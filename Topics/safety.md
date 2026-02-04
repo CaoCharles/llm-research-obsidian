@@ -4,6 +4,10 @@
 
 ## 最新論文
 
+- `[safety]` [[[2602.01587] Provable Defense Framework for LLM Jailbreaks via Noise-Augmented Alignment|Provable Defense Framework for LLM Jailbreaks via ...]] (2026-02-02)
+
+- `[safety]` [[[2602.00619] Jailbreaking LLMs via Calibration|Jailbreaking LLMs via Calibration]] (2026-02-01)
+
 - `[safety]` [[[2602.03263] CSR-Bench - A Benchmark for Evaluating the Cross-modal Safety and Reliability of...|CSR-Bench: A Benchmark for Evaluating the Cross-mo...]] (2026-02-03)
 
 - `[safety]` [[[2602.03255] LPS-Bench - Benchmarking Safety Awareness of Computer-Use Agents in Long-Horizon...|LPS-Bench: Benchmarking Safety Awareness of Comput...]] (2026-02-03)

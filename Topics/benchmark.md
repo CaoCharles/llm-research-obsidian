@@ -4,6 +4,8 @@
 
 ## 最新論文
 
+- `[rag-evaluation]` [[[2602.03368] Pursuing Best Industrial Practices for Retrieval-Augmented Generation in the Med...|Pursuing Best Industrial Practices for Retrieval-A...]] (2026-02-03)
+
 - `[safety]` [[[2602.03263] CSR-Bench - A Benchmark for Evaluating the Cross-modal Safety and Reliability of...|CSR-Bench: A Benchmark for Evaluating the Cross-mo...]] (2026-02-03)
 
 - `[benchmark]` [[[2602.03704] Cognitively Diverse Multiple-Choice Question Generation - A Hybrid Multi-Agent F...|Cognitively Diverse Multiple-Choice Question Gener...]] (2026-02-03)
