@@ -21,7 +21,7 @@ openai:
 
 # Obsidian 設定
 obsidian:
-  vault_path: /Users/caocharles/Library/CloudStorage/OneDrive-個人/GitHub/claude_test/llm-paper-obsidian
+  vault_path: /home/user/llm-research-obsidian
   
 # 可用主題標籤
 topics:

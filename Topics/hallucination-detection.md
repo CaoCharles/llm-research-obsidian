@@ -1,18 +1,16 @@
-# Llm As Judge
+# Hallucination Detection
 
 表現相關研究的彙整頁面。
 
 ## 最新論文
-
 - `[faithfulness]` [[[2602.02290] Hallucination or Creativity - How to Evaluate AI-Generated Scientific Stories|Hallucination or Creativity: How to Evaluate AI-Ge...]] (2026-02-03)
-- `[benchmark]` [[[2602.03704] Cognitively Diverse Multiple-Choice Question Generation - A Hybrid Multi-Agent F...|Cognitively Diverse Multiple-Choice Question Gener...]] (2026-02-03)
 
 ## 所有相關論文
 
 ```dataview
 LIST
 FROM "Papers"
-WHERE contains(tags, "llm-as-judge")
+WHERE contains(tags, "hallucination-detection")
 SORT date DESC
 ```
 
