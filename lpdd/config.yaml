@@ -1,0 +1,37 @@
+# arXiv 設定
+arxiv:
+  categories:
+    - cs.CL
+    - cs.AI
+    - cs.CR
+  hours_lookback: 24
+  max_results: 200
+
+# 篩選設定
+filter:
+  min_score: 5
+  top_n: 5  # 送去 AI 分析的數量
+
+# OpenAI 設定
+openai:
+  model: gpt-5-mini  # 400K context，性價比高
+  # model: gpt-5-nano  # 最便宜
+  # model: gpt-4o-mini # 舊版備選
+  max_tokens: 2000
+
+# Obsidian 設定
+obsidian:
+  vault_path: /Users/caocharles/Library/CloudStorage/OneDrive-個人/GitHub/claude_test/llm-paper-obsidian
+  
+# 可用主題標籤
+topics:
+  - llm-as-judge
+  - rag-evaluation
+  - red-teaming
+  - prompt-injection
+  - faithfulness
+  - hallucination
+  - benchmark
+  - safety
+  - alignment
+  - agent-evaluation

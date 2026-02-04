@@ -1,0 +1,75 @@
+# 關鍵字權重配置
+# 分數越高，越可能被選中進行 AI 分析
+
+# 核心關鍵字 (權重 5)
+core:
+  llm-as-judge: 5
+  red team: 5
+  red-team: 5
+  redteam: 5
+  jailbreak: 5
+  prompt injection: 5
+  prompt-injection: 5
+
+# 評測相關 (權重 4)
+evaluation:
+  faithfulness: 4
+  hallucination: 4
+  benchmark: 4
+  evaluation: 4
+  eval: 4
+  factuality: 4
+
+# RAG 相關 (權重 4)
+rag:
+  rag: 4
+  retrieval-augmented: 4
+  retrieval augmented: 4
+  graph-rag: 4
+  graphrag: 4
+  knowledge-graph: 3
+  retrieval: 3
+
+# 代理系統 (權重 4)
+agent:
+  agentic: 4
+  multi-agent: 4
+  agent: 3
+  tool-use: 4
+  tool use: 4
+
+# 安全與對齊 (權重 3)
+safety:
+  safety: 3
+  alignment: 3
+  toxicity: 3
+  bias: 3
+
+# 多模態 (權重 3)
+multimodal:
+  multimodal: 3
+  vision-language: 3
+  mllm: 3
+  vlm: 3
+
+# 推理能力 (權重 3)
+reasoning:
+  reasoning: 3
+  chain-of-thought: 3
+  cot: 3
+
+# 記憶與上下文 (權重 3)
+memory:
+  memory: 3
+  long-context: 3
+  contextual: 2
+
+# 合成資料 (權重 3)
+synthetic:
+  synthetic data: 3
+  data generation: 3
+
+# 其他 (權重 2)
+other:
+  accuracy: 2
+  consistency: 2
