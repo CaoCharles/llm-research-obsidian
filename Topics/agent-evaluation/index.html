@@ -763,7 +763,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最新論文
+        為什麼重要？
       
     </span>
   </a>
@@ -774,7 +774,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        所有相關論文
+        收錄標準
       
     </span>
   </a>
@@ -785,7 +785,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        相關主題
+        研究方向
       
     </span>
   </a>
@@ -794,6 +794,28 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關論文
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        延伸閱讀
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         筆記
@@ -1760,7 +1782,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最新論文
+        為什麼重要？
       
     </span>
   </a>
@@ -1771,7 +1793,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        所有相關論文
+        收錄標準
       
     </span>
   </a>
@@ -1782,7 +1804,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        相關主題
+        研究方向
       
     </span>
   </a>
@@ -1791,6 +1813,28 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關論文
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        延伸閱讀
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         筆記
@@ -1817,9 +1861,43 @@
 
 
 
-<h1 id="agent-evaluation">Agent Evaluation</h1>
-<p>表現相關研究的彙整頁面。</p>
-<h2 id="_1">最新論文</h2>
+<h1 id="agent-evaluation">代理評測 (Agent Evaluation)</h1>
+<blockquote>
+<p>評估 LLM 代理在複雜任務中的表現。代理需要規劃、使用工具、 與環境互動，評測比單純對話更複雜。</p>
+</blockquote>
+<h2 id="_1">為什麼重要？</h2>
+<p>隨著 AI 代理應用增加，需要專門的評測框架。</p>
+<h2 id="_2">收錄標準</h2>
+<p>論文被收入此主題的原因：</p>
+<ul>
+<li>標題或摘要含有 agent、agentic、multi-agent 等詞</li>
+<li>研究代理系統的能力評測</li>
+<li>提出代理任務基準測試</li>
+</ul>
+<h2 id="_3">研究方向</h2>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>任務完成率</strong></td>
+<td>代理能否成功完成指定任務</td>
+</tr>
+<tr>
+<td><strong>工具使用</strong></td>
+<td>代理選擇和使用工具的能力</td>
+</tr>
+<tr>
+<td><strong>多步推理</strong></td>
+<td>代理進行長程規劃的能力</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">相關論文</h2>
 <ul>
 <li>
 <p><code>[rag-evaluation]</code> <a href="../../Papers/%5B2602.03315%5D%20Memora%20-%20A%20Harmonic%20Memory%20Representation%20Balancing%20Abstraction%20and%20Specificity/">Memora: A Harmonic Memory Representation Balancing...</a> (2026-02-03)</p>
@@ -1838,18 +1916,12 @@
 </li>
 <li><code>[rag-evaluation]</code> <a href="../../Papers/%5B2602.03442%5D%20A-RAG%20-%20Scaling%20Agentic%20Retrieval-Augmented%20Generation%20via%20Hierarchical%20Retrieva.../">A-RAG: Scaling Agentic Retrieval-Augmented Generat...</a> (2026-02-03)</li>
 </ul>
-<h2 id="_2">所有相關論文</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LIST
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FROM "Papers"
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>WHERE contains(tags, "agent-evaluation")
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>SORT date DESC
-</code></pre></div>
-<h2 id="_3">相關主題</h2>
+<h2 id="_5">延伸閱讀</h2>
 <ul>
-<li><a href="../benchmark/">Topics/benchmark</a></li>
-<li><a href="../llm-as-judge/">Topics/llm-as-judge</a></li>
+<li><a href="../benchmark/">benchmark</a></li>
+<li><a href="../agentic-rag/">agentic-rag</a></li>
 </ul>
-<h2 id="_4">筆記</h2>
+<h2 id="_6">筆記</h2>
 <p>（手動補充主題相關的見解與總結）</p>
 
 
@@ -1873,7 +1945,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月5日 11:04:42 CST">2026年2月5日 11:04:42</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月5日 11:13:28 CST">2026年2月5日 11:13:28</span>
   </span>
 
     
@@ -1883,7 +1955,7 @@
     <span class="md-icon" title="建立日期">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月5日 11:04:42 CST">2026年2月5日 11:04:42</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月5日 11:13:28 CST">2026年2月5日 11:13:28</span>
   </span>
 
     

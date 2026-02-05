@@ -9,13 +9,9 @@
         <meta name="author" content="Charles Cao">
       
       
-        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/factuality/">
+        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/red-teaming/">
       
       
-        <link rel="prev" href="../hallucination-mitigation/">
-      
-      
-        <link rel="next" href="../faithful-reasoning/">
       
       
         
@@ -26,7 +22,7 @@
     
     
       
-        <title>事實性 - LLM Paper Daily Digest</title>
+        <title>紅隊測試 (Red-Teaming) - LLM Paper Daily Digest</title>
       
     
     
@@ -91,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#factuality" class="md-skip">
+        <a href="#red-teaming" class="md-skip">
           跳轉到
         </a>
       
@@ -125,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              事實性
+              紅隊測試 (Red-Teaming)
             
           </span>
         </div>
@@ -315,12 +311,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../hallucination/" class="md-tabs__link">
           
   
@@ -1066,31 +1060,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1108,7 +1097,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1207,37 +1196,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    事實性
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../factuality/" class="md-nav__link">
         
   
   
@@ -1253,70 +1215,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目錄">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目錄
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新論文
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        所有相關論文
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        筆記
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1760,7 +1658,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最新論文
+        為什麼重要？
       
     </span>
   </a>
@@ -1771,7 +1669,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        所有相關論文
+        收錄標準
       
     </span>
   </a>
@@ -1782,7 +1680,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        相關主題
+        研究方向
       
     </span>
   </a>
@@ -1791,6 +1689,28 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關論文
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        延伸閱讀
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         筆記
@@ -1817,24 +1737,50 @@
 
 
 
-<h1 id="factuality">Factuality</h1>
-<p>表現相關研究的彙整頁面。</p>
-<h2 id="_1">最新論文</h2>
+<h1 id="red-teaming">紅隊測試 (Red-Teaming)</h1>
+<blockquote>
+<p>主動尋找 LLM 的漏洞和弱點。模擬攻擊者視角，發現模型可能被濫用的方式。</p>
+</blockquote>
+<h2 id="_1">為什麼重要？</h2>
+<p>在部署前發現問題，比事後修復更有效。</p>
+<h2 id="_2">收錄標準</h2>
+<p>論文被收入此主題的原因：</p>
 <ul>
-<li><code>[faithfulness]</code> <a href="../../Papers/%5B2602.02290%5D%20Hallucination%20or%20Creativity%20-%20How%20to%20Evaluate%20AI-Generated%20Scientific%20Stories/">Hallucination or Creativity: How to Evaluate AI-Ge...</a> (2026-02-03)</li>
+<li>標題或摘要含有 red team、adversarial、attack 等詞</li>
+<li>研究如何系統性地發現模型弱點</li>
+<li>提出自動化紅隊測試方法</li>
 </ul>
-<h2 id="_2">所有相關論文</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>LIST
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FROM "Papers"
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>WHERE contains(tags, "factuality")
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>SORT date DESC
-</code></pre></div>
-<h2 id="_3">相關主題</h2>
+<h2 id="_3">研究方向</h2>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>自動化攻擊</strong></td>
+<td>使用 AI 自動生成攻擊輸入</td>
+</tr>
+<tr>
+<td><strong>多模態攻擊</strong></td>
+<td>結合文字、圖片的攻擊</td>
+</tr>
+<tr>
+<td><strong>防禦評估</strong></td>
+<td>測試防禦機制的有效性</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">相關論文</h2>
+<p>（尚無論文）</p>
+<h2 id="_5">延伸閱讀</h2>
 <ul>
-<li><a href="../benchmark/">Topics/benchmark</a></li>
-<li><a href="../llm-as-judge/">Topics/llm-as-judge</a></li>
+<li><a href="../prompt-injection/">prompt-injection</a></li>
+<li><a href="../safety/">safety</a></li>
 </ul>
-<h2 id="_4">筆記</h2>
+<h2 id="_6">筆記</h2>
 <p>（手動補充主題相關的見解與總結）</p>
 
 
