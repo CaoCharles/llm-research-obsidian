@@ -31,7 +31,13 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 
 ### Step 2: 分析論文
 
-讀取 CLI 輸出的 JSON，分析論文並生成以下結構化內容（使用繁體中文）：
+讀取 CLI 輸出的 JSON，**深度閱讀並理解論文的完整內容**（包含方法細節、實驗設計、結果分析），然後生成以下結構化內容（使用繁體中文）：
+
+**分析要求**:
+1. **深度理解**: 不要只看摘要，要理解論文的核心創新、技術細節和實驗證據
+2. **技術準確**: 保留關鍵技術術語的英文，確保翻譯準確不失真
+3. **批判思考**: 分析論文的優勢、限制和潛在影響，提供有價值的見解
+4. **實用導向**: 在「對我們的啟發」中提供可操作的洞察，而非空泛評論
 
 ```json
 {
@@ -45,31 +51,52 @@ cd lpdd && uv run python cli.py get {arxiv_id}
     "pdf_url": "從 CLI 結果取得"
   },
   "analysis": {
-    "abstract_zh": "摘要的完整中文翻譯（保留技術術語英文，約200-300字）",
-    "problem_statement": "論文解決什麼問題？現有方法有什麼不足？（100-150字）",
-    "proposed_solution": "作者提出什麼解決方案或框架？核心創新點是什麼？（150-200字）",
-    "core_contributions": ["核心貢獻1（具體描述）", "核心貢獻2", "核心貢獻3"],
-    "methodology": "技術方法詳細說明：包含模型架構、演算法步驟、資料處理方式、評估指標等（300-400字）",
-    "key_results": "關鍵實驗結果，使用 Markdown 表格呈現主要數據對比",
-    "insights": ["對我們的啟發1（可實際應用的見解）", "啟發2", "啟發3"],
-    "limitations": "論文的限制、不足或未來工作方向（80-100字）",
-    "tags": ["選擇 2-3 個標籤"],
+    "abstract_zh": "摘要的完整中文翻譯（保留技術術語英文，約200-300字）\n準確傳達研究目標、方法和主要發現",
+
+    "problem_statement": "論文解決什麼問題？現有方法有什麼不足？（100-150字）\n要點：明確指出研究動機、現有方法的局限性、為何這個問題重要",
+
+    "proposed_solution": "作者提出什麼解決方案或框架？核心創新點是什麼？（150-200字）\n要點：說明方法的核心思想、創新之處、與現有方法的本質區別",
+
+    "core_contributions": [
+      "核心貢獻1（具體且可量化，說明技術創新或理論突破）",
+      "核心貢獻2（強調實驗驗證或實用價值）",
+      "核心貢獻3（如有第三個重要貢獻）"
+    ],
+
+    "methodology": "技術方法詳細說明（300-400字）\n必須包含：\n1. 模型架構或演算法流程\n2. 訓練/推理過程的關鍵步驟\n3. 資料集和預處理方式\n4. 評估指標和實驗設置\n5. 與 baseline 的對比方法",
+
+    "key_results": "關鍵實驗結果（必須使用 Markdown 表格）\n要求：\n- 包含主要性能指標的數值對比\n- 展示本文方法相對於 baseline 的提升\n- 如有消融實驗，也應呈現關鍵結果\n- 表格要清晰、易讀、有對比性",
+
+    "insights": [
+      "洞察1（技術啟發：方法可以如何應用或改進）",
+      "洞察2（理論啟發：揭示了什麼規律或原理）",
+      "洞察3（實踐啟發：對實際部署或研究方向的建議）"
+    ],
+
+    "limitations": "論文的限制、不足或未來工作方向（80-100字）\n要點：客觀指出方法的適用範圍、實驗的局限、未解決的問題",
+
+    "tags": ["標籤1", "標籤2", "標籤3（從上述分類中選擇2-4個最相關的）"],
     "relevance": 4,
-    "related_topics": ["相關主題1", "相關主題2"],
-    "category": "最主要的分類標籤"
+    "related_topics": ["主題1", "主題2（相關的研究領域或技術方向）"],
+    "category": "最主要的分類標籤（只選一個最核心的）"
   }
 }
 ```
 
 **可用的 tags**:
-llm-as-judge, rag-evaluation, red-teaming, prompt-injection, faithfulness, hallucination, benchmark, safety, alignment, agent-evaluation
+
+**評測相關**: llm-as-judge, rag-evaluation, benchmark, agent-evaluation, faithfulness
+**安全相關**: safety, red-teaming, jailbreak, adversarial-attacks, adversarial-defense, prompt-injection, certified-defense, provable-robustness, adversarial-robustness
+**對齊相關**: alignment, preference-learning, rlhf
+**多模態**: multimodal, vision-language, cross-modality, vlm, omni-models, multimodal-safety
+**其他**: hallucination, reasoning, tool-use, prompt-engineering
 
 **relevance 評分（1-5）**:
-- 5 = 突破性研究
-- 4 = 有實用價值
-- 3 = 可參考
-- 2 = 間接相關
-- 1 = 相關性低
+- 5 = 突破性研究（重大創新、開創性方法、顯著超越現有技術）
+- 4 = 有實用價值（實用技術、可複現方法、明確應用場景）
+- 3 = 可參考（有趣想法、部分創新、值得關注）
+- 2 = 間接相關（邊緣議題、有限貢獻、參考價值低）
+- 1 = 相關性低（主題不符、缺乏新意、價值有限）
 
 ### Step 3: 寫入 Obsidian
 
