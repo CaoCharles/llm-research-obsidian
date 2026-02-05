@@ -60,19 +60,16 @@ cd lpdd && uv run python cli.py trending "{topic}" [--classic]
 
 ### Step 3: 詢問使用者
 
-詢問使用者是否要：
-1. 下載並分析特定論文
-2. 將特定論文加入 Obsidian
-3. 只查看不下載
+顯示搜尋統計並詢問使用者：
 
 **提示訊息：**
 ```
-找到 {n} 篇相關論文。
+📊 找到 {n} 篇相關論文
 
-請選擇要執行的操作：
-1. 輸入論文編號（如 "1" 或 "1,3,5"）下載並分析
-2. 輸入 "all" 下載所有論文
-3. 輸入 "none" 或按 Enter 結束
+想要進一步分析嗎？
+- 輸入論文編號（如 "1" 或 "1,3,5"）以執行詳細分析並寫入 Obsidian
+- 輸入 "all" 分析所有論文
+- 按 Enter 結束
 ```
 
 ### Step 4: 執行使用者選擇
@@ -99,15 +96,35 @@ Obsidian 寫入（若選擇下載）：
 ## 熱門主題建議
 
 可搜尋的熱門主題：
+
+**評測與測試**:
 - `llm-as-judge` - LLM 作為評審
+- `benchmark` - 基準測試
+- `rag evaluation` - RAG 評測
+- `faithfulness` - 忠實度評估
+
+**安全與對抗**:
 - `red teaming` - 紅隊測試
 - `jailbreak` - 越獄攻擊
+- `adversarial attack` - 對抗攻擊
+- `adversarial defense` - 對抗防禦
 - `prompt injection` - Prompt 注入
-- `hallucination` - 幻覺檢測
-- `rag evaluation` - RAG 評測
-- `benchmark` - 基準測試
+- `safety` - 安全性
+
+**對齊與訓練**:
 - `alignment` - 對齊研究
+- `RLHF` - 強化學習人類反饋
+- `preference learning` - 偏好學習
+
+**多模態**:
+- `vision language model` - 視覺-語言模型
+- `multimodal` - 多模態
+- `cross-modality` - 跨模態
+
+**其他**:
+- `hallucination` - 幻覺檢測
 - `agent` - 代理系統
+- `reasoning` - 推理能力
 
 ## 注意事項
 
