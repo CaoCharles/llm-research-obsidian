@@ -189,7 +189,15 @@
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/ai-agent/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/alignment/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/benchmark-evaluation/</loc>
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
@@ -221,6 +229,10 @@
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-factuality/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-mitigation/</loc>
          <lastmod>2026-02-05</lastmod>
     </url>
@@ -245,6 +257,10 @@
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/multimodal/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/omni-models/</loc>
          <lastmod>2026-02-05</lastmod>
     </url>
@@ -257,11 +273,19 @@
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/rag-retrieval/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/red-teaming/</loc>
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/rlhf/</loc>
+         <lastmod>2026-02-05</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/safety-alignment/</loc>
          <lastmod>2026-02-05</lastmod>
     </url>
     <url>

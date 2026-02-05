@@ -9,9 +9,13 @@
         <meta name="author" content="Charles Cao">
       
       
-        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/safety/">
+        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-factuality/">
       
       
+        <link rel="prev" href="../safety-alignment/">
+      
+      
+        <link rel="next" href="../rag-retrieval/">
       
       
         
@@ -22,7 +26,7 @@
     
     
       
-        <title>安全性 (Safety) - LLM Paper Daily Digest</title>
+        <title>幻覺與事實性 - LLM Paper Daily Digest</title>
       
     
     
@@ -87,7 +91,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#safety" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳轉到
         </a>
       
@@ -121,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              安全性 (Safety)
+              幻覺與事實性
             
           </span>
         </div>
@@ -271,10 +275,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../ai-agent/" class="md-tabs__link">
           
   
@@ -526,26 +532,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -563,7 +574,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -634,10 +645,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../hallucination-factuality/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    幻覺與事實性
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -653,6 +691,198 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目錄">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目錄
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        什麼是 LLM 幻覺？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="什麼是 LLM 幻覺？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼會發生？
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心概念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 幻覺類型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factuality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 事實性 (Factuality)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faithfulness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 忠實度 (Faithfulness)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        研究方向
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="研究方向">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔬 幻覺檢測
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ 幻覺緩解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📏 幻覺評測
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        收錄標準
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關論文
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        延伸閱讀
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        筆記
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -863,18 +1093,135 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#llm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        為什麼重要？
+        什麼是 LLM 幻覺？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="什麼是 LLM 幻覺？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼會發生？
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心概念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 幻覺類型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factuality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 事實性 (Factuality)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faithfulness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 忠實度 (Faithfulness)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        研究方向
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="研究方向">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔬 幻覺檢測
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ 幻覺緩解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📏 幻覺評測
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         收錄標準
@@ -885,18 +1232,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        研究方向
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         相關論文
@@ -907,7 +1243,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         延伸閱讀
@@ -918,7 +1254,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         筆記
@@ -945,66 +1281,136 @@
 
 
 
-<h1 id="safety">安全性 (Safety)</h1>
+<h1 id="_1">幻覺與事實性</h1>
 <blockquote>
-<p>確保 LLM 不會生成有害、偏見或危險的內容。包括防止模型被濫用、 避免輸出有毒內容、以及保護用戶隱私。</p>
+<p>當 AI「一本正經地胡說八道」——生成看似合理但完全錯誤的內容</p>
 </blockquote>
-<h2 id="_1">為什麼重要？</h2>
-<p>隨著 LLM 廣泛應用，安全性成為部署的關鍵考量。</p>
-<h2 id="_2">收錄標準</h2>
-<p>論文被收入此主題的原因：</p>
-<ul>
-<li>標題或摘要含有 safety、safe、harm、toxicity 等詞</li>
-<li>研究模型的安全對齊或防護機制</li>
-<li>提出安全評測方法或基準</li>
-</ul>
-<h2 id="_3">研究方向</h2>
+<h2 id="llm">什麼是 LLM 幻覺？</h2>
+<p>你問 AI：「林肯總統是什麼時候訪問月球的？」</p>
+<p>一個有幻覺問題的 AI 可能會自信地回答：</p>
+<blockquote>
+<p>「林肯總統於 1865 年 4 月 14 日訪問月球，這是人類歷史上首次月球訪問...」</p>
+</blockquote>
+<p>這就是「幻覺」——AI <strong>編造不存在的事實</strong>，而且說得非常有自信。</p>
+<h3 id="_2">為什麼會發生？</h3>
 <table>
 <thead>
 <tr>
-<th>方向</th>
+<th>原因</th>
 <th>說明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>毒性過濾</strong></td>
-<td>防止生成有害或冒犯性內容</td>
+<td><strong>訓練目標</strong></td>
+<td>LLM 被訓練「預測下一個詞」，不是「說真話」</td>
 </tr>
 <tr>
-<td><strong>隱私保護</strong></td>
-<td>避免洩露訓練資料中的敏感資訊</td>
+<td><strong>知識截止</strong></td>
+<td>訓練資料有時間限制，不知道最新資訊</td>
 </tr>
 <tr>
-<td><strong>濫用防護</strong></td>
-<td>防止模型被用於惡意目的</td>
+<td><strong>過度泛化</strong></td>
+<td>把學到的模式錯誤應用到新情況</td>
+</tr>
+<tr>
+<td><strong>缺乏來源</strong></td>
+<td>無法區分「我知道」和「我猜測」</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_4">相關論文</h2>
+<hr>
+<h2 id="_3">核心概念</h2>
+<h3 id="_4">🔍 幻覺類型</h3>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>說明</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>事實錯誤</strong></td>
+<td>陳述與現實不符</td>
+<td>「巴黎是德國首都」</td>
+</tr>
+<tr>
+<td><strong>虛構實體</strong></td>
+<td>編造不存在的人事物</td>
+<td>虛構的學術論文</td>
+</tr>
+<tr>
+<td><strong>時間錯誤</strong></td>
+<td>搞錯時間順序</td>
+<td>把未來事件說成已發生</td>
+</tr>
+<tr>
+<td><strong>邏輯矛盾</strong></td>
+<td>前後說法不一致</td>
+<td>先說 A &gt; B，又說 B &gt; A</td>
+</tr>
+</tbody>
+</table>
+<h3 id="factuality">📊 事實性 (Factuality)</h3>
+<p>評估 AI 輸出是否符合事實：</p>
 <ul>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.01587%5D%20Provable%20Defense%20Framework%20for%20LLM%20Jailbreaks%20via%20Noise-Augmented%20Alignment/">Provable Defense Framework for LLM Jailbreaks via ...</a> (2026-02-02)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.00619%5D%20Jailbreaking%20LLMs%20via%20Calibration/">Jailbreaking LLMs via Calibration</a> (2026-02-01)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.03263%5D%20CSR-Bench%20-%20A%20Benchmark%20for%20Evaluating%20the%20Cross-modal%20Safety%20and%20Reliability%20of.../">CSR-Bench: A Benchmark for Evaluating the Cross-mo...</a> (2026-02-03)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.03255%5D%20LPS-Bench%20-%20Benchmarking%20Safety%20Awareness%20of%20Computer-Use%20Agents%20in%20Long-Horizon.../">LPS-Bench: Benchmarking Safety Awareness of Comput...</a> (2026-02-03)</p>
-</li>
-<li><code>[agent-evaluation]</code> <a href="../../Papers/%5B2602.03224%5D%20TAME%20-%20A%20Trustworthy%20Test-Time%20Evolution%20of%20Agent%20Memory%20with%20Systematic%20Benchma.../">TAME: A Trustworthy Test-Time Evolution of Agent M...</a> (2026-02-03)</li>
+<li><strong>可驗證性</strong>：陳述可以被查證</li>
+<li><strong>來源追蹤</strong>：知道資訊從哪裡來</li>
+<li><strong>不確定性表達</strong>：承認「我不確定」</li>
 </ul>
-<h2 id="_5">延伸閱讀</h2>
+<h3 id="faithfulness">🎯 忠實度 (Faithfulness)</h3>
+<p>在 RAG 系統中，生成內容是否忠於檢索到的資料：</p>
 <ul>
-<li><a href="../alignment/">alignment</a></li>
-<li><a href="../prompt-injection/">prompt-injection</a></li>
-<li><a href="../red-teaming/">red-teaming</a></li>
+<li>AI 說的是否<strong>基於</strong>給它的文件？</li>
+<li>還是<strong>編造</strong>了文件裡沒有的內容？</li>
 </ul>
-<h2 id="_6">筆記</h2>
-<p>（手動補充主題相關的見解與總結）</p>
+<hr>
+<h2 id="_5">研究方向</h2>
+<h3 id="_6">🔬 幻覺檢測</h3>
+<p>如何自動判斷 AI 是否在胡扯？</p>
+<ul>
+<li><strong>自我一致性</strong>：多次問同一問題，看答案是否一致</li>
+<li><strong>外部驗證</strong>：用搜尋引擎或知識庫核實</li>
+<li><strong>置信度分析</strong>：看模型對自己答案的確定程度</li>
+</ul>
+<h3 id="_7">🛡️ 幻覺緩解</h3>
+<p>如何減少幻覺發生？</p>
+<ul>
+<li><strong>RAG（檢索增強生成）</strong>：先查資料再回答</li>
+<li><strong>引用生成</strong>：要求 AI 附上來源</li>
+<li><strong>拒絕回答</strong>：訓練 AI 說「我不知道」</li>
+<li><strong>事實約束解碼</strong>：在生成時限制只能說已驗證的事實</li>
+</ul>
+<h3 id="_8">📏 幻覺評測</h3>
+<p>如何量化幻覺程度？</p>
+<ul>
+<li>建立事實性基準測試</li>
+<li>人工標註幻覺樣本</li>
+<li>自動化評測指標</li>
+</ul>
+<hr>
+<h2 id="_9">收錄標準</h2>
+<p>論文被收入此主題的原因：</p>
+<ul>
+<li>標題或摘要含有 <code>hallucination</code>、<code>factual</code>、<code>faithful</code> 等詞</li>
+<li>研究 LLM 生成內容的真實性</li>
+<li>提出幻覺檢測或緩解方法</li>
+<li>涉及事實性評測基準</li>
+</ul>
+<hr>
+<h2 id="_10">相關論文</h2>
+<p>（自動更新）</p>
+<hr>
+<h2 id="_11">延伸閱讀</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2311.05232">A Survey on Hallucination in LLMs</a></li>
+<li><a href="https://github.com/sylinrl/TruthfulQA">TruthfulQA 基準測試</a></li>
+</ul>
+<hr>
+<h2 id="_12">筆記</h2>
+<p>（手動補充見解與總結）</p>
 
 
 

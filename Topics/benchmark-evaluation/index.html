@@ -9,9 +9,13 @@
         <meta name="author" content="Charles Cao">
       
       
-        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/safety/">
+        <link rel="canonical" href="https://CaoCharles.github.io/llm-research-obsidian/Topics/benchmark-evaluation/">
       
       
+        <link rel="prev" href="../rag-retrieval/">
+      
+      
+        <link rel="next" href="../multimodal/">
       
       
         
@@ -22,7 +26,7 @@
     
     
       
-        <title>安全性 (Safety) - LLM Paper Daily Digest</title>
+        <title>評測與基準 - LLM Paper Daily Digest</title>
       
     
     
@@ -87,7 +91,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#safety" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳轉到
         </a>
       
@@ -121,7 +125,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              安全性 (Safety)
+              評測與基準
             
           </span>
         </div>
@@ -271,10 +275,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../ai-agent/" class="md-tabs__link">
           
   
@@ -526,26 +532,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -563,7 +574,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -690,10 +701,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../benchmark-evaluation/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    評測與基準
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -709,6 +747,231 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目錄">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目錄
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼需要基準測試？
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        核心概念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 基準測試類型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 評測指標
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        研究方向
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="研究方向">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#llm-as-judge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤖 LLM-as-Judge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📏 評測的問題
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🆕 新興評測方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要基準測試介紹
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要基準測試介紹">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mmlu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MMLU（大規模多任務語言理解）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gsm8k" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GSM8K（數學推理）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#humaneval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HumanEval（程式碼生成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mt-bench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MT-Bench（對話品質）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        收錄標準
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關論文
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        延伸閱讀
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        筆記
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -863,21 +1126,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        為什麼重要？
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        收錄標準
+        為什麼需要基準測試？
       
     </span>
   </a>
@@ -888,7 +1140,157 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        核心概念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 基準測試類型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 評測指標
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         研究方向
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="研究方向">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#llm-as-judge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤖 LLM-as-Judge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📏 評測的問題
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🆕 新興評測方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要基準測試介紹
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要基準測試介紹">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mmlu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MMLU（大規模多任務語言理解）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gsm8k" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GSM8K（數學推理）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#humaneval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HumanEval（程式碼生成）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mt-bench" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MT-Bench（對話品質）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        收錄標準
       
     </span>
   </a>
@@ -896,7 +1298,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         相關論文
@@ -907,7 +1309,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         延伸閱讀
@@ -918,7 +1320,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         筆記
@@ -945,66 +1347,177 @@
 
 
 
-<h1 id="safety">安全性 (Safety)</h1>
+<h1 id="_1">評測與基準</h1>
 <blockquote>
-<p>確保 LLM 不會生成有害、偏見或危險的內容。包括防止模型被濫用、 避免輸出有毒內容、以及保護用戶隱私。</p>
+<p>如何客觀比較不同 AI 模型的能力？需要標準化的「考試」</p>
 </blockquote>
-<h2 id="_1">為什麼重要？</h2>
-<p>隨著 LLM 廣泛應用，安全性成為部署的關鍵考量。</p>
-<h2 id="_2">收錄標準</h2>
-<p>論文被收入此主題的原因：</p>
-<ul>
-<li>標題或摘要含有 safety、safe、harm、toxicity 等詞</li>
-<li>研究模型的安全對齊或防護機制</li>
-<li>提出安全評測方法或基準</li>
-</ul>
-<h2 id="_3">研究方向</h2>
+<h2 id="_2">為什麼需要基準測試？</h2>
+<p>想像你要選一個 AI 助理：
+- GPT-4 說「我很聰明」
+- Claude 說「我更聰明」
+- Gemini 說「我最聰明」</p>
+<p>誰說的對？我們需要<strong>公平的考試</strong>來驗證。</p>
+<p>這就是基準測試（Benchmark）的作用——用標準化的題目，客觀評估 AI 能力。</p>
+<hr>
+<h2 id="_3">核心概念</h2>
+<h3 id="_4">📊 基準測試類型</h3>
 <table>
 <thead>
 <tr>
-<th>方向</th>
+<th>類型</th>
+<th>評測什麼</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>知識</strong></td>
+<td>事實知識儲備</td>
+<td>MMLU、TriviaQA</td>
+</tr>
+<tr>
+<td><strong>推理</strong></td>
+<td>邏輯思考能力</td>
+<td>GSM8K、BIG-Bench</td>
+</tr>
+<tr>
+<td><strong>程式碼</strong></td>
+<td>寫程式能力</td>
+<td>HumanEval、MBPP</td>
+</tr>
+<tr>
+<td><strong>對話</strong></td>
+<td>對話品質</td>
+<td>MT-Bench、AlpacaEval</td>
+</tr>
+<tr>
+<td><strong>安全</strong></td>
+<td>拒絕有害請求</td>
+<td>ToxiGen、SafetyBench</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">🎯 評測指標</h3>
+<table>
+<thead>
+<tr>
+<th>指標</th>
 <th>說明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>毒性過濾</strong></td>
-<td>防止生成有害或冒犯性內容</td>
+<td><strong>準確率</strong></td>
+<td>答對的比例</td>
 </tr>
 <tr>
-<td><strong>隱私保護</strong></td>
-<td>避免洩露訓練資料中的敏感資訊</td>
+<td><strong>F1 分數</strong></td>
+<td>精確率和召回率的調和平均</td>
 </tr>
 <tr>
-<td><strong>濫用防護</strong></td>
-<td>防止模型被用於惡意目的</td>
+<td><strong>BLEU/ROUGE</strong></td>
+<td>生成文本與參考答案的相似度</td>
+</tr>
+<tr>
+<td><strong>人類偏好</strong></td>
+<td>人類評估員的選擇</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_4">相關論文</h2>
+<hr>
+<h2 id="_6">研究方向</h2>
+<h3 id="llm-as-judge">🤖 LLM-as-Judge</h3>
+<p>用 AI 評估 AI：</p>
+<p><strong>優點</strong>：
+- 比人工評測便宜 100 倍
+- 可以大規模評估
+- 評分一致性高</p>
+<p><strong>挑戰</strong>：
+- 評審模型可能有偏見
+- 偏好冗長、格式好看的回答
+- 自我評估可能過度樂觀</p>
+<h3 id="_7">📏 評測的問題</h3>
+<table>
+<thead>
+<tr>
+<th>問題</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>資料污染</strong></td>
+<td>測試題目出現在訓練資料中</td>
+</tr>
+<tr>
+<td><strong>過度優化</strong></td>
+<td>模型只學會「考試技巧」</td>
+</tr>
+<tr>
+<td><strong>代表性</strong></td>
+<td>基準不反映真實使用場景</td>
+</tr>
+<tr>
+<td><strong>飽和</strong></td>
+<td>太多模型都接近滿分</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">🆕 新興評測方向</h3>
 <ul>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.01587%5D%20Provable%20Defense%20Framework%20for%20LLM%20Jailbreaks%20via%20Noise-Augmented%20Alignment/">Provable Defense Framework for LLM Jailbreaks via ...</a> (2026-02-02)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.00619%5D%20Jailbreaking%20LLMs%20via%20Calibration/">Jailbreaking LLMs via Calibration</a> (2026-02-01)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.03263%5D%20CSR-Bench%20-%20A%20Benchmark%20for%20Evaluating%20the%20Cross-modal%20Safety%20and%20Reliability%20of.../">CSR-Bench: A Benchmark for Evaluating the Cross-mo...</a> (2026-02-03)</p>
-</li>
-<li>
-<p><code>[safety]</code> <a href="../../Papers/%5B2602.03255%5D%20LPS-Bench%20-%20Benchmarking%20Safety%20Awareness%20of%20Computer-Use%20Agents%20in%20Long-Horizon.../">LPS-Bench: Benchmarking Safety Awareness of Comput...</a> (2026-02-03)</p>
-</li>
-<li><code>[agent-evaluation]</code> <a href="../../Papers/%5B2602.03224%5D%20TAME%20-%20A%20Trustworthy%20Test-Time%20Evolution%20of%20Agent%20Memory%20with%20Systematic%20Benchma.../">TAME: A Trustworthy Test-Time Evolution of Agent M...</a> (2026-02-03)</li>
+<li><strong>動態評測</strong>：不斷更新題目防止污染</li>
+<li><strong>真實場景評測</strong>：評估實際應用效果</li>
+<li><strong>能力分解</strong>：細分不同能力維度</li>
+<li><strong>對抗評測</strong>：測試模型的魯棒性</li>
 </ul>
-<h2 id="_5">延伸閱讀</h2>
+<hr>
+<h2 id="_9">主要基準測試介紹</h2>
+<h3 id="mmlu">MMLU（大規模多任務語言理解）</h3>
 <ul>
-<li><a href="../alignment/">alignment</a></li>
-<li><a href="../prompt-injection/">prompt-injection</a></li>
-<li><a href="../red-teaming/">red-teaming</a></li>
+<li>57 個學科的選擇題</li>
+<li>從高中到專業水平</li>
+<li>測試知識廣度</li>
 </ul>
-<h2 id="_6">筆記</h2>
-<p>（手動補充主題相關的見解與總結）</p>
+<h3 id="gsm8k">GSM8K（數學推理）</h3>
+<ul>
+<li>8500 道小學數學應用題</li>
+<li>需要多步推理</li>
+<li>測試數學能力</li>
+</ul>
+<h3 id="humaneval">HumanEval（程式碼生成）</h3>
+<ul>
+<li>164 道程式設計題</li>
+<li>需要生成可執行程式碼</li>
+<li>測試程式設計能力</li>
+</ul>
+<h3 id="mt-bench">MT-Bench（對話品質）</h3>
+<ul>
+<li>80 道多輪對話題</li>
+<li>用 GPT-4 評分</li>
+<li>測試對話能力</li>
+</ul>
+<hr>
+<h2 id="_10">收錄標準</h2>
+<p>論文被收入此主題的原因：</p>
+<ul>
+<li>標題或摘要含有 <code>benchmark</code>、<code>evaluation</code>、<code>dataset</code> 等詞</li>
+<li>提出新的評測資料集或方法</li>
+<li>大規模比較多個模型</li>
+<li>研究評測的方法論</li>
+</ul>
+<hr>
+<h2 id="_11">相關論文</h2>
+<p>（自動更新）</p>
+<hr>
+<h2 id="_12">延伸閱讀</h2>
+<ul>
+<li><a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard">Open LLM Leaderboard</a></li>
+<li><a href="https://chat.lmsys.org/">LMSYS Chatbot Arena</a></li>
+<li><a href="https://paperswithcode.com/sota">Papers With Code Benchmarks</a></li>
+</ul>
+<hr>
+<h2 id="_13">筆記</h2>
+<p>（手動補充見解與總結）</p>
 
 
 
