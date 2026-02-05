@@ -144,6 +144,20 @@ def write_paper_note(
     return output_path
 
 
+def load_topic_descriptions(topics_config_path: str = "topic_descriptions.yaml") -> dict:
+    """載入主題說明配置"""
+    path = Path(topics_config_path)
+    if not path.exists():
+        # 嘗試相對於此檔案的路徑
+        path = Path(__file__).parent / topics_config_path
+    
+    if path.exists():
+        import yaml
+        with open(path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    return {}
+
+
 def update_topic_page(
     topic: str,
     paper: Paper,
@@ -185,11 +199,11 @@ def update_topic_page(
         if paper.arxiv_id in content:
             return topic_file
         
-        # 在 "## 最新論文" 區塊後插入
-        if "## 最新論文" in content:
-            parts = content.split("## 最新論文")
+        # 在 "## 相關論文" 區塊後插入
+        if "## 相關論文" in content:
+            parts = content.split("## 相關論文")
             if len(parts) == 2:
-                header = parts[0] + "## 最新論文\n"
+                header = parts[0] + "## 相關論文\n"
                 rest = parts[1]
                 if rest.startswith("\n"):
                     rest = "\n" + new_entry + rest
@@ -199,14 +213,35 @@ def update_topic_page(
             else:
                 content += f"\n{new_entry}"
         else:
-            content += f"\n\n## 最新論文\n{new_entry}"
+            content += f"\n\n## 相關論文\n{new_entry}"
     else:
-        # 建立新主題頁
+        # 建立新主題頁，使用主題說明配置
+        topic_descriptions = load_topic_descriptions()
+        topic_info = topic_descriptions.get(topic, {})
+        
         env = get_template_env(templates_dir)
         template = env.get_template("topic.md")
+        
+        # 預設值
+        default_title = topic.replace("-", " ").title()
+        default_desc = f"{default_title} 相關研究的彙整頁面。"
+        default_importance = "此領域持續有新的研究進展。"
+        default_criteria = [
+            f"標題或摘要含有 {topic} 相關關鍵字",
+            "研究主題與此分類高度相關",
+        ]
+        default_directions = [
+            {"name": "待補充", "desc": "歡迎補充研究方向"},
+        ]
+        default_related = ["benchmark"]
+        
         content = template.render(
-            topic=topic,
-            topic_title=topic.replace("-", " ").title(),
+            title=topic_info.get("title", default_title),
+            description=topic_info.get("description", default_desc),
+            importance=topic_info.get("importance", default_importance),
+            inclusion_criteria=topic_info.get("inclusion_criteria", default_criteria),
+            research_directions=topic_info.get("research_directions", default_directions),
+            related_topics=topic_info.get("related_topics", default_related),
             first_paper_entry=new_entry,
         )
     

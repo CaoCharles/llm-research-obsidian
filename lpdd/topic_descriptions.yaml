@@ -1,0 +1,224 @@
+# 主題說明配置
+# 為每個主題提供詳細說明，讓讀者理解主題內容和收錄標準
+
+hallucination:
+  title: "幻覺 (Hallucination)"
+  description: >
+    LLM 生成與事實不符或虛構內容的現象。模型可能「一本正經地胡說八道」，
+    生成看似合理但實際上錯誤或不存在的資訊。
+  importance: >
+    對於需要高可靠性的應用（如醫療、法律、金融）是嚴重問題。
+  inclusion_criteria:
+    - 標題或摘要含有 hallucination、hallucinate 等詞
+    - 研究 LLM 生成內容的事實正確性
+    - 提出幻覺檢測或緩解方法
+  research_directions:
+    - name: "幻覺檢測"
+      desc: "判斷模型輸出是否為幻覺"
+    - name: "幻覺緩解"
+      desc: "減少幻覺發生的技術"
+    - name: "幻覺評測"
+      desc: "量化幻覺程度的基準測試"
+  related_topics:
+    - hallucination-detection
+    - hallucination-mitigation
+    - factuality
+    - faithful-reasoning
+
+benchmark:
+  title: "基準測試 (Benchmark)"
+  description: >
+    用於評估 LLM 能力的標準化測試集和評測框架。提供可比較的指標來衡量
+    模型在特定任務上的表現。
+  importance: >
+    讓研究者能公平比較不同模型，推動技術進步。
+  inclusion_criteria:
+    - 標題或摘要含有 benchmark、evaluation、dataset 等詞
+    - 提出新的評測資料集或測試方法
+    - 在多個基準上進行系統性比較
+  research_directions:
+    - name: "通用能力評測"
+      desc: "測試模型的推理、知識、語言能力"
+    - name: "專業領域評測"
+      desc: "針對醫療、法律、程式等特定領域"
+    - name: "安全性評測"
+      desc: "測試模型的安全性和對齊程度"
+  related_topics:
+    - llm-as-judge
+    - agent-evaluation
+    - rag-evaluation
+
+safety:
+  title: "安全性 (Safety)"
+  description: >
+    確保 LLM 不會生成有害、偏見或危險的內容。包括防止模型被濫用、
+    避免輸出有毒內容、以及保護用戶隱私。
+  importance: >
+    隨著 LLM 廣泛應用，安全性成為部署的關鍵考量。
+  inclusion_criteria:
+    - 標題或摘要含有 safety、safe、harm、toxicity 等詞
+    - 研究模型的安全對齊或防護機制
+    - 提出安全評測方法或基準
+  research_directions:
+    - name: "毒性過濾"
+      desc: "防止生成有害或冒犯性內容"
+    - name: "隱私保護"
+      desc: "避免洩露訓練資料中的敏感資訊"
+    - name: "濫用防護"
+      desc: "防止模型被用於惡意目的"
+  related_topics:
+    - alignment
+    - prompt-injection
+    - red-teaming
+
+alignment:
+  title: "對齊 (Alignment)"
+  description: >
+    讓 LLM 的行為符合人類意圖和價值觀。確保模型「做人類想要的事」
+    而不是「字面上被要求的事」。
+  importance: >
+    是 AI 安全的核心問題，關係到 AI 系統是否可信賴。
+  inclusion_criteria:
+    - 標題或摘要含有 alignment、align、RLHF 等詞
+    - 研究如何讓模型行為符合人類偏好
+    - 提出新的對齊訓練方法
+  research_directions:
+    - name: "RLHF"
+      desc: "從人類回饋中強化學習"
+    - name: "DPO"
+      desc: "直接偏好優化"
+    - name: "價值對齊"
+      desc: "讓模型理解並遵循人類價值觀"
+  related_topics:
+    - rlhf
+    - safety
+
+rag-evaluation:
+  title: "RAG 評測 (RAG Evaluation)"
+  description: >
+    評估檢索增強生成系統的效果。RAG 結合了檢索和生成，需要同時評估
+    檢索品質和生成品質。
+  importance: >
+    RAG 是目前減少幻覺、提升事實正確性的主流方法。
+  inclusion_criteria:
+    - 標題或摘要含有 RAG、retrieval-augmented、retrieval 等詞
+    - 研究檢索對生成品質的影響
+    - 提出 RAG 系統的評測方法
+  research_directions:
+    - name: "檢索品質"
+      desc: "評估檢索到的文件相關性和完整性"
+    - name: "生成忠實度"
+      desc: "生成內容是否忠於檢索資料"
+    - name: "端到端評測"
+      desc: "評估整體系統效果"
+  related_topics:
+    - faithfulness
+    - hallucination
+
+llm-as-judge:
+  title: "LLM 評審 (LLM-as-Judge)"
+  description: >
+    使用 LLM 來評估其他 LLM 的輸出品質。以 AI 評 AI，減少人工評測成本。
+  importance: >
+    人工評測昂貴且難以規模化，LLM 評審提供了自動化替代方案。
+  inclusion_criteria:
+    - 標題或摘要含有 LLM-as-judge、evaluator、judge 等詞
+    - 研究使用 LLM 進行自動評測
+    - 分析 LLM 評審的可靠性和偏見
+  research_directions:
+    - name: "評審可靠性"
+      desc: "LLM 評審與人類評估的一致性"
+    - name: "評審偏見"
+      desc: "LLM 評審可能存在的系統性偏差"
+    - name: "多評審整合"
+      desc: "結合多個評審的判斷"
+  related_topics:
+    - benchmark
+    - agent-evaluation
+
+agent-evaluation:
+  title: "代理評測 (Agent Evaluation)"
+  description: >
+    評估 LLM 代理在複雜任務中的表現。代理需要規劃、使用工具、
+    與環境互動，評測比單純對話更複雜。
+  importance: >
+    隨著 AI 代理應用增加，需要專門的評測框架。
+  inclusion_criteria:
+    - 標題或摘要含有 agent、agentic、multi-agent 等詞
+    - 研究代理系統的能力評測
+    - 提出代理任務基準測試
+  research_directions:
+    - name: "任務完成率"
+      desc: "代理能否成功完成指定任務"
+    - name: "工具使用"
+      desc: "代理選擇和使用工具的能力"
+    - name: "多步推理"
+      desc: "代理進行長程規劃的能力"
+  related_topics:
+    - benchmark
+    - agentic-rag
+
+prompt-injection:
+  title: "提示注入 (Prompt Injection)"
+  description: >
+    攻擊者通過惡意輸入操縱 LLM 的行為，繞過安全限制或竊取資料。
+    類似於傳統的 SQL 注入攻擊。
+  importance: >
+    是 LLM 應用面臨的重大安全威脅，尤其是有外部輸入的系統。
+  inclusion_criteria:
+    - 標題或摘要含有 prompt injection、jailbreak 等詞
+    - 研究 LLM 的越獄或注入攻擊
+    - 提出防禦機制
+  research_directions:
+    - name: "攻擊方法"
+      desc: "新的注入攻擊技術"
+    - name: "防禦機制"
+      desc: "檢測和阻擋注入攻擊"
+    - name: "魯棒性測試"
+      desc: "測試模型對注入的抵抗力"
+  related_topics:
+    - safety
+    - red-teaming
+
+red-teaming:
+  title: "紅隊測試 (Red-Teaming)"
+  description: >
+    主動尋找 LLM 的漏洞和弱點。模擬攻擊者視角，發現模型可能被濫用的方式。
+  importance: >
+    在部署前發現問題，比事後修復更有效。
+  inclusion_criteria:
+    - 標題或摘要含有 red team、adversarial、attack 等詞
+    - 研究如何系統性地發現模型弱點
+    - 提出自動化紅隊測試方法
+  research_directions:
+    - name: "自動化攻擊"
+      desc: "使用 AI 自動生成攻擊輸入"
+    - name: "多模態攻擊"
+      desc: "結合文字、圖片的攻擊"
+    - name: "防禦評估"
+      desc: "測試防禦機制的有效性"
+  related_topics:
+    - prompt-injection
+    - safety
+
+faithfulness:
+  title: "忠實度 (Faithfulness)"
+  description: >
+    生成內容是否忠於來源資料。在 RAG 系統中尤為重要——
+    模型應該基於檢索到的資料回答，而不是編造。
+  importance: >
+    是 RAG 系統可信度的核心指標。
+  inclusion_criteria:
+    - 標題或摘要含有 faithful、faithfulness、grounding 等詞
+    - 研究生成內容與來源的一致性
+    - 提出忠實度評測方法
+  research_directions:
+    - name: "忠實度評測"
+      desc: "量化生成內容與來源的一致程度"
+    - name: "忠實生成"
+      desc: "訓練模型更忠於來源"
+    - name: "引用驗證"
+      desc: "驗證生成內容的來源引用"
+  related_topics:
+    - rag-evaluation
+    - hallucination
