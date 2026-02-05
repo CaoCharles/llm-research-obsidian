@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from models import Paper, AnalysisResult
 from fetcher import fetch_papers, fetch_papers_by_date, fetch_paper_by_id
 from filter import load_keywords, get_top_papers, filter_papers, search_by_keyword
+from analyzer import analyze_papers
 from writer import write_from_json, write_daily_from_json
 
 
@@ -40,6 +41,23 @@ def paper_to_dict(paper: Paper) -> dict:
         "pdf_url": paper.pdf_url,
         "arxiv_url": paper.arxiv_url,
         "score": paper.score,
+    }
+
+def analysis_to_dict(analysis: AnalysisResult) -> dict:
+    """將 AnalysisResult 物件轉為 dict"""
+    return {
+        "abstract_zh": analysis.abstract_zh,
+        "problem_statement": analysis.problem_statement,
+        "proposed_solution": analysis.proposed_solution,
+        "core_contributions": analysis.core_contributions,
+        "methodology": analysis.methodology,
+        "key_results": analysis.key_results,
+        "insights": analysis.insights,
+        "limitations": analysis.limitations,
+        "tags": analysis.tags,
+        "relevance": analysis.relevance,
+        "related_topics": analysis.related_topics,
+        "category": analysis.category,
     }
 
 
@@ -344,6 +362,136 @@ def cmd_list(args) -> None:
     }
     output_json(result)
 
+def _parse_date_arg(date_arg: str | None) -> str:
+    if not date_arg or date_arg.lower() == "today":
+        return datetime.now().strftime("%Y-%m-%d")
+    return date_arg
+
+
+def cmd_digest(args) -> None:
+    """完整每日摘要流程（抓取 → 篩選 → 分析 → 產 JSON → 寫入 Obsidian）"""
+    load_dotenv()
+    config = load_config()
+
+    date = _parse_date_arg(args.date)
+    top_n = args.top or 10
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if args.require_api_key and not api_key:
+        output_json({
+            "status": "error",
+            "message": "缺少 OPENAI_API_KEY（已設定 --require-api-key）",
+        })
+        sys.exit(2)
+
+    # 抓取 + 篩選
+    categories = config["arxiv"]["categories"]
+    keywords_path = Path(__file__).parent / "keywords.yaml"
+    keywords = load_keywords(str(keywords_path))
+
+    papers = fetch_papers_by_date(
+        categories=categories,
+        date=date,
+        max_results=config["arxiv"]["max_results"]
+    )
+
+    min_score = args.min_score or config["filter"]["min_score"]
+    top_papers = get_top_papers(
+        papers=papers,
+        keywords=keywords,
+        min_score=min_score,
+        top_n=top_n
+    )
+
+    # 分析
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key) if api_key else None
+
+    model = args.model or config["openai"]["model"]
+    max_tokens = args.max_tokens or config["openai"]["max_tokens"]
+
+    processed = analyze_papers(
+        papers=top_papers,
+        client=client,
+        model=model,
+        max_tokens=max_tokens,
+        verbose=True
+    )
+
+    items = []
+    for paper, analysis in processed:
+        items.append({
+            "paper": paper_to_dict(paper),
+            "analysis": analysis_to_dict(analysis),
+        })
+
+    # 輸出 JSON 檔（可選）
+    out_path = None
+    if args.out:
+        out_path = Path(args.out).expanduser()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+
+    # 寫入 Obsidian（可選）
+    written = {
+        "notes": [],
+        "daily": None,
+    }
+    if args.write:
+        vault_path = Path(
+            args.vault or
+            os.environ.get("OBSIDIAN_VAULT_PATH") or
+            config["obsidian"]["vault_path"]
+        ).expanduser()
+        templates_dir = str(Path(__file__).parent / "templates")
+
+        # 每篇筆記 + Topics
+        # write_from_json 需要單篇 JSON 檔，因此使用臨時檔案轉接
+        # （避免重複實作 writer 邏輯）
+        tmp_dir = Path(args.tmp_dir).expanduser() if args.tmp_dir else Path("/tmp")
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+
+        for item in items:
+            arxiv_id = item["paper"]["arxiv_id"]
+            tmp_json = tmp_dir / f"lpdd_{date}_{arxiv_id}.json"
+            with open(tmp_json, "w", encoding="utf-8") as f:
+                json.dump(item, f, ensure_ascii=False, indent=2)
+            note_path = write_from_json(
+                json_path=str(tmp_json),
+                vault_path=vault_path,
+                templates_dir=templates_dir,
+                download_pdfs=(not args.no_download_pdfs),
+                verbose=True
+            )
+            written["notes"].append(str(note_path))
+
+        # 每日摘要
+        daily_json = out_path
+        if daily_json is None:
+            daily_json = tmp_dir / f"lpdd_{date}_daily.json"
+            with open(daily_json, "w", encoding="utf-8") as f:
+                json.dump(items, f, ensure_ascii=False, indent=2)
+        daily_path = write_daily_from_json(
+            json_path=str(daily_json),
+            date=date,
+            vault_path=vault_path,
+            templates_dir=templates_dir
+        )
+        written["daily"] = str(daily_path)
+
+    result = {
+        "status": "success",
+        "date": date,
+        "total_fetched": len(papers),
+        "min_score": min_score,
+        "count": len(items),
+        "json_path": str(out_path) if out_path else None,
+        "written": written if args.write else None,
+        "model": model,
+    }
+    output_json(result)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -368,6 +516,21 @@ def main():
     list_parser.add_argument("--top", type=int, default=10, help="取 Top N 篇")
     list_parser.add_argument("--date", type=str, help="指定日期 (YYYY-MM-DD)")
     list_parser.set_defaults(func=cmd_list)
+
+    # digest 子命令（完整流程，適合 automation）
+    digest_parser = subparsers.add_parser("digest", help="完整每日流程：抓取/篩選/分析/輸出 JSON/寫入 Obsidian")
+    digest_parser.add_argument("--top", type=int, default=10, help="取 Top N 篇進行分析")
+    digest_parser.add_argument("--date", type=str, help="指定日期 (YYYY-MM-DD) 或 today")
+    digest_parser.add_argument("--min-score", type=int, help="最低分數（覆蓋 config.yaml）")
+    digest_parser.add_argument("--out", type=str, help="輸出 JSON 檔案路徑（陣列格式）")
+    digest_parser.add_argument("--write", action="store_true", help="寫入 Obsidian（論文筆記 + Topics + Daily）")
+    digest_parser.add_argument("--vault", type=str, help="Obsidian Vault 路徑（覆蓋 config/env）")
+    digest_parser.add_argument("--model", type=str, help="OpenAI model（覆蓋 config.yaml）")
+    digest_parser.add_argument("--max-tokens", type=int, help="max_completion_tokens（覆蓋 config.yaml）")
+    digest_parser.add_argument("--require-api-key", action="store_true", help="若缺少 OPENAI_API_KEY 則視為錯誤並退出")
+    digest_parser.add_argument("--no-download-pdfs", action="store_true", help="寫入 Obsidian 時不下載 PDF")
+    digest_parser.add_argument("--tmp-dir", type=str, help="寫入流程使用的暫存 JSON 目錄（預設 /tmp）")
+    digest_parser.set_defaults(func=cmd_digest)
 
     # get 子命令
     get_parser = subparsers.add_parser("get", help="取得單篇論文")

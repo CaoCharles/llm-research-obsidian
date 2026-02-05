@@ -1,0 +1,89 @@
+# MkDocs 專案設定 - LLM Paper Daily Digest
+
+site_name: LLM Paper Daily Digest
+site_description: Daily LLM paper digests from arXiv with structured summaries
+site_author: Charles Cao
+site_url: https://CaoCharles.github.io/llm-research-obsidian/
+
+repo_name: CaoCharles/llm-research-obsidian
+repo_url: https://github.com/CaoCharles/llm-research-obsidian
+edit_uri: ""
+
+docs_dir: docs
+site_dir: site
+
+# Hooks - 自動生成 content.json
+hooks:
+  - .agent/skills/chatbot-setup/assets/generate_content.py
+
+theme:
+  name: material
+  language: zh-TW
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: 切換至深色模式
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: 切換至淺色模式
+  font:
+    text: Noto Sans TC
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang: zh
+  - glightbox
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: datetime
+      timezone: Asia/Taipei
+      locale: zh
+  - git-authors
+  - mkdocs-pdf
+  - roamlinks
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/marked/marked.min.js
+  - assets/js/chatbot.js
+
+extra_css:
+  - assets/css/extra.css
+  - assets/css/chatbot.css
+
+nav:
+  - Home: index.md
+  - Daily: Daily/index.md
+  - Topics: Topics/index.md
+  - Papers: Papers/index.md

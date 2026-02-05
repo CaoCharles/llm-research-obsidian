@@ -68,13 +68,10 @@ def main():
     )
     args = parser.parse_args()
     
-    # 檢查 API Key
+    # 檢查 API Key（允許缺省，會改用手動補充模板）
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        print("錯誤：請設定 OPENAI_API_KEY 環境變數")
-        print("  export OPENAI_API_KEY=your-key")
-        print("  或在 .env 檔案中設定")
-        sys.exit(1)
+        print("⚠️ 未設定 OPENAI_API_KEY，將跳過 LLM 分析並產生待補充摘要")
     
     # 載入設定
     print("📋 載入設定...")
@@ -148,7 +145,7 @@ def main():
     
     # 3. AI 分析
     print("\n🤖 OpenAI GPT 分析...")
-    client = OpenAI(api_key=api_key)
+    client = OpenAI(api_key=api_key) if api_key else None
     
     results = analyze_papers(
         papers=top_papers,

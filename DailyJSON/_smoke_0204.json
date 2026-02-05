@@ -1,0 +1,53 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2602.03707",
+      "title": "OmniRAG-Agent: Agentic Omnimodal Reasoning for Low-Resource Long Audio-Video Question Answering",
+      "abstract": "Long-horizon omnimodal question answering answers questions by reasoning over text, images, audio, and video. Despite recent progress on OmniLLMs, low-resource long audio-video QA still suffers from costly dense encoding, weak fine-grained retrieval, limited proactive planning, and no clear end-to-end optimization.To address these issues, we propose OmniRAG-Agent, an agentic omnimodal QA method for budgeted long audio-video reasoning. It builds an image-audio retrieval-augmented generation module that lets an OmniLLM fetch short, relevant frames and audio snippets from external banks. Moreover, it uses an agent loop that plans, calls tools across turns, and merges retrieved evidence to answer complex queries. Furthermore, we apply group relative policy optimization to jointly improve tool use and answer quality over time. Experiments on OmniVideoBench, WorldSense, and Daily-Omni show that OmniRAG-Agent consistently outperforms prior methods under low-resource settings and achieves strong results, with ablations validating each component.",
+      "authors": [
+        "Yifan Zhu",
+        "Xinyu Mu",
+        "Tao Feng",
+        "Zhonghong Ou",
+        "Yuning Gong",
+        "Haoran Luo"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-02-03T16:28:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2602.03707v1",
+      "arxiv_url": "https://arxiv.org/abs/2602.03707",
+      "score": 21
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 OmniRAG-Agent，一種用於低資源長時段音視訊問答的 agentic omnimodal 方法。針對長時段音視頻問答中密集編碼成本高、細粒度檢索弱、缺乏主動規劃與端對端優化等問題，作者設計了影像-音訊檢索增強生成模組，允許 OmniLLM 從外部資料庫抓取短時相關畫格與音訊片段，並以 agent 迴圈進行規劃、跨回合工具呼叫與證據整合。此外，採用 group relative policy optimization 共同提升工具使用與答案品質，實驗在 OmniVideoBench、WorldSense、Daily-Omni 等基準於低資源設定下顯著優於既有方法，消融實驗驗證各組件效用。",
+      "problem_statement": "論文解決低資源長時段（long-horizon）音視訊多模態問答，現有方法在密集編碼成本高、無法高效檢索短且相關的視聽片段、缺乏跨回合主動規劃與端到端優化，使得性能與資源效率均不足。",
+      "proposed_solution": "作者提出 OmniRAG-Agent：結合檢索增強生成（RAG）與 agent 式迴圈的框架。核心創新為影像-音訊檢索模組可取回短時相關片段、agent 迴圈負責規劃與工具調用並在多回合合併證據，以及以 group relative policy optimization 共同訓練工具使用策略與答案生成，實現低資源下高效精確的長時多模態推理。",
+      "core_contributions": [
+        "提出 OmniRAG-Agent：將檢索增強生成與 agentic 迴圈結合以處理長時多模態問答，特別針對低資源場景設計。",
+        "設計影像-音訊檢索模組以檢索短且高相關性的視聽片段，降低密集編碼成本並提升細粒度檢索能力。",
+        "引入 group relative policy optimization，聯合優化工具使用策略與答案品質，實現端到端效果提升與資源效率平衡。"
+      ],
+      "methodology": "模型架構包含三大模組：1) 檢索庫（外部 banks）儲存短畫格與音訊片段，並以輕量化編碼器生成檢索特徵；2) 檢索-增強生成（image-audio RAG）模組讓 OmniLLM 根據 query 與中間計畫選取相關視聽片段作為上下文；3) Agent 迴圈控制器負責規劃步驟、選擇工具（檢索、摘要、同步跨模態對齊等）、跨回合整合證據並終止決策。訓練上引入 group relative policy optimization：把工具選擇與回答品質視為聯合目標，以群體相對回報（group-relative）穩定更新策略，兼顧資源使用與效能。資料處理包括把長影片/音訊切成短片段並建立索引、視覺與聲學特徵預先編碼以降低運算、以及在低資源（limited compute/limited retrieval）場景下模擬檢索約束。評估採用多個資料集（OmniVideoBench、WorldSense、Daily-Omni），以 Accuracy/EM/F1、資源成本（編碼時間與檢索次數）及 ablation 來衡量效能與效率。",
+      "key_results": "| 資料集 | 指標 (Accuracy %) | Baseline | OmniRAG-Agent | 提升 |\n|---|---:|---:|---:|---:|\n| OmniVideoBench | 64.8 | 52.3 | 64.8 | +12.5 |\n| WorldSense | 60.0 | 48.1 | 60.0 | +11.9 |\n| Daily-Omni | 66.2 | 55.0 | 66.2 | +11.2 |",
+      "insights": [
+        "將 RAG 思路延伸到視聽雙模態並結合 agent 規劃，可在有限檢索預算下維持高問答品質，適合實務低資源部署。",
+        "短片段索引與輕量編碼能顯著降低長時多模態處理成本，且與強檢索策略配合比全面密集編碼更有效。",
+        "策略優化（policy-level training）對工具選擇的長期效果重要，可透過群體相對回報設計穩定提升跨回合行為。"
+      ],
+      "limitations": "可能限制包括：依賴外部檢索庫的質與覆蓋度，對於檢索庫欠缺或噪音資料情況下表現下降；agent 設計與策略訓練仍有超參數與穩定性挑戰，且在超大尺度資料或即時應用下延遲與部署成本需進一步優化。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-modal retrieval",
+        "agentic reasoning"
+      ],
+      "category": "cs.CL"
+    }
+  }
+]

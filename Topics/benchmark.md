@@ -4,6 +4,16 @@
 
 ## 最新論文
 
+- `[benchmark]` [[[2602.03707] OmniRAG-Agent - Agentic Omnimodal Reasoning for Low-Resource Long Audio-Video Qu...|OmniRAG-Agent: Agentic Omnimodal Reasoning for Low...]] (2026-02-03)
+
+- `[benchmark]` [[[2602.03794] Understanding Agent Scaling in LLM-Based Multi-Agent Systems via Diversity|Understanding Agent Scaling in LLM-Based Multi-Age...]] (2026-02-03)
+
+- `[benchmark]` [[[2602.03828] AutoFigure - Generating and Refining Publication-Ready Scientific Illustrations|AutoFigure: Generating and Refining Publication-Re...]] (2026-02-03)
+
+- `[benchmark]` [[[2602.03822] They Said Memes Were Harmless-We Found the Ones That Hurt - Decoding Jokes, Symb...|They Said Memes Were Harmless-We Found the Ones Th...]] (2026-02-03)
+
+- `[benchmark]` [[[2602.03792] WebSentinel - Detecting and Localizing Prompt Injection Attacks for Web Agents|WebSentinel: Detecting and Localizing Prompt Injec...]] (2026-02-03)
+
 - `[rag-evaluation]` [[[2602.03368] Pursuing Best Industrial Practices for Retrieval-Augmented Generation in the Med...|Pursuing Best Industrial Practices for Retrieval-A...]] (2026-02-03)
 
 - `[safety]` [[[2602.03263] CSR-Bench - A Benchmark for Evaluating the Cross-modal Safety and Reliability of...|CSR-Bench: A Benchmark for Evaluating the Cross-mo...]] (2026-02-03)

@@ -10,7 +10,7 @@ arxiv:
 # 篩選設定
 filter:
   min_score: 5
-  top_n: 5  # 送去 AI 分析的數量
+  top_n: 10  # 送去 AI 分析的數量
 
 # OpenAI 設定
 openai:
@@ -21,7 +21,7 @@ openai:
 
 # Obsidian 設定
 obsidian:
-  vault_path: /home/user/llm-research-obsidian
+  vault_path: /Users/caocharles/Library/CloudStorage/OneDrive-個人/GitHub/claude_test/llm-paper-obsidian
   
 # 可用主題標籤
 topics:

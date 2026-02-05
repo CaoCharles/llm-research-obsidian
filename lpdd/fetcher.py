@@ -79,14 +79,19 @@ def fetch_papers_by_date(
     
     Args:
         categories: 論文分類列表
-        date: 日期字串，格式 YYYY-MM-DD
+        date: 日期字串，格式 YYYY-MM-DD（以本機時區的「當日」為準）
         max_results: 最大結果數量
     
     Returns:
         論文列表
     """
-    target_date = datetime.strptime(date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    next_date = target_date + timedelta(days=1)
+    # arXiv 回傳 published 為 UTC 時間；這裡用「本機時區」的日期區間對應到 UTC 來篩選
+    local_tz = datetime.now().astimezone().tzinfo or timezone.utc
+    target_local = datetime.strptime(date, "%Y-%m-%d").replace(tzinfo=local_tz)
+    next_local = target_local + timedelta(days=1)
+
+    target_utc = target_local.astimezone(timezone.utc)
+    next_utc = next_local.astimezone(timezone.utc)
     
     # 建立查詢條件
     category_query = " OR ".join([f"cat:{cat}" for cat in categories])
@@ -107,7 +112,7 @@ def fetch_papers_by_date(
             published = published.replace(tzinfo=timezone.utc)
         
         # 只取指定日期的論文
-        if published < target_date or published >= next_date:
+        if published < target_utc or published >= next_utc:
             continue
         
         arxiv_id = result.entry_id.split("/")[-1]

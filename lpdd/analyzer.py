@@ -6,6 +6,7 @@ import json
 import re
 import time
 from openai import OpenAI
+from typing import Optional
 from models import Paper, AnalysisResult
 
 
@@ -109,12 +110,27 @@ def fix_json_string(json_str: str) -> str:
 
 def analyze_paper(
     paper: Paper,
-    client: OpenAI,
+    client: Optional[OpenAI],
     model: str = "gpt-5-mini",
     max_tokens: int = 3500,
     max_retries: int = 2
 ) -> AnalysisResult:
     """使用 OpenAI GPT 分析論文（含重試機制）"""
+    if client is None:
+        return AnalysisResult(
+            abstract_zh=paper.abstract[:800],
+            problem_statement="（未設定 API Key，請手動補充）",
+            proposed_solution="（未設定 API Key，請手動補充）",
+            core_contributions=["（未設定 API Key，請手動補充核心貢獻）"],
+            methodology="（未設定 API Key，請手動補充方法）",
+            key_results="（未設定 API Key，請手動補充結果）",
+            insights=["（未設定 API Key，請手動補充啟發）"],
+            limitations="（未設定 API Key，請手動補充限制）",
+            tags=guess_tags_from_abstract(paper.abstract),
+            relevance=3,
+            related_topics=["benchmark"],
+            category="benchmark",
+        )
     prompt = ANALYSIS_PROMPT.format(
         title=paper.title,
         abstract=paper.abstract,
@@ -203,7 +219,7 @@ def guess_tags_from_abstract(abstract: str) -> list[str]:
 
 def analyze_papers(
     papers: list[Paper],
-    client: OpenAI,
+    client: Optional[OpenAI],
     model: str = "gpt-5-mini",
     max_tokens: int = 3500,
     verbose: bool = True

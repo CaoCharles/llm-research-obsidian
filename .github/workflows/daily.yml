@@ -1,0 +1,38 @@
+name: Daily Digest and Deploy
+
+on:
+  schedule:
+    - cron: "30 0 * * *" # 00:30 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install MkDocs dependencies
+        run: |
+          uv sync --project .agent/skills/mkdocs-setup/assets --no-install-project
+
+      - name: Sync content for MkDocs
+        run: |
+          python scripts/sync_docs.py
+
+      - name: Deploy with mkdocs gh-deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run --project .agent/skills/mkdocs-setup/assets mkdocs gh-deploy --force

@@ -35,7 +35,7 @@ def download_pdf(paper: Paper, vault_path: Path, verbose: bool = True) -> str | 
     Returns:
         PDF 檔名（相對於 Vault），失敗則返回 None
     """
-    pdf_dir = vault_path / "PDFs" / paper.year / paper.month
+    pdf_dir = vault_path / "PDFs"
     ensure_dir(pdf_dir)
     
     pdf_filename = f"{paper.arxiv_id}.pdf"
@@ -45,7 +45,7 @@ def download_pdf(paper: Paper, vault_path: Path, verbose: bool = True) -> str | 
     if pdf_path.exists():
         if verbose:
             print(f"    📄 PDF 已存在: {pdf_filename}")
-        return f"PDFs/{paper.year}/{paper.month}/{pdf_filename}"
+        return f"PDFs/{pdf_filename}"
     
     try:
         if verbose:
@@ -60,7 +60,7 @@ def download_pdf(paper: Paper, vault_path: Path, verbose: bool = True) -> str | 
         if verbose:
             print(f"    ✅ 已儲存: {pdf_filename}")
         
-        return f"PDFs/{paper.year}/{paper.month}/{pdf_filename}"
+        return f"PDFs/{pdf_filename}"
     
     except Exception as e:
         if verbose:
@@ -131,7 +131,7 @@ def write_paper_note(
     content = template.render(**data)
     
     # 建立輸出路徑（使用論文標題作為檔名）
-    output_dir = vault_path / "Papers" / paper.year / paper.month
+    output_dir = vault_path / "Papers"
     ensure_dir(output_dir)
     
     # 檔名格式: "[arXiv ID] 標題.md"
