@@ -88,39 +88,33 @@ nav:
       - Daily/index.md
       - 2026-02-05: Daily/2026-02-05.md
       - 2026-02-04: Daily/2026-02-04.md
-  - 研究主題:
-      - Topics/index.md
-      - AI Agent:
-          - Agent 總覽: Topics/agent.md
-          - Agent 評測: Topics/agent-evaluation.md
-          - Agent 基準測試: Topics/agent-benchmark.md
-          - Agentic RAG: Topics/agentic-rag.md
-          - 具身智能: Topics/embodied-ai.md
-      - 安全與對齊:
-          - 安全總覽: Topics/safety.md
-          - 對齊研究: Topics/alignment.md
-          - RLHF: Topics/rlhf.md
-          - Prompt 注入: Topics/prompt-injection.md
-          - 對抗魯棒性: Topics/adversarial-robustness.md
-          - 認證防禦: Topics/certified-defense.md
-          - 多模態安全: Topics/multimodal-safety.md
-      - 幻覺與事實性:
-          - 幻覺總覽: Topics/hallucination.md
-          - 幻覺檢測: Topics/hallucination-detection.md
-          - 幻覺緩解: Topics/hallucination-mitigation.md
-          - 事實性: Topics/factuality.md
-          - 忠實推理: Topics/faithful-reasoning.md
-      - RAG 與評測:
-          - RAG 評測: Topics/rag-evaluation.md
-          - 基準測試: Topics/benchmark.md
-          - LLM-as-Judge: Topics/llm-as-judge.md
-      - 多模態:
-          - VLM: Topics/vlm.md
-          - Omni 模型: Topics/omni-models.md
-          - 多模態推理: Topics/multimodal-reasoning.md
-      - 其他:
-          - 主動學習: Topics/active-learning.md
-          - 互動式 AI: Topics/interactive-ai.md
-          - 安全研究: Topics/security.md
+  - AI Agent:
+      - Agent 總覽: Topics/agent.md
+      - Agent 評測: Topics/agent-evaluation.md
+      - Agent 基準測試: Topics/agent-benchmark.md
+      - Agentic RAG: Topics/agentic-rag.md
+      - 具身智能: Topics/embodied-ai.md
+  - 安全與對齊:
+      - 安全總覽: Topics/safety.md
+      - 對齊研究: Topics/alignment.md
+      - RLHF: Topics/rlhf.md
+      - Prompt 注入: Topics/prompt-injection.md
+      - 對抗魯棒性: Topics/adversarial-robustness.md
+      - 認證防禦: Topics/certified-defense.md
+      - 多模態安全: Topics/multimodal-safety.md
+  - 幻覺與事實:
+      - 幻覺總覽: Topics/hallucination.md
+      - 幻覺檢測: Topics/hallucination-detection.md
+      - 幻覺緩解: Topics/hallucination-mitigation.md
+      - 事實性: Topics/factuality.md
+      - 忠實推理: Topics/faithful-reasoning.md
+  - RAG 與評測:
+      - RAG 評測: Topics/rag-evaluation.md
+      - 基準測試: Topics/benchmark.md
+      - LLM-as-Judge: Topics/llm-as-judge.md
+  - 多模態:
+      - VLM: Topics/vlm.md
+      - Omni 模型: Topics/omni-models.md
+      - 多模態推理: Topics/multimodal-reasoning.md
   - 論文庫:
       - Papers/index.md
