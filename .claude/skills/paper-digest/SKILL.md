@@ -25,11 +25,19 @@ argument-hint: "[date] [top_n]"
 
 ### Step 1: 抓取並篩選論文
 
-執行 CLI 列出論文：
+**優先嘗試 CLI**：
 
 ```bash
 cd lpdd && uv run python cli.py list --top {top_n} [--date {date}]
 ```
+
+**若 CLI 因 proxy/網路問題失敗，改用 WebSearch 備援**：
+
+使用 WebSearch 工具搜尋當日論文：
+- 搜尋 `arxiv {date_month} LLM evaluation safety alignment jailbreak benchmark site:arxiv.org`
+- 進行多組關鍵字搜尋以覆蓋不同研究領域
+- 從搜尋結果中篩選最相關的 top N 篇論文
+- 檢查 Papers/ 目錄避免重複分析
 
 顯示進度：「正在抓取 {date} 的論文...」
 

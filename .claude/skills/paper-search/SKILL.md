@@ -35,13 +35,21 @@ argument-hint: "<keyword> [days]"
 - /paper-search "adversarial robustness" 30
 ```
 
-### Step 2: 執行 CLI 搜尋
+### Step 2: 執行搜尋
 
-執行以下命令：
+**優先嘗試 CLI**：
 
 ```bash
 cd lpdd && uv run python cli.py search "{keyword}" --days {days}
 ```
+
+**若 CLI 因 proxy/網路問題失敗，改用 WebSearch 備援**：
+
+使用 WebSearch 工具搜尋：
+- 搜尋關鍵字：`arxiv "{keyword}" LLM {current_year} {current_month} site:arxiv.org`
+- 可進行多次搜尋以擴大覆蓋範圍
+- 使用 WebFetch 取得論文詳細資訊（若 arxiv.org 被封鎖，從搜尋結果摘要中提取）
+- 根據關鍵字匹配度排序結果
 
 ### Step 3: 顯示搜尋結果
 

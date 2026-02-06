@@ -23,11 +23,18 @@ argument-hint: "<arxiv_id>"
 
 ### Step 1: 抓取論文
 
-執行 CLI 取得論文資料：
+**優先嘗試 CLI**：
 
 ```bash
 cd lpdd && uv run python cli.py get {arxiv_id}
 ```
+
+**若 CLI 因 proxy/網路問題失敗，改用 WebSearch/WebFetch 備援**：
+
+1. 使用 WebSearch 搜尋 `arxiv {arxiv_id}` 取得論文標題和摘要
+2. 使用 WebFetch 嘗試取得 `https://arxiv.org/abs/{arxiv_id}` 或 `https://arxiv.org/html/{arxiv_id}` 的完整資訊
+3. 若 arxiv.org 完全不可存取，從 WebSearch 結果中提取標題、作者、摘要等資訊
+4. 將取得的資訊整理為與 CLI 相同的 JSON 格式，供後續分析使用
 
 ### Step 2: 分析論文
 
