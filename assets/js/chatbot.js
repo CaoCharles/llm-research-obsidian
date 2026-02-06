@@ -1,5 +1,5 @@
-// ====== AI 聊天機器人範本 ======
-// 版本：2.0 - 可複製到新專案使用
+// ====== AI 聊天機器人 ======
+// LLM 評測知識庫
 
 // ====== 全域狀態 ======
 let chatContainer, chatMessages, chatInput, sendChatBtn;
@@ -9,20 +9,17 @@ let allDocsContent = null;
 let isContentLoading = false;
 let chatHistory = [];
 
-// ====== 設定 (請修改這些值) ======
-// Railway 後端 URL（部署後請更新）llm-research-obsidian-production.up.railway.app
+// ====== 設定 ======
 window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-obsidian-production.up.railway.app";
 
-// TODO: 修改為你的 GitHub Repo 名稱
 const isGitHubPages = window.location.hostname.includes('github.io');
 const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-window.INITIAL_PROMPT = "嗨！我是 LLM 評測知識庫助教 🤖\n\n我可以幫你：\n- 解釋評測指標（準確率、相關性、真實性）\n- 比較評測工具（RAGAS、DeepEval、Arize）\n- 介紹安全評估與紅隊演練方法\n- 查找相關論文的摘要與見解\n\n試試問我：\n• HELM 評測框架包含哪些面向？\n• 如何設計對抗性測試樣本？\n• 最近有哪些 RAG 相關論文？";
+window.INITIAL_PROMPT = "嗨！我是 LLM 評測知識庫助教 🧅\n\n我可以幫你：\n\n- 解釋評測指標（準確率、相關性、真實性）\n- 比較評測工具（RAGAS、DeepEval、Arize）\n- 介紹安全評估與紅隊演練方法\n- 查找相關論文的摘要與見解\n\n試試問我：\n- HELM 評測框架包含哪些面向？\n- 如何設計對抗性測試樣本？\n- 最近有哪些 RAG 相關論文？";
 
-// ====== 連結修正 (請修改 BASE_URL) ======
-// TODO: 修改為你的網站 URL
+// ====== 連結修正 ======
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
 
 function fixBrokenLinks(text) {
@@ -155,22 +152,16 @@ async function sendMessage() {
     chatInput.value = "";
     showTypingIndicator();
 
-    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教，專門回答關於大型語言模型評測、基準測試、安全性和相關論文的問題。
+    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教。
 
 ## 回答規則
-1. **語言**：使用繁體中文回答
-2. **引用**：回答時引用相關論文的 arXiv ID 和標題
-3. **連結**：提供文件的完整 URL 連結
-4. **格式**：使用 Markdown 格式（標題、列點、表格）
-5. **精準**：優先使用知識庫內容回答，沒有相關內容時才使用一般知識
+1. 使用繁體中文回答
+2. 當提到相關主題時，提供文章的 Markdown 連結（使用 URL 欄位）
+3. 使用清晰的 Markdown 格式（標題、列點、程式碼區塊）
+4. 優先使用文件內容回答，如果沒有相關內容才用一般知識
+5. 程式碼使用 \`\`\`bash 格式
 
-## 知識庫涵蓋主題
-- 評測策略與框架設計（準確率、相關性、真實性、一致性）
-- 基準測試與數據治理（測試集設計、RAGAS、DeepEval）
-- 安全性與紅隊演練（Jailbreaking、Prompt Injection、PII 防護）
-- LLM 相關論文（RAG、Agent、評測方法等）
-
-## 知識庫文件
+## 課程文件
 ${allDocsContent || "文件載入中..."}`;
 
     try {
@@ -189,10 +180,10 @@ ${allDocsContent || "文件載入中..."}`;
         if (!response.ok) throw new Error("API request failed");
 
         const data = await response.json();
-        addMessage("bot", data.response);
+        addMessage("bot", data.text);
     } catch (error) {
         removeTypingIndicator();
-        addMessage("bot", `⚠️ 發生錯誤：${error.message || "未知錯誤"}。請檢查網路連線或稍後再試。`);
+        addMessage("bot", `⚠️ 發生錯誤：${error.message}。請檢查網路連線或稍後再試。`);
         console.error("Chat error:", error);
     }
 }
