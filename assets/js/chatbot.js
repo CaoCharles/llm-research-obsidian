@@ -192,7 +192,7 @@ ${allDocsContent || "文件載入中..."}`;
         addMessage("bot", data.response);
     } catch (error) {
         removeTypingIndicator();
-        addMessage("bot", "⚠️ 發生錯誤，請稍後再試。");
+        addMessage("bot", `⚠️ 發生錯誤：${error.message || "未知錯誤"}。請檢查網路連線或稍後再試。`);
         console.error("Chat error:", error);
     }
 }
