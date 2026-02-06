@@ -10,8 +10,8 @@ let isContentLoading = false;
 let chatHistory = [];
 
 // ====== 設定 (請修改這些值) ======
-// TODO: 修改為你的 Railway 後端 URL
-window.BACKEND_API_URL = window.BACKEND_API_URL || "https://YOUR-APP.up.railway.app";
+// Railway 後端 URL（部署後請更新）
+window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-obsidian-production.up.railway.app";
 
 // TODO: 修改為你的 GitHub Repo 名稱
 const isGitHubPages = window.location.hostname.includes('github.io');
@@ -156,16 +156,22 @@ async function sendMessage() {
     chatInput.value = "";
     showTypingIndicator();
 
-    // TODO: 修改 System Instruction
-    const systemInstruction = `你是網站的 AI 助教。
+    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教，專門回答關於大型語言模型評測、基準測試、安全性和相關論文的問題。
 
 ## 回答規則
-1. 使用繁體中文回答
-2. 使用文件中的完整 URL
-3. 使用 Markdown 格式
-4. 程式碼使用 \`\`\`bash 格式
+1. **語言**：使用繁體中文回答
+2. **引用**：回答時引用相關論文的 arXiv ID 和標題
+3. **連結**：提供文件的完整 URL 連結
+4. **格式**：使用 Markdown 格式（標題、列點、表格）
+5. **精準**：優先使用知識庫內容回答，沒有相關內容時才使用一般知識
 
-## 課程文件
+## 知識庫涵蓋主題
+- 評測策略與框架設計（準確率、相關性、真實性、一致性）
+- 基準測試與數據治理（測試集設計、RAGAS、DeepEval）
+- 安全性與紅隊演練（Jailbreaking、Prompt Injection、PII 防護）
+- LLM 相關論文（RAG、Agent、評測方法等）
+
+## 知識庫文件
 ${allDocsContent || "文件載入中..."}`;
 
     try {
