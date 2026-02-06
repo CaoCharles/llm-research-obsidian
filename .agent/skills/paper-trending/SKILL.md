@@ -90,8 +90,8 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 - 互動式選擇要下載的論文
 
 Obsidian 寫入（若選擇下載）：
-- Papers/{year}/{month}/[{arxiv_id}] {title}.md
-- 更新相關 Topics/ 頁面
+- Papers/[{arxiv_id}] {title}.md
+- 更新相關主題頁面（AI-Agent/, Safety-Alignment/, Hallucination/, RAG/, Benchmark/, Multimodal/）
 
 ## 熱門主題建議
 

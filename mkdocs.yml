@@ -1,7 +1,7 @@
-# MkDocs 專案設定 - LLM Paper Daily Digest
+# MkDocs 專案設定 - LLM 評測知識庫
 
-site_name: LLM Paper Daily Digest
-site_description: Daily LLM paper digests from arXiv with structured summaries
+site_name: LLM 評測知識庫
+site_description: LLM 評測策略、基準測試與安全評估的完整指南
 site_author: Charles Cao
 site_url: https://CaoCharles.github.io/llm-research-obsidian/
 
@@ -84,16 +84,39 @@ extra_css:
 
 nav:
   - 首頁: index.md
-  - 每日摘要:
-      - Daily/index.md
-      - 2026-02-05: Daily/2026-02-05.md
-      - 2026-02-04: Daily/2026-02-04.md
-  - 主題導覽:
-      - AI Agent 智慧代理: Topics/ai-agent.md
-      - 安全與對齊: Topics/safety-alignment.md
-      - 幻覺與事實性: Topics/hallucination-factuality.md
-      - RAG 與檢索增強: Topics/rag-retrieval.md
-      - 評測與基準: Topics/benchmark-evaluation.md
-      - 多模態 AI: Topics/multimodal.md
-  - 論文庫:
-      - Papers/index.md
+  - 評測策略與框架:
+      - 概述: Evaluation-Framework/index.md
+      - 評估指標:
+          - 準確率: Evaluation-Framework/metrics-accuracy.md
+          - 相關性: Evaluation-Framework/metrics-relevance.md
+          - 真實性: Evaluation-Framework/metrics-faithfulness.md
+          - 一致性: Evaluation-Framework/metrics-consistency.md
+      - Responsible AI:
+          - 概述: Evaluation-Framework/responsible-ai.md
+          - 公平性驗收: Evaluation-Framework/fairness.md
+          - 偏見檢測: Evaluation-Framework/bias-detection.md
+          - 可解釋性: Evaluation-Framework/explainability.md
+  - 基準測試與數據治理:
+      - 概述: Benchmark-Governance/index.md
+      - 測試集設計:
+          - 黃金測試集: Benchmark-Governance/golden-testset.md
+          - 數據生命週期: Benchmark-Governance/dataset-lifecycle.md
+          - 關鍵路徑覆蓋: Benchmark-Governance/critical-path.md
+          - 邊緣案例: Benchmark-Governance/edge-cases.md
+          - 對抗性樣本: Benchmark-Governance/adversarial-samples.md
+      - 評測工具:
+          - RAGAS: Benchmark-Governance/tools-ragas.md
+          - DeepEval: Benchmark-Governance/tools-deepeval.md
+          - Arize Phoenix: Benchmark-Governance/tools-arize.md
+  - 安全性與紅隊演練:
+      - 概述: Security-RedTeam/index.md
+      - AI 安全防護: Security-RedTeam/ai-security.md
+      - 紅隊演練指南: Security-RedTeam/red-teaming-guide.md
+      - 攻擊向量清單: Security-RedTeam/attack-vectors.md
+      - 威脅防禦策略:
+          - Prompt Injection: Security-RedTeam/defense-prompt-injection.md
+          - Jailbreaking: Security-RedTeam/defense-jailbreaking.md
+          - PII 洩露防護: Security-RedTeam/defense-pii.md
+      - 壓力測試: Security-RedTeam/stress-testing.md
+  - 論文庫: Papers/index.md
+

@@ -87,10 +87,10 @@ INFO    -  Your documentation should shortly be available at: https://CaoCharles
 **設定位置**: `mkdocs.yml`
 ```yaml
 hooks:
-  - hooks/generate_content.py
+  - .agent/skills/chatbot-setup/assets/generate_content.py
 ```
 
-**Hook 腳本**: `hooks/generate_content.py`
+**Hook 腳本**: `.agent/skills/chatbot-setup/assets/generate_content.py`
 - 讀取所有 `.md` 檔案
 - 生成 `site/content.json` 供 AI Chatbot 使用
 
@@ -131,6 +131,6 @@ markdown_extensions:
 | 檔案 | 說明 |
 |------|------|
 | `mkdocs.yml` | MkDocs 主設定檔 |
-| `hooks/generate_content.py` | 自動生成 content.json |
-| `docs/assets/stylesheets/extra.css` | 客製 CSS 樣式 |
+| `.agent/skills/chatbot-setup/assets/generate_content.py` | 自動生成 content.json |
+| `docs/assets/css/extra.css` | 客製 CSS 樣式 |
 | `docs/assets/js/chatbot.js` | AI Chatbot 前端 |
