@@ -90,13 +90,13 @@ LLM 系統安全評估的學術框架與威脅防禦：
 
 ### LLM 評測與安全指南
 
-![LLM Evaluation Guide](PDFs/LLM_Evaluation_and_Safety_Guide.pdf){ type=application/pdf style="min-height:50vh;width:100%" }
+![LLM Evaluation Guide](PDFs/LLM_Evaluation_and_Safety_Guide.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:50vh;width:100%" }
 
 ---
 
 ### LLM 攻擊紅隊進階
 
-![LLM 攻擊紅隊](PDFs/LLM攻擊紅隊前沿進階.pdf){ type=application/pdf style="min-height:50vh;width:100%" }
+![LLM 攻擊紅隊](PDFs/LLM攻擊紅隊前沿進階.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:50vh;width:100%" }
 
 ---
 
