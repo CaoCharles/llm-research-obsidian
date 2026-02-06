@@ -1811,27 +1811,81 @@
 <li>📎 本地 PDF: <a href="../../PDFs/2602.03822.pdf">PDF</a></li>
 </ul>
 <h2 id="_2">摘要（中文翻譯）</h2>
-<p>Meme-based social abuse detection is challenging because harmful intent often relies on implicit cultural symbolism and subtle cross-modal incongruence. Prior approaches, from fusion-based methods to in-context learning with Large Vision-Language Models (LVLMs), have made progress but remain limited by three factors: i) cultural blindness (missing symbolic context), ii) boundary ambiguity (satire vs. abuse confusion), and iii) lack of interpretability (opaque model reasoning). We introduce CROSS-ALIGN+, a three-stage framework that systematically addresses these limitations: (1) Stage I mitigates cultural blindness by enriching multimodal representations with structured knowledge from ConceptNet, Wikidata, and Hatebase; (2) Stage II reduces boundary ambiguity through parameter-efficient Lo</p>
+<p>基於 meme 的社群濫用偵測極具挑戰性，因為有害意圖往往依賴隱含的文化符號象徵與微妙的跨模態不一致性。先前方法（從 fusion-based 到 LVLM 的 in-context learning）雖有進展，但仍受限於三大因素：(i) 文化盲區——缺乏符號語境；(ii) 邊界模糊——諷刺與濫用混淆；(iii) 缺乏可解釋性——模型推理不透明。本文提出 CROSS-ALIGN+，一個三階段框架：Stage I 透過整合 ConceptNet、Wikidata 與 Hatebase 的結構化知識來消除文化盲區；Stage II 利用參數高效的 LoRA adapters 搭配 contrastive objectives 來銳化決策邊界；Stage III 生成層級式自然語言解釋以提升可解釋性。在五個 benchmark 與八個 LVLM 上的大規模實驗顯示，CROSS-ALIGN+ 持續超越現有最佳方法，最高可達 17% 的相對 F1 提升，同時為每個決策提供可解釋的理由。</p>
 <h2 id="_3">論文預覽</h2>
+<p><a href="../../PDFs/2602.03822.pdf">📥 點選查看論文 (PDF)</a></p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.03822.pdf#navpanes=0&amp;toolbar=0" data-desc-position="bottom"><embed alt="" src="../../PDFs/2602.03822.pdf#navpanes=0&amp;toolbar=0" style="min-height:60vh;width:100%;" type="application/pdf"></a></p>
 <h2 id="_4">問題背景</h2>
-<p>（請手動補充）</p>
+<p>Meme 已成為網路上最具傳播力的溝通形式，但也被武器化用於散播仇恨與排斥性言論。現有 LVLM 方法在偵測 meme 濫用時存在三大系統性缺陷：文化盲區（無法識別如 Pepe the Frog 等被挪用的文化符號）、邊界模糊（無法區分諷刺與真正的濫用）、以及缺乏可解釋性（模型預測不透明，無法提供決策理由），導致大規模內容審核系統難以有效運作。</p>
 <h2 id="_5">解決方案</h2>
-<p>（請手動補充）</p>
+<p>提出 CROSS-ALIGN+（Cross-modal Social Signal Alignment with External Knowledge &amp; Adaptive Contrastive Reasoning），一個三階段框架，每個階段對應一個核心限制：Stage I（External Knowledge Grounding）從 ConceptNet、Wikidata、Hatebase 擷取結構化文化知識，透過 cross-attention 融合至多模態表徵以消除文化盲區；Stage II（Adaptive Contrastive Fine-Tuning）以 LoRA adapters 搭配 triplet contrastive loss 銳化濫用與諷刺之間的決策邊界；Stage III（Hierarchical Multistage Reasoning）基於 evidence tuples 生成層級式自然語言解釋，確保預測的可追溯性與可信度。</p>
 <h2 id="_6">核心貢獻</h2>
 <ol>
-<li>（請手動補充核心貢獻）</li>
+<li>首個系統性將外部文化知識（ConceptNet、Wikidata、Hatebase）整合至 LVLM-based meme 濫用偵測的框架，填補了文化符號推理的空白</li>
+<li>設計三階段架構，每階段明確對應一項核心限制（文化盲區、邊界模糊、可解釋性不足），並透過 LoRA contrastive fine-tuning 實現參數高效的決策邊界銳化</li>
+<li>在 GOAT-Bench 的五個 benchmark 與八個 7B 級 LVLM 上進行大規模實驗，達到平均約 17% 的相對 macro-F1 提升，且計算開銷極低（LoRA 僅增加 &lt;1% 參數，throughput 維持 ~8 memes/s）</li>
 </ol>
 <h2 id="_7">技術方法</h2>
-<p>（請手動補充方法）</p>
+<p>將 meme 濫用偵測建模為二元分類問題 $\hat{y} = f_\Theta(I, T, K)$，其中 $K$ 為外部文化知識。<strong>Stage I（External Knowledge Grounding）</strong>：透過 OCR、Object Detection 與 NER 從圖像與文字中抽取實體，再經由 entity linking 連結至 ConceptNet（常識關係）、Wikidata（文化背景）與 Hatebase（仇恨詞彙），以加權聚合方式建構知識表徵 $M_K$，並透過 cross-attention 與 LVLM 的多模態表徵 $h_{mm}$ 融合，產生 knowledge-grounded representation $\tilde{h}$。<strong>Stage II（Adaptive Contrastive Fine-Tuning）</strong>：對 LVLM attention layers 加入 LoRA adapters（rank=16, $\alpha$=32），並採用 triplet contrastive loss 搭配 hybrid similarity（結合語義相似度與文化關聯度）來選取 hard negatives，銳化濫用/良性之間的決策邊界。最終以 sigmoid classification head 預測 $\hat{p}$，總損失為 $L = L_{cls} + \lambda L_{contrast}$。<strong>Stage III（Hierarchical Multistage Reasoning）</strong>：從 Stage I 的知識連結與 cross-attention 權重中抽取 evidence tuples（entity, symbol, relation, snippet），以 salience scoring 選取 top-$m$ reasoning chains，再透過 constrained templates 生成結構化自然語言解釋，確保解釋忠實於模型的推理過程。</p>
 <h2 id="_8">關鍵結果</h2>
-<p>（請手動補充結果）</p>
+<p>在 GOAT-Bench 五個任務上，CROSS-ALIGN+ 對八個 LVLM 均帶來顯著提升。以 Standard ICL baseline 下的 Overall macro-F1 為例：</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Baseline F1 (%)</th>
+<th>+ CROSS-ALIGN+ F1 (%)</th>
+<th>提升幅度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen2.5-VL (7B)</td>
+<td>65.1</td>
+<td>76.9</td>
+<td>+11.8</td>
+</tr>
+<tr>
+<td>LLaVA-V1.6 (7B)</td>
+<td>63.0</td>
+<td>74.0</td>
+<td>+11.0</td>
+</tr>
+<tr>
+<td>InternVL2 (7B)</td>
+<td>60.6</td>
+<td>72.5</td>
+<td>+11.9</td>
+</tr>
+<tr>
+<td>Gemma-VL (7B)</td>
+<td>57.2</td>
+<td>69.7</td>
+<td>+12.5</td>
+</tr>
+<tr>
+<td>DeepSeek-VL-S (7B)</td>
+<td>58.6</td>
+<td>71.6</td>
+<td>+13.0</td>
+</tr>
+<tr>
+<td>BLIP-2 OPT (6.7B)</td>
+<td>55.2</td>
+<td>68.3</td>
+<td>+13.1</td>
+</tr>
+</tbody>
+</table>
+<p>Ablation 顯示移除 Stage I（知識）影響最大（平均 -7.0% F1），Stage II（contrastive）次之（-4.6%），Stage III（解釋）最小但仍一致有效（-2.3%）。Robustness 測試中，CROSS-ALIGN+ 在四種擾動下 F1 下降均 &lt;4%，遠優於 vanilla LVLM 的 11-15% 下降。</p>
 <h2 id="_9">對我們的啟發</h2>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> （請手動補充啟發）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 外部知識整合是提升多模態理解的關鍵策略：將 ConceptNet、Wikidata 等結構化知識庫引入 LVLM pipeline，可有效彌補模型對文化符號與隱含語境的理解缺口，此方法可推廣至其他需要文化敏感度的 NLP 任務</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 三階段設計模式值得借鏡：每個階段精確對應一項已識別的限制（知識盲區、決策模糊、可解釋性），此「問題導向的模組化架構」思維可應用於其他複雜系統設計</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> LoRA + contrastive learning 的組合在資源受限場景下極具實用價值：僅增加 &lt;1% 參數即可實現顯著的決策邊界改善，且 throughput 維持在 ~8 memes/s，證明參數高效微調結合對比學習是強化 LVLM 下游任務表現的高效途徑</li>
 </ul>
 <h2 id="_10">限制與未來工作</h2>
-<p>（請手動補充限制）</p>
+<p>框架依賴 ConceptNet/Wikidata/Hatebase 等現有知識庫，對新興文化符號與快速演變的網路迷因語言覆蓋不足；實驗僅涵蓋英語 meme，跨語言與跨文化泛化能力未經驗證；Stage III 的解釋基於 constrained templates，靈活性有限。</p>
 <h2 id="_11">相關主題</h2>
 <ul>
 <li><a href="../Topics/benchmark.md">benchmark</a></li>
@@ -1860,7 +1914,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月7日 00:50:06 CST">2026年2月7日 00:50:06</span>
   </span>
 
     

@@ -1808,30 +1808,132 @@
 <ul>
 <li>📄 <a href="https://arxiv.org/abs/2602.04224">arXiv</a></li>
 <li>📥 <a href="https://arxiv.org/pdf/2602.04224v1">PDF</a></li>
-<li>📎 本地 PDF: <a href="../../PDFs/2602.04224.pdf">2602.04224.pdf</a></li>
+<li>📎 本地 PDF: <a href="../../PDFs/2602.04224.pdf">PDF</a></li>
 </ul>
 <h2 id="_2">摘要（中文翻譯）</h2>
-<p>Large Reasoning Models (LRMs) have achieved tremendous success with their chain-of-thought (CoT) reasoning, yet also face safety issues similar to those of basic language models. In particular, while algorithms are designed to guide them to deliberately refuse harmful prompts with safe reasoning, this process often fails to generalize against diverse and complex jailbreak attacks. In this work, we attribute these failures to the generalization of the safe reasoning process, particularly their insufficiency against complex attack prompts. We provide both theoretical and empirical evidence to show the necessity of a more sufficient safe reasoning process to defend against advanced attack prompts. Building on this insight, we propose a Risk-Aware Preference Optimization (RAPO) framework that </p>
+<p>大型推理模型（LRMs）透過 chain-of-thought（CoT）推理取得巨大成功，但仍面臨與基礎語言模型相似的安全問題。儘管現有演算法引導模型以安全推理拒絕有害提示，但此過程常無法泛化至多樣且複雜的 jailbreak 攻擊。本研究將此失敗歸因於安全推理過程的泛化不足，尤其是面對複雜攻擊提示時的不充分性。作者提供理論與實證證據，證明更充分的安全推理過程對抵禦進階攻擊的必要性。基於此洞察，提出 Risk-Aware Preference Optimization（RAPO）框架，使 LRM 能自適應地識別安全風險，並在 thinking content 中以適當粒度進行安全推理。大量實驗證明 RAPO 成功使多種 LRM 的安全推理泛化至多樣攻擊提示，同時保持一般任務效能。</p>
 <h2 id="_3">論文預覽</h2>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04224.pdf#page1" data-desc-position="bottom"><img alt="2602.04224.pdf#page=1" src="../../PDFs/2602.04224.pdf#page1"></a></p>
+<p><a href="../../PDFs/2602.04224.pdf">📥 點選查看論文 (PDF)</a></p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04224.pdf#navpanes=0&amp;toolbar=0" data-desc-position="bottom"><embed alt="論文預覽" src="../../PDFs/2602.04224.pdf#navpanes=0&amp;toolbar=0" style="min-height:60vh;width:100%" type="application/pdf"></a></p>
 <h2 id="_4">問題背景</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>Large Reasoning Models（LRMs）雖具備 CoT 推理能力，但現有安全對齊方法（SFT 或 RL）僅能拒絕基本有害提示，面對複雜 jailbreak 攻擊時安全推理無法有效泛化。當攻擊複雜度提升，模型的安全推理比例反而下降，導致防禦失敗率顯著增加。</p>
 <h2 id="_5">解決方案</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>提出 Risk-Aware Preference Optimization（RAPO）框架，包含兩階段：(1) SFT warm-up 階段，透過安全推理生成器在 thinking content 開頭插入風險分析段落，並依攻擊複雜度分級（L1/L2/L3）設定推理粒度先驗；(2) RL 階段，以 GRPO 為骨幹，結合 risk-aware reward（評估安全推理充分性）與 general reward（維持拒絕能力與一般推理效能），訓練模型自適應地依風險複雜度分配安全推理預算。</p>
 <h2 id="_6">核心貢獻</h2>
 <ol>
-<li>（未設定 API Key，請手動補充核心貢獻）</li>
+<li>從 in-context alignment 視角提出安全推理的統一理論框架，證明安全推理的充分性需隨攻擊複雜度線性增長（safe reasoning traces 數量需為 Omega(k)，k 為攻擊複雜度）</li>
+<li>提出 RAPO 框架，結合 SFT warm-up 與 risk-aware RL，訓練模型依風險等級自適應調整安全推理的深度與長度，實現跨複雜度 jailbreak 攻擊的泛化防禦</li>
+<li>在多個 LRM（Qwen-3-8B/1.7B、DeepSeek-distillation）上驗證 RAPO 顯著優於 STAR、IPO、TARS 等基線，在 WildJailbreak 上將 ASR 降至 5.6%-15.8%，同時維持 MMLU-Pro 與 XsTest 效能</li>
 </ol>
 <h2 id="_7">技術方法</h2>
-<p>（未設定 API Key，請手動補充方法）</p>
+<p>RAPO 分兩階段訓練：<strong>SFT Warm-up</strong> 階段使用 safe reasoning generator 為每個 prompt 生成安全推理段落，置於 thinking content 開頭，依 StrataSword 三級複雜度分類（L1: 明確請求、L2: 間接請求如 roleplay、L3: 複雜推理如編碼/密碼/多步驟）設定推理粒度先驗，並加入 benign prompts 避免模型僅對有害提示觸發安全推理。<strong>RL 階段</strong> 以 GRPO 為骨幹演算法，設計複合獎勵函數 A_p = R(s_p) + G(r_p)：risk-aware reward R 由 LLM-as-a-Judge 評估安全推理與風險複雜度的匹配程度（Adequate=+1, Fair=0, Excessive=0, Invalid=-1）；general reward G 以二元判斷（+1/-1）評估有害提示的拒絕與 benign 提示的回應品質。所有 reward 透過 vLLM 平行推論生成，使用模型自身作為 judge（self-rewarding），避免依賴外部 API。</p>
 <h2 id="_8">關鍵結果</h2>
-<p>（未設定 API Key，請手動補充結果）</p>
+<p>RAPO 在三個模型上全面優於所有基線方法，尤其在 robustness 維度（複雜 jailbreak 攻擊）表現突出：</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Method</th>
+<th>JailbreakBench ASR</th>
+<th>WildJailbreak ASR</th>
+<th>SorryBench ASR</th>
+<th>XsTest</th>
+<th>MMLU-Pro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen-8B</td>
+<td>Base</td>
+<td>5.0%</td>
+<td>62.3%</td>
+<td>16.6%</td>
+<td>99.2%</td>
+<td>63.0%</td>
+</tr>
+<tr>
+<td>Qwen-8B</td>
+<td>IPO</td>
+<td>0.0%</td>
+<td>16.9%</td>
+<td>4.6%</td>
+<td>89.6%</td>
+<td>61.0%</td>
+</tr>
+<tr>
+<td>Qwen-8B</td>
+<td><strong>RAPO</strong></td>
+<td><strong>0.0%</strong></td>
+<td><strong>7.4%</strong></td>
+<td><strong>2.7%</strong></td>
+<td>90.4%</td>
+<td>60.3%</td>
+</tr>
+<tr>
+<td>Qwen-1.7B</td>
+<td>Base</td>
+<td>17.0%</td>
+<td>70.9%</td>
+<td>49.5%</td>
+<td>97.6%</td>
+<td>41.9%</td>
+</tr>
+<tr>
+<td>Qwen-1.7B</td>
+<td>IPO</td>
+<td>0.0%</td>
+<td>20.7%</td>
+<td>5.8%</td>
+<td>93.6%</td>
+<td>40.9%</td>
+</tr>
+<tr>
+<td>Qwen-1.7B</td>
+<td><strong>RAPO</strong></td>
+<td><strong>0.0%</strong></td>
+<td><strong>15.8%</strong></td>
+<td><strong>3.7%</strong></td>
+<td>91.2%</td>
+<td>41.1%</td>
+</tr>
+<tr>
+<td>DeepSeek</td>
+<td>Base</td>
+<td>66.0%</td>
+<td>68.7%</td>
+<td>31.2%</td>
+<td>96.0%</td>
+<td>31.2%</td>
+</tr>
+<tr>
+<td>DeepSeek</td>
+<td>IPO</td>
+<td>16.0%</td>
+<td>18.2%</td>
+<td>15.6%</td>
+<td>82.4%</td>
+<td>30.6%</td>
+</tr>
+<tr>
+<td>DeepSeek</td>
+<td><strong>RAPO</strong></td>
+<td><strong>9.0%</strong></td>
+<td><strong>5.6%</strong></td>
+<td><strong>5.7%</strong></td>
+<td>93.6%</td>
+<td>30.3%</td>
+</tr>
+</tbody>
+</table>
+<p>在 adaptive attack（PAIR/TAP）下，RAPO 同樣表現最佳：DeepSeek 上 PAIR ASR 15%、TAP ASR 14%，遠低於 IPO 的 25%/29%。</p>
 <h2 id="_9">對我們的啟發</h2>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> （未設定 API Key，請手動補充啟發）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 安全推理的「充分性」需與攻擊複雜度匹配——簡單的一句話安全判斷不足以防禦複雜 jailbreak，可將此原則應用於 red-teaming 評估中，根據攻擊分級設計不同深度的防禦策略</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> RAPO 的 risk-aware reward 設計（區分 Adequate/Fair/Excessive/Invalid）提供了一個實用的安全推理品質評估框架，可作為 LRM 安全性 benchmark 的評分標準參考</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 將安全推理置於 thinking content 開頭並以 self-rewarding 方式訓練的做法，避免了對外部強模型 API 的依賴，對資源受限場景下的 LRM 安全對齊具有實際參考價值</li>
 </ul>
 <h2 id="_10">限制與未來工作</h2>
-<p>（未設定 API Key，請手動補充限制）</p>
+<p>實驗僅涵蓋小型 LRM（1.5B-8B），未驗證在更大規模模型上的效果；risk-aware reward 依賴 self-rewarding 的 LLM-as-a-Judge，其評估品質受限於模型自身能力；訓練資料規模較小（400-800 prompts），長期泛化性待驗證。</p>
 <h2 id="_11">相關主題</h2>
 <ul>
 <li><a href="../Topics/benchmark.md">benchmark</a></li>
@@ -1860,7 +1962,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月7日 00:50:06 CST">2026年2月7日 00:50:06</span>
   </span>
 
     

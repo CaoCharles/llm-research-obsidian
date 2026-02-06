@@ -1808,30 +1808,90 @@
 <ul>
 <li>📄 <a href="https://arxiv.org/abs/2602.04813">arXiv</a></li>
 <li>📥 <a href="https://arxiv.org/pdf/2602.04813v1">PDF</a></li>
-<li>📎 本地 PDF: <a href="../../PDFs/2602.04813.pdf">2602.04813.pdf</a></li>
+<li>📎 本地 PDF: <a href="../../PDFs/2602.04813.pdf">PDF</a></li>
 </ul>
 <h2 id="_2">摘要（中文翻譯）</h2>
-<p>Large Language Model (LLM)-based agents that plan, use tools and act has begun to shape healthcare and medicine. Reported studies demonstrate competence on various tasks ranging from EHR analysis and differential diagnosis to treatment planning and research workflows. Yet the literature largely consists of overviews which are either broad surveys or narrow dives into a single capability (e.g., memory, planning, reasoning), leaving healthcare work without a common frame. We address this by reviewing 49 studies using a seven-dimensional taxonomy: Cognitive Capabilities, Knowledge Management, Interaction Patterns, Adaptation &amp; Learning, Safety &amp; Ethics, Framework Typology and Core Tasks &amp; Subtasks with 29 operational sub-dimensions. Using explicit inclusion and exclusion criteria and a labeli</p>
+<p>基於 Large Language Model (LLM) 的 agent 已開始在醫療與醫學領域發揮作用，涵蓋 EHR 分析、鑑別診斷、治療規劃及研究工作流程等任務。然而，現有文獻多為廣泛綜述或僅聚焦單一能力（如 memory、planning、reasoning），缺乏統一的評估框架。本研究透過七維度分類法（Cognitive Capabilities、Knowledge Management、Interaction Patterns、Adaptation &amp; Learning、Safety &amp; Ethics、Framework Typology、Core Tasks &amp; Subtasks）及 29 個操作性子維度，系統性地審查 49 篇研究。採用三級標籤（Fully Implemented ✓、Partially Implemented Δ、Not Implemented ✗）進行標注，揭示當前 agent 擅長 retrieval-grounded advising，但在 adaptation 與 compliance 方面仍需大幅強化，方能從早期系統邁向可靠的臨床應用系統。</p>
 <h2 id="_3">論文預覽</h2>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04813.pdf#page1" data-desc-position="bottom"><img alt="2602.04813.pdf#page=1" src="../../PDFs/2602.04813.pdf#page1"></a></p>
+<p><a href="../../PDFs/2602.04813.pdf">📥 點選查看論文 (PDF)</a></p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04813.pdf#navpanes=0&amp;toolbar=0" data-desc-position="bottom"><embed alt="論文預覽" src="../../PDFs/2602.04813.pdf#navpanes=0&amp;toolbar=0" style="min-height:60vh;width:100%" type="application/pdf"></a></p>
 <h2 id="_4">問題背景</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>LLM-based agent 在醫療領域的應用快速增長，但現有文獻缺乏統一的評估框架。多數研究僅為廣泛綜述或針對單一能力（如 planning、memory、reasoning）的深入探討，導致不同系統之間難以進行跨研究的能力比較與差距分析，阻礙了從實驗原型到可靠臨床部署的發展路徑。</p>
 <h2 id="_5">解決方案</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>提出七維度分類法（Seven-Dimensional Taxonomy），包含 29 個操作性子維度，涵蓋 Cognitive Capabilities（5）、Knowledge Management（3）、Interaction Patterns（4）、Adaptation &amp; Learning（3）、Safety &amp; Ethics（4）、Framework Typology（2）及 Core Tasks &amp; Subtasks（8）。對 49 篇研究採用三級標籤系統（✓ Fully Implemented / Δ Partially Implemented / ✗ Not Implemented）進行系統性標注與 cross-study 比較分析，建立醫療 AI agent 的實證評估基線。</p>
 <h2 id="_6">核心貢獻</h2>
 <ol>
-<li>（未設定 API Key，請手動補充核心貢獻）</li>
+<li>建立首個涵蓋 7 維度、29 子維度的醫療 LLM agent 系統性分類法，為跨研究比較提供統一的評估框架</li>
+<li>對 49 篇研究進行三級標籤實證標注，量化揭示能力分布的顯著不對稱性（如 External Knowledge Integration 約 76% fully implemented，而 Drift Detection 約 98% not implemented）</li>
+<li>識別出 information-centric 任務（Medical QA、Decision Support）與 action-oriented 任務（Treatment Planning、Drug Discovery）之間的關鍵成熟度落差，為未來研究優先方向提供數據支撐</li>
 </ol>
 <h2 id="_7">技術方法</h2>
-<p>（未設定 API Key，請手動補充方法）</p>
+<p>採用 systematic review 方法，以明確的 inclusion/exclusion criteria 篩選 49 篇 LLM-based agent 醫療應用研究。建構七維度分類法：(A) Cognitive Capabilities 包含 Planning、Perception、Action、Meta-Capabilities、Consistency &amp; Conflict Resolution；(B) Knowledge Management 包含 External Knowledge Integration、Memory Module、Dynamic Updates &amp; Forgetting；(C) Interaction Patterns 包含 Conversational Mode、Event-Triggered Activation、Human-in-the-Loop、Error Recovery；(D) Adaptation &amp; Learning 包含 Drift Detection &amp; Mitigation、Reinforcement-Based Adaptation、Meta-Learning &amp; Few-Shot；(E) Safety &amp; Ethics 包含 Safety Guardrails &amp; Adversarial Robustness、Bias &amp; Fairness、Privacy-Preserving Mechanism、Regulatory &amp; Compliance Constraints；(F) Framework Typology 包含 Multi-Agent Design、Centralized Orchestration；(G) Core Tasks &amp; Subtasks 涵蓋 8 類醫療任務。每篇研究依各子維度標注三級標籤（✓/Δ/✗），並進行 co-occurrence pattern 分析以識別能力叢集與稀疏區域。</p>
 <h2 id="_8">關鍵結果</h2>
-<p>（未設定 API Key，請手動補充結果）</p>
+<p>49 篇研究的標注結果揭示顯著的能力不對稱性：</p>
+<table>
+<thead>
+<tr>
+<th>子維度</th>
+<th>Fully Implemented (✓)</th>
+<th>Not Implemented (✗)</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>External Knowledge Integration</td>
+<td>~76%</td>
+<td>—</td>
+<td>高度成熟，多數系統整合外部知識庫</td>
+</tr>
+<tr>
+<td>Multi-Agent Design</td>
+<td>~82%</td>
+<td>—</td>
+<td>多 agent 架構為主流設計模式</td>
+</tr>
+<tr>
+<td>Medical QA &amp; Decision Support</td>
+<td>高</td>
+<td>低</td>
+<td>Information-centric 任務最為成熟</td>
+</tr>
+<tr>
+<td>Benchmarking &amp; Simulation</td>
+<td>高</td>
+<td>低</td>
+<td>評估基礎設施相對完善</td>
+</tr>
+<tr>
+<td>Treatment Planning &amp; Prescription</td>
+<td>—</td>
+<td>~59%</td>
+<td>Action-oriented 任務仍有顯著缺口</td>
+</tr>
+<tr>
+<td>Event-Triggered Activation</td>
+<td>—</td>
+<td>~92%</td>
+<td>幾乎未被實作的互動模式</td>
+</tr>
+<tr>
+<td>Drift Detection &amp; Mitigation</td>
+<td>—</td>
+<td>~98%</td>
+<td>最大能力缺口，適應性機制嚴重不足</td>
+</tr>
+</tbody>
+</table>
+<p>整體而言，information-centric 任務（Medical QA、Decision Support）實作程度領先，而 action-oriented 與 discovery-oriented 任務（Treatment Planning、Drug Discovery）存在實質性差距。Safety &amp; Ethics 維度的實作亦普遍不足，多數系統缺乏完整的 bias、privacy 與 regulatory compliance 機制。</p>
 <h2 id="_9">對我們的啟發</h2>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> （未設定 API Key，請手動補充啟發）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 開發醫療 AI agent 時應優先補強 Adaptation &amp; Learning 維度（尤其是 Drift Detection），因為 98% 的現有系統未實作此能力，這是部署到真實臨床環境的關鍵瓶頸</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 評估 LLM agent 不應僅關注 Medical QA 等 information-centric 任務的表現，更需建立 Treatment Planning、Drug Discovery 等 action-oriented 任務的標準化 benchmark</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 七維度分類法可作為我們自身 agent 系統開發的 checklist，特別是 Safety &amp; Ethics 維度中的 Regulatory Compliance 與 Privacy-Preserving Mechanism 在台灣醫療法規脈絡下的落地實踐</li>
 </ul>
 <h2 id="_10">限制與未來工作</h2>
-<p>（未設定 API Key，請手動補充限制）</p>
+<p>三級標籤（✓/Δ/✗）為實務導向的決策輔助而非嚴格閾值，系統可能跨越邊界。分類法定義非窮盡性，隨 LLM agent 快速演進需持續更新。未來應強化 Drift Detection、Event-Triggered Activation 等稀疏能力區域，並建立臨床驗證框架。</p>
 <h2 id="_11">相關主題</h2>
 <ul>
 <li><a href="../Topics/benchmark.md">benchmark</a></li>
@@ -1860,7 +1920,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月7日 00:50:06 CST">2026年2月7日 00:50:06</span>
   </span>
 
     

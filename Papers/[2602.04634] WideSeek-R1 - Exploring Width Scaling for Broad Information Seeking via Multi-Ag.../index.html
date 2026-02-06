@@ -1808,30 +1808,88 @@
 <ul>
 <li>📄 <a href="https://arxiv.org/abs/2602.04634">arXiv</a></li>
 <li>📥 <a href="https://arxiv.org/pdf/2602.04634v1">PDF</a></li>
-<li>📎 本地 PDF: <a href="../../PDFs/2602.04634.pdf">2602.04634.pdf</a></li>
+<li>📎 本地 PDF: <a href="../../PDFs/2602.04634.pdf">PDF</a></li>
 </ul>
 <h2 id="_2">摘要（中文翻譯）</h2>
 <p>Recent advancements in Large Language Models (LLMs) have largely focused on depth scaling, where a single agent solves long-horizon problems with multi-turn reasoning and tool use. However, as tasks grow broader, the key bottleneck shifts from individual competence to organizational capability. In this work, we explore a complementary dimension of width scaling with multi-agent systems to address broad information seeking. Existing multi-agent systems often rely on hand-crafted workflows and turn-taking interactions that fail to parallelize work effectively. To bridge this gap, we propose WideSeek-R1, a lead-agent-subagent framework trained via multi-agent reinforcement learning (MARL) to synergize scalable orchestration and parallel execution. By utilizing a shared LLM with isolated conte</p>
 <h2 id="_3">論文預覽</h2>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04634.pdf#page1" data-desc-position="bottom"><img alt="2602.04634.pdf#page=1" src="../../PDFs/2602.04634.pdf#page1"></a></p>
+<p><a href="../../PDFs/2602.04634.pdf">📥 點選查看論文 (PDF)</a></p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../PDFs/2602.04634.pdf#navpanes=0&amp;toolbar=0" data-desc-position="bottom"><embed alt="論文預覽" src="../../PDFs/2602.04634.pdf#navpanes=0&amp;toolbar=0" style="min-height:60vh;width:100%" type="application/pdf"></a></p>
 <h2 id="_4">問題背景</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>現有 LLM agent 主要透過 depth scaling（延長 chain-of-thought、多輪 tool use）解決問題，但面對需要廣泛蒐集多實體資訊的 broad information seeking 任務時，單一 agent 會遭遇 context pollution 與 sequential execution 瓶頸，導致效能嚴重下降。</p>
 <h2 id="_5">解決方案</h2>
-<p>（未設定 API Key，請手動補充）</p>
+<p>提出 WideSeek-R1，一個 lead-agent–subagent 階層式多代理框架，透過 multi-agent reinforcement learning (MARL) 端對端訓練，讓 lead agent 學習可擴展的任務分解與調度（scalable orchestration），subagents 則平行執行子任務（parallel execution）。所有 agent 共用同一個 LLM 但擁有獨立 context 與專用工具，實現 width scaling。</p>
 <h2 id="_6">核心貢獻</h2>
 <ol>
-<li>（未設定 API Key，請手動補充核心貢獻）</li>
+<li>提出 WideSeek-R1 框架，以 MARL 端對端聯合訓練 lead agent 與 subagents，實現可學習的 orchestration 與平行 information seeking，突破傳統 hand-crafted workflow 的限制</li>
+<li>開源 20k 筆 broad information-seeking 訓練資料集，透過自動化 pipeline 從 HybridQA 產生 schema-constrained query 與 tabular answer，填補現有 multi-hop QA dataset 在寬度任務上的空白</li>
+<li>實驗證明 WideSeek-R1-4B 在 WideSearch benchmark 達到 Item F1 40.0%，效能媲美 DeepSeek-R1-671B（參數量少約 170 倍），且隨 subagent 數量增加呈現持續的 width scaling 增益</li>
 </ol>
 <h2 id="_7">技術方法</h2>
-<p>（未設定 API Key，請手動補充方法）</p>
+<p>系統由 lead agent 與多個 subagents 組成，共用同一個 Qwen3-4B 模型但 context 隔離。Lead agent 僅配備 <code>call_subagent</code> 工具，負責將廣泛任務拆解為可平行化的子任務並分派給 subagents；每個 subagent 配備 <code>search</code> 與 <code>access</code> 工具，在獨立 context 中平行執行資訊檢索。訓練基於 GRPO 擴展的 MARL：對同一 query 產生 G 組 multi-agent rollouts，以 verifiable outcome reward 計算 group-normalized advantage，並將相同 advantage 分配給同一 rollout 內所有 agent（multi-agent advantage assignment），避免複雜的 credit assignment。此外引入 dual-level advantage reweighting：token level 按各 turn 的 token 數加權避免短 turn 稀釋梯度，agent level 按 agent 數量平均避免 subagent 過多主導梯度。訓練資料透過三階段 pipeline 自動建構：Query Generation、Answer Generation（雙重獨立回答）、QA Pair Filtering（cell-wise consistency &gt; 0.9 且足夠難度）。</p>
 <h2 id="_8">關鍵結果</h2>
-<p>（未設定 API Key，請手動補充結果）</p>
+<p>在 WideSearch benchmark 上的主要結果（Avg@4）：</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Setting</th>
+<th>Item F1 (%)</th>
+<th>Row F1 (%)</th>
+<th>Success Rate (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WideSeek-R1-4B</td>
+<td>Multi-Agent</td>
+<td><strong>40.0</strong></td>
+<td><strong>15.3</strong></td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>Qwen3-4B</td>
+<td>Multi-Agent</td>
+<td>31.2</td>
+<td>8.4</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>AgentFlow-7B</td>
+<td>Multi-Agent</td>
+<td>28.7</td>
+<td>9.0</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>SingleSeek-R1-4B</td>
+<td>Single-Agent</td>
+<td>28.1</td>
+<td>6.5</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>DeepSeek-R1-671B</td>
+<td>Single-Agent</td>
+<td>41.3</td>
+<td>20.7</td>
+<td>0.4</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>WideSeek-R1-4B 相較 single-agent 變體 SingleSeek-R1-4B，Item F1 提升 11.9%</li>
+<li>MARL 訓練相較未訓練 Qwen3-4B 多代理設定，Item F1 提升 8.8%</li>
+<li>Depth scaling 快速飽和，而 width scaling 隨 subagent 數量增加持續提升</li>
+</ul>
 <h2 id="_9">對我們的啟發</h2>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> （未設定 API Key，請手動補充啟發）</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> Width scaling 是一個被低估的 test-time compute 擴展維度：透過增加平行 agent 數量而非加深推理深度，可突破單一 agent 的 context pollution 與效率瓶頸，適合需要廣泛蒐集資訊的應用場景</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 端對端 MARL 訓練優於 hand-crafted workflow：讓 lead agent 與 subagents 共用模型並聯合優化，比起人工設計的多代理流程能學到更靈活的任務分解與協調策略</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled><span class="task-list-indicator"></span></label> 小模型透過多代理架構可達到大模型水準：4B 模型在 multi-agent 設定下媲美 671B 單一 agent，暗示未來可用多個輕量模型平行協作取代昂貴的超大模型</li>
 </ul>
 <h2 id="_10">限制與未來工作</h2>
-<p>（未設定 API Key，請手動補充限制）</p>
+<p>目前僅在 broad information seeking 任務上驗證，尚未擴展到 code generation、complex reasoning 等場景；訓練依賴離線 Wiki2018 知識庫，與線上搜尋存在分布差異；width scaling 的理論上界與最佳 agent 數量仍待探索。</p>
 <h2 id="_11">相關主題</h2>
 <ul>
 <li><a href="../Topics/benchmark.md">benchmark</a></li>
@@ -1860,7 +1918,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月7日 00:50:06 CST">2026年2月7日 00:50:06</span>
   </span>
 
     
