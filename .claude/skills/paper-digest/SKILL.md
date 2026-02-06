@@ -99,9 +99,9 @@ python3 scripts/ingest_claude_json.py --dir /tmp --date {date}
 
 終端輸出：顯示處理進度
 Obsidian 寫入：
-- Papers/{year}/{month}/[{arxiv_id}] {title}.md（每篇論文）
+- Papers/[{arxiv_id}] {title}.md（每篇論文）
 - Daily/{date}.md（每日摘要）
-- 更新相關 Topics/ 頁面
+- 更新相關主題頁面（AI-Agent/, Safety-Alignment/, Hallucination/, RAG/, Benchmark/, Multimodal/）
 
 ## 注意事項
 

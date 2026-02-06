@@ -96,15 +96,35 @@ Obsidian 寫入（若選擇下載）：
 ## 熱門主題建議
 
 可搜尋的熱門主題：
+
+**評測與測試**:
 - `llm-as-judge` - LLM 作為評審
+- `benchmark` - 基準測試
+- `rag evaluation` - RAG 評測
+- `faithfulness` - 忠實度評估
+
+**安全與對抗**:
 - `red teaming` - 紅隊測試
 - `jailbreak` - 越獄攻擊
+- `adversarial attack` - 對抗攻擊
+- `adversarial defense` - 對抗防禦
 - `prompt injection` - Prompt 注入
-- `hallucination` - 幻覺檢測
-- `rag evaluation` - RAG 評測
-- `benchmark` - 基準測試
+- `safety` - 安全性
+
+**對齊與訓練**:
 - `alignment` - 對齊研究
+- `RLHF` - 強化學習人類反饋
+- `preference learning` - 偏好學習
+
+**多模態**:
+- `vision language model` - 視覺-語言模型
+- `multimodal` - 多模態
+- `cross-modality` - 跨模態
+
+**其他**:
+- `hallucination` - 幻覺檢測
 - `agent` - 代理系統
+- `reasoning` - 推理能力
 
 ## 注意事項
 

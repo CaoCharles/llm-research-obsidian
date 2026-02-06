@@ -42,3 +42,24 @@ SORT date DESC
 
 ## 筆記
 （手動補充主題相關的見解與總結）
+
+## 相關論文
+
+- `[Safety-Alignment]` [[[2601.03699] RedBench - A Universal Dataset for Comprehensive Red Teaming of Large Language M...|RedBench: A Universal Dataset for Comprehensive Re...]] (2026-01-07)
+
+- `[Hallucination]` [[[2601.09929] Hallucination Detection and Mitigation in Large Language Models|Hallucination Detection and Mitigation in Large La...]] (2026-01-14)
+
+- `[Hallucination]` [[[2601.22984] Why Your Deep Research Agent Fails On Hallucination Evaluation in Full Research ...|Why Your Deep Research Agent Fails? On Hallucinati...]] (2026-01-30)
+
+- `[Benchmark]` [[[2601.20251] Efficient Evaluation of LLM Performance with Statistical Guarantees|Efficient Evaluation of LLM Performance with Stati...]] (2026-01-28)
+
+- `[RAG]` [[[2505.04847] Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards|Benchmarking LLM Faithfulness in RAG with Evolving...]] (2025-05-07)
+
+- `[RAG]` [[[2504.14891] Retrieval Augmented Generation Evaluation in the Era of Large Language Models - ...|Retrieval Augmented Generation Evaluation in the E...]] (2025-04-21)
+
+- `[Benchmark]` [[[2601.17399] ReLE - A Scalable System and Structured Benchmark for Diagnosing Capability Anis...|ReLE: A Scalable System and Structured Benchmark f...]] (2026-01-24)
+
+- `[Benchmark]` [[[2601.03986] Benchmark^2 - Systematic Evaluation of LLM Benchmarks|Benchmark^2: Systematic Evaluation of LLM Benchmar...]] (2026-01-07)
+
+- `[Benchmark]` [[[2511.21140] How to Correctly Report LLM-as-a-Judge Evaluations|How to Correctly Report LLM-as-a-Judge Evaluations]] (2025-11-26)
+- `[Benchmark]` [[[2512.16041] Are We on the Right Way to Assessing LLM-as-a-Judge|Are We on the Right Way to Assessing LLM-as-a-Judg...]] (2025-12-17)

@@ -10,13 +10,13 @@ argument-hint: "<arxiv_id>"
 
 ## 參數
 
-- `$ARGUMENTS[0]` - arXiv ID（必填，如 "2502.00123"）
+- `$ARGUMENTS[0]` - arXiv ID（必填，如 "2602.00123"）
 
 ## 範例
 
 ```
-/paper-analyze 2502.00123
-/paper-analyze 2501.12345
+/paper-analyze 2602.00123
+/paper-analyze 2602.04739
 ```
 
 ## 執行步驟
@@ -75,21 +75,25 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 
     "limitations": "論文的限制、不足或未來工作方向（80-100字）\n要點：客觀指出方法的適用範圍、實驗的局限、未解決的問題",
 
-    "tags": ["標籤1", "標籤2", "標籤3（從上述分類中選擇2-4個最相關的）"],
+    "tags": ["標籤1", "標籤2", "標籤3（從下方分類中選擇2-4個最相關的）"],
     "relevance": 4,
-    "related_topics": ["主題1", "主題2（相關的研究領域或技術方向）"],
-    "category": "最主要的分類標籤（只選一個最核心的）"
+    "related_topics": ["AI-Agent", "Safety-Alignment"（從6個主題資料夾中選擇）],
+    "category": "最主要的分類（AI-Agent/Safety-Alignment/Hallucination/RAG/Benchmark/Multimodal）"
   }
 }
 ```
 
-**可用的 tags**:
+**可用的 tags**（按主題資料夾分類）:
 
-**評測相關**: llm-as-judge, rag-evaluation, benchmark, agent-evaluation, faithfulness
-**安全相關**: safety, red-teaming, jailbreak, adversarial-attacks, adversarial-defense, prompt-injection, certified-defense, provable-robustness, adversarial-robustness
-**對齊相關**: alignment, preference-learning, rlhf
-**多模態**: multimodal, vision-language, cross-modality, vlm, omni-models, multimodal-safety
-**其他**: hallucination, reasoning, tool-use, prompt-engineering
+**AI-Agent**: agent, agent-evaluation, agent-benchmark, agentic-rag, embodied-ai, interactive-ai, tool-use, multi-agent
+**Safety-Alignment**: safety, alignment, rlhf, red-teaming, jailbreak, prompt-injection, adversarial-robustness, certified-defense
+**Hallucination**: hallucination, factuality, faithfulness, faithful-reasoning
+**RAG**: rag, rag-evaluation, retrieval
+**Benchmark**: benchmark, llm-as-judge, evaluation
+**Multimodal**: multimodal, vlm, vision-language, multimodal-safety, omni-models, multimodal-reasoning
+
+**related_topics 可用值**:
+- AI-Agent, Safety-Alignment, Hallucination, RAG, Benchmark, Multimodal
 
 **relevance 評分（1-5）**:
 - 5 = 突破性研究（重大創新、開創性方法、顯著超越現有技術）
@@ -118,5 +122,5 @@ cd lpdd && uv run python cli.py write {json_file_path}
 
 終端輸出：顯示分析進度和結果摘要
 Obsidian 寫入：
-- Papers/{year}/{month}/[{arxiv_id}] {title}.md
-- 更新相關 Topics/ 頁面
+- Papers/[{arxiv_id}] {title}.md
+- 更新相關主題頁面（AI-Agent/, Safety-Alignment/, Hallucination/, RAG/, Benchmark/, Multimodal/）

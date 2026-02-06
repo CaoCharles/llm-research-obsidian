@@ -69,6 +69,14 @@ project/
 ├── mkdocs.yml               # MkDocs 設定
 ├── docs/
 │   ├── index.md             # 首頁
+│   ├── AI-Agent/            # AI Agent 主題
+│   ├── Safety-Alignment/    # 安全與對齊主題
+│   ├── Hallucination/       # 幻覺與事實性主題
+│   ├── RAG/                 # RAG 檢索增強主題
+│   ├── Benchmark/           # 評測與基準主題
+│   ├── Multimodal/          # 多模態 AI 主題
+│   ├── Daily/               # 每日摘要
+│   ├── Papers/              # 論文筆記
 │   └── assets/
 │       ├── css/
 │       │   ├── extra.css    # 網站樣式
@@ -77,8 +85,9 @@ project/
 │       │   └── chatbot.js   # Chatbot 邏輯
 │       └── images/
 │           └── favicon.png
-├── hooks/
-│   └── generate_content.py  # 自動生成 content.json
+├── .agent/skills/           # Agent Skills
+│   └── chatbot-setup/assets/
+│       └── generate_content.py  # 自動生成 content.json
 └── backend/                 # AI 後端（可選）
     ├── chat_server.py
     ├── Dockerfile

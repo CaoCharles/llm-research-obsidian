@@ -29,7 +29,3 @@ PDFs/
 *.tmp
 *.log
 
-# MkDocs
-site/
-docs/*
-!docs/assets/
