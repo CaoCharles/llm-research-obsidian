@@ -4,17 +4,25 @@
 
 ---
 
+## 📑 LLM 評測與安全指南
+
+這份簡報涵蓋企業級 LLM 品質驗證的完整框架，從評測指標定義到安全防禦策略：
+
+![LLM Evaluation Guide](PDFs/LLM_Evaluation_and_Safety_Guide.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
+
+---
+
 ## 🎧 專題講解
 
 <audio controls style="width:100%">
   <source src="assets/audio/專家如何幫_AI_模型打分數.m4a" type="audio/mp4">
 </audio>
 
-*專家如何幫 AI 模型打分數*
+*專家如何幫 AI 模型打分數 — 深入解析評測方法論與業界實務*
 
 ---
 
-## 📖 技術白皮書
+## 📖 技術白皮書精華
 
 !!! abstract "企業級 LLM 品質驗證體系"
     建立系統化評測體系是企業控管技術風險、優化運營成本與確保 ROI 的關鍵。相較於傳統軟體測試，LLM 驗證更像是一種統計推斷與語義審查的結合。
@@ -40,7 +48,7 @@
 
 ## 📚 知識庫內容
 
-本知識庫整理 LLM 評測領域的學術研究與實務框架，涵蓋評測指標、基準測試設計、安全評估三大核心主題。
+本知識庫整理 LLM 評測領域的學術研究與實務框架，涵蓋三大核心主題，協助 AI 架構師與開發團隊建立可靠的模型驗證流程。
 
 ---
 
@@ -86,15 +94,9 @@ LLM 系統安全評估的學術框架與威脅防禦：
 
 ---
 
-## 📑 簡報資源
+## 📑 進階簡報：LLM 攻擊紅隊
 
-### LLM 評測與安全指南
-
-![LLM Evaluation Guide](PDFs/LLM_Evaluation_and_Safety_Guide.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:50vh;width:100%" }
-
----
-
-### LLM 攻擊紅隊進階
+探討 LLM 安全攻防的前沿技術與對抗策略：
 
 ![LLM 攻擊紅隊](PDFs/LLM攻擊紅隊前沿進階.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:50vh;width:100%" }
 
