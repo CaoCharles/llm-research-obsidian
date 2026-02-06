@@ -19,16 +19,18 @@ hooks:
 theme:
   name: material
   language: zh-TW
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
   palette:
     - scheme: default
-      primary: deep purple
-      accent: purple
+      primary: black
+      accent: teal
       toggle:
         icon: material/brightness-7
         name: 切換至深色模式
     - scheme: slate
-      primary: deep purple
-      accent: purple
+      primary: black
+      accent: teal
       toggle:
         icon: material/brightness-4
         name: 切換至淺色模式

@@ -17,7 +17,7 @@ const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-window.INITIAL_PROMPT = "嗨！我是 LLM 評測知識庫助教 🧅\n\n我可以幫你：\n\n- 解釋評測指標（準確率、相關性、真實性）\n- 比較評測工具（RAGAS、DeepEval、Arize）\n- 介紹安全評估與紅隊演練方法\n- 查找相關論文的摘要與見解\n\n試試問我：\n- HELM 評測框架包含哪些面向？\n- 如何設計對抗性測試樣本？\n- 最近有哪些 RAG 相關論文？";
+window.INITIAL_PROMPT = "嗨！有什麼關於 LLM 評測的問題嗎？💡\n\n試試問我：\n• RAGAS 怎麼用？\n• 什麼是紅隊演練？\n• 最新 RAG 論文有哪些？";
 
 // ====== 連結修正 ======
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";

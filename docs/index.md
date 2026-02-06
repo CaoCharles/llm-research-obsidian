@@ -6,7 +6,10 @@
 
 ## 📑 LLM 評測與安全指南
 
-這份簡報涵蓋企業級 LLM 品質驗證的完整框架，從評測指標定義到安全防禦策略：
+網頁涵蓋企業級 LLM 品質驗證的完整框架，從評測指標定義到安全防禦策略：
+
+[📥 下載完整評測與安全指南 (PDF)](PDFs/LLM_Evaluation_and_Safety_Guide.pdf)
+
 
 ![LLM Evaluation Guide](PDFs/LLM_Evaluation_and_Safety_Guide.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
 
@@ -97,6 +100,10 @@ LLM 系統安全評估的學術框架與威脅防禦：
 ## 📑 進階簡報：LLM 攻擊紅隊
 
 探討 LLM 安全攻防的前沿技術與對抗策略：
+
+[📥 下載LLM攻擊紅隊分析重點 (PDF)](PDFs/LLM攻擊紅隊前沿進階.pdf)
+
+
 
 ![LLM 攻擊紅隊](PDFs/LLM攻擊紅隊前沿進階.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:50vh;width:100%" }
 
