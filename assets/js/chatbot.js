@@ -10,7 +10,7 @@ let isContentLoading = false;
 let chatHistory = [];
 
 // ====== 設定 (請修改這些值) ======
-// Railway 後端 URL（部署後請更新）
+// Railway 後端 URL（部署後請更新）llm-research-obsidian-production.up.railway.app
 window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-obsidian-production.up.railway.app";
 
 // TODO: 修改為你的 GitHub Repo 名稱
@@ -19,8 +19,7 @@ const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-// TODO: 修改歡迎訊息
-window.INITIAL_PROMPT = "嗨！我是 LLM 論文摘要助教 🤖\n\n我可以幫你查找與解釋這個知識庫的內容。\n\n試試問我：\n- 最近有哪些 RAG 評測論文？\n- 某篇論文的關鍵貢獻是什麼？";
+window.INITIAL_PROMPT = "嗨！我是 LLM 評測知識庫助教 🤖\n\n我可以幫你：\n- 解釋評測指標（準確率、相關性、真實性）\n- 比較評測工具（RAGAS、DeepEval、Arize）\n- 介紹安全評估與紅隊演練方法\n- 查找相關論文的摘要與見解\n\n試試問我：\n• HELM 評測框架包含哪些面向？\n• 如何設計對抗性測試樣本？\n• 最近有哪些 RAG 相關論文？";
 
 // ====== 連結修正 (請修改 BASE_URL) ======
 // TODO: 修改為你的網站 URL
