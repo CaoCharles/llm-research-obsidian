@@ -19,6 +19,7 @@ from fetcher import fetch_papers, fetch_papers_by_date, fetch_paper_by_id
 from filter import load_keywords, get_top_papers, filter_papers, search_by_keyword
 from analyzer import analyze_papers
 from writer import write_from_json, write_daily_from_json
+from exporter import export_to_excel, parse_date_range
 
 
 def load_config(config_path: str = None) -> dict:
@@ -493,6 +494,107 @@ def cmd_digest(args) -> None:
     output_json(result)
 
 
+def cmd_export(args) -> None:
+    """匯出論文為 Excel 子命令"""
+    config = load_config()
+    categories = config["arxiv"]["categories"]
+    keywords_path = Path(__file__).parent / "keywords.yaml"
+    keywords = load_keywords(str(keywords_path))
+
+    # 解析日期範圍
+    date_spec = args.date or "1d"
+    start_date, end_date = parse_date_range(date_spec)
+
+    # 計算需要抓取的天數
+    start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+    end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+    total_days = max((end_dt - start_dt).days + 1, 1)
+
+    # 用 hours 模式抓取涵蓋整個日期範圍的論文
+    # 需要從 end_date 往回看 total_days 天
+    hours = total_days * 24 + 24  # 多抓一天的緩衝
+
+    print(f"正在抓取 {start_date} ~ {end_date} 的論文（共 {total_days} 天）...",
+          file=sys.stderr)
+
+    papers = fetch_papers(
+        categories=categories,
+        hours=hours,
+        max_results=args.max_results or 1000,
+    )
+
+    # 篩選日期範圍內的論文
+    start_utc = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    end_utc = datetime.strptime(end_date, "%Y-%m-%d").replace(
+        hour=23, minute=59, second=59, tzinfo=timezone.utc
+    )
+
+    papers = [
+        p for p in papers
+        if start_utc <= p.published <= end_utc
+    ]
+
+    print(f"日期範圍內共 {len(papers)} 篇論文", file=sys.stderr)
+
+    # 關鍵字篩選
+    extra_keyword = args.keyword
+    if extra_keyword:
+        # 使用者指定的額外關鍵字搜尋
+        matched = search_by_keyword(papers, extra_keyword)
+        papers = matched
+        print(f"關鍵字 '{extra_keyword}' 匹配到 {len(papers)} 篇", file=sys.stderr)
+    else:
+        # 使用預設關鍵字篩選
+        min_score = args.min_score or config["filter"]["min_score"]
+        papers = filter_papers(papers, keywords, min_score=min_score)
+        print(f"關鍵字篩選後 {len(papers)} 篇（最低分數: {min_score}）", file=sys.stderr)
+
+    if not papers:
+        result = {
+            "status": "success",
+            "message": "沒有找到符合條件的論文",
+            "date_range": f"{start_date} ~ {end_date}",
+            "count": 0,
+        }
+        output_json(result)
+        return
+
+    # 匯出 Excel
+    vault_path = Path(__file__).parent.parent
+    if args.output:
+        output_path = Path(args.output)
+    else:
+        export_dir = vault_path / "Exports"
+        export_dir.mkdir(parents=True, exist_ok=True)
+        if start_date == end_date:
+            filename = f"llm-papers-{start_date}.xlsx"
+        else:
+            filename = f"llm-papers-{start_date}_to_{end_date}.xlsx"
+        output_path = export_dir / filename
+
+    title_parts = ["LLM 評測論文清單"]
+    if extra_keyword:
+        title_parts.append(f"（關鍵字: {extra_keyword}）")
+    title_parts.append(f"| {start_date} ~ {end_date}")
+    title = " ".join(title_parts)
+
+    export_to_excel(
+        papers=papers,
+        output_path=output_path,
+        keywords=keywords,
+        title=title,
+    )
+
+    result = {
+        "status": "success",
+        "date_range": f"{start_date} ~ {end_date}",
+        "keyword": extra_keyword,
+        "count": len(papers),
+        "output_path": str(output_path),
+    }
+    output_json(result)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="LLM Paper Daily Digest CLI"
@@ -549,6 +651,16 @@ def main():
     trending_parser.add_argument("--classic", action="store_true", help="搜尋經典論文")
     trending_parser.add_argument("--limit", type=int, default=10, help="結果數量")
     trending_parser.set_defaults(func=cmd_trending)
+
+    # export 子命令
+    export_parser = subparsers.add_parser("export", help="匯出論文清單為 Excel")
+    export_parser.add_argument("--date", type=str,
+                               help="日期規格: YYYY-MM-DD, YYYY-MM-DD:YYYY-MM-DD, 7d, 1m, 3m, 6m, 1y, 2026")
+    export_parser.add_argument("--keyword", type=str, help="額外搜尋關鍵字（如 'red team'）")
+    export_parser.add_argument("--min-score", type=int, help="最低關鍵字匹配分數")
+    export_parser.add_argument("--max-results", type=int, default=1000, help="arXiv 最大抓取數量")
+    export_parser.add_argument("--output", type=str, help="輸出檔案路徑（預設 Exports/llm-papers-{date}.xlsx）")
+    export_parser.set_defaults(func=cmd_export)
 
     # write 子命令
     write_parser = subparsers.add_parser("write", help="寫入論文筆記到 Obsidian")
