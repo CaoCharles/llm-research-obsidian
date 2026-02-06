@@ -24,7 +24,7 @@ aliases:
 - 📄 [arXiv]({{ arxiv_url }})
 - 📥 [PDF]({{ pdf_url }})
 {% if pdf_embed %}
-- 📎 本地 PDF: [[{{ pdf_filename }}]]
+- 📎 本地 PDF: [PDF](../PDFs/{{ pdf_filename }})
 {% endif %}
 
 ## 摘要（中文翻譯）
@@ -34,7 +34,9 @@ aliases:
 {% if pdf_embed %}
 ## 論文預覽
 
-![[{{ pdf_filename }}#page=1]]
+[📥 點選查看論文 (PDF)](../PDFs/{{ pdf_filename }})
+
+![{{ title }}](../PDFs/{{ pdf_filename }}#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
 
 {% endif %}
 ## 問題背景

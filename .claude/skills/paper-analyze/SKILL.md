@@ -110,6 +110,23 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 cd lpdd && uv run python cli.py write {json_file_path}
 ```
 
+### Step 3.5: 確認 PDF 嵌入格式
+
+寫入後確認生成的 markdown 使用 **MkDocs 相容語法**（非 Obsidian `![[]]` 語法）：
+
+```markdown
+## 論文預覽
+
+[📥 點選查看論文 (PDF)](../PDFs/{arxiv_id}.pdf)
+
+![{title}](../PDFs/{arxiv_id}.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
+```
+
+連結區塊的本地 PDF 也應使用標準 markdown 連結：
+```markdown
+- 📎 本地 PDF: [PDF](../PDFs/{arxiv_id}.pdf)
+```
+
 ### Step 4: 回報結果
 
 顯示以下資訊：
