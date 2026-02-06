@@ -31,4 +31,5 @@ PDFs/
 
 # MkDocs
 site/
-docs/
+docs/*
+!docs/assets/
