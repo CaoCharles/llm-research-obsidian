@@ -33,15 +33,17 @@ argument-hint: "[topic] [--classic]"
 - 熱門論文：按引用數 + 最近關注度排序
 - 經典論文：按總引用數排序，發表時間較早
 
-執行搜尋：
+**優先嘗試 CLI**：
 
 ```bash
 cd lpdd && uv run python cli.py trending "{topic}" [--classic]
 ```
 
-若 CLI 尚未支援，則使用 WebSearch 搜尋：
-- 搜尋 "most cited LLM {topic} papers 2024 2025"
-- 或 "influential {topic} papers arxiv"
+**若 CLI 因 proxy/網路問題失敗，或 CLI 尚未支援，改用 WebSearch 備援**：
+- 搜尋 `most cited LLM {topic} papers 2025 2026`
+- 或 `influential {topic} papers arxiv`
+- 或 `{topic} survey arxiv LLM` 尋找綜述論文
+- 使用 Semantic Scholar 或 Google Scholar 搜尋以取得引用數
 
 ### Step 2: 整理並顯示結果
 
