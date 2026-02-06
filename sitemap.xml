@@ -5,15 +5,75 @@
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Daily/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Daily/2026-02-04/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/adversarial-samples/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Daily/2026-02-05/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/critical-path/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/dataset-lifecycle/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/edge-cases/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/golden-testset/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/tools-arize/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/tools-deepeval/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Benchmark-Governance/tools-ragas/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/bias-detection/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/explainability/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/fairness/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/metrics-accuracy/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/metrics-consistency/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/metrics-faithfulness/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/metrics-relevance/</loc>
+         <lastmod>2026-02-06</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Evaluation-Framework/responsible-ai/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
@@ -161,143 +221,35 @@
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/active-learning/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/ai-security/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/adversarial-robustness/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/attack-vectors/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/agent-benchmark/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/defense-jailbreaking/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/agent-evaluation/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/defense-pii/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/agent/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/defense-prompt-injection/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/agentic-rag/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/red-teaming-guide/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
     <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/ai-agent/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/alignment/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/benchmark-evaluation/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/benchmark/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/certified-defense/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/embodied-ai/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/factuality/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/faithful-reasoning/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/faithfulness/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-detection/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-factuality/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination-mitigation/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/hallucination/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/interactive-ai/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/llm-as-judge/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/multimodal-reasoning/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/multimodal-safety/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/multimodal/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/omni-models/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/prompt-injection/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/rag-evaluation/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/rag-retrieval/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/red-teaming/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/rlhf/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/safety-alignment/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/safety/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/security/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://CaoCharles.github.io/llm-research-obsidian/Topics/vlm/</loc>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Security-RedTeam/stress-testing/</loc>
          <lastmod>2026-02-06</lastmod>
     </url>
 </urlset>
