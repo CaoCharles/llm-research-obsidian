@@ -1,13 +1,13 @@
 ---
 name: MkDocs 部署流程
-description: DCKA 文件網站的本地預覽與 GitHub Pages 部署流程
+description: LLM 評測知識庫的本地預覽與 GitHub Pages 部署流程
 ---
 
 # MkDocs 部署流程 Skill
 
 ## 概述
 
-本 Skill 定義 DCKA 課程網站的部署流程，包含本地預覽、GitHub 提交、和 GitHub Pages 部署。
+本 Skill 定義 LLM 評測知識庫的部署流程，包含本地預覽、GitHub 提交、和 GitHub Pages 部署。
 
 ## 觸發條件
 
@@ -73,35 +73,27 @@ uv run mkdocs gh-deploy --force
 
 **預期輸出**：
 ```
-INFO    -  Your documentation should shortly be available at: https://CaoCharles.github.io/dcka-class-notes/
+INFO    -  Your documentation should shortly be available at: https://CaoCharles.github.io/llm-research-obsidian/
 ```
 
 ---
 
-## 專案特殊設定
+## 網站結構
 
-### 自動生成 content.json
+### 目前主題
 
-本專案使用 MkDocs Hook 在建置時自動生成 `content.json`：
+| 主題 | 頁面數 | 內容 |
+|------|--------|------|
+| **評測策略與框架** | 9 | 準確率、相關性、真實性、一致性、Responsible AI |
+| **基準測試與數據治理** | 9 | 黃金測試集、評測工具（RAGAS、DeepEval、Arize）|
+| **安全性與紅隊演練** | 8 | Jailbreaking、Prompt Injection、PII 防護 |
+| **論文庫** | N | 收錄的 LLM 相關論文 |
 
-**設定位置**: `mkdocs.yml`
-```yaml
-hooks:
-  - .agent/skills/chatbot-setup/assets/generate_content.py
-```
+### 專案特殊設定
 
-**Hook 腳本**: `.agent/skills/chatbot-setup/assets/generate_content.py`
-- 讀取所有 `.md` 檔案
-- 生成 `site/content.json` 供 AI Chatbot 使用
-
-### 使用的外掛
-
-| 外掛 | 用途 |
-|------|------|
-| `glightbox` | 圖片放大檢視 |
-| `git-revision-date-localized` | 顯示最後更新時間 |
-| `git-authors` | 顯示作者資訊 |
-| `mkdocs-pdf` | 嵌入 PDF 預覽視窗 |
+**自動生成 content.json**：
+- Hook 腳本：`.agent/skills/chatbot-setup/assets/generate_content.py`
+- 在建置時自動生成供 AI Chatbot 使用
 
 ---
 
@@ -111,18 +103,10 @@ hooks:
 **解決**：清除瀏覽器快取，或等待 1-2 分鐘
 
 ### 問題：Mermaid 圖表不顯示
-**解決**：確認 `mkdocs.yml` 有正確設定：
-```yaml
-markdown_extensions:
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-```
+**解決**：確認 `mkdocs.yml` 有正確設定 superfences
 
 ### 問題：content.json 沒有生成
-**解決**：確認 `hooks/generate_content.py` 存在且 `mkdocs.yml` 有設定 hooks
+**解決**：確認 hooks 設定正確
 
 ---
 
@@ -131,6 +115,7 @@ markdown_extensions:
 | 檔案 | 說明 |
 |------|------|
 | `mkdocs.yml` | MkDocs 主設定檔 |
-| `.agent/skills/chatbot-setup/assets/generate_content.py` | 自動生成 content.json |
-| `docs/assets/css/extra.css` | 客製 CSS 樣式 |
-| `docs/assets/js/chatbot.js` | AI Chatbot 前端 |
+| `docs/index.md` | 首頁 |
+| `docs/Evaluation-Framework/` | 評測策略章節 |
+| `docs/Benchmark-Governance/` | 基準測試章節 |
+| `docs/Security-RedTeam/` | 安全性章節 |
