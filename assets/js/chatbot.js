@@ -17,7 +17,7 @@ const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-window.INITIAL_PROMPT = "嗨！有什麼關於 LLM 評測的問題嗎？💡\n\n試試問我：\n• RAGAS 怎麼用？\n• 什麼是紅隊演練？\n• 最新 RAG 論文有哪些？";
+window.INITIAL_PROMPT = "👋 嗨！我是 LLM 評測助教\n\n可以問我關於：\n📊 評測指標與框架\n🔬 RAGAS、DeepEval 工具\n🛡️ 紅隊演練與安全測試\n📄 論文摘要與見解";
 
 // ====== 連結修正 ======
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
@@ -25,13 +25,19 @@ const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
 function fixBrokenLinks(text) {
     return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
         if (url.startsWith('http://') || url.startsWith('https://')) {
-            return match;
+            // 修正已有完整 URL 但帶 .md 的情況
+            url = url.replace(/\.md(#|$)/, '/$1').replace(/\/\/$/, '/');
+            return `[${linkText}](${url})`;
         }
-        if (url.startsWith('/')) {
-            return `[${linkText}](${BASE_URL}${url})`;
+        // 移除 .md 副檔名，轉為目錄式 URL
+        let cleanUrl = url.replace(/\.md(#|$)/, '/$1').replace(/\/\/$/, '/');
+        // 移除相對路徑前綴 ../
+        cleanUrl = cleanUrl.replace(/^(\.\.\/)+/, '');
+        if (cleanUrl.startsWith('/')) {
+            return `[${linkText}](${BASE_URL}${cleanUrl})`;
         }
-        if (!url.startsWith('#')) {
-            return `[${linkText}](${BASE_URL}/${url})`;
+        if (!cleanUrl.startsWith('#')) {
+            return `[${linkText}](${BASE_URL}/${cleanUrl})`;
         }
         return match;
     });
