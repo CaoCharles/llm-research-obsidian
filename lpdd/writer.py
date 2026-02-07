@@ -129,18 +129,34 @@ def write_paper_note(
     
     # 渲染模板
     content = template.render(**data)
-    
+
     # 建立輸出路徑（使用論文標題作為檔名）
     output_dir = vault_path / "Papers"
     ensure_dir(output_dir)
-    
+
     # 檔名格式: "[arXiv ID] 標題.md"
     safe_filename = f"[{paper.arxiv_id}] {paper.safe_title}.md"
     output_path = output_dir / safe_filename
-    
+
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
-    
+
+    # 同步寫入 docs/Papers/（MkDocs 用）
+    docs_papers_dir = vault_path / "docs" / "Papers"
+    if docs_papers_dir.exists():
+        docs_output_path = docs_papers_dir / safe_filename
+        with open(docs_output_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+    # 同步複製 PDF 到 docs/PDFs/
+    if pdf_path is not None:
+        import shutil
+        docs_pdfs_dir = vault_path / "docs" / "PDFs"
+        if docs_pdfs_dir.exists():
+            src_pdf = vault_path / "PDFs" / pdf_filename
+            if src_pdf.exists():
+                shutil.copy2(src_pdf, docs_pdfs_dir / pdf_filename)
+
     return output_path
 
 

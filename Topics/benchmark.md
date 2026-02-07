@@ -45,6 +45,10 @@ SORT date DESC
 
 ## 相關論文
 
+- `[Safety-Alignment]` [[[2512.10449] When Reject Turns into Accept - Quantifying the Vulnerability of LLM-Based Scien...|When Reject Turns into Accept: Quantifying the Vul...]] (2025-12-11)
+
+- `[Safety-Alignment]` [[[2602.05656] Alignment Verifiability in Large Language Models - Normative Indistinguishabilit...|Alignment Verifiability in Large Language Models: ...]] (2026-02-05)
+
 - `[Safety-Alignment]` [[[2601.03699] RedBench - A Universal Dataset for Comprehensive Red Teaming of Large Language M...|RedBench: A Universal Dataset for Comprehensive Re...]] (2026-01-07)
 
 - `[Hallucination]` [[[2601.09929] Hallucination Detection and Mitigation in Large Language Models|Hallucination Detection and Mitigation in Large La...]] (2026-01-14)

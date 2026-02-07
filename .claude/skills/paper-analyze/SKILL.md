@@ -45,6 +45,7 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 2. **技術準確**: 保留關鍵技術術語的英文，確保翻譯準確不失真
 3. **批判思考**: 分析論文的優勢、限制和潛在影響，提供有價值的見解
 4. **實用導向**: 在「對我們的啟發」中提供可操作的洞察，而非空泛評論
+5. **⚠️ insights 欄位必須是純文字**：不要加 `- [ ] ` 前綴，模板渲染時會自動加上 checkbox 格式
 
 ```json
 {
@@ -75,9 +76,9 @@ cd lpdd && uv run python cli.py get {arxiv_id}
     "key_results": "關鍵實驗結果（必須使用 Markdown 表格）\n要求：\n- 包含主要性能指標的數值對比\n- 展示本文方法相對於 baseline 的提升\n- 如有消融實驗，也應呈現關鍵結果\n- 表格要清晰、易讀、有對比性",
 
     "insights": [
-      "洞察1（技術啟發：方法可以如何應用或改進）",
-      "洞察2（理論啟發：揭示了什麼規律或原理）",
-      "洞察3（實踐啟發：對實際部署或研究方向的建議）"
+      "洞察1 純文字，不要加 '- [ ] ' 前綴（技術啟發：方法可以如何應用或改進）",
+      "洞察2 純文字，不要加 '- [ ] ' 前綴（理論啟發：揭示了什麼規律或原理）",
+      "洞察3 純文字，不要加 '- [ ] ' 前綴（實踐啟發：對實際部署或研究方向的建議）"
     ],
 
     "limitations": "論文的限制、不足或未來工作方向（80-100字）\n要點：客觀指出方法的適用範圍、實驗的局限、未解決的問題",
@@ -117,22 +118,13 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 cd lpdd && uv run python cli.py write {json_file_path}
 ```
 
-### Step 3.5: 確認 PDF 嵌入格式
+### Step 3.5: 自動同步（已內建）
 
-寫入後確認生成的 markdown 使用 **MkDocs 相容語法**（非 Obsidian `![[]]` 語法）：
+CLI 的 `write` 命令現在會自動：
+- 同步寫入 `docs/Papers/`（MkDocs 用）
+- 同步複製 PDF 到 `docs/PDFs/`
 
-```markdown
-## 論文預覽
-
-[📥 點選查看論文 (PDF)](../PDFs/{arxiv_id}.pdf)
-
-![{title}](../PDFs/{arxiv_id}.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
-```
-
-連結區塊的本地 PDF 也應使用標準 markdown 連結：
-```markdown
-- 📎 本地 PDF: [PDF](../PDFs/{arxiv_id}.pdf)
-```
+**不需要手動複製檔案到 docs/ 目錄。**
 
 ### Step 4: 回報結果
 
