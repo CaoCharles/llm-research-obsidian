@@ -81,6 +81,38 @@
          <lastmod>2026-02-07</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2504.19793%5D%20Prompt%20Injection%20Attack%20to%20Tool%20Selection%20in%20LLM%20Agents/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2511.05797%5D%20When%20AI%20Meets%20the%20Web%20-%20Prompt%20Injection%20Risks%20in%20Third-Party%20AI%20Chatbot%20Plugins/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2512.09321%5D%20ObliInjection%20-%20Order-Oblivious%20Prompt%20Injection%20Attack%20to%20LLM%20Agents%20with%20Multi.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2512.10449%5D%20When%20Reject%20Turns%20into%20Accept%20-%20Quantifying%20the%20Vulnerability%20of%20LLM-Based%20Scien.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2601.04666%5D%20Know%20Thy%20Enemy%20-%20Securing%20LLMs%20Against%20Prompt%20Injection%20via%20Diverse%20Data%20Synthes.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2601.04795%5D%20Defense%20Against%20Indirect%20Prompt%20Injection%20via%20Tool%20Result%20Parsing/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2601.05504%5D%20Memory%20Poisoning%20Attack%20and%20Defense%20on%20Memory%20Based%20LLM-Agents/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2601.12359%5D%20Zero-Shot%20Embedding%20Drift%20Detection%20-%20A%20Lightweight%20Defense%20Against%20Prompt%20Injec.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.00238%5D%20Diverge%20-%20Diversity-Enhanced%20Retrieval-Augmented%20Generation/</loc>
          <lastmod>2026-02-07</lastmod>
     </url>
@@ -102,6 +134,10 @@
     </url>
     <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.01640%5D%20A2Eval%20-%20Agentic%20and%20Automated%20Evaluation%20for%20Embodied%20Brain/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.02287%5D%20Cross-Lingual%20Stability%20of%20LLM%20Judges%20Under%20Controlled%20Generation/</loc>
          <lastmod>2026-02-07</lastmod>
     </url>
     <url>
@@ -193,6 +229,10 @@
          <lastmod>2026-02-07</lastmod>
     </url>
     <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.04448%5D%20RASA%20-%20Routing-Aware%20Safety%20Alignment%20for%20Mixture-of-Experts%20Models/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.04496%5D%20ReThinker%20-%20Scientific%20Reasoning%20by%20Rethinking%20with%20Guided%20Reflection%20and%20Confid.../</loc>
          <lastmod>2026-02-07</lastmod>
     </url>
@@ -218,6 +258,30 @@
     </url>
     <url>
          <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.04813%5D%20Agentic%20AI%20in%20Healthcare%20%26%20Medicine%20-%20A%20Seven-Dimensional%20Taxonomy%20for%20Empirical.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05066%5D%20Bypassing%20AI%20Control%20Protocols%20via%20Agent-as-a-Proxy%20Attacks/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05125%5D%20Rethinking%20Rubric%20Generation%20for%20Improving%20LLM%20Judge%20and%20Reward%20Modeling/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05444%5D%20CFA2%20-%20Causal%20Front-Door%20Adjustment%20for%20Robust%20Jailbreak%20Attacks%20on%20LLMs/</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05484%5D%20Clouding%20the%20Mirror%20-%20Stealthy%20Prompt%20Injection%20Attacks%20Targeting%20LLM-based%20Phis.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05656%5D%20Alignment%20Verifiability%20in%20Large%20Language%20Models%20-%20Normative%20Indistinguishabilit.../</loc>
+         <lastmod>2026-02-07</lastmod>
+    </url>
+    <url>
+         <loc>https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2602.05746%5D%20AutoInject%20-%20Learning%20to%20Inject%20Automated%20Prompt%20Injection%20via%20Reinforcement%20Learning/</loc>
          <lastmod>2026-02-07</lastmod>
     </url>
     <url>
