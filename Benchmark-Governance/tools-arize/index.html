@@ -15,7 +15,7 @@
         <link rel="prev" href="../tools-deepeval/">
       
       
-        <link rel="next" href="../../Security-RedTeam/">
+        <link rel="next" href="../cross-tool-rag-benchmark/">
       
       
         
@@ -26,7 +26,7 @@
     
     
       
-        <title>Arize Phoenix - LLM 評測知識庫</title>
+        <title>Arize Phoenix 完整教學 - LLM 評測知識庫</title>
       
     
     
@@ -124,7 +124,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Arize Phoenix
+              Arize Phoenix 完整教學
             
           </span>
         </div>
@@ -1192,7 +1192,7 @@
   <span class="md-ellipsis">
     
   
-    RAGAS
+    RAGAS 完整教學
   
 
     
@@ -1220,7 +1220,7 @@
   <span class="md-ellipsis">
     
   
-    DeepEval
+    DeepEval 完整教學
   
 
     
@@ -1257,7 +1257,7 @@
   <span class="md-ellipsis">
     
   
-    Arize Phoenix
+    Arize Phoenix 完整教學
   
 
     
@@ -1275,7 +1275,7 @@
   <span class="md-ellipsis">
     
   
-    Arize Phoenix
+    Arize Phoenix 完整教學
   
 
     
@@ -1301,10 +1301,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#phoenix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 Phoenix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phoenix_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phoenix 在整體治理中的位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        兩條能力線：Observability 與 Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        你在專案裡應優先使用的能力
       
     </span>
   </a>
@@ -1315,38 +1359,32 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#llm" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLM 可觀測性
+        常用評測器應該怎麼看
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        追蹤的重要性
+        與金融共用測試集的對接
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#langchain-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LangChain Tracing 整合（你提供的重點資源）
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1354,49 +1392,10 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心功能
+        實務上最容易踩的坑
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="核心功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tracing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追蹤（Tracing）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#evaluation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測（Evaluation）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experimentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        實驗（Experimentation）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1404,107 +1403,29 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        學術應用
+        流程圖：線上問題回灌機制
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="學術應用">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        研究可複製性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        錯誤分析
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與研究工作流整合
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="與研究工作流整合">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測流程
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與學術基準整合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        工具比較
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -1515,6 +1436,62 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cross-tool-rag-benchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    金融文件橫向比較
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook 實作
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1932,10 +1909,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#phoenix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 Phoenix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phoenix_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phoenix 在整體治理中的位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        兩條能力線：Observability 與 Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        你在專案裡應優先使用的能力
       
     </span>
   </a>
@@ -1946,38 +1967,32 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#llm" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLM 可觀測性
+        常用評測器應該怎麼看
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        追蹤的重要性
+        與金融共用測試集的對接
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#langchain-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LangChain Tracing 整合（你提供的重點資源）
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1985,49 +2000,10 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心功能
+        實務上最容易踩的坑
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="核心功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tracing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追蹤（Tracing）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#evaluation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測（Evaluation）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experimentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        實驗（Experimentation）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2035,107 +2011,29 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        學術應用
+        流程圖：線上問題回灌機制
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="學術應用">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        研究可複製性
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        錯誤分析
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與研究工作流整合
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="與研究工作流整合">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測流程
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與學術基準整合
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        工具比較
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -2159,289 +2057,162 @@
 
 
 
-<h1 id="arize-phoenix">Arize Phoenix</h1>
+<h1 id="arize-phoenix">Arize Phoenix 完整教學（深入版）</h1>
 <blockquote>
-<p>LLM 可觀測性與評測的整合平台</p>
+<p>適用對象：需要「線上可觀測性 + 離線評測」一體化治理的團隊。</p>
 </blockquote>
-<h2 id="_1">概述</h2>
-<p><strong>Arize Phoenix</strong> 是一個開源的 LLM 可觀測性（Observability）平台，將追蹤、評測和分析整合在統一的框架中。其設計理念源於軟體工程的可觀測性實務，將 Tracing、Metrics、Logging 的概念應用於 LLM 系統。</p>
-<hr>
-<h2 id="_2">理論基礎</h2>
-<h3 id="llm">LLM 可觀測性</h3>
-<p>借鏡分散式系統的可觀測性三支柱：</p>
+<h2 id="phoenix">為什麼用 Phoenix</h2>
+<p>Phoenix 和另外兩個工具最大的差異是：它不只做評分，還把 trace、評分、錯誤分析放在同一個操作面。</p>
+<p>你可以用它回答這些問題：</p>
+<ol>
+<li>哪個 pipeline step 最常導致低品質回答。</li>
+<li>哪些失敗案例在特定版本突然變多。</li>
+<li>線上流量與離線評測是否一致。</li>
+</ol>
+<h2 id="2026-02-08">版本基準（截至 2026-02-08）</h2>
 <table>
 <thead>
 <tr>
-<th>支柱</th>
-<th>傳統系統</th>
-<th>LLM 系統</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Traces</strong></td>
-<td>請求追蹤</td>
-<td>Prompt Chain 追蹤</td>
-</tr>
-<tr>
-<td><strong>Metrics</strong></td>
-<td>效能指標</td>
-<td>品質評測指標</td>
-</tr>
-<tr>
-<td><strong>Logs</strong></td>
-<td>事件記錄</td>
-<td>輸入輸出記錄</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_3">追蹤的重要性</h3>
-<p>LLM 應用通常涉及複雜的 Chain：</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Query → Embedding → Retrieval → Reranking → Generation → Response
-</code></pre></div>
-<p>追蹤使得：
-- 識別慢速步驟
-- 定位錯誤來源
-- 分析成本分佈</p>
-<hr>
-<h2 id="_4">核心功能</h2>
-<h3 id="tracing">追蹤（Tracing）</h3>
-<table>
-<thead>
-<tr>
-<th>追蹤層次</th>
-<th>內容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Span</strong></td>
-<td>單一操作（如一次 LLM 呼叫）</td>
-</tr>
-<tr>
-<td><strong>Trace</strong></td>
-<td>完整請求的所有操作</td>
-</tr>
-<tr>
-<td><strong>Attributes</strong></td>
-<td>操作的元資料（Token 數、延遲等）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="evaluation">評測（Evaluation）</h3>
-<p>Phoenix 內建的評測模組：</p>
-<table>
-<thead>
-<tr>
-<th>評測類型</th>
+<th>元件</th>
+<th style="text-align: right;">建議版本</th>
 <th>說明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>幻覺評測</strong></td>
-<td>檢測生成內容中的幻覺</td>
+<td><code>arize-phoenix</code></td>
+<td style="text-align: right;"><code>12.33.1</code></td>
+<td>目前 PyPI 最新版</td>
 </tr>
 <tr>
-<td><strong>QA 評測</strong></td>
-<td>問答品質評估</td>
-</tr>
-<tr>
-<td><strong>相關性評測</strong></td>
-<td>檢索相關性評估</td>
-</tr>
-<tr>
-<td><strong>有害性評測</strong></td>
-<td>有害內容檢測</td>
+<td><code>arize-phoenix-evals</code></td>
+<td style="text-align: right;"><code>2.9.0</code></td>
+<td>目前 PyPI 最新版</td>
 </tr>
 </tbody>
 </table>
-<h3 id="experimentation">實驗（Experimentation）</h3>
-<p>支援系統化的實驗管理：</p>
+<h2 id="phoenix_1">Phoenix 在整體治理中的位置</h2>
+<pre class="mermaid"><code>flowchart LR
+    A[「線上請求與 trace」] --&gt; B[「Phoenix 收集與儲存」]
+    B --&gt; C[「批次評測」]
+    C --&gt; D[「儀表板觀察趨勢」]
+    D --&gt; E[「回灌測試集」]
+    E --&gt; F[「版本迭代」]
+    F --&gt; A</code></pre>
+<h2 id="observability-evaluation">兩條能力線：Observability 與 Evaluation</h2>
 <table>
 <thead>
 <tr>
-<th>功能</th>
-<th>說明</th>
+<th>能力線</th>
+<th>你會得到什麼</th>
+<th>適用時機</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>實驗追蹤</td>
-<td>記錄每次實驗的配置和結果</td>
+<td>Observability</td>
+<td>trace、延遲、步驟級失敗定位</td>
+<td>線上診斷與根因分析</td>
 </tr>
 <tr>
-<td>A/B 比較</td>
-<td>視覺化比較不同配置</td>
-</tr>
-<tr>
-<td>版本控制</td>
-<td>追蹤 Prompt 和模型版本</td>
+<td>Evaluation</td>
+<td>批次分數與標籤</td>
+<td>發版前驗收與週期回歸</td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="_5">學術應用</h2>
-<h3 id="_6">研究可複製性</h3>
-<p>Phoenix 的追蹤機制支援研究可複製性：</p>
+<h2 id="_1">你在專案裡應優先使用的能力</h2>
+<ol>
+<li>先用 code evaluator 建立本地可重現的規則評測。</li>
+<li>再加入 LLM evaluator（如 hallucination、relevance）。</li>
+<li>最後把線上 traces 納入同一套評測節奏。</li>
+</ol>
+<h2 id="_2">常用評測器應該怎麼看</h2>
 <table>
 <thead>
 <tr>
-<th>記錄項目</th>
-<th>用途</th>
+<th>評測器</th>
+<th>主要用途</th>
+<th>低分時先查哪裡</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>完整輸入</td>
-<td>精確複製請求</td>
+<td>HallucinationEvaluator</td>
+<td>檢查回答是否無根據</td>
+<td>檢索內容覆蓋率、回答約束</td>
 </tr>
 <tr>
-<td>模型版本</td>
-<td>確保使用相同模型</td>
+<td>RelevanceEvaluator</td>
+<td>檢查檢索與問題相關性</td>
+<td>檢索查詢改寫、rerank</td>
 </tr>
 <tr>
-<td>參數設定</td>
-<td>溫度、Top-p 等</td>
+<td>QAEvaluator</td>
+<td>檢查回答品質</td>
+<td>回答結構、資訊完整度</td>
 </tr>
 <tr>
-<td>完整輸出</td>
-<td>比對輸出結果</td>
+<td>自訂 code evaluator</td>
+<td>將內規落地</td>
+<td>規則定義是否可執行</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_7">錯誤分析</h3>
-<p>系統化的錯誤分類和分析：</p>
-<table>
-<thead>
-<tr>
-<th>分析維度</th>
-<th>說明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>時間分佈</td>
-<td>錯誤隨時間的變化</td>
-</tr>
-<tr>
-<td>類型分佈</td>
-<td>不同錯誤類型的比例</td>
-</tr>
-<tr>
-<td>根因分析</td>
-<td>追蹤錯誤到具體步驟</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_8">與研究工作流整合</h2>
-<h3 id="_9">評測流程</h3>
-<table>
-<thead>
-<tr>
-<th>階段</th>
-<th>Phoenix 功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>資料收集</td>
-<td>自動記錄生產請求</td>
-</tr>
-<tr>
-<td>評測執行</td>
-<td>批量執行評測</td>
-</tr>
-<tr>
-<td>結果分析</td>
-<td>視覺化儀表板</td>
-</tr>
-<tr>
-<td>報告生成</td>
-<td>匯出評測報告</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_10">與學術基準整合</h3>
-<p>Phoenix 可與標準基準測試配合：</p>
-<table>
-<thead>
-<tr>
-<th>基準</th>
-<th>整合方式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MMLU</td>
-<td>批量評測 + 結果追蹤</td>
-</tr>
-<tr>
-<td>GSM8K</td>
-<td>追蹤推理過程</td>
-</tr>
-<tr>
-<td>HumanEval</td>
-<td>代碼執行結果追蹤</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_11">工具比較</h2>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Phoenix</th>
-<th>RAGAS</th>
-<th>DeepEval</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>追蹤功能</td>
-<td>✓✓</td>
-<td>✗</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>RAG 評測</td>
-<td>✓</td>
-<td>✓✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>視覺化</td>
-<td>✓✓</td>
-<td>✗</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>開源</td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>本地部署</td>
-<td>✓✓</td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_12">相關主題</h2>
+<h2 id="_3">與金融共用測試集的對接</h2>
+<p>Phoenix Notebook 與其他兩套工具共用：</p>
 <ul>
-<li><a href="../tools-ragas/">RAGAS 指南</a></li>
-<li><a href="../tools-deepeval/">DeepEval 指南</a></li>
+<li>文件：<code>/Benchmark-Governance/data/financial-stability-report-20211108.pdf</code></li>
+<li>問題集：<code>/Benchmark-Governance/data/finance-rag-benchmark.json</code></li>
 </ul>
-<hr>
-<h2 id="_13">參考文獻</h2>
+<p>這可直接比較同一份回答在三個框架中的評分差異。</p>
+<h2 id="langchain-tracing">LangChain Tracing 整合（你提供的重點資源）</h2>
+<p>若你的 RAG pipeline 是 LangChain，建議優先完成 Phoenix tracing 整合，再進入評測。<br>
+這樣你不只知道「分數低」，還能直接知道「哪個鏈路步驟造成低分」。</p>
+<p>建議閱讀順序：</p>
+<ol>
+<li>Phoenix 官方整合文件（LangChain tracing）<br>
+<a href="https://arize.com/docs/phoenix/integrations/python/langchain/langchain-tracing">https://arize.com/docs/phoenix/integrations/python/langchain/langchain-tracing</a></li>
+<li>官方 Colab 教學（LangChain tracing tutorial）<br>
+<a href="https://colab.research.google.com/github/Arize-ai/phoenix/blob/main/tutorials/tracing/langchain_tracing_tutorial.ipynb">https://colab.research.google.com/github/Arize-ai/phoenix/blob/main/tutorials/tracing/langchain_tracing_tutorial.ipynb</a></li>
+</ol>
+<p>建議導入流程：</p>
+<ol>
+<li>先把 LangChain pipeline trace 成功送進 Phoenix。</li>
+<li>確認每個 step（檢索、重排、生成）都能在 trace 中被區分。</li>
+<li>將低分樣本對回 trace，做步驟級根因分析。</li>
+<li>依 trace 結論修正後，回到三工具共同 benchmark 重跑。</li>
+</ol>
+<p>整合後你的收益：</p>
+<ol>
+<li>評分與根因不再分離，排障速度提升。</li>
+<li>能建立「線上異常 -&gt; 離線重現 -&gt; 修正驗證」閉環。</li>
+<li>可把 LangChain trace 直接納入團隊週期性品質審查。</li>
+</ol>
+<h2 id="_4">實務上最容易踩的坑</h2>
+<ol>
+<li>只建 dashboard，不做失敗案例閉環。</li>
+<li>評測規則沒有版本化，歷史趨勢不可解釋。</li>
+<li>把所有問題丟給 LLM evaluator，忽略可 deterministic 的 code rules。</li>
+<li>線上 trace 沒做抽樣策略，噪音太大。</li>
+</ol>
+<h2 id="_5">流程圖：線上問題回灌機制</h2>
+<pre class="mermaid"><code>flowchart TD
+    A[「線上低品質回覆」] --&gt; B[「從 trace 定位失敗步驟」]
+    B --&gt; C[「加入金融測試集」]
+    C --&gt; D[「Phoenix 批次評測」]
+    D --&gt; E[「與 RAGAS / DeepEval 對照」]
+    E --&gt; F[「修檢索、修生成、修規則」]
+    F --&gt; G[「重新發布並持續監控」]</code></pre>
+<h2 id="notebook">對應 Notebook</h2>
 <ul>
-<li>Arize AI (2024). "Phoenix: Open-Source LLM Observability"</li>
-<li>Software Engineering Institute (2020). "Observability Primer"</li>
+<li><code>/Benchmark-Governance/notebooks/arize-phoenix-tutorial.ipynb</code></li>
+</ul>
+<h2 id="_6">官方資源</h2>
+<ul>
+<li>Phoenix Docs: <a href="https://arize.com/docs/phoenix">https://arize.com/docs/phoenix</a></li>
+<li>arize-phoenix PyPI: <a href="https://pypi.org/project/arize-phoenix/">https://pypi.org/project/arize-phoenix/</a></li>
+<li>arize-phoenix-evals PyPI: <a href="https://pypi.org/project/arize-phoenix-evals/">https://pypi.org/project/arize-phoenix-evals/</a></li>
 </ul>
 
 
@@ -2465,7 +2236,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月9日 00:53:03 CST">2026年2月9日 00:53:03</span>
   </span>
 
     

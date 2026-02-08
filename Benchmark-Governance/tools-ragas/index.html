@@ -26,7 +26,7 @@
     
     
       
-        <title>RAGAS - LLM 評測知識庫</title>
+        <title>RAGAS 完整教學 - LLM 評測知識庫</title>
       
     
     
@@ -124,7 +124,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              RAGAS
+              RAGAS 完整教學
             
           </span>
         </div>
@@ -1201,7 +1201,7 @@
   <span class="md-ellipsis">
     
   
-    RAGAS
+    RAGAS 完整教學
   
 
     
@@ -1219,7 +1219,7 @@
   <span class="md-ellipsis">
     
   
-    RAGAS
+    RAGAS 完整教學
   
 
     
@@ -1245,10 +1245,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#ragas_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 RAGAS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ragas_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAGAS 在評測流程中的角色
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        你應該先理解的五個指標
       
     </span>
   </a>
@@ -1259,38 +1292,21 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RAG 系統的評測挑戰
+        實戰導入步驟（無程式碼版）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        分離式評估
+        與你目前金融樣本的對接
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1298,196 +1314,51 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心指標
+        判讀結果時的常見誤區
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="核心指標">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ragas_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        什麼時候優先用 RAGAS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        生成品質指標
+        流程圖：從低分到修正
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        檢索品質指標
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        指標計算方法
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="指標計算方法">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#faithfulness" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Faithfulness
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#answer-relevancy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Answer Relevancy
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#context-precision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context Precision
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#context-recall" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context Recall
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        學術貢獻
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="學術貢獻">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與傳統指標的比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        局限性討論
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        應用建議
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="應用建議">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測流程設計
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        閾值設定
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -1517,7 +1388,7 @@
   <span class="md-ellipsis">
     
   
-    DeepEval
+    DeepEval 完整教學
   
 
     
@@ -1545,7 +1416,63 @@
   <span class="md-ellipsis">
     
   
-    Arize Phoenix
+    Arize Phoenix 完整教學
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cross-tool-rag-benchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    金融文件橫向比較
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook 實作
   
 
     
@@ -1971,10 +1898,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#ragas_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 RAGAS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ragas_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAGAS 在評測流程中的角色
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        你應該先理解的五個指標
       
     </span>
   </a>
@@ -1985,38 +1945,21 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RAG 系統的評測挑戰
+        實戰導入步驟（無程式碼版）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        分離式評估
+        與你目前金融樣本的對接
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2024,196 +1967,51 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心指標
+        判讀結果時的常見誤區
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="核心指標">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ragas_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        什麼時候優先用 RAGAS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        生成品質指標
+        流程圖：從低分到修正
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        檢索品質指標
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        指標計算方法
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="指標計算方法">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#faithfulness" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Faithfulness
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#answer-relevancy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Answer Relevancy
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#context-precision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context Precision
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#context-recall" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context Recall
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        學術貢獻
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="學術貢獻">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與傳統指標的比較
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        局限性討論
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        應用建議
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="應用建議">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        評測流程設計
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        閾值設定
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -2237,198 +2035,151 @@
 
 
 
-<h1 id="ragas">RAGAS 評測框架</h1>
+<h1 id="ragas">RAGAS 完整教學（深入版）</h1>
 <blockquote>
-<p>RAG 系統的標準化評測方法論</p>
+<p>適用對象：第一次導入 RAG 評測的新人工程師、需要把「檢索問題」與「生成問題」分開治理的團隊。</p>
 </blockquote>
-<h2 id="_1">概述</h2>
-<p><strong>RAGAS</strong>（Retrieval-Augmented Generation Assessment）是 Es et al. (2024) 提出的 RAG 系統評測框架，提供系統化的評測指標和方法論，已成為 RAG 評測的事實標準。</p>
-<hr>
-<h2 id="_2">理論基礎</h2>
-<h3 id="rag">RAG 系統的評測挑戰</h3>
-<p>RAG 系統結合檢索與生成兩個組件，評測面臨獨特挑戰：</p>
+<h2 id="ragas_1">為什麼用 RAGAS</h2>
+<p>RAGAS 的核心價值不是「多一個分數」，而是把 RAG 失敗拆成可修復的子問題：</p>
+<ol>
+<li>檢索是否找對內容。</li>
+<li>回答是否忠於內容。</li>
+<li>回答是否切題。</li>
+<li>回答是否真的利用到檢索內容。</li>
+</ol>
+<p>這種拆解非常適合你現在的 LLM 評測專案，因為可以直接對應到資料治理、prompt 優化與檢索策略優化。</p>
+<h2 id="2026-02-08">版本基準（截至 2026-02-08）</h2>
 <table>
 <thead>
 <tr>
-<th>挑戰</th>
+<th>元件</th>
+<th style="text-align: right;">建議版本</th>
 <th>說明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>組件耦合</strong></td>
-<td>檢索錯誤與生成錯誤混合</td>
+<td><code>ragas</code></td>
+<td style="text-align: right;"><code>0.4.3</code></td>
+<td>目前 PyPI 最新版</td>
 </tr>
 <tr>
-<td><strong>評測複雜度</strong></td>
-<td>需同時評估多個維度</td>
+<td>評審模型</td>
+<td style="text-align: right;">固定單一版本</td>
+<td>建議溫度固定、避免分數漂移</td>
 </tr>
 <tr>
-<td><strong>標準缺失</strong></td>
-<td>缺乏統一的評測標準</td>
+<td>embeddings</td>
+<td style="text-align: right;">固定單一版本</td>
+<td>避免跨次評測不可比</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_3">分離式評估</h3>
-<p>RAGAS 的核心理念是分離評估檢索和生成的品質：</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[問題] → [檢索] → [上下文] → [生成] → [答案]
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>         ↓                    ↓
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    檢索品質評估          生成品質評估
-</code></pre></div>
-<hr>
-<h2 id="_4">核心指標</h2>
-<h3 id="_5">生成品質指標</h3>
+<h2 id="ragas_2">RAGAS 在評測流程中的角色</h2>
+<pre class="mermaid"><code>flowchart LR
+    A[「共用金融語料」] --&gt; B[「RAG Pipeline 產生回答」]
+    B --&gt; C[「RAGAS 指標評分」]
+    C --&gt; D[「維度診斷」]
+    D --&gt; D1[「檢索面修正」]
+    D --&gt; D2[「生成面修正」]
+    D1 --&gt; E[「再次評測」]
+    D2 --&gt; E</code></pre>
+<h2 id="_1">你應該先理解的五個指標</h2>
 <table>
 <thead>
 <tr>
 <th>指標</th>
-<th>定義</th>
-<th>衡量對象</th>
+<th>問題意義</th>
+<th>高分代表</th>
+<th>低分常見原因</th>
+<th>優先修正方向</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Faithfulness</strong></td>
-<td>答案對上下文的忠實程度</td>
-<td>幻覺程度</td>
+<td>Faithfulness</td>
+<td>回答是否忠於來源</td>
+<td>回答幾乎都能在檢索內容找到依據</td>
+<td>幻覺、過度推論</td>
+<td>約束回答可引用範圍、加入引用檢查</td>
 </tr>
 <tr>
-<td><strong>Answer Relevancy</strong></td>
-<td>答案與問題的相關程度</td>
-<td>回答切題性</td>
+<td>Answer Relevancy</td>
+<td>回答是否切題</td>
+<td>回答覆蓋問題核心意圖</td>
+<td>答非所問、過度冗長</td>
+<td>重寫問題模板、加意圖分類</td>
+</tr>
+<tr>
+<td>Context Precision</td>
+<td>檢索排序是否精準</td>
+<td>前段檢索多為高相關內容</td>
+<td>高噪音 chunk 排在前面</td>
+<td>調整檢索排序與 rerank</td>
+</tr>
+<tr>
+<td>Context Recall</td>
+<td>檢索是否完整</td>
+<td>回答所需關鍵資訊多被召回</td>
+<td>召回不足、chunk 切分不佳</td>
+<td>擴充召回、改善 chunk 策略</td>
+</tr>
+<tr>
+<td>Context Utilization</td>
+<td>回答是否有效使用上下文</td>
+<td>回答明顯由檢索內容支撐</td>
+<td>模型忽略檢索段落</td>
+<td>強化 grounding 指令</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">檢索品質指標</h3>
-<table>
-<thead>
-<tr>
-<th>指標</th>
-<th>定義</th>
-<th>衡量對象</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Context Precision</strong></td>
-<td>相關上下文在檢索結果中的排序</td>
-<td>精確性</td>
-</tr>
-<tr>
-<td><strong>Context Recall</strong></td>
-<td>標準答案可從上下文推導的程度</td>
-<td>完整性</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_7">指標計算方法</h2>
-<h3 id="faithfulness">Faithfulness</h3>
-<p>評估答案中每個陳述是否可從上下文推導：</p>
+<h2 id="_2">實戰導入步驟（無程式碼版）</h2>
 <ol>
-<li>將答案拆解為獨立陳述</li>
-<li>對每個陳述判斷是否有上下文支持</li>
-<li>計算有支持的陳述比例</li>
+<li>定義共用資料集與問題集。</li>
+<li>以固定版 RAG pipeline 先跑一次 baseline。</li>
+<li>用 RAGAS 計算五個核心指標。</li>
+<li>先看低分案例，再看平均分。</li>
+<li>依指標類型分流修正：
+檢索面：Context Precision/Recall。
+生成面：Faithfulness/Relevancy/Utilization。</li>
+<li>每輪只改一到兩個變因，保留實驗紀錄。</li>
 </ol>
-<p>$$\text{Faithfulness} = \frac{|V|}{|S|}$$</p>
-<p>其中 $S$ 是所有陳述，$V$ 是可驗證的陳述。</p>
-<h3 id="answer-relevancy">Answer Relevancy</h3>
-<p>評估答案與問題的語義相關性：</p>
-<ol>
-<li>從答案反向生成可能的問題</li>
-<li>計算生成問題與原始問題的語義相似度</li>
-<li>取平均相似度</li>
-</ol>
-<h3 id="context-precision">Context Precision</h3>
-<p>評估相關上下文的排序品質：</p>
-<p>$$\text{Context Precision@K} = \frac{\sum_{k=1}^{K} (\text{Precision@k} \times v_k)}{\text{相關項目總數}}$$</p>
-<p>其中 $v_k = 1$ 當第 $k$ 個上下文相關。</p>
-<h3 id="context-recall">Context Recall</h3>
-<p>評估標準答案是否可從上下文推導：</p>
-<ol>
-<li>將標準答案拆解為陳述</li>
-<li>對每個陳述判斷是否可從上下文推導</li>
-<li>計算可推導的比例</li>
-</ol>
-<hr>
-<h2 id="_8">學術貢獻</h2>
-<h3 id="_9">與傳統指標的比較</h3>
-<p>Es et al. (2024) 的實驗顯示：</p>
-<table>
-<thead>
-<tr>
-<th>指標</th>
-<th>與人類判斷相關性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>RAGAS Faithfulness</td>
-<td>0.67</td>
-</tr>
-<tr>
-<td>BLEU</td>
-<td>0.12</td>
-</tr>
-<tr>
-<td>ROUGE-L</td>
-<td>0.18</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_10">局限性討論</h3>
-<p>研究者指出的局限：
-- 依賴 LLM 作為評審的偏見
-- 對複雜推理的評估能力有限
-- 跨語言應用需進一步驗證</p>
-<hr>
-<h2 id="_11">應用建議</h2>
-<h3 id="_12">評測流程設計</h3>
-<ol>
-<li><strong>基線建立</strong>：先評測基線系統</li>
-<li><strong>維度分析</strong>：識別主要問題維度</li>
-<li><strong>迭代改進</strong>：針對弱項優化</li>
-<li><strong>持續監控</strong>：部署後持續追蹤</li>
-</ol>
-<h3 id="_13">閾值設定</h3>
-<table>
-<thead>
-<tr>
-<th>應用場景</th>
-<th>Faithfulness</th>
-<th>Answer Relevancy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>高風險應用</td>
-<td>≥ 0.9</td>
-<td>≥ 0.85</td>
-</tr>
-<tr>
-<td>一般業務</td>
-<td>≥ 0.8</td>
-<td>≥ 0.75</td>
-</tr>
-<tr>
-<td>探索性應用</td>
-<td>≥ 0.7</td>
-<td>≥ 0.65</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_14">相關主題</h2>
+<h2 id="_3">與你目前金融樣本的對接</h2>
+<p>本專案已提供共用測試資料：</p>
 <ul>
-<li><a href="../tools-deepeval/">DeepEval 指南</a></li>
-<li><a href="../tools-arize/">Arize Phoenix 指南</a></li>
-<li><a href="../../Evaluation-Framework/metrics-faithfulness/">真實性評估</a></li>
+<li>文件：<code>/Benchmark-Governance/data/financial-stability-report-20211108.pdf</code></li>
+<li>問題集：<code>/Benchmark-Governance/data/finance-rag-benchmark.json</code></li>
 </ul>
-<hr>
-<h2 id="_15">參考文獻</h2>
+<p>RAGAS Notebook 會直接讀這兩份資料，和 DeepEval/Phoenix 使用相同資料來源，方便橫向比較。</p>
+<h2 id="_4">判讀結果時的常見誤區</h2>
+<ol>
+<li>只看平均分，不看個案分布。</li>
+<li>一次改太多設定，無法定位改善來源。</li>
+<li>評審模型版本不固定，導致歷史分數不可比。</li>
+<li>把 RAGAS 當「最終裁決」，不做人類抽樣審查。</li>
+</ol>
+<h2 id="ragas_3">什麼時候優先用 RAGAS</h2>
 <ul>
-<li>Es, S., et al. (2024). "RAGAS: Automated Evaluation of Retrieval Augmented Generation"</li>
-<li>Saad-Falcon, J., et al. (2023). "ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems"</li>
+<li>你主要是做 RAG，且想要精準分離檢索與生成責任。</li>
+<li>你有明確的知識庫來源，希望追蹤「引用忠實度」。</li>
+<li>你要建立週期性回歸評測，避免上線後品質慢性退化。</li>
+</ul>
+<h2 id="_5">流程圖：從低分到修正</h2>
+<pre class="mermaid"><code>flowchart TD
+    A[「Faithfulness 低分案例」] --&gt; B{「檢索內容有答案嗎？」}
+    B -- 否 --&gt; C[「先修召回與切分策略」]
+    B -- 是 --&gt; D[「修生成約束與引用機制」]
+    C --&gt; E[「重跑 RAGAS」]
+    D --&gt; E
+    E --&gt; F[「建立回歸門檻」]</code></pre>
+<h2 id="notebook">對應 Notebook</h2>
+<ul>
+<li><code>/Benchmark-Governance/notebooks/ragas-tutorial.ipynb</code></li>
+</ul>
+<h2 id="_6">官方資源</h2>
+<ul>
+<li>RAGAS Docs: <a href="https://docs.ragas.io/">https://docs.ragas.io/</a></li>
+<li>RAGAS PyPI: <a href="https://pypi.org/project/ragas/">https://pypi.org/project/ragas/</a></li>
 </ul>
 
 
@@ -2452,7 +2203,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月9日 00:53:03 CST">2026年2月9日 00:53:03</span>
   </span>
 
     

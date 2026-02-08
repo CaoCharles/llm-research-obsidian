@@ -1,0 +1,58 @@
+[
+  {
+    "id": "FSR-Q01",
+    "question": "Financial Stability Report 的主要目的為何？",
+    "ground_truth": "該報告用於呈現聯準會對美國金融系統韌性的評估，並提升透明度與公眾理解。",
+    "topic": "purpose",
+    "difficulty": "easy"
+  },
+  {
+    "id": "FSR-Q02",
+    "question": "報告如何描述金融穩定與聯準會雙重使命的關係？",
+    "ground_truth": "金融穩定有助於實現充分就業與物價穩定；金融不穩定會干擾信貸流動並造成失業與經濟困難。",
+    "topic": "purpose",
+    "difficulty": "medium"
+  },
+  {
+    "id": "FSR-Q03",
+    "question": "報告框架如何區分 shocks 與 vulnerabilities？",
+    "ground_truth": "shocks 是難以預測的突發事件；vulnerabilities 是隨時間累積、在壓力情境下更可能擴散風險的結構弱點。",
+    "topic": "framework",
+    "difficulty": "easy"
+  },
+  {
+    "id": "FSR-Q04",
+    "question": "報告中的第一類脆弱性是什麼？",
+    "ground_truth": "第一類是 elevated valuation pressures，指資產估值相對基本面偏高，可能導致價格大幅修正。",
+    "topic": "vulnerabilities",
+    "difficulty": "easy"
+  },
+  {
+    "id": "FSR-Q05",
+    "question": "第二類脆弱性在報告中如何定義？",
+    "ground_truth": "第二類是企業與家戶過度借貸，當收入下滑或資產價值下降時容易造成支出縮減與違約風險。",
+    "topic": "vulnerabilities",
+    "difficulty": "easy"
+  },
+  {
+    "id": "FSR-Q06",
+    "question": "第三類脆弱性與金融機構行為有何關聯？",
+    "ground_truth": "第三類是金融部門過度槓桿，遭遇損失時可能被迫縮減放貸、拋售資產，進而壓縮實體經濟信用供給。",
+    "topic": "vulnerabilities",
+    "difficulty": "medium"
+  },
+  {
+    "id": "FSR-Q07",
+    "question": "第四類 funding risk 為何會導致 run 風險？",
+    "ground_truth": "因部分機構以可短期贖回資金投資較長天期或低流動性資產，壓力下投資人可能集中贖回引發擠兌。",
+    "topic": "vulnerabilities",
+    "difficulty": "medium"
+  },
+  {
+    "id": "FSR-Q08",
+    "question": "報告提到的 CCyB 與壓力測試有何關係？",
+    "ground_truth": "金融穩定監測所蒐集資訊可協助聯準會設定壓力測試情境，並支援逆週期資本緩衝（CCyB）決策。",
+    "topic": "policy",
+    "difficulty": "medium"
+  }
+]

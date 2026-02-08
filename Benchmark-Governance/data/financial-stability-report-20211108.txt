@@ -1,0 +1,5783 @@
+Financial Stability Report
+
+November 2021
+
+B o a r d o f G o v e r n o r s o f t h e F e d e r a l R e s e rv e S y s t e m
+
+Financial Stability Report
+
+November 2021
+
+B o a r d o f G o v e r n o r s o f t h e F e d e r a l R e s e rv e S y s t e m
+
+This and other Federal Reserve Board reports and publications are available
+online at www.federalreserve.gov/publications/default.htm.
+To order copies of Federal Reserve Board publications
+offered in print, see the Board’s Publication Order Form
+(www.federalreserve.gov/pubs/orderform.pdf)
+or contact:
+Publications Fulfillment
+Mail Stop N-127
+Board of Governors of the Federal Reserve System
+Washington, DC 20551
+(ph) 202-452-3245
+(fax) 202-728-5886
+(email) Publications-BOG@frb.gov
+
+  iii
+
+Contents
+Purpose . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+Framework . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1. Asset Valuations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+2. Borrowing by Businesses and Households . . . . . . . . . . . . . . . . . . . . . . . . . 27
+3. Leverage in the Financial Sector . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+4. Funding Risk . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+Near-Term Risks to the Financial System . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59
+Figure Notes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+
+Boxes
+Retail Investors, Social Media, and Equity Trading  . . . . . . . . . . . . . . . . . . . . 18
+The Role of Foreign Investors in the March 2020 Turmoil in the
+U.S. Treasury Market . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+Liquidity Vulnerabilities from Noncash Collateral at Central
+Counterparties . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+LIBOR Transition Update . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55
+The Financial Stability Oversight Council’s Climate Report and the
+Federal Reserve’s Actions  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+Cyber Risk and Financial Stability  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+Salient Shocks to Financial Stability Cited in Market Outreach . . . . . . . . . . . 67
+Note: This report generally reflects information that was available as of October 25, 2021.
+
+  1
+
+Purpose
+This report presents the Federal Reserve Board’s current assessment of the resilience of the
+U.S. financial system. By publishing this report, the Board intends to promote public understanding and increase transparency and accountability for the Federal Reserve’s views on
+this topic.
+Promoting financial stability is a key element in meeting the Federal Reserve’s dual mandate
+for monetary policy regarding full employment and stable prices. In an unstable financial
+system, adverse events are more likely to result in severe financial stress and disrupt the
+flow of credit, leading to high unemployment and great financial hardship. Monitoring and
+assessing financial stability also support the Federal Reserve’s regulatory and supervisory
+activities, which promote the safety and soundness of our nation’s banks and other impor­
+tant financial institutions. Information gathered while monitoring the stability of the financial system helps the Federal Reserve develop its view of the salient risks to be included in
+the scenarios of the stress tests and its setting of the countercyclical capital buffer (CCyB).1
+The Board’s Financial Stability Report is similar to those published by other central banks
+and complements the annual report of the Financial Stability Oversight Council (FSOC),
+which is chaired by the Secretary of the Treasury and includes the Federal Reserve Board
+Chair and other financial regulators.
+
+1
+
+More information on the Federal Reserve’s supervisory and regulatory activities is available on the Board’s website; see
+Board of Governors of the Federal Reserve System (2021), Supervision and Regulation Report (Washington: Board of
+Governors, April), available at https://www.federalreserve.gov/publications/supervision-and-regulation-report.htm as well
+as the webpages for Supervision and Regulation (https://www.federalreserve.gov/supervisionreg.htm) and Payment Systems
+(https://www.federalreserve.gov/paymentsystems.htm). Moreover, additional details about the conduct of monetary policy
+are also on the Board’s website; see the Monetary Policy Report (https://www.federalreserve.gov/monetarypolicy/mpr_
+default.htm) and the webpage for Monetary Policy (https://www.federalreserve.gov/monetarypolicy.htm).
+
+  3
+
+Framework
+A stable financial system, when hit by adverse events, or “shocks,” continues to meet the
+demands of households and businesses for financial services, such as credit provision and
+payment services. By contrast, in an unstable system, these same shocks are likely to have
+much larger effects, disrupting the flow of credit and leading to declines in employment and
+economic activity.
+Consistent with this view of financial stability, the Federal Reserve Board’s monitoring
+framework distinguishes between shocks to and vulnerabilities of the financial system.
+Shocks, such as sudden changes to financial or economic conditions, are typically surprises
+and are inherently difficult to predict. Vulnerabilities tend to build up over time and are the
+aspects of the financial system that are most expected to cause widespread problems in times
+of stress. As a result, the framework focuses primarily on monitoring vulnerabilities and
+emphasizes four broad categories based on research.2
+1. Elevated valuation pressures are signaled by asset prices that are high relative to economic fundamentals or historical norms and are often driven by an increased willingness
+of investors to take on risk. As such, elevated valuation pressures imply a greater possibility of outsized drops in asset prices.
+2. Excessive borrowing by businesses and households leaves them vulnerable to distress
+if their incomes decline or the assets they own fall in value. In the event of such shocks,
+businesses and households with high debt burdens may need to cut back spending
+sharply, affecting the overall level of economic activity. Moreover, when businesses and
+households cannot make payments on their loans, financial institutions and investors
+incur losses.
+3. Excessive leverage within the financial sector increases the risk that financial institutions will not have the ability to absorb even modest losses when hit by adverse shocks.
+In those situations, institutions will be forced to cut back lending, sell their assets, or, in
+extreme cases, shut down. Such responses can substantially impair credit access for households and businesses.
+4. Funding risks expose the financial system to the possibility that investors will “run” by
+withdrawing their funds from a particular institution or sector. Many financial institutions raise funds from the public with a commitment to return their investors’ money on
+short notice, but those institutions then invest much of the funds in illiquid assets that
+2
+
+For a review of the research literature in this area and further discussion, see Tobias Adrian, Daniel Covitz, and Nellie Liang
+(2015), “Financial Stability Monitoring,” Annual Review of Financial Economics, vol. 7 (December), pp. 357–95.
+
+4  Framework
+
+are hard to sell quickly or in assets that have a long maturity. This liquidity and maturity
+transformation can create an incentive for investors to withdraw funds quickly in adverse
+situations. Facing a run, financial institutions may need to sell assets quickly at “fire
+sale” prices, thereby incurring substantial losses and potentially even becoming insolvent.
+Histo­rians and economists often refer to widespread investor runs as “financial panics.”
+These vulnerabilities often interact with each other. For example, elevated valuation pressures tend to be associated with excessive borrowing by businesses and households because
+both borrowers and lenders are more willing to accept higher degrees of risk and leverage
+when asset prices are appreciating rapidly. The associated debt and leverage, in turn, make
+the risk of outsized declines in asset prices more likely and more damaging. Similarly, the
+risk of a run on a financial institution and the consequent fire sales of assets are greatly
+amplified when significant leverage is involved.
+It is important to note that liquidity and maturity transformation and lending to households,
+businesses, and financial firms are key aspects of how the financial system supports the
+economy. For example, banks provide safe, liquid assets to depositors and long-term loans
+to households and businesses; businesses rely on loans or bonds to fund investment projects;
+and households benefit from a well-functioning mortgage market when buying a home.
+The Federal Reserve’s monitoring framework also tracks domestic and international developments to identify near-term risks—that is, plausible adverse developments or shocks that
+could stress the U.S. financial system. The analysis of these risks focuses on assessing how
+such potential shocks may play out through the U.S. financial system, given our current
+assessment of the four areas of vulnerabilities.
+While this framework provides a systematic way to assess financial stability, some potential
+risks do not fit neatly into it because they are novel or difficult to quantify. In addition, some
+vulnerabilities are difficult to measure with currently available data, and the set of vulnerabilities may evolve over time. Given these limitations, we continually rely on ongoing research
+by the Federal Reserve staff, academics, and other experts to improve our measurement of
+existing vulnerabilities and to keep pace with changes in the financial system that could create new forms of vulnerabilities or add to existing ones.
+
+Federal Reserve actions to promote the resilience of the financial system
+The assessment of financial vulnerabilities informs Federal Reserve actions to promote the
+resilience of the financial system. The Federal Reserve works with other domestic agencies
+directly and through the FSOC to monitor risks to financial stability and to undertake supervisory and regulatory efforts to mitigate the risks and consequences of financial instability.
+Actions taken by the Federal Reserve to promote the resilience of the financial system
+include its supervision and regulation of financial institutions—in particular, large bank
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  5
+
+holding companies (BHCs), the U.S. operations of certain foreign banking organizations,
+and financial market utilities. Specifically, in the post-crisis period, for the largest, most systemically important BHCs, these actions have included requirements for more and higherquality capital, an innovative stress-testing regime, new liquidity regulation, and improvements in the resolvability of such BHCs.
+In addition, the Federal Reserve’s assessment of financial vulnerabilities informs the design
+of stress-test scenarios and decisions regarding the CCyB. The stress scenarios incorporate
+some systematic elements to make the tests more stringent when financial imbalances are
+rising, and the assessment of vulnerabilities also helps identify salient risks that can be
+included in the scenarios. The CCyB is designed to increase the resilience of large banking
+organizations when there is an elevated risk of above-normal losses and to promote a more
+sustainable supply of credit over the economic cycle.
+
+  7
+
+Overview
+This report reviews conditions affecting the stability of the financial system by analyzing vulnerabilities related to valuation pressures, borrowing by businesses and households, financial
+leverage, and funding risk. It also highlights several near-term risks that, if realized, could
+interact with these vulnerabilities.
+Since the May 2021 Financial Stability Report was issued, prices of risky assets generally
+rose further. Despite concerns about the spread of the Delta variant of the virus that causes
+COVID-19, asset prices were supported by increased earnings expectations and low Treasury
+yields. Business and household borrowing as a percentage of gross domestic product (GDP)
+decreased further. Banks continued to be profitable and strongly capitalized. By contrast,
+structural vulnerabilities persist in some types of money market funds (MMFs) and other
+cash-management vehicles as well as in bond and bank loan mutual funds and could again
+amplify shocks to the financial system in times of stress.
+Our view of the current level of vulnerabilities is as follows:
+1. Asset valuations. Prices of risky assets generally increased since the previous report, and,
+in some markets, prices are high compared with expected cash flows. House prices have
+increased rapidly since May, continuing to outstrip increases in rent. Nevertheless, despite
+rising housing valuations, little evidence exists of deteriorating credit standards or highly
+leveraged investment activity in the housing market. Asset prices remain vulnerable to
+significant declines should investor risk sentiment deteriorate, progress on containing the
+virus disappoint, or the economic recovery stall.
+2. Borrowing by businesses and households. Key measures of vulnerability from business
+debt, including debt-to-GDP, gross leverage, and interest coverage ratios, have largely
+returned to pre-pandemic levels. Business balance sheets have benefited from continued
+earnings growth, low interest rates, and government support. However, the rise of the
+Delta variant appears to have slowed improvements in the outlook for small businesses.
+Key measures of household vulnerability have also largely returned to pre-pandemic
+levels. Household balance sheets have benefited from, among other factors, extensions
+in borrower relief programs, federal stimulus, and high aggregate personal savings rates.
+Nonetheless, the expiration of government support programs and uncertainty over the
+course of the pandemic may still pose significant risks to households.
+3. Leverage in the financial sector. Bank profits have been strong this year, and capital
+ratios remained well in excess of regulatory requirements. Some challenging conditions
+remain due to compressed net interest margins and loans in the sectors most affected
+by the COVID-19 pandemic. Leverage at broker-dealers was low. Leverage continued
+
+8  Overview
+
+to be high by historical standards at life insurance companies, and hedge fund leverage
+remained somewhat above its historical average. Issuance of collateralized loan obligations (CLOs) and asset-backed securities (ABS) has been robust.
+4. Funding risk. Domestic banks relied only modestly on short-term wholesale funding and
+continued to maintain sizable holdings of high-quality liquid assets (HQLA). By contrast,
+structural vulnerabilities persist in some types of MMFs and other cash-management
+vehicles as well as in bond and bank loan mutual funds. There are also funding-risk vulnerabilities in the growing stablecoin sector.
+The report also details how near-term risks have changed since the May 2021 report based in
+part on the most frequently cited risks to U.S. financial stability as gathered from outreach
+to a wide range of market contacts (discussed in the box “Salient Shocks to Financial Stability Cited in Market Outreach”). Despite recent improvements, an increase in uncertainty
+over the course of the pandemic might pose risks to asset markets, financial institutions, and
+borrowers in the United States and globally. In addition, stresses in the real estate sector in
+China caused in part by China’s ongoing regulatory focus on leveraged institutions, as well
+as a sharp tightening of global financial conditions, especially in highly indebted emerging
+market economies (EMEs), could pose some risks to the U.S. financial system. If realized,
+the effects of near-term risks could be amplified through the financial vulnerabilities identified in this report.
+The report includes additional boxes that analyze salient topics related to financial stability.
+Two boxes explore recent notable events in financial markets. The first, “Retail Investors,
+Social Media, and Equity Trading,” analyzes recent volatility in so-called meme stocks by
+linking changes in demographics, regulations, and technology to recent trends in the demand
+for and supply of retail trading opportunities in equity markets. The second, “The Role of
+Foreign Investors in the March 2020 Turmoil in the U.S. Treasury Market,” documents the
+material role played by foreign investors in the selloff of Treasury securities in March 2020
+and assesses the drivers of these sales. Central counterparties (CCPs) are important institutions underpinning the financial system. The box “Liquidity Vulnerabilities from Noncash Collateral at Central Counterparties” considers potential challenges CCPs may face in
+quickly monetizing noncash collateral in the event of stress. The next two boxes discuss the
+Federal Reserve’s work to adapt its financial stability framework to incorporate climate and
+cyber risks. The box “The Financial Stability Oversight Council’s Climate Report and the
+Federal Reserve’s Actions” discusses the Federal Reserve’s work to identify and address climate-related financial risks. Similarly, the box “Cyber Risk and Financial Stability” describes
+how the Federal Reserve considers cyber risk in its framework for monitoring financial stability. Finally, the box “LIBOR Transition Update” reviews progress with the transition away
+from LIBOR.
+
+  9
+
+1. Asset Valuations
+Prices of risky assets generally rose further, and most valuations are high relative
+to history
+Across most asset classes, valuation measures are high relative to historical norms. Since the
+May 2021 Financial Stability Report, equity prices rose further. While this increase is due, in
+part, to improved earnings expectations, the ratio of prices to forecasts of corporate earnings
+stands at the upper end of its historical distribution. Yields on long-term Treasury securities,
+corporate bonds, and leveraged loans remain at low levels relative to their historical ranges.
+Supported by low mortgage rates and strong demand, house prices continued to rise at a
+rapid clip, outstripping increases in rents. Nonetheless, little evidence exists of widespread
+erosion in mortgage underwriting standards or speculative practices. However, with valuations at high levels, house prices could be particularly sensitive to shocks.
+Aggregate commercial real estate (CRE) prices have continued to increase since May, rising further above their pre-pandemic levels. However, prices for the retail, hotel, and office
+sectors have remained roughly flat amid limited transaction volume since the onset of the
+pandemic. Farmland prices continued to be elevated relative to rents and incomes.
+Fiscal and monetary policy accommodation, along with continued progress on vaccinations,
+continued to support a strong economic recovery. Nevertheless, uncertainty about the
+economic outlook and the course of the pandemic remained high. Some segments of
+the economy, such as energy, travel, and hospitality, remained particularly sensitive to
+pandemic-related developments. Since the previous report, the more transmissible Delta
+variant has further spread throughout the world. Despite the tragic human toll, the Delta
+variant has left a limited imprint on U.S. financial markets. Risk compensation remains low
+across sectors, which is often associated with elevated investor risk appetite. Consequently,
+asset prices may be vulnerable to significant declines should risk appetite fall, progress on
+containing the virus disappoint, or the recovery stall.
+Table 1 shows the sizes of the asset markets discussed in this section. The largest
+asset markets are those for corporate public equities, residential real estate, CRE, and
+Treasury securities.
+
+Treasury yields remained low by historical standards
+Since the previous report, yields on 10-year Treasury securities have remained unchanged, on
+net, amid a flattening of the yield curve; model estimates of Treasury term premiums have
+changed little on net (figures 1-1 and 1-2).3 Treasury yields are low relative to their historical
+3
+
+Treasury term premiums capture the difference between the yield that investors require for holding longer-term Treasury
+securities and the expected yield from rolling over shorter-dated ones.
+
+10  Asset Valuations
+
+Table 1. Size of Selected Asset Markets
+Outstanding
+(billions of dollars)
+
+Growth,
+2020:Q2–2021:Q2
+(percent)
+
+Average annual growth,
+1997–2021:Q2
+(percent)
+
+Equities
+
+54,768
+
+47.2
+
+10.1
+
+Residential real estate
+
+44,489
+
+12.0
+
+6.0
+
+Commercial real estate
+
+21,788
+
+6.8
+
+7.0
+
+Treasury securities
+
+21,699
+
+9.2
+
+8.2
+
+Investment-grade corporate bonds
+
+6,667
+
+4.1
+
+8.3
+
+Farmland
+
+2,597
+
+1.6
+
+5.1
+
+High-yield and unrated corporate bonds
+
+1,630
+
+4.9
+
+6.9
+
+Leveraged loans*
+
+1,258
+
+6.2
+
+14.2
+
+Commercial real estate**
+
+5.8
+
+2.7
+
+Residential real estate***
+
+11.2
+
+2.5
+
+Item
+
+Price growth (real)
+
+Note: The data extend through 2021:Q2. Growth rates are measured from Q2 of the year immediately preceding the period through Q2 of
+the final year of the period. Equities, real estate, and farmland are at market value; bonds and loans are at book value.
+* The amount outstanding shows institutional leveraged loans and generally excludes loan commitments held by banks. For example, lines
+of credit are generally excluded from this measure. Average annual growth of leveraged loans is from 2000 to 2021:Q2, as this market was
+fairly small before then.
+** One-year growth of commercial real estate prices is from March 2020 to March 2021, and average annual growth is from 1998:Q4 to
+2021:Q2. Both growth rates are calculated from value-weighted nominal prices deflated using the consumer price index (CPI).
+*** One-year growth of residential real estate prices is from March 2020 to March 2021, and average annual growth is from 1997:Q4 to
+2021:Q2. Nominal prices are deflated using the CPI.
+Source: For leveraged loans, S&P Global, Leveraged Commentary & Data; for corporate bonds, Mergent, Inc., Corporate Fixed Income
+Securities Database; for farmland, Department of Agriculture; for residential real estate price growth, CoreLogic, Inc.; for commercial real estate
+price growth, CoStar Group, Inc., CoStar Commercial Repeat Sale Indices; for all other items, Federal Reserve Board, Statistical Release Z.1,
+“Financial Accounts of the United States.”
+
+1-1. Yields on Nominal Treasury Securities
+Percent, annual rate
+monthly
+
+2-year
+10-year
+
+8
+7
+6
+5
+4
+3
+2
+
+oct.
+
+1
+0
+
+1997
+
+2001
+
+2005
+
+2009
+
+Source: Federal Reserve Board, Statistical Release H.15, “Selected Interest Rates.”
+
+2013
+
+2017
+
+2021
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  11
+
+ranges, and an increase in Treasury yields, if unaccompanied by a commensurate strengthening of the economic outlook, could put downward pressure on valuations in a variety of
+markets. However, a forward-looking measure of Treasury market volatility derived from
+options prices changed little since May, on net, and remains below the median of its historical distribution (figure 1-3). Measures of Treasury market functioning have been stable since
+the previous report. In particular, liquidity metrics, such as market depth, have remained
+stable since recovering from the brief period of stress in February 2021 (figure 1-4).4
+1-2. Term Premium on 10-Year Nominal Treasury
+Securities
+Percentage points
+monthly
+
+1-3. Implied Volatility of 10-Year Swap Rate
+Basis points
+
+2.5
+
+monthly
+
+2.0
+
+200
+
+1.5
+1.0
+oct.
+
+150
+oct.
+
+0.5
+
+100
+
+0.0
+median
+
+−0.5
+
+50
+
+−1.0
+−1.5
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+250
+
+0
+
+2021
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Barclays.
+
+Source: Department of the Treasury; Wolters Kluwer, Blue Chip
+Financial Forecasts; Federal Reserve Bank of New York; Federal
+Reserve Board staff estimates.
+
+1-4. Treasury Market Depth
+35
+
+millions of dollars
+
+millions of dollars
+
+5-day moving average
+
+5-year (right scale)
+10-year (right scale)
+30-year (left scale)
+
+30
+25
+
+300
+250
+
+20
+
+200
+oct.
+20
+
+15
+10
+5
+0
+
+350
+
+150
+100
+50
+
+Jan.
+
+apr.
+
+July
+2019
+
+oct.
+
+Jan.
+
+apr.
+
+July
+2020
+
+oct.
+
+Jan.
+
+apr.
+
+July
+
+oct.
+
+0
+
+2021
+
+Source: Interdealer broker community.
+
+Corporate bond spreads changed little, and risk compensation remained low
+Since the May 2021 report, yields on corporate bonds increased, on net, in line with those
+of comparable-maturity Treasury securities (figure 1-5). Consequently, spreads of corporate
+bond yields over comparable-maturity Treasury yields were little changed and remained very
+4
+
+Market depth indicates the quantity of an asset available to buy or sell at the best posted bid and ask prices.
+
+12  Asset Valuations
+
+1-5. Corporate Bond Yields
+Percent
+monthly
+Triple-B
+High-yield
+
+oct.
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+24
+22
+20
+18
+16
+14
+12
+10
+8
+6
+4
+2
+0
+
+narrow relative to their historical distributions (figure 1-6).5 The excess bond premium, which is a measure that captures the
+gap between corporate bond spreads and
+expected credit losses, declined further from
+its level in May 2021 and now stands at the
+bottom decile of its historical distribution,
+suggesting elevated appetite for risk among
+investors (figure 1-7).6
+
+2021
+
+Source: ICE Data Indices, LLC, used with permission.
+
+1-6. Corporate Bond Spreads to Similar-Maturity
+Treasury Securities
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+
+Percentage points
+
+Percentage points
+
+monthly
+Triple-B
+(left scale)
+High-yield
+(right scale)
+oct.
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: ICE Data Indices, LLC, used with permission.
+
+1-7. Excess Bond Premium
+24
+22
+20
+18
+16
+14
+12
+10
+8
+6
+4
+2
+0
+
+Percentage points
+monthly
+
+4
+3
+2
+1
+0
+
+Sept.
+
+−1
+−2
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Board staff calculations based
+on Lehman Brothers Fixed Income Database (Warga);
+Intercontinental Exchange, Inc., ICE Data Services; Center for
+Research in Security Prices, CRSP/Compustat Merged Database,
+Wharton Research Data Services; S&P Global Market Intelligence,
+Compustat.
+
+Corporate bond issuance remained robust, supported by low interest rates. The share of
+investment-grade issuance with the lowest investment-grade ratings remained at historically
+elevated levels. Within speculative-grade bonds, the share of new bonds with the lowest
+ratings continued to increase through the third quarter but remained at relatively low levels
+by historical standards. Across the ratings spectrum, the composition of newly issued corporate bonds has become riskier. Even so, the overall credit quality of outstanding bonds has
+improved since May, as the volume of credit rating upgrades has outpaced that of downgrades. Defaults and expected defaults have continued to decline since the May report.
+5
+
+Spreads between yields on corporate bonds and comparable-maturity Treasury securities reflect the extra compensation
+investors require to hold debt that is subject to corporate default or liquidity risks.
+
+6
+
+For a description of the excess bond premium, see Simon Gilchrist and Egon Zakrajšek (2012), “Credit Spreads and Business Cycle Fluctuations,” American Economic Review, vol. 102 (June), pp. 1692–720.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  13
+
+Spreads on lower-rated leveraged loans in the secondary market were little changed, on net,
+since the spring and are below their median levels (figure 1-8). Investor sentiment in the leveraged loan market has remained optimistic since the previous report.
+1-8. Secondary-Market Spreads of Leveraged Loans
+Percentage points
+weekly
+B
+
+30
+25
+
+BB
+
+20
+15
+oct.
+15
+
+10
+5
+0
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: S&P Global Market Intelligence, Leveraged Commentary & Data.
+
+Equity prices increased, and earnings expectations improved
+Equity prices have increased notably, on net, since May 2021. The ratio of prices to forecasts
+of corporate earnings edged down, on net, as analysts revised their earnings expectations up
+(figure 1-9). Nevertheless, prices relative to earnings forecasts remained near the top of their
+historical distribution. Meanwhile, the difference between the forward earnings-to-price ratio
+and the expected real yield on 10-year Treasury securities—a rough measure of the compensation that investors require for holding stocks, known as the equity premium—has increased
+a touch since May (figure 1-10). In contrast to the signal from other valuation measures, this
+measure of the equity premium remained somewhat above its median, suggesting that equity
+investor risk appetite remained within historical norms. Option-implied volatility, a proxy
+1-9. Forward Price-to-Earnings Ratio of S&P 500 Firms
+ratio
+monthly
+oct.
+
+30
+27
+24
+21
+18
+
+median
+
+15
+12
+9
+6
+
+1991
+
+1996
+
+2001
+
+2006
+
+2011
+
+2016
+
+2021
+
+Source: Federal Reserve Board staff calculations using Refinitiv (formerly Thomson Reuters), Institutional Brokers Estimate System estimates.
+
+14  Asset Valuations
+
+for perceived uncertainty, briefly spiked a few times over the past six months and now stands
+below its median level (figure 1-11).
+1-10. Spread of Forward Earnings-to-Price Ratio of S&P 500 Firms to Expected 10-Year Real Treasury Yield
+Percentage points
+monthly
+
+10
+8
+
+oct.
+median
+
+6
+4
+2
+0
+−2
+
+1991
+
+1996
+
+2001
+
+2006
+
+2011
+
+2016
+
+2021
+
+Source: Federal Reserve Board staff calculations using Refinitiv (formerly Thomson Reuters), Institutional Brokers Estimate System estimates;
+Department of the Treasury; Federal Reserve Bank of Philadelphia, Survey of Professional Forecasters.
+
+1-11. S&P 500 Return Volatility
+Percent
+monthly
+
+option-implied volatility
+realized volatility
+
+70
+60
+50
+40
+
+oct.
+
+30
+20
+10
+0
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Bloomberg Finance L.P.
+
+Nonprice measures suggest that investor appetite for equity risk appears to have moderated since last spring. While the pace of initial public offerings (IPOs) continued to be
+above its historical average, the volume of IPOs supported by special purpose acquisition
+­companies—non-operating corporations created specifically to issue public equity and subsequently acquire an existing operating company—declined significantly from the high levels
+observed earlier this year, in part because of increased regulatory scrutiny.
+
+Aggregate commercial real estate prices increased, although prices for sectors harder hit
+by the pandemic were little changed
+Since the May Financial Stability Report, aggregate measures of CRE prices based on
+transactions have continued to increase, rising further above their pre-pandemic levels
+(­figure 1-12). However, prices for properties in sectors harder hit by the pandemic, such
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  15
+
+as retail establishments, hotels, and offices, were little changed and remained close to their
+pre-pandemic levels. Historically low capitalization rates, which measure annual income
+relative to prices of commercial properties, point to high valuation pressures (figure 1-13).
+By contrast, the spreads of capitalization rates to Treasury yields remained close to or above
+their historical averages, suggesting that investors currently receive moderate compensation
+for holding CRE risk.
+1-12. Commercial Real Estate Prices (Real)
+Jan. 2001 = 100
+monthly
+
+1-13. Capitalization Rate at Property Purchase
+Percent
+
+200
+
+monthly
+
+180
+
+equalweighted
+Valueweighted
+
+aug.
+
+9.5
+9.0
+
+160
+
+8.5
+
+140
+
+8.0
+
+120
+
+7.5
+
+100
+
+7.0
+
+80
+
+aug.
+
+60
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: CoStar Group, Inc., CoStar Commercial Repeat Sale
+Indices; Bureau of Labor Statistics, consumer price index via
+Haver Analytics.
+
+6.5
+6.0
+5.5
+
+40
+1997
+
+10.0
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Real Capital Analytics; Andrew C. Florance, Norm G.
+Miller, Ruijue Peng, and Jay Spivey (2010), “Slicing, Dicing, and
+Scoping the Size of the U.S. Commercial Real Estate Market,”
+Journal of Real Estate Portfolio Management, vol. 16 (May–
+August), pp. 101–18.
+
+easing
+
+Tightening
+
+Other indicators continue to show strains in some CRE markets compared with
+pre-pandemic levels. Vacancy rates in most sectors with available data are in line with
+pre-pandemic levels, but office vacancies are elevated and hotel occupancy rates remain
+depressed. Additionally, delinquency rates on
+mortgages in commercial mortgage-backed
+1-14. Change in Bank Standards for Commercial
+securities (CMBS) pools backed by properReal Estate Loans
+ties in the lodging and retail sectors, which
+Net percentage of banks reporting
+100
+Quarterly
+have suffered more from pandemic-related
+80
+60
+declines in income, are still elevated but
+40
+have declined somewhat since the May
+20
+0
+report. Finally, the July Senior Loan Officer
+−20
+Opinion Survey on Bank Lending Prac−40
+Q2
+tices (SLOOS) indicated that banks, on
+−60
+−80
+net, reported easier standards and stronger
+−100
+demand for most CRE loans over the sec1997 2001 2005 2009 2013 2017 2021
+ond quarter of 2021 (figure 1-14). However,
+Source: Federal Reserve Board (FRB), Senior Loan Officer
+Opinion Survey on Bank Lending Practices; FRB staff
+banks also reported that the level of stancalculations.
+dards for CRE loans remains tighter than
+before the pandemic.
+
+16  Asset Valuations
+
+Farmland prices remained high relative to rents
+Farmland prices increased slightly at the national level through the first half of 2021
+(figure 1-15). In midwestern states—where farmland values are more elevated than the
+national average—prices increased slightly more over the same period. Overall, the ratio of
+farmland prices to rents remained close to its historical highs (figure 1-16).
+1-15. Farmland Prices
+
+1-16. Farmland Price-to-Rent Ratio
+2020 dollars per acre
+
+annual
+
+midwest index
+united States
+
+7000
+
+ratio
+
+35
+
+annual
+
+6000
+
+30
+
+midwest index
+united States
+
+5000
+
+25
+
+4000
+median
+
+20
+
+3000
+
+median
+
+15
+
+2000
+1000
+1971
+
+1981
+
+1991
+
+2001
+
+2011
+
+2021
+
+10
+1971
+
+Source: Department of Agriculture; Federal Reserve Bank of
+Minneapolis staff calculations.
+
+1981
+
+1991
+
+2001
+
+2011
+
+2021
+
+Source: Department of Agriculture; Federal Reserve Bank of
+Minneapolis staff calculations.
+
+House prices continued to increase, and valuations remained high relative to history
+House prices have increased at a rapid pace since the previous report, supported by low
+mortgage rates and strong housing demand (figure 1-17). Nationwide, house price valuation
+measures have risen sharply since May (figure 1-18). These gains have been widespread, with
+
+1-17. Growth of Nominal Prices of Existing Homes
+12-month percent change
+July
+aug.
+Sept.
+
+monthly
+
+Zillow
+CoreLogic
+Case-Shiller
+
+2005
+
+2009
+
+2013
+
+2017
+
+25
+20
+15
+10
+5
+0
+−5
+−10
+−15
+−20
+−25
+
+2021
+
+Source: CoreLogic Real Estate Data; Zillow, Inc., Zillow Real
+Estate Data; S&P Case-Shiller Home Price Indices.
+
+1-18. House Price Valuation Measure
+Percent
+Quarterly
+
+40
+30
+
+Q3
+
+20
+10
+0
+−10
+−20
+
+1981
+
+1991
+
+2001
+
+2011
+
+2021
+
+Source: For house prices, Zillow, Inc., Zillow Real Estate Data;
+for rent data, Bureau of Labor Statistics.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  17
+
+price-to-rent ratios rising across geographically dispersed housing markets (figure 1-19).
+Even amid such rapid and widespread price growth, there is currently little indication of
+highly leveraged real estate investment activity or of a deterioration in underwriting standards. Taken together, these developments do not point to speculative activity as a primary
+driver of the recent house price growth.
+1-19. Selected Local Housing Price-to-Rent Ratio Indexes
+Jan. 2010 = 100
+monthly
+Phoenix
+miami
+Los angeles
+median
+middle 80 percent
+of markets
+
+1997
+
+2001
+
+Sept.
+
+2005
+
+2009
+
+2013
+
+Source: For house prices, Zillow, Inc., Zillow Real Estate Data; for rent data, Bureau of Labor Statistics.
+
+2017
+
+2021
+
+240
+220
+200
+180
+160
+140
+120
+100
+80
+60
+40
+
+18  Asset Valuations
+
+Retail Investors, Social Media, and Equity Trading
+Retail investors and social media have been highlighted as key factors in episodes of “meme” stock
+volatility in equity markets in the first half of 2021. Longer-run changes in demographics, regulations,
+and technology as well as behavioral factors that could interact with these structural changes may
+have influenced recent trends in the demand for and supply of retail trading opportunities in equity
+markets.1 To date, the broad financial stability implications of these developments have been limited,
+with bursts of retail-led trading volatility that have rapidly subsided. Still, the evolution of the effects of
+these changes warrants continued monitoring.
+
+The revival of household financial risk appetite and stock market participation
+Figure a. Household willingness to Take Financial
+risks and Direct Stock ownership
+Percent
+
+30
+25
+
+2019
+
+20
+15
+
+Household
+willingness
+Direct stock
+ownership
+
+10
+5
+0
+
+1989
+
+1995
+
+2001
+
+2007
+
+2013
+
+2019
+
+Source: Federal reserve Board, Survey of Consumer
+Finances.
+
+Household financial risk appetite appears to
+be cyclical. Over the past three decades, a
+survey-based measure of the share of households
+reportedly willing to take financial risks reached
+a peak in 2001, hit a trough in 2009, and then
+rebounded notably. By 2019, the most recent
+survey, it was again approaching its 2001 peak
+(figure A).2 Household direct stock ownership
+appears to follow risk appetite to some degree.
+Following a substantial, prolonged decline that
+started after the dot-com bubble burst in 2001,
+the share of households directly owning stocks
+stabilized and then rose appreciably from 2013
+through 2019.3
+
+Because equities feature higher volatility and expected returns than many other financial assets, they
+tend to be more attractive to younger and less risk-averse investors. According to survey data, the
+share of younger consumers willing to take risks has been significantly higher than that for other age
+groups for decades. Relatedly, in recent years, the share of direct stock owners aged 35 or younger
+surged nearly 6 percentage points after 2013.
+
+Market structure changes
+Along with the rise in risk appetite and the growing share of younger retail investors, access to retail
+equity trading opportunities has expanded over the past decade. One factor contributing to this expansion has been the elimination of trading commissions at major retail brokerages for both stocks and
+(continued)
+
+1
+
+In parallel to the equity market developments, and perhaps sharing some of the same underlying drivers, there have been episodes
+of volatility in crypto-asset markets. However, the view into these markets is limited, and therefore this discussion focuses on equity
+market developments.
+
+2
+
+The Survey of Consumer Finances (SCF), conducted by the Federal reserve Board every three years, collects comprehensive data on
+household balance sheets and attitudes toward various financial and credit markets. The SCF asks its respondents to choose from the
+following four options that best describe their willingness to take financial risks:
+1. take substantial financial risks expecting to earn substantial returns
+2. take above-average financial risks expecting to earn above-average returns
+3. take average financial risks expecting to earn average returns
+4. not willing to take any financial risks
+a household is defined as willing to take financial risks if it chooses one of the first two options.
+
+3
+
+The SCF data showed an increase in direct stock ownership between 2016 and 2019 (the most recent survey). In addition, the university of michigan Surveys of Consumers indicated that broad stock ownership (including ownership through mutual funds or retirement
+accounts), which also began to rise in 2016, continued to increase appreciably through the summer of 2021.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  19
+
+options.4 Many years of growing revenues from payment for order flow (PFOF) helped set the stage for
+this development.5 PFOF is the compensation that brokerage firms receive for directing orders to venues for trade execution. Retail investor trading flows can help market makers facilitate the execution of
+institutional trading flows, thereby promoting market liquidity.6
+The structure of the current market for order flow was heavily influenced by a series of regulations
+adopted between 2005 and 2010 that allows retail brokers to choose the venues where customer
+orders are executed so long as customers receive the “national best bid or offer” price or better.7 Since
+2010, several off-exchange venues, including those run by Citadel, Virtu Financial, and others, have
+emerged and thrived. Over the past two years, the PFOF paid to some of the largest retail brokers was
+in large part paid by these off-exchange venues (figures B and C).
+Figure B. Payment for order Flow Paid to Selected retail Brokers
+Millions of dollars
+Monthly
+
+450
+400
+
+Schwab
+TD Ameritrade
+E-Trade
+Robinhood
+
+350
+300
+250
+200
+150
+100
+50
+
+Feb.
+
+Apr.
+
+June
+2020
+
+Aug.
+
+Oct.
+
+Dec.
+
+Feb.
+
+Apr.
+
+June
+
+0
+
+2021
+
+Source: Securities and exchange Commission, filings under rule 606 from Schwab, TD ameritrade, e-Trade, and robinhood,
+Disclosure of order routing Information.
+
+Aggregate PFOF levels for the retail brokerage firms in figure B have recently fallen below the record
+highs from earlier in 2021, as have trading volumes. However, on a per-share basis, PFOF (not shown)
+has continued to rise, which in part reflects a shift in the volumes mix toward options trades, where
+per-share PFOF is highest.
+
+Trading apps and social media effects on market access and investor behavior
+In addition to eliminating commissions, retail brokerages have shifted how retail investors access and
+communicate about equity markets by introducing mobile trading apps. While the services offered
+on some of the most popular apps are similar to those provided by a traditional stockbroker, these
+apps make investing more accessible, in part by offering a wider range of products, including the
+(continued on next page)
+4
+
+robinhood was the first large broker offering commission-free trading in late 2014, as reported in Josh Constine (2014), “robinhood
+Launches Zero-Fee Stock Trading app,” TechCrunch, December 11, https://techcrunch.com/2014/12/11/robinhood-free-stocktrading. many other large brokers have since eliminated retail trading commissions starting with the Charles Schwab Corporation
+in late 2019, as reported in Business wire (2019), “In Conjunction with Chuck Schwab’s New Book ‘Invested,’ Schwab removes
+the Final Pricing Barrier to Investing online by eliminating u.S. Stock, eTF and options Commissions,” Business Wire, october 1,
+https://www.businesswire.com/news/home/20191001005489/en/In-Conjunction-with-Chuck-Schwab%e2%80%99s-New-Book%e2%80%9CInvested%e2%80%9D-Schwab-removes-the-Final-Pricing-Barrier-to-Investing-online-by-eliminating-u.S.-Stock-eTFand-options-Commissions.
+
+5
+
+For a detailed discussion on PFoF, see Securities and exchange Commission (2016), “Certain Issues affecting Customers in the
+Current equity market Structure,” memorandum, SeC, Division of Trading and markets, January 26, https://www.sec.gov/spotlight/
+equity-market-structure/issues-affecting-customers-emsac-012616.pdf.
+
+6
+
+See robert a. korajczyk and Dermot murphy (2019), “High Frequency market making to Large Institutional Trades,” Review of Financial Studies, vol. 32 (3), pp. 1034–67.
+
+7
+
+See, for example, the SeC’s final rule for regulation NmS from 2005 at 17 C.F.r. pts. 200, 201, 230, 240, 242, 249, and 270 (2005),
+https://www.sec.gov/rules/final/34-51808.pdf.
+
+20  Asset Valuations
+
+Retail Investors (continued)
+Figure C. Payment for order Flow Paid by Selected Venues
+Millions of dollars
+Monthly
+
+450
+400
+
+Other
+Global Execution
+Wolverine Trading
+Virtu Financial
+Citadel
+
+350
+300
+250
+200
+150
+100
+50
+
+Feb.
+
+Apr.
+
+June
+2020
+
+Aug.
+
+Oct.
+
+Dec.
+
+Feb.
+
+Apr.
+
+June
+
+0
+
+2021
+
+Source: Securities and exchange Commission, filings under rule 606 from Schwab, TD ameritrade, e-Trade, and robinhood,
+Disclosure of order routing Information.
+
+opportunity to easily trade fractions of equity shares or crypto-assets. The apps also make trading
+more visually appealing. Many apps have color-coded graphical layouts that highlight stock movements, mark trading milestones, and have animations celebrating a user’s first stock purchase. With
+their ease of access and engaging graphics, such apps can make trading seem like a game, particularly for younger or less experienced investors.8 Consistent with this interface style, among users of
+trading apps, the average age of account holders is 30 years, and nearly half of them self-identify as
+first-time investors.9
+The widespread use of large, open social media platforms has also shaped how some retail equity
+investors communicate about markets. Recent academic papers have shown that social media can
+increase the information flow to retail investors as well as the amount of “noise” in markets from
+retail investor trading.10 In addition, social media can contribute to an “echo chamber” in which retail
+investors find themselves communicating most frequently with others with similar interests and views,
+thereby reinforcing their views, even if these views are speculative or biased.11 More generally, social
+media platforms allow a single comment or post to reach millions of people and potentially affect market sentiment dramatically within a short period.
+The January 2021 meme stock episodes offer a case study for the interaction of social media and
+stock prices. Twitter posts spiked in late January on days when daily trading volumes for GameStop
+(GME), as well as other meme stocks, rose sharply (figure D). These spikes also coincided with a jump
+in intraday volatility, as the daily standard deviation of one-minute price changes increased more than
+10-fold from less than 0.25 percent to greater than 2.5 percent. Coincident with the dramatically higher
+price volatility, intraday trading flows for meme stocks (such as GME and AMC Entertainment Holdings
+(continued)
+8
+
+See robert w. Cook (2021), “Statement Before the Financial Services Committee u.S. House of representatives,” may 6,
+https://www.finra.org/media-center/speeches-testimony/statement-financial-services-committee-us-house-representatives. The SeC
+requested information and comment on “gamification” and related practices; comments closed on october 1, 2021. See Securities
+and exchange Commission (2021), “request for Information and Comments on Broker-Dealer and Investment adviser Digital engagement Practices, related Tools and methods, and regulatory Considerations and Potential approaches; Information and Comments on
+Investment adviser use of Technology to Develop and Provide Investment advice,” File No. S7-10-21, august 27, with an associated
+press release at https://www.sec.gov/news/press-release/2021-167.
+
+9
+
+See robinhood (2021), “Letter of acceptance, waiver, and Consent (awC) No. 2020066971201,” June 30, https://www.finra.org/
+sites/default/files/2021-06/robinhood-financial-awc-063021.pdf.
+
+10
+
+See, for example, Gregory w. eaton, T. Clifton Green, Brian roseman, and Yanbin wu (2021), “Zero-Commission Individual Investors, High Frequency Traders, and Stock market Quality,” SSrN working paper (rochester, N.Y.: SSrN, February; revised april). In
+the financial market research, “noise traders” refers to investors who make transaction decisions based on factors they believe to be
+helpful but, in reality, give them no better returns than random choices.
+
+11
+
+See, for example, J. anthony Cookson, Joseph engelberg, and william mullins (2020), “echo Chambers,” SSrN working paper
+(rochester, N.Y.: SSrN, June; revised January 2021).
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  21
+
+Figure D. GameStop Stock Price and Twitter mentions of GameStop
+2500
+
+Tweets (thousands)
+
+2000
+
+Dollars
+Jan. 22, 2021
+
+Daily
+
+450
+400
+
+Tweets (left scale)
+GameStop stock price (right scale)
+
+350
+300
+
+1500
+
+250
+200
+
+1000
+
+150
+
+Feb.
+28
+
+500
+
+100
+50
+
+0
+
+Dec.
+
+Jan.
+
+0
+
+Feb.
+
+2020
+
+2021
+
+Source: For Twitter mentions, Twitter, Inc., enterprise-level application programming interface; for GameStop stock price, Bloomberg.
+
+Figure e. Intraday Flow Correlations of GameStop and amC entertainment Holdings
+Beta
+Daily
+
+Jan. 22, 2021
+
+0.8
+0.6
+0.4
+0.2
+0.0
+
+Oct.
+
+Nov.
+2020
+
+Dec.
+
+Jan.
+
+Feb.
+
+Mar.
+
+−0.2
+
+2021
+
+Source: Bloomberg; New York Stock exchange, Daily TaQ (Trade and Quote); Federal reserve Board staff estimates.
+
+[AMC]) became much more correlated, as illustrated in figure E.12 Higher flow correlations have the
+potential to amplify liquidity shortages in equity markets and may lead to price dislocations if sufficiently large.
+
+Implications for financial stability
+To date, the broad financial stability implications of changes in retail equity investor characteristics and
+behaviors have been limited, as recent episodes of meme stock volatility did not leave a lasting imprint
+on broader markets. However, a few areas should be monitored. First, younger stock investors tend to
+have more leveraged household balance sheets. The median leverage ratios of younger retail investors
+are more than double those of all investors, leaving these investors potentially more vulnerable to large
+swings in stock prices, as they have a larger debt service burden. Moreover, this vulnerability is amplified,
+as investors are now increasingly using options, which can often boost leverage and amplify losses.
+Second, episodes of heightened risk appetite may continue to evolve with the interaction between
+social media and retail investors and may be difficult to predict. A potentially destabilizing outcome
+could emerge if elevated risk appetite among retail investors retreats rapidly to more moderate levels.
+Third, the risk-management systems of the relevant financial institutions may not be calibrated for the
+increased volatility or financial losses that could result from the trends highlighted here. More frequent
+episodes of higher volatility may require further steps to ensure the resilience of the financial system.
+
+12
+
+The correlations analysis compares the direction of the trading flows ((buy flows – sell flows) / total flows) every minute between amC
+and Gme stocks each day using data from TaQ (Trade and Quote database).
+
+22  Asset Valuations
+
+The Role of Foreign Investors in the March 2020 Turmoil in the
+U.S. Treasury Market
+The U.S. Treasury market is critical to the overall functioning of the financial system and to the effective
+transmission of monetary policy to the broader economy. U.S. Treasury securities are among the most
+liquid securities in the world and play critical roles as safe investments, collateral for secured credit,
+and pricing benchmarks for dollar loans and fixed-income securities. In March 2020, as the effects
+of the COVID-19 pandemic on financial markets intensified, the U.S. Treasury market experienced
+severe dislocations, and market functioning became unusually strained amid intense and widespread
+selling pressures. These selling pressures contrasted sharply with typical market dynamics in previous
+instances of severe global financial stress in which many investors sought to buy U.S. Treasury securities. Although many different types of market participants contributed to the selloff of U.S. Treasury
+securities, this discussion focuses on the important role of foreign investors.1
+
+Foreign investors are large holders of U.S. Treasury securities
+Foreign investors held $7.2 trillion of U.S. Treasury securities as of the second quarter of 2021, almost
+30 percent of the total amount outstanding (figure A). Foreign official institutions—mostly central banks
+and sovereign wealth funds—are the largest foreign holders of U.S. Treasury securities, accounting
+for almost 60 percent of foreign holdings. Foreign private investors, including nonfinancial investors,
+banks, and nonbank financial institutions (NBFIs), hold the remainder and have increased their share in
+recent years.2
+Figure a. Foreign Holdings of u.S. Treasury Securities
+8
+
+Trillions of dollars
+
+Percent
+
+Quarterly
+
+45
+
+Q2
+
+6
+
+30
+
+4
+Total (left scale)
+Share of U.S. Treasuries outstanding (right scale)
+
+2
+
+15
+
+0
+
+0
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal reserve Board (FrB), Statistical release Z.1, “Financial accounts of the united States”; FrB staff calculations.
+
+Foreign investors played a large role in the U.S. Treasury market selloff in
+March 2020
+Foreign investors sold $287 billion of U.S. Treasury securities in the first quarter of 2020, accounting
+for about 37 percent of total net sales of these securities in that quarter (figure B). Net sales of
+(continued)
+
+1
+
+For a retrospective on the march 2020 turmoil in the Treasury market and the roles of different market participants, including hedge
+funds, mortgage real estate investment trusts, principal trading firms, and dealers, see the box “a retrospective on the march 2020
+Turmoil in Treasury and mortgage-Backed Securities markets” in Board of Governors of the Federal reserve System (2020), Financial
+Stability Report (washington: Board of Governors, November), pp. 32–38, https://www.federalreserve.gov/publications/files/financialstability-report-20201109.pdf.
+
+2
+
+Foreign NBFIs include central counterparties, exchange-traded funds, hedge funds, insurance companies, mutual funds, and pension funds.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  23
+
+Figure B. Net Purchases of u.S. Treasury Securities by u.S. and Foreign Holders
+Billions of dollars
+Quarterly
+
+1400
+1200
+
+1. All foreign investors
+2. Mutual funds
+3. Households (incl. hedge funds)
+
+4. Other
+5. Money market funds
+6. Federal Reserve
+
+1000
+800
+600
+400
+200
+0
+−200
+
+Q1
+
+Q2
+
+Q3
+2019
+
+Q4
+
+Q1
+
+Q2
+
+Q3
+
+Q4
+
+−400
+
+2020
+
+Source: Federal reserve Board (FrB), Statistical release Z.1, “Financial accounts of the united States”; FrB staff calculations.
+
+U.S. Treasury securities by foreign investors exceeded net sales by U.S. mutual funds ($266 billion) and
+by the U.S. household sector ($224 billion), which includes U.S.-domiciled hedge funds.
+Estimates of monthly transactions show that foreign investors made record net sales of almost
+$420 billion of U.S. Treasury securities in March 2020; this amount is substantially higher than the
+$287 billion total for the first quarter because foreign investors purchased U.S. Treasury securities in
+January and February.3 More than half of net foreign sales in March 2020 came from official investors.
+Additionally, investors from EMEs, which include large official investors, accounted for 55 percent of
+net foreign sales of U.S. Treasury securities in March 2020 despite accounting for only 45 percent of
+total foreign holdings.
+As part of its response to the turmoil in the U.S. Treasury market, on March 31, 2020, the Federal
+Reserve established the FIMA (Foreign and International Monetary Authorities) Repo Facility, which
+allowed foreign monetary authorities to access dollars for liquidity purposes without having to sell their
+U.S. Treasury securities and thereby contributed to the stabilization of the U.S. Treasury market.4 This
+facility was made a standing facility in July 2021.5
+
+Central banks in emerging market economies sold U.S. Treasury securities to
+support their currencies, provide dollar liquidity to domestic residents, and build
+precautionary dollar cash buffers
+Financial stresses in EMEs ratcheted up substantially as concerns about COVID-19 started to escalate
+in mid-February 2020. EME equity prices tumbled, and sovereign spreads rose sharply. Portfolio
+(continued on next page)
+
+3
+
+These estimates are based on data from the Treasury International Capital (TIC) system. See Carol Bertaut and ruth Judson
+(2014), “estimating u.S. Cross-Border Securities Positions: New Data and New methods,” International Finance Discussion
+Papers 1113 (washington: Board of Governors of the Federal reserve System, august), https://www.federalreserve.gov/pubs/
+ifdp/2014/1113/ifdp1113.pdf. many hedge funds and other investment funds that serve u.S. investors are domiciled in Caribbean
+offshore financial centers and thus their holdings of u.S. Treasury securities are classified as foreign in the TIC data. Net sales of
+u.S. Treasury securities by entities located in Caribbean offshore financial centers are estimated to have totaled less than $30 billion in
+march 2020, so excluding these jurisdictions would not materially change the aggregate estimates of net foreign sales.
+
+4
+
+The FIma repo Facility allows foreign monetary authorities to temporarily exchange their u.S. Treasury securities with the Federal
+reserve for dollars (a repurchase agreement), thus giving these authorities access to dollar liquidity when needed. This facility complemented the additional provision of dollar funding through the expansion and enhancement of dollar liquidity swap lines announced by
+the Federal reserve and several other central banks during the third week of march 2020 by extending access to dollar liquidity to a
+broader range of countries. See https://www.newyorkfed.org/markets/central-bank-and-international-account-services.
+
+5
+
+For the announcement, see Board of Governors of the Federal reserve System (2021), “Statement regarding repurchase agreement
+arrangements” press release, July 28, https://www.federalreserve.gov/newsevents/pressreleases/monetary20210728b.htm.
+
+24  Asset Valuations
+
+The Role of Foreign Investors in the March 2020 Turmoil (continued)
+outflows from EMEs surpassed those observed during the Global Financial Crisis and previous episodes of EME financial stress (in dollar terms and relative to GDP), and many EME currencies depreciated sharply against the dollar. EME central banks liquidated assets held as foreign exchange reserves,
+including U.S. Treasury securities, at a rapid pace to mitigate currency depreciation pressures and to
+provide foreign currency liquidity to domestic firms and financial institutions.
+At the same time that they were selling U.S. Treasury securities, some official entities increased their
+cash and deposits in the United States, suggesting that their sales were also partly used to build dollar
+cash buffers amid a widespread surge in demand for liquidity.
+
+Large outflows from foreign-domiciled funds that invest in U.S. bonds led some
+of these funds to disproportionately sell U.S. Treasury securities because of
+their liquidity
+To explore some of the factors that drove sales of U.S. Treasury securities by foreign private investors
+in March 2020, we examine institution-level data on portfolio holdings for foreign-domiciled openend bond funds.6 We focus on bond mutual funds because, as noted in previous Financial Stability
+Reports, rapid redemptions from these types of funds contributed to the market turmoil at the start of
+the pandemic.
+Foreign-domiciled bond funds invest in a broad range of bonds—U.S., foreign, corporate, and government—including U.S. Treasury securities. Foreign-domiciled funds that invest solely in U.S. government securities experienced inflows in March 2020 (figure C), suggesting that concerns about the
+U.S. Treasury market were not significant drivers of outflows from foreign-domiciled funds. By contrast,
+other foreign-domiciled bond funds that invest in a broad range of U.S. securities experienced large
+outflows during this period.
+Figure C. Cumulative Net Flows to Foreign-Domiciled Bond Funds
+Billions of dollars
+Daily
++3 in March
+
+40
+20
+0
+−20
+
+Foreign-domiciled funds focused on U.S.
+government securities
+
+−78 in March
+−40
+
+Other foreign-domiciled bond funds
+
+Jan. 2020
+
+Feb. 2020
+
+Mar. 2020
+
+Apr. 2020
+
+−60
+May 2020
+
+Source: ePFr Global; Federal reserve Board staff calculations.
+
+(continued)
+6
+
+Because of data limitations, it is not possible to get a comprehensive breakdown of foreign private investors’ holdings of u.S. Treasury
+securities by type of investor (for example, deposit-taking institutions, insurance companies, pension funds, and nonfinancial corporations). Institution-level data provide only a very partial picture of these holdings. Sales of u.S. Treasury securities by the foreigndomiciled bond funds included in our analysis totaled only $11 billion in march 2020, compared with total estimated sales by foreign
+private investors of almost $190 billion.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  25
+
+Open-end funds offer daily liquidity to investors, but they invest in a range of assets with different
+levels of liquidity. When faced with large redemptions, funds may need to sell assets, and they may
+choose to sell their most liquid securities first to limit the effect of these sales on prices. Liquidity management practices at foreign-domiciled bond mutual funds could have led them to disproportionately
+sell U.S. Treasury securities in response to redemptions, as these securities were probably the most
+liquid assets in their portfolios.
+To understand whether foreign-domiciled funds did indeed disproportionately sell U.S. Treasury securities in response to outflows, we analyze the sensitivity of fund holdings of different types of securities
+to net outflows in March 2020 for 840 foreign-domiciled open-end bond funds.7 If these funds had
+sold all asset holdings in proportion to outflows (keeping portfolio weights unchanged), then investor
+redemptions equivalent to 1 percent of fund assets would have led to a reduction of 1 percent in each
+portfolio holding, including U.S. Treasury security holdings. The results show that fund asset sales
+were not proportional to holdings at the beginning of the month; rather, outflows led to greater net
+sales of more liquid securities. For instance,
+estimates indicate that outflows equivalent to
+1 percent of fund assets are associated with a
+Figure D. Sensitivity of Foreign-Domiciled Bond
+reduction in U.S. Treasury security holdings of
+Fund Holdings to Net outflows in march 2020
+about 1.5 percent, compared with a reduction
+Percent reduction assoc. with
+net outflows of 1 percent
+of only 0.6 percent in corporate bond holdings
+1.6
+(figure D). These results suggest that sales of
+1.4
+U.S. Treasury securities by foreign-domiciled
+1.2
+bond funds were not necessarily motivated
+1.0
+by a desire to rebalance their portfolios away
+0.8
+from these securities. Rather, because of the
+0.6
+depth and liquidity of the U.S. Treasury market,
+0.4
+foreign-domiciled funds sold Treasury securities
+0.2
+to raise cash to meet redemptions. Available
+0.0
+evidence shows that U.S.-domiciled bond
+U.S. Treasury Other countries’ Corporate
+mutual funds behaved in a similar manner in
+securities
+sovereign bonds
+bonds
+March 2020, disproportionately selling U.S.TreaSource: morningstar, Inc.; Federal reserve Board staff
+calculations.
+sury securities in response to net outflows.8
+
+7
+
+The 840 foreign-domiciled bond funds in this sample are those with a reported investment mandate for either u.S. or global bonds and
+data available on returns and portfolio holdings for February and march 2020 from morningstar, Inc. These funds had total net assets
+of $460 billion dollars at the end of February 2020. Figure C incorporates a larger sample of funds with data on daily flows available
+from ePFr Global, with total net assets of $1.3 trillion at the end of February 2020.
+
+8
+
+See Yiming ma, kairong Xiao, and Yao Zeng (2020), “mutual Fund Liquidity Transformation and reverse Flight to Liquidity,”
+Jacobs Levy equity management Center for Quantitative Financial research Paper (Philadelphia: The wharton School, university of
+Pennsylvania, July; revised april 2021).
+
+  27
+
+2. Borrowing by Businesses and Households
+Vulnerabilities from business and household debt have continued to fall, reflecting
+ample government support and strong business earnings
+Key measures of vulnerabilities arising from business debt including debt-to-GDP, gross
+leverage, and interest coverage ratios have largely returned to pre-pandemic levels. After
+jumping in mid-2020, business debt has since decreased on net. This decrease, combined with
+the continued recovery of earnings, the low level of interest rates, support from the Paycheck
+Protection Program (PPP), and fiscal stimulus, has helped restore the balance sheets of businesses. Nonetheless, risks to the economic outlook remain, particularly for industries most
+affected by the pandemic and for small businesses. Key measures of household vulnerability
+have also largely returned to pre-pandemic levels. A combination of extensions in borrower
+relief programs, fiscal stimulus, and high personal savings rates have helped the recovery of
+household balance sheets. However, uncertainty over the course of the pandemic and the
+expiration of relief programs may pose significant risks to household balance sheets.
+Table 2 shows the amounts outstanding and recent historical growth rates of forms of debt
+owed by nonfinancial businesses and households as of the second quarter of 2021. Total
+outstanding private credit was split about evenly between businesses and households, with
+businesses owing $18 trillion and households owing $17.3 trillion.
+
+The ratio of business and household debt to gross domestic product fell significantly
+during the first half of 2021, returning closer to historical trends
+Before the onset of the pandemic, the combined total debt of nonfinancial businesses and
+households grew roughly in line with nominal GDP, leaving the debt-to-GDP ratio essentially flat. In the first half of 2020, strong business borrowing and a precipitous drop in GDP
+pushed the debt-to-GDP ratio to historical highs. After that surge, the ratio declined in the
+second half of 2020—a decline that has continued in the first half of this year (figure 2-1).
+The ratio of business debt to GDP decreased in the first half of 2021 as GDP growth outpaced the growth of business debt (figure 2-2). Business debt grew modestly as outstanding
+bank loans declined. In addition, the level of business debt adjusted for inflation fell in the
+second quarter of this year (figure 2-3). The decline in the ratio of business debt to GDP
+was accompanied by reduced outlays, a strong recovery in profits, and a slower pace of share
+repurchases that contributed to an increase in the cash buffers of firms. Moreover, low interest rates continued to mitigate investor concerns about default risk arising from high leverage. Meanwhile, the net issuance of risky business debt—high-yield bonds and institutional
+leveraged loans—surged in the second and third quarters of this year (figure 2-4).
+
+28  Borrowing by Businesses and Households
+
+Table 2. Outstanding Amounts of Nonfinancial Business and Household Credit
+Outstanding
+(billions of dollars)
+
+Growth,
+2020:Q2–2021:Q2
+(percent)
+
+Average annual growth,
+1997–2021:Q2
+(percent)
+
+Total private nonfinancial credit
+
+35,235
+
+4.0
+
+5.5
+
+Total nonfinancial business credit
+
+17,978
+
+1.5
+
+5.8
+
+Corporate business credit
+
+11,238
+
+.4
+
+5.1
+
+Bonds and commercial paper
+
+7,328
+
+2.1
+
+5.7
+
+Bank lending
+
+1,440
+
+−17.2
+
+2.6
+
+Leveraged loans*
+
+1,195
+
+6.2
+
+14.2
+
+Noncorporate business credit
+
+6,739
+
+3.3
+
+7.2
+
+Commercial real estate credit
+
+2,686
+
+4.5
+
+6.1
+
+Total household credit
+
+17,257
+
+6.8
+
+5.3
+
+Mortgages
+
+11,270
+
+6.1
+
+5.5
+
+Consumer credit
+
+4,267
+
+4.1
+
+5.0
+
+Student loans
+
+1,732
+
+3.1
+
+8.5
+
+Auto loans
+
+1,280
+
+6.9
+
+5.1
+
+Credit cards
+
+952
+
+−.1
+
+2.6
+
+22,731
+
+5.2
+
+4.2
+
+Item
+
+Nominal GDP
+
+Note: The data extend through 2021:Q2. Growth rates are measured from Q2 of the year immediately preceding the period through Q2 of
+the final year of the period. The table reports the main components of corporate business credit, total household credit, and consumer credit.
+Other, smaller components are not reported. The commercial real estate (CRE) row shows CRE debt owed by both corporate and noncorporate
+businesses. The total household-sector credit includes debt owed by other entities, such as nonprofit organizations. GDP is gross domestic
+product.
+* Leveraged loans included in this table are an estimate of the leveraged loans that are made to nonfinancial businesses only and do not
+include the small amount of leveraged loans outstanding for financial businesses. The amount outstanding shows institutional leveraged loans
+and generally excludes loan commitments held by banks. For example, lines of credit are generally excluded from this measure. The average
+annual growth rate shown for leveraged loans is computed from 2000 to 2021:Q2, as this market was fairly small before 2000.
+Source: For leveraged loans, S&P Global Market Intelligence, Leveraged Commentary & Data; for GDP, Bureau of Economic Analysis,
+national income and product accounts; for all other items, Federal Reserve Board, Statistical Release Z.1, “Financial Accounts of the United
+States.”
+
+2-1. Private Nonfinancial-Sector Credit-to-GDP Ratio
+ratio
+Quarterly
+
+2.0
+1.7
+
+Q2
+
+1.4
+1.1
+0.8
+
+1982
+
+1985
+
+1988
+
+1991
+
+1994
+
+1997
+
+2000
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal Reserve Board (FRB) staff calculations based on Bureau of Economic Analysis, national income and product accounts, and
+FRB, Statistical Release Z.1, “Financial Accounts of the United States.”
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  29
+
+2-2. Nonfinancial Business- and Household-Sector Credit-to-GDP Ratios
+1.1
+
+ratio
+
+ratio
+Quarterly
+
+1.0
+
+1.0
+0.9
+
+0.9
+
+0.8
+
+0.8
+0.7
+
+Q2
+
+0.6
+
+Nonﬁnancial business
+(right scale)
+Household (left scale)
+
+0.5
+0.4
+
+0.7
+0.6
+0.5
+0.4
+
+0.3
+1982
+
+1985
+
+1988
+
+1991
+
+1994
+
+1997
+
+2000
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal Reserve Board (FRB) staff calculations based on Bureau of Economic Analysis, national income and product accounts, and
+FRB, Statistical Release Z.1, “Financial Accounts of the United States.”
+
+2-3. Growth of Real Aggregate Debt of the Business Sector
+Percent change, annual rate
+Quarterly
+
+20
+15
+10
+5
+0
+
+Q2
+
+−5
+−10
+
+1997
+
+2003
+
+2009
+
+2015
+
+2021
+
+Source: Federal Reserve Board, Statistical Release Z.1, “Financial Accounts of the United States.”
+
+2-4. Net Issuance of Risky Business Debt
+Billions of dollars
+Quarterly
+
+120
+100
+
+Institutional leveraged loans
+High-yield and unrated bonds
+Q3
+
+80
+60
+40
+20
+0
+−20
+−40
+−60
+
+2005
+
+2007
+
+2009
+
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+Source: Mergent, Fixed Income Securities Database; S&P Global Market Intelligence, Leveraged Commentary & Data.
+
+Key indicators point to a reduction in vulnerabilities from business debt
+Gross leverage of large businesses—the ratio of debt to assets for all publicly traded nonfinancial firms—declined to pre-pandemic levels in the first half of 2021 (figure 2-5). For
+large firms in industries most affected by the pandemic, such as airlines, hospitality and leisure, and restaurants, gross leverage is still high, but net leverage—the ratio of debt less cash
+to total assets—has dropped to levels last seen in 2018, driven by large cash buffers.
+
+30  Borrowing by Businesses and Households
+
+2-5. Gross Balance Sheet Leverage of Public
+Nonfinancial Businesses
+Percent
+Quarterly
+
+75th percentile
+all ﬁrms
+
+2-6. Interest Coverage Ratios for Public
+Nonfinancial Businesses
+55
+50
+
+ratio
+Quarterly
+
+median
+25th percentile
+
+45
+Q2
+
+5
+4
+3
+
+40
+35
+
+Q2
+
+30
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal Reserve Board staff calculations based on S&P
+Global, Compustat.
+
+1
+−1
+
+20
+2003
+
+2
+0
+
+25
+2000
+
+6
+
+−2
+2000
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal Reserve Board staff calculations based on S&P
+Global, Compustat.
+
+As earnings among large firms continued to recover and interest rates remained low, the
+ratio of earnings to interest expenses (the interest coverage ratio) moved up over the first
+half of this year, suggesting large firms were better able to service debt. The median interest
+coverage ratio among these firms rose to levels last seen in 2018 (figure 2-6). The share of
+firms with a negative ratio, which could stem from negative earnings, declined significantly.
+Coverage ratios for firms in the lowest quartile of interest coverage were below pre-pandemic
+levels in the second quarter of 2021. These firms were typically in the industries most
+affected by the pandemic.
+An important caveat to these improvements in leverage and interest coverage ratios is that
+comprehensive data are only available for publicly traded firms.7 These firms tend to be large
+and have better access to capital markets, allowing them to more easily weather the disruptions associated with the pandemic. By contrast, smaller middle-market firms that are privately held tend to have higher leverage than public firms and primarily borrow from banks,
+private credit and equity funds, and sophisticated investors. Privately held firms, however,
+likely are also finding it easier to borrow because the commercial lending standards of banks
+have largely returned to pre-pandemic levels and because of recent regulatory changes for
+privately held firms.8
+Credit quality, which deteriorated after the onset of the pandemic, has continued to improve
+in the first half of 2021. The rate of corporate bond downgrades remained low in the first
+half of this year. The fraction of nonfinancial corporate bonds that are high yield—the
+higher-risk segment of the market—is little changed since the May report. Expected oneyear-ahead bond defaults have continued to decline and are now well below their long-run
+medians. Moreover, risky firms will need to roll over only about 3 percent of outstanding
+speculative-grade bonds within one year, as firms have continued to refinance existing debt
+with longer-maturity bonds at low interest rates.
+7
+
+8
+
+It is important to note, however, that the credit aggregates shown in figures 2-1, 2-2, and 2-3 include debt from both public
+and private firms.
+See Securities and Exchange Commission (2020), “SEC Harmonizes and Improves ‘Patchwork’ Exempt Offering Framework,” press release, November 2, https://www.sec.gov/news/press-release/2020-273.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  31
+
+Default rates on leveraged loans have fallen, even as underwriting standards have weakened. The default rate on leveraged loans increased rapidly early in the pandemic but has
+declined to below pre-pandemic levels in the first half of this year (figure 2-7). Additionally,
+the average credit quality of outstanding leveraged loans has continued to improve over
+the same period.9 However, the share of newly issued loans to large corporations with high
+leverage—defined as those with ratios of debt to earnings before interest, taxes, depreciation,
+and amortization greater than 6—has exceeded the historical highs reached in recent years
+(figure 2-8).
+2-7. Default Rates of Leveraged Loans
+
+2-8. Distribution of Large Institutional Leveraged
+Loan Volumes, by Debt-to-EBITDA Ratio
+Percent
+
+monthly
+
+14
+12
+10
+8
+
+Sept.
+
+Percent
+Debt multiples ≥ 6x
+Debt multiples 5x−5.99x
+Debt multiples 4x−4.99x
+Debt multiples < 4x
+
+Q3
+
+80
+
+4
+
+60
+
+2
+
+40
+
+0
+
+20
+
+−2
+2000 2003 2006 2009 2012 2015 2018 2021
+Source: S&P Global, Leveraged Commentary & Data.
+
+100
+
+6
+
+0
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Mergent, Fixed Income Securities Database; S&P
+Global, Leveraged Commentary & Data.
+
+Vulnerabilities from debt owed by small businesses have improved, but many small
+businesses could be affected by a worsening of the pandemic
+While many small businesses closed or significantly scaled back their operations as a result
+of the pandemic, credit quality for small businesses that have continued operating or
+reopened has stabilized further in the first half of this year. Loan delinquencies have declined
+significantly in the first half of the year. Loans extended under the PPP provided financial
+support to many small businesses. However, even though the outlook for small businesses
+has steadily improved in the first half of the year, the Census Bureau’s Overall Sentiment
+Index for small businesses indicates that, more recently, the improvements have stopped,
+likely reflecting the rise of the Delta variant.
+
+Although conditions for many households have improved, the expiration of assistance
+programs may cause additional financial stress for some households
+The financial position of many households has continued to improve since the previous
+Financial Stability Report, supported by pandemic stimulus programs, a recovering economy,
+and rising house prices. Still, some households remain financially strained and more vulnerable to future shocks. These vulnerabilities may be increased by the expiration of expanded
+unemployment programs, loan forbearance, and eviction moratoria as well as by a potential
+worsening of the public health situation, especially for low-income households.
+9
+
+According to S&P Leveraged Commentary and Data, the share of outstanding leveraged loans rated B or worse has
+decreased significantly through October of this year.
+
+32  Borrowing by Businesses and Households
+
+Borrowing by households picked up in the second quarter
+Household debt growth picked up in the second quarter of this year. Debt owed by the
+roughly one-half of households with prime credit scores continued to account for all the
+growth, driven by increases in mortgage, credit card, and automobile debt. However,
+accounting for inflation, household debt only edged up slightly and the ratio of household
+debt to GDP declined. The increase in mortgage and automobile debt reflects a surge in
+demand for housing and automobiles as well as substantial price growth in those categories.
+Furthermore, the growth in credit card bal2-9. Total Household Loan Balances
+ances may reflect a return to pre-pandemic
+Trillions of dollars (real)
+11
+spending patterns. By contrast, loan balances
+Quarterly
+10
+for borrowers with near-prime and subprime
+9
+8
+credit scores declined in real terms (figure 2-9).
+7
+This decrease may be attributable to relatively
+6
+Prime
+5
+Near prime
+tight lending standards for such borrowers
+4
+Q2
+3
+and to a decline in the share of borrowers
+2
+Subprime
+with low credit scores. Subprime debt balances
+1
+0
+may increase with the expiration of expanded
+2001
+2005
+2009
+2013
+2017
+2021
+unemployment programs, loan forbearance,
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Bureau of Labor Statistics, consumer price index
+and eviction moratoria or with a potential
+via Haver Analytics.
+worsening of the public health situation.
+
+The share of mortgages either delinquent or in loss mitigation has fallen well below prepandemic levels
+Mortgage debt accounts for roughly two-thirds of total household debt, with new mortgage
+extensions skewed toward prime borrowers in recent years (figure 2-10). Mortgage forbearance programs have helped significantly reduce the effect of the pandemic on mortgage
+delinquencies (figure 2-11). The share of mortgages that are either delinquent or in a loss
+mitigation program, including forbearance, was slightly above 4 percent in August 2021,
+down from its peak of 8.9 percent in May 2020.
+2-10. Estimates of New Mortgage Volumes to
+Households
+Billions of dollars (real)
+annual
+
+Subprime
+Near prime
+Prime
+
+2-11. Mortgage Loss Mitigation and Delinquency
+1400
+
+Percent of mortgages
+Quarterly/monthly
+
+1200
+
+8
+
+1000
+
+6
+
+800
+600
+
+aug.
+
+400
+
+0
+
+0
+2003
+
+2009
+
+2015
+
+2021
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+4
+2
+
+Delinquent
+Delinquent/loss mitigation
+
+200
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Bureau of Labor Statistics, consumer price index
+via Haver Analytics.
+
+10
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  33
+
+Borrowers still in forbearance may be vulnerable to the increased payments associated with
+the end of forbearance programs. Borrowers who received forbearance were more likely
+to have been delinquent before the pandemic, have low incomes, and have subprime credit
+scores.10 Those borrowers that have remained in forbearance are even more likely to have
+subprime credit scores.11 Survey evidence also suggests that these borrowers are more likely
+to be employed in industries hard hit by the pandemic, to have suffered income losses in the
+past year, and to be delinquent or in forbearance on other forms of debt.12
+Borrowers exiting forbearance are expected to resume making payments, and servicers are
+expected to work with these borrowers to modify their mortgages to achieve manageable
+payment plans. Should borrowers be unable to resume making payments even under a modified payment plan, a home sale could be a viable option, especially because the recent robust
+house price increases have put many borrowers in a strong equity position (figures 2-12 and
+2-13).13 Estimates suggest that, as one would expect in a time of rapidly rising house prices,
+only a small fraction of borrowers currently in forbearance have equity cushions of less than
+10 percent.14 The implications of such sales for aggregate house prices would likely be minor.
+As of September 21, there were about 1.5 million residential properties in forbearance;
+2-12. Estimates of Mortgages with Negative Equity
+Percent of mortgages
+monthly
+
+30
+
+2-13. Estimates of Housing Leverage
+1999:Q1 = 100
+Quarterly
+
+relative to model-implied values
+relative to market value
+
+180
+160
+140
+
+20
+
+120
+100
+
+10
+Q2
+
+June
+
+60
+
+0
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+Source: CoreLogic, Inc., Real Estate Data.
+
+2021
+
+80
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Zillow, Inc., Zillow Real Estate Data; Bureau of
+Labor Statistics via Haver Analytics.
+
+10
+
+See Andrew Haughwout, Donghoon Lee, Joelle Scally, and Wilbert van der Klaauw (2021), “Keeping Borrowers Current in
+a Pandemic,” Federal Reserve Bank of New York, Liberty Street Economics (blog), May 19, https://libertystreeteconomics.
+newyorkfed.org/2021/05/keeping-borrowers-current-in-a-pandemic.
+
+11
+
+See Andrew Haughwout, Donghoon Lee, Joelle Scally, and Wilbert van der Klaauw (2021), “Forbearance Participation
+Declines as Programs’ End Nears,” Federal Reserve Bank of New York, Liberty Street Economics (blog), August 3, https://
+libertystreeteconomics.newyorkfed.org/2021/08/forbearance-participation-declines-as-programs-end-nears.
+
+12
+
+See Lauren Lambie-Hanson, James Vickery, and Tom Akana (2021), “Recent Data on Mortgage Forbearance: Borrower Uptake and Understanding of Lender Accommodations,” brief (Philadelphia: Federal Reserve
+Bank of Philadelphia, March 4), https://www.philadelphiafed.org/consumer-finance/mortgage-markets/
+recent-data-on-mortgage-forbearance-borrower-uptake-and-understanding-of-lender-accommodations.
+
+13
+
+The significant growth in house prices over the past year, noted earlier in this report, has contributed to the very low
+estimated share of outstanding mortgages with negative equity (figure 2-12). Consistent with higher house prices, the ratio
+of outstanding mortgage debt to home values continued to fall in the first half of this year and remains at a modest level
+(figure 2-13).
+
+14
+
+See Black Knight (2021), “Tappable Equity Rises $1 Trillion in Q2 2021 Alone to Hit All-Time High of $9.1 Trillion; Quarter Also Sees Largest Volume of Cash-Out Refis in 15 Years,” press release, September 8, https://www.blackknightinc.com/
+black-knights-july-2021-mortgage-monitor.
+
+34  Borrowing by Businesses and Households
+
+should those properties all be put on the market simultaneously—an unlikely event—they
+would add roughly two to three months of housing supply. Even so, with housing demand
+currently strong, such an increase in supply would likely not be enough to cause a drop in
+aggregate house prices.
+
+Consumer delinquencies declined further as conditions for households continued to
+improve and forbearance on student loans was extended again through the end of
+January 2022
+Most of the remaining one-third of household debt is consumer credit, which consists
+primarily of student loans, auto loans, and credit card debt (table 2). Inflation-adjusted
+consumer credit edged down in 2021, as student and auto debt were flat and credit card debt
+declined in real terms (figure 2-14). Auto loan balances expanded moderately, on net, in
+2021, driven primarily by borrowers with prime and near-prime credit scores (figure 2-15).
+
+2-14. Consumer Credit Balances
+
+2-15. Auto Loan Balances
+
+Billions of dollars (real)
+Quarterly
+
+2000
+1800
+
+Student loans
+
+Billions of dollars (real)
+Quarterly
+
+1600
+1400
+Q2
+
+Q2
+
+1200
+
+Prime
+
+Near prime
+
+1000
+800
+Credit cards
+
+600
+
+auto loans
+
+400
+
+Subprime
+
+200
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Bureau of Labor Statistics, consumer price index
+via Haver Analytics.
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+750
+700
+650
+600
+550
+500
+450
+400
+350
+300
+250
+200
+150
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Bureau of Labor Statistics, consumer price index
+via Haver Analytics.
+
+The share of auto loans that were either delinquent or in loss mitigation declined further to
+about 3 percent by August of this year, with outright delinquency rates reaching 2 percent
+(figure 2-16). However, delinquencies in auto
+2-16. Auto Loss Mitigation and Delinquency
+loans have increased significantly in the subPercent
+10
+prime category and may accelerate with the
+Quarterly/monthly
+expiration of stimulus programs—state and
+8
+Delinquent
+federal expanded unemployment programs
+Delinquent/loss mitigation
+6
+and eviction moratoria—or if economic
+growth stalls as a result of the pandemic. High
+4
+automobile prices due to pandemic-related
+2
+aug.
+shortages may mitigate potential adverse
+0
+effects of such delinquencies on financial
+2001
+2005
+2009
+2013
+2017
+2021
+institutions.
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  35
+
+The risk that student loan debt poses to the financial system appears limited at this time.
+Most of the loans were issued through government programs and are owed by households
+in the top 40 percent of the income distribution. Moreover, protections originally in the
+Coronavirus Aid, Relief, and Economic Security Act—later extended by the Department
+of Education—currently guarantee payment forbearance and stop interest accrual through
+January 2022 for most federal student loans.
+Consumer credit card balances have contracted, on net, since the onset of the pandemic
+(figure 2-17). Delinquency rates were roughly flat for borrowers with prime credit scores,
+decreased moderately for near-prime borrowers, and dropped steeply for subprime borrowers
+in the first half of this year (figure 2-18). Delinquency rates may increase going forward as
+spending levels pick up or if the economic growth stalls as a result of the pandemic. Additionally, credit card delinquencies for subprime and near-prime borrowers may be adversely
+affected by the expiration of stimulus programs.
+2-17. Credit Card Balances
+
+2-18. Credit Card Delinquency Rates
+Billions of dollars (real)
+
+Quarterly
+
+500
+450
+
+Prime
+
+Percent
+Quarterly
+
+Q2
+Near prime
+
+25
+
+Subprime
+
+400
+
+20
+
+350
+
+15
+
+300
+250
+
+10
+
+200
+
+Subprime
+
+Prime
+
+150
+
+Near prime
+
+Q2
+
+50
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax; Bureau of Labor Statistics, consumer price index
+via Haver Analytics.
+
+5
+0
+
+100
+2001
+
+30
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Bank of New York Consumer Credit
+Panel/Equifax.
+
+  37
+
+3. Leverage in the Financial Sector
+Leverage at banks and broker-dealers remained low, while leverage continued to be high
+at life insurance companies and somewhat elevated at hedge funds
+Banks continued to weather the pandemic well. Although banks may still experience some
+losses from loans in loss-mitigation programs, their capital and loan loss reserves remained
+above pre-pandemic levels, and profitability was strong during the first half of 2021. Leverage continued to be at historically low levels at broker-dealers as well as at property and
+casualty (P&C) insurers. However, leverage stayed high at life insurance companies, and the
+most comprehensive available measures of hedge fund leverage remained somewhat above
+their historical averages. Although securitization volumes continued to be subdued, issuance volumes of CLOs and ABS were elevated. Bank lending to NBFIs continued to grow
+notably.
+Table 3 shows the sizes and growth rates of the types of financial institutions discussed in
+this section.15
+Table 3. Size of Selected Sectors of the Financial System, by Types of Institutions and Vehicles
+Total assets
+(billions of dollars)
+
+Growth,
+2020:Q2–2021:Q2
+(percent)
+
+Average annual growth,
+1997–2021:Q2
+(percent)
+
+Banks and credit unions
+
+24,385
+
+7.1
+
+6.3
+
+Mutual funds
+
+21,460
+
+27.9
+
+10.4
+
+Insurance companies
+
+12,578
+
+9.1
+
+6.0
+
+Life
+
+9,568
+
+8.1
+
+6.1
+
+Property and casualty
+
+3,010
+
+12.4
+
+5.9
+
+Hedge funds*
+
+8,554
+
+12.1
+
+8.7
+
+Broker-dealers**
+
+4,941
+
+10.7
+
+5.2
+
+Item
+
+Outstanding
+(billions of dollars)
+Securitization
+
+11,637
+
+6.3
+
+5.5
+
+Agency
+
+10,388
+
+6.8
+
+6.0
+
+Non-agency***
+
+1,249
+
+2.2
+
+3.2
+
+Note: The data extend through 2021:Q2. Growth rates are measured from Q2 of the year immediately preceding the period through Q2 of
+the final year of the period. Life insurance companies’ assets include both general and separate account assets.
+* Hedge fund data start in 2012:Q4 and are updated through 2021:Q1. Growth rates for the hedge fund data are measured from Q1 of the
+year immediately preceding the period through Q1 of 2021.
+** Broker-dealer assets are calculated as unnetted values.
+*** Non-agency securitization excludes securitized credit held on balance sheets of banks and finance companies.
+Source: Federal Reserve Board (FRB), Statistical Release Z.1, “Financial Accounts of the United States”; FRB, “Enhanced Financial Accounts
+of the United States.”
+
+15
+
+For hedge funds, the growth rate is computed from the first quarter of 2020 through the first quarter of 2021 and the average
+annual growth rate from the fourth quarter of 2012 through the first quarter of 2021.
+
+38  Leverage in the Financial Sector
+
+Bank capital ratios rose above pre-pandemic levels, although some challenging
+conditions remain
+The common equity Tier 1 (CET1) ratio—a regulatory risk-based measure of bank capital adequacy—increased in the first half of 2021 for most banks, exceeding pre-pandemic
+levels (figure 3-1). The increase resulted from the recovery of bank profitability to above
+pre-pandemic levels, which was driven by strong trading and capital market activity as well
+as releases of loan loss reserves associated with improvements in the economic outlook.16
+The ratio of tangible capital to total assets—a measure of bank capital adequacy that does
+not account for the riskiness of credit exposures and excludes items such as goodwill from
+capital—at large banks remained near multi-decade highs but below pre-pandemic levels due
+to growth in low-risk assets such as central bank reserve balances and Treasury securities
+(figure 3-2).
+3-1. Common Equity Tier 1 Ratio of Banks
+Percent of risk-weighted assets
+14
+Q2
+
+Quarterly
+
+12
+G-SIBs—
+Preliminary
+Q3
+
+10
+8
+6
+
+G-SIBs
+Large non–G-SIBs
+other BHCs
+
+4
+2
+0
+
+2001
+
+2003
+
+2005
+
+2007
+
+2009
+
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+Source: Federal Reserve Board, Form FR Y-9C, Consolidated Financial Statements for Holding Companies.
+
+3-2. Ratio of Tangible Bank Equity to Assets
+Percent of total assets
+Quarterly
+
+12
+10
+
+Q2
+
+8
+6
+
+G-SIBs
+Large non–G-SIBs
+other BHCs
+
+4
+2
+0
+
+1985
+
+1991
+
+1997
+
+2003
+
+2009
+
+2015
+
+2021
+
+Source: Federal Financial Institutions Examination Council, Call Report Form FFIEC 031, Consolidated Reports of Condition and Income
+(Call Report).
+
+16
+
+Under accounting rules, banks prepare for possible loan losses before they occur. Loan loss provisions in the bank’s income
+statement are expenses set aside for estimated credit losses and are added to the loan loss reserves. The decline in loan loss
+reserves during the first half of 2021 was notable for most loan categories, with the exception of CRE loans, consistent with
+elevated credit risk in some CRE segments.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  39
+
+In June, the Federal Reserve released the results of its annual bank stress tests.17 The large
+banks that were tested all remained well above their risk-based minimum capital requirements during a severe hypothetical recession that included, among other features, substantial stress in U.S. CRE, housing, and corporate debt markets. Additional restrictions on the
+capital distributions of banks put in place during the pandemic ended on June 30, as previously announced, and large banks announced plans for increased capital distributions and
+resumed share repurchases.18
+CET1 ratios at large banks, as of June 30, exceeded regulatory requirements, including the
+new stress capital buffers that were put into effect on October 1. These stress capital buffers
+were computed based on the June 2021 stress-test results.19 In addition, based on preliminary
+data for the third quarter of 2021, earnings at the U.S. global systemically important banks
+remained high enough to support CET1 ratios well above required minimum levels despite
+the increased capital payouts (as shown in figure 3-1). However, the ability of banks to
+accumulate equity capital may be affected in the future, as bank profitability remains under
+pressure from historically low net interest margins.
+Measures of the credit quality of bank loan portfolios continued to improve broadly over
+the first half of the year amid an improved economic outlook as well as significant monetary
+and fiscal support, including forbearance
+3-3. Borrower Leverage for Bank Commercial and
+programs, expanded unemployment benefits,
+Industrial Loans
+Debt as percent of assets
+and the PPP. The credit quality of firms with
+36
+Quarterly
+outstanding loans at large banks improved in
+34
+the first half of the year, as measured by the
+32
+Q2
+outstanding amounts of loans that experi30
+enced credit rating upgrades minus those
+that experienced downgrades. The leverage
+28
+Non-publicly-traded ﬁrms
+of these firms declined during the same
+Publicly traded ﬁrms
+26
+period but remained somewhat elevated rela24
+tive to levels observed since 2013 (figure 3-3).
+2013
+2015
+2017
+2019
+2021
+Source: Federal Reserve Board, Form FR Y-14Q
+The overall delinquency rates of loans held
+(Schedule H.1), Capital Assessments and Stress Testing.
+by banks fell during the first half of 2021.
+17
+
+See Board of Governors of the Federal Reserve System (2021), “Federal Reserve Board Releases Results of Annual Bank
+Stress Tests, Which Show That Large Banks Continue to Have Strong Capital Levels and Could Continue Lending to
+Households and Businesses during a Severe Recession,” press release, June 24, https://www.federalreserve.gov/newsevents/
+pressreleases/bcreg20210624a.htm.
+
+18
+
+See Board of Governors of the Federal Reserve System (2021), “Federal Reserve Announces Temporary and Additional
+Restrictions on Bank Holding Company Dividends and Share Repurchases Currently in Place Will End for Most Firms after
+June 30, Based on Results from Upcoming Stress Test,” press release, March 25, https://www.federalreserve.gov/newsevents/
+pressreleases/bcreg20210325a.htm. This action followed a previous announcement by the Federal Reserve that allowed banks
+to resume share repurchases in the first quarter of 2021 following the release of the results from the second round of bank
+stress tests for 2020.
+
+19
+
+In March 2020, the Board approved a final rule creating a stress capital buffer requirement for large banks. See Board of
+Governors of the Federal Reserve System (2020), “Federal Reserve Board Approves Rule to Simplify Its Capital Rules
+for Large Banks, Preserving the Strong Capital Requirements Already in Place,” press release, March 4, https://www.
+federalreserve.gov/newsevents/pressreleases/bcreg20200304a.htm.
+
+40  Leverage in the Financial Sector
+
+However, delinquency rates on commercial and industrial (C&I) loans to industries most
+affected by the pandemic—including oil and gas, transportation, and leisure—and CRE
+loans backed by hotels and retail properties remained elevated.
+In response to the July 2021 SLOOS, banks generally reported that standards for C&I
+loans eased from the first to the second quarter of 2021, which followed the large tightening in 2020 (figure 3-4). In terms of levels, banks reported that the standards on C&I loans
+are at the easier end of the range of standards observed since 2005 and generally close to
+their pre-pandemic levels. Demand for C&I loans also strengthened over the second quarter,
+although market commentary and write-in comments to the SLOOS suggest it remained
+generally weak. New C&I loan originations for businesses of all sizes increased in the first
+half of 2021, though not enough to offset the overall decline in C&I loan balances.
+3-4. Change in Bank Lending Standards for Commercial and Industrial Loans
+
+easing
+
+Tightening
+
+Net percentage of banks reporting
+Quarterly
+
+Q2
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+100
+80
+60
+40
+20
+0
+−20
+−40
+−60
+−80
+−100
+
+2021
+
+Source: Federal Reserve Board (FRB), Senior Loan Officer Opinion Survey on Bank Lending Practices; FRB staff calculations.
+
+Shares of consumer and small business loans in loss-mitigation programs at large banks continued to decline in the first quarter. However, the shares of C&I, CRE, and residential mortgage loans as well as home equity lines of credit in loss-mitigation programs stayed elevated
+during the same period. Although banks maintained significant loan loss reserves, concerns
+about the future path of credit quality remain because of the anticipated end of loss mitigation and the government support mentioned earlier as well as the uncertain course of the virus.
+
+Broker-dealer leverage remained at historically low levels . . .
+Broker-dealer leverage remained near historically low levels through the first half
+of 2021 (figure 3-5). Primary dealers’ net
+secured borrowings decreased over the past
+year. Total secured borrowing and lending,
+a measure of funding intermediation activity by dealers, remained roughly unchanged
+over the same period. However, total secured
+borrowing and lending backed by equity
+securities have increased, coinciding with
+the large gains in broader equity markets.
+Dealer trading revenues were robust in the
+
+3-5. Leverage at Broker-Dealers
+ratio of assets to equity
+Quarterly
+
+50
+40
+30
+20
+
+Q2
+
+10
+0
+
+1997
+
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Board, Statistical Release Z.1,
+“Financial Accounts of the United States.”
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  41
+
+first half of the year, led by equity trading. In response to a set of special questions in the
+September 2021 Senior Credit Officer Opinion Survey on Dealer Financing Terms (SCOOS)
+motivated by the meme stock episode in January 2021, three-fifths of respondents reported
+tightening of initial and variation margins for clients using over-the-counter derivatives and
+structured products with exposure to individual stocks over the same period.
+
+. . . but leverage at life insurance companies stayed high
+Leverage of life insurance companies
+remained at post-2008 highs (figure 3-6).
+Corporate bonds, CLOs, and CRE debt
+continued to account for a large proportion
+of life insurers’ assets. If these assets lose
+value, life insurers’ capital positions—and,
+hence, their ability to honor debt obligations—could be impaired.
+
+3-6. Leverage at Insurance Companies
+ratio of assets to equity
+Quarterly
+
+Life
+Property and casualty
+
+15
+12
+9
+
+Q2
+
+6
+3
+0
+
+As discussed in the November 2020 Finan2000 2003 2006 2009 2012 2015 2018 2021
+Source: National Association of Insurance Commissioners,
+cial Stability Report, climate change might
+quarterly and annual statutory filings accessed via S&P Global
+increase financial stability risks associated
+Market Intelligence, Capital IQ Pro.
+with financial leverage.20 P&C insurers
+are one type of financial institution whose
+leverage may be affected by climate change. Leverage at P&C insurers remained at historically low levels in the first half of 2021. The low leverage allowed P&C insurers to cover
+claims from recent severe weather events without solvency issues.21
+
+Leverage at hedge funds continued to be somewhat elevated
+Hedge fund leverage remained somewhat
+higher than its historical average in the first
+quarter of 2021, according to the most comprehensive available measures. On-­balancesheet leverage at hedge funds, based on confidential data collected by the Securities and
+Exchange Commission (SEC), decreased in
+the first quarter to a level close to its historical
+average. Gross leverage at hedge funds—based
+on the same source but including off-balancesheet derivatives exposures—continued to be
+above its historical average in the first quarter
+(figure 3-7). Several indicators of leverage
+
+3-7. Gross Leverage at Hedge Funds
+ratio
+Quarterly
+
+10
+9
+8
+
+mean
+
+7
+6
+Q1
+
+5
+4
+3
+
+median
+
+2
+1
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+Source: Securities and Exchange Commission, Form PF,
+Reporting Form for Investment Advisers to Private Funds and
+Certain Commodity Pool Operators and Commodity Trading
+Advisors.
+
+20
+
+For more information, see the box “The Implications of Climate Change for Financial Stability” in Board of Governors of
+the Federal Reserve System (2020), Financial Stability Report (Washington: Board of Governors, November), pp. 58–59,
+https://www.federalreserve.gov/publications/files/financial-stability-report-20201109.pdf.
+
+21
+
+For instance, losses of the magnitude of those from Hurricane Ida or Hurricane Katrina, in the range of $15 billion to
+$65 billion, would have minimally affected the P&C insurance industry at the end of 2020, as P&C insurers’ capital levels, at
+more than $900 billion, easily exceeded such losses.
+
+42  Leverage in the Financial Sector
+
+intermediated by dealers on behalf of hedge funds, such as hedge funds’ margin and securities borrowing in prime brokerage accounts, suggest that hedge fund leverage associated with
+equity market activities remained at high levels in January 2021, the most recent data. More
+recently, in response to the September SCOOS, dealers reported that the use of financial
+leverage by hedge funds decreased between May and August, on net, amid tighter nonprice
+terms on financial leverage extended to hedge funds (figure 3-8).
+3-8. Change in the Use of Financial Leverage
+Net percentage
+
+60
+
+Quarterly
+
+40
+Q3
+
+20
+0
+−20
+
+Hedge funds
+Trading reITs
+Insurance companies
+mutual funds
+
+−40
+−60
+−80
+
+2012
+
+2013
+
+2014
+
+2015
+
+2016
+
+2017
+
+2018
+
+2019
+
+2020
+
+2021
+
+Source: Federal Reserve Board, Senior Credit Officer Opinion Survey on Dealer Financing Terms.
+
+Issuance of non-agency securitized products has hit a post-2008 high
+Although securitization volumes of non-agency securities—that is, those not guaranteed
+by a government-sponsored enterprise or by the federal government—remained subdued
+compared with pre-2008 levels, the volumes rose beyond pre-pandemic levels in the first
+half of 2021 and remained high in the third quarter (figure 3-9).22 This growth resulted,
+in part, from strong investor demand for assets with higher yields. Issuance of residential
+3-9. Issuance of Non-agency Securitized Products, by Asset Class
+Billions of dollars (real)
+annual
+
+other
+Private-label rmBS
+Non-agency CmBS
+auto loan/lease aBS
+CDos (including CLos and aBS CDos)
+
+2800
+2400
+2000
+1600
+1200
+800
+400
+0
+
+2001
+
+2003
+
+2005
+
+2007
+
+2009
+
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+Source: Green Street Advisors, LLC, Commercial Mortgage Alert’s CMBS Database and Asset-Backed Alert’s ABS Database; Bureau of
+Labor Statistics, consumer price index via Haver Analytics.
+
+22
+
+Securitization allows financial institutions to bundle loans or other financial assets and sell claims on the cash flows generated by these assets as tradable securities, much like bonds. Examples of the resulting securities include CLOs (predominantly backed by leveraged loans), ABS (often backed by credit card and auto debt), CMBS, and RMBS. By funding
+assets with debt issued by investment funds known as special purpose entities (SPEs), securitization can add leverage to the
+financial system, in part because SPEs are generally subject to regulatory regimes, such as risk retention rules, that are less
+stringent than banks’ regulatory capital requirements.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  43
+
+­mortgage-backed securities (RMBS) and some types of CRE-related securitization deals—
+such as CMBS and CRE CLOs—had been subdued since the onset of the pandemic but
+increased substantially this year. Issuance of ABS, including subprime auto ABS, was elevated over the same period. CLO issuance continued to be brisk through the third quarter
+of this year. CLO fundamentals, such as average loan ratings or holdings of triple-C-rated
+loans, continued to improve over the same period but remained slightly worse than pre-­
+pandemic levels.
+
+Bank lending to nonbank financial institutions continued to grow notably
+Bank lending to financial institutions operating outside the banking sector continued to
+increase notably in terms of both committed and utilized amounts. Committed amounts
+of credit from large banks to NBFIs grew above pre-pandemic levels in the first half the
+year (figure 3-10). This growth was driven by real estate lenders and lessors; special purpose entities, CLOs, and ABS; open-end investment funds; and other financial vehicles
+(­figure 3-11). The utilization rates of credit lines remained at normal levels over the same
+period. Delinquency rates on loans by large banks to NBFIs declined in the first half of 2021
+but remained somewhat elevated compared with historical levels.
+3-10. Large Bank Lending to Nonbank Financial Firms: Committed Amounts
+Billions of dollars
+Quarterly
+1. Financial transactions processing
+2. Private equity, BDCs, and credit funds
+3. Broker-dealers
+4. Insurance companies
+5. reITs
+6. open-end investment funds
+7. Special purpose entities, CLos, and aBS
+8. other ﬁnancial vehicles
+9. real estate lenders and lessors
+10. Consumer lenders, other lenders, and lessors
+
+Q2
+3
+4
+
+2000
+
+1
+2
+
+1750
+
+5
+
+1250
+
+6
+
+1500
+1000
+
+7
+
+750
+
+8
+
+500
+9
+
+250
+
+10
+
+2018
+
+2019
+
+2020
+
+0
+
+2021
+
+Source: Federal Reserve Board, Form FR Y-14Q (Schedule H.1), Capital Assessments and Stress Testing.
+
+3-11. Growth of Loan Commitments to and Utilization by Nonbank Financial Institutions in the Second Quarter
+of 2021, by Sector
+Percent
+Committed amounts
+utilized amounts
+
+reITs
+
+Pe,
+Financial Consumer, Insurance
+transactions leasing, companies BDCs,
+& credit
+processing & other
+lenders
+funds
+
+Broker- open-end SPes,
+dealers investment CLos,
+funds
+and aBS
+
+real
+estate
+lenders
+& lessors
+
+Source: Federal Reserve Board, Form FR Y-14Q (Schedule H.1), Capital Assessments and Stress Testing.
+
+other
+ﬁnancial
+vehicles
+
+Total
+
+60
+50
+40
+30
+20
+10
+0
+−10
+−20
+−30
+−40
+−50
+−60
+
+  45
+
+4. Funding Risk
+Key indicators point to low funding risks at domestic banks, but structural
+vulnerabilities persist at some types of money market funds, open-end mutual funds,
+and stablecoins
+As of the second quarter of 2021, a measure of aggregate liabilities that are vulnerable to
+runs had increased 3.6 percent over the past year to $18.2 trillion; that level was equivalent
+to about 80 percent of nominal GDP (table 4 and figure 4-1).23 Banks relied only modestly
+on short-term wholesale funding and maintained large amounts of HQLA. Some types of
+money market funds as well as other cash-management vehicles remain vulnerable to runs,
+and bond mutual funds continued to grow rapidly and remained exposed to risks due to their
+large holdings of illiquid assets. Stablecoins can suffer from structural vulnerabilities, and
+their market capitalization has grown about fivefold over the past 12 months.
+Table 4. Size of Selected Instruments and Institutions
+
+Item
+
+Outstanding/
+total assets
+(billions of dollars)
+
+Total runnable money-like liabilities*
+
+18,227
+
+Growth,
+2020:Q2–2021:Q2
+(percent)
+
+Average annual growth,
+1997–2021:Q2
+(percent)
+
+3.6
+
+4.8
+
+Uninsured deposits
+
+7,370
+
+18.7
+
+12.0
+
+Domestic money market funds**
+
+4,534
+
+−2.2
+
+5.9
+
+3,956
+
+5.7
+
+15.5
+
+485
+
+−36.3
+
+−.9
+
+Government
+Prime
+
+93
+
+−27.9
+
+−2.6
+
+Repurchase agreements
+
+Tax exempt
+
+3,568
+
+−6.9
+
+5.0
+
+Commercial paper
+
+1,085
+
+7.8
+
+2.5
+
+Securities lending***
+
+747
+
+15.0
+
+7.7
+
+5,245
+
+17.8
+
+9.2
+
+Bond mutual funds
+
+Note: The data extend through 2021:Q2. Growth rates are measured from Q2 of the year immediately preceding the period through Q2 of the
+final year of the period. Total runnable money-like liabilities exceed the sum of listed components. Items not included in the table are variable-rate
+demand obligations, federal funds, funding-agreement-backed securities, private liquidity funds, offshore money market funds, short-term
+investment funds, and local government investment pools.
+* Average annual growth is from 2003:Q4 to 2021:Q2.
+** Average annual growth is from 2001:Q4 to 2021:Q2.
+*** Average annual growth is from 2000:Q4 to 2021:Q2.
+Source: Securities and Exchange Commission, Private Funds Statistics; iMoneyNet, Inc., Offshore Money Fund Analyzer; Bloomberg
+Finance L.P.; Securities Industry and Financial Markets Association: U.S. Municipal Variable-Rate Demand Obligation Update; Risk Management Association, Securities Lending Report; DTCC Solutions LLC, an affiliate of the Depository Trust & Clearing Corporation: commercial paper
+data; Federal Reserve Board (FRB) staff calculations based on Investment Company Institute data; FRB, Statistical Release H.6, “Money Stock
+Measures” (M3 monetary aggregate, 1997–2001); FRB, Statistical Release Z.1, “Financial Accounts of the United States”; Federal Financial
+Institutions Examination Council, Consolidated Reports of Condition and Income (Call Report); Morningstar, Inc., Morningstar Direct; Moody’s
+Analytics, Inc., CreditView, Asset-Backed Commercial Paper Program Index.
+
+23
+
+Table 4 and figure 4-1 do not include data on stablecoins.
+
+46  Funding Risk
+
+4-1. Runnable Money-Like Liabilities as a Share of GDP, by Instrument and Institution
+Percent of GDP
+Quarterly
+
+1. other
+2. Securities lending
+3. Commercial paper
+
+4. Domestic money market funds
+5. repurchase agreements
+6. uninsured deposits
+
+100
+
+Q2
+1
+2
+3
+
+80
+
+4
+
+60
+
+5
+
+40
+20
+
+6
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+120
+
+0
+
+2021
+
+Source: Securities and Exchange Commission, Private Funds Statistics; iMoneyNet, Inc., Offshore Money Fund Analyzer; Bloomberg
+Finance L.P.; Securities Industry and Financial Markets Association: U.S. Municipal Variable-Rate Demand Obligation Update; Risk Management
+Association, Securities Lending Report; DTCC Solutions LLC, an affiliate of the Depository Trust & Clearing Corporation: commercial paper
+data; Federal Reserve Board (FRB) staff calculations based on Investment Company Institute data; FRB, Statistical Release Z.1, “Financial
+Accounts of the United States”; Federal Financial Institutions Examination Council, Consolidated Reports of Condition and Income (Call Report);
+Moody’s Analytics, Inc., CreditView, Asset-Backed Commercial Paper Program Index; Bureau of Economic Analysis, gross domestic product
+via Haver Analytics.
+
+Domestic banks continued to have high levels of liquid assets and stable funding
+HQLA continued to increase for all domestic banks in the first half of 2021, reflecting an
+increase in Treasury securities, central bank reserve balances, and agency mortgage-backed
+securities (MBS) (figure 4-2). Reliance on short-term wholesale funding remained at low
+levels (figure 4-3). A measure of the exposure of banks to interest rate risk, calculated as
+the difference between the effective time to maturity or next contractual interest rate adjustment for bank assets and liabilities, increased to historically high levels for all banks. This
+increase was due to a rise in holdings of long-term Treasury securities and agency MBS at
+banks amid large deposit inflows. However, banks’ strong capital positions, their high levels
+of liquid assets, and their stable funding are mitigating factors to the potential vulnerabilities
+from maturity transformation.
+Foreign banking organizations play a major role in global dollar funding markets. They rely
+on short-term wholesale funding to a greater extent than domestic banks and can transmit stresses to the United States. Temporary dollar liquidity swap lines with foreign cen4-2. Liquid Assets Held by Banks
+
+4-3. Short-Term Wholesale Funding of Banks
+Percent of assets
+
+Quarterly
+
+Percent of assets
+
+32
+
+Quarterly
+
+28
+G-SIBs
+Large non–G-SIBs
+other BHCs
+
+35
+
+24
+Q2
+
+40
+
+30
+
+20
+
+25
+
+16
+12
+
+Q2
+
+8
+
+20
+15
+10
+
+4
+
+5
+
+0
+2001
+
+2005
+
+2009
+
+2013
+
+2017
+
+2021
+
+Source: Federal Reserve Board, Form FR Y-9C, Consolidated
+Financial Statements for Holding Companies.
+
+2000
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+Source: Federal Reserve Board, Form FR Y-9C, Consolidated
+Financial Statements for Holding Companies.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  47
+
+tral banks, established at the onset of the pandemic as liquidity backstops to complement
+standing swap lines, were extended through the end of 2021 to help sustain improvements in
+global dollar funding markets and thus mitigate potential spillovers that could hamper the
+flow of credit to U.S. households and businesses.24
+
+Structural vulnerabilities remain at some money market funds and other cashmanagement vehicles
+Assets under management at prime and tax-exempt MMFs continued to decline in the
+first half of this year, while those at government MMFs remained near historical highs
+(figure 4-4). Vulnerabilities associated with liquidity transformation at prime and tax-exempt
+MMFs contribute to the susceptibility of these funds to runs and call for structural fixes. In
+October 2021, the Financial Stability Board (FSB) published a report analyzing options to
+mitigate MMF vulnerabilities globally, including several potentially promising options—such
+as swing pricing or similar mechanisms, a minimum balance at risk, and capital buffers—
+many of which were considered in a report by the President’s Working Group on Financial
+Markets that focused on U.S. MMFs last year.25
+Net assets in other cash-management vehicles, including dollar-denominated offshore funds
+and short-term investment funds, continued to increase in the first half of 2021. These vehicles also invest in money market instruments and are vulnerable to runs; moreover, they are
+4-4. Domestic Money Market Fund Assets
+Billions of dollars (real)
+monthly
+
+1. Government
+2. Tax exempt
+3. retail prime
+4. Institutional prime
+
+July
+
+6000
+5250
+4500
+3750
+3000
+2250
+
+1
+
+1500
+2
+4
+
+2001
+
+2003
+
+2005
+
+2007
+
+2009
+
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+3
+
+750
+0
+
+2021
+
+Source: Federal Reserve Board staff calculations based on Investment Company Institute data; Bureau of Labor Statistics, consumer price
+index via Haver Analytics.
+
+24
+
+For the announcement, see Board of Governors of the Federal Reserve System (2021), “Federal Reserve Announces the
+Extension of Its Temporary U.S. Dollar Liquidity Swap Lines with Nine Central Banks through December 31, 2021,” press
+release, June 16, https://www.federalreserve.gov/newsevents/pressreleases/monetary20210616c.htm. For more information on
+global dollar funding markets, see the box “Vulnerabilities in Global U.S. Dollar Funding Markets” in Board of Governors
+of the Federal Reserve System (2021), Financial Stability Report (Washington: Board of Governors, May), pp. 55–58, https://
+www.federalreserve.gov/publications/files/financial-stability-report-20210506.pdf.
+
+25
+
+See Financial Stability Board (2021), Policy Proposals to Enhance Money Market Fund Resilience (Basel: FSB, October),
+https://www.fsb.org/wp-content/uploads/P111021-2.pdf. Also, see President’s Working Group on Financial Markets (2020),
+Report of the President’s Working Group on Financial Markets: Overview of Recent Events and Potential Reform Options for
+Money Market Funds (Washington: PWG, December), https://home.treasury.gov/system/files/136/PWG-MMF-report-finalDec-2020.pdf.
+
+48  Funding Risk
+
+less transparent and regulated than MMFs. Currently, between $400 billion and $1 trillion
+of these vehicles’ assets are in portfolios similar to those of U.S. prime funds, and a wave of
+redemptions from them could destabilize short-term funding markets.
+
+Some stablecoins are vulnerable, and the sector continues to grow
+Stablecoins are digital assets that are issued and transferred using distributed ledger technologies and are purported to maintain a stable value relative to a national currency or other
+reference asset or assets. The value of stablecoins outstanding has grown about fivefold
+over the past 12 months and stood at around $130 billion as of October 2021, based on the
+report published on November 1 by the President’s Working Group on Financial Markets,
+the Federal Deposit Insurance Corporation, and the Office of the Comptroller of the Cur­
+rency.26 Certain stablecoins, including the largest ones, promise to be redeemable at any
+time at a stable value in U.S. dollars but are, in part, backed by assets that may lose value or
+become illiquid. If the assets backing a stablecoin fall in value, the issuer may not be able
+to meet redemptions at the promised stable value. Accordingly, these stablecoins have structural vulnerabilities similar to those discussed earlier for certain MMFs and are susceptible
+to runs. These vulnerabilities may be exacerbated by a lack of transparency and governance
+standards regarding the assets backing stablecoins. The potential use of stablecoins in payments and their capacity to grow can also pose risks to payment and financial systems.
+
+Central banks continue to consider the costs and benefits of their own digital currencies
+Many central banks around the world are weighing the pros and cons of issuing central
+bank digital currency, including the potential implications for financial stability. The Federal Reserve is committed to hearing a wide range of voices on this important issue, taking
+account of the broader risks and opportunities that such currencies may offer.
+
+Bond and bank loan mutual funds experienced net inflows and remain exposed to risks
+due to large holdings of illiquid assets
+Mutual funds that invest substantially in corporate and municipal bonds and bank loans
+may be particularly exposed to liquidity transformation risks, given that they offer daily
+redemptions while holding assets that can quickly become illiquid. U.S. corporate bonds held
+by U.S. mutual funds remained sizable and represented about one-seventh of outstanding
+U.S. corporate bonds in the first half of 2021 (figure 4-5). Total assets under management
+at bank loan and high-yield bond mutual funds remained high during the same period
+(figure 4-6). Since the record outflows in March 2020, bond and bank loan mutual funds
+have attracted net inflows (figure 4-7). Policymakers in the United States and abroad, as well
+as the FSB, are examining potential options to address vulnerabilities in mutual funds.
+
+26
+
+The report recommends a governmentwide approach to address the range of risks that could arise from stablecoins. See
+President’s Working Group on Financial Markets, Federal Deposit Insurance Corporation, and Office of the Comptroller
+of the Currency (2021), Report on Stablecoins (Washington: PWG, November), https://home.treasury.gov/system/files/136/
+StableCoinReport_Nov1_508.pdf.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  49
+
+4-5. U.S. Corporate Bonds Held by U.S. Mutual
+Funds
+Billions of dollars (real)
+Quarterly
+
+4-6. Bank Loan and High-Yield Bond Mutual Fund
+Assets
+Billions of dollars (real)
+
+2100
+
+monthly
+
+1800
+
+Q2
+
+Bank loan mutual funds
+High-yield
+bond mutual funds
+
+1500
+1200
+
+aug.
+
+525
+450
+375
+300
+
+900
+
+225
+
+600
+
+150
+
+300
+
+75
+
+0
+
+0
+
+2000 2003 2006 2009 2012 2015 2018 2021
+
+2000
+
+Source: Federal Reserve Board (FRB) staff estimates based on
+FRB, Statistical Release Z.1, “Financial Accounts of the United
+States”; Bureau of Labor Statistics, consumer price index via
+Haver Analytics.
+
+Source: Investment Company Institute; Bureau of Labor
+Statistics, consumer price index via Haver Analytics.
+
+2003
+
+2006
+
+2009
+
+2012
+
+2015
+
+2018
+
+2021
+
+4-7. Net Flows to Selected Bond and Bank Loan Mutual Funds
+Billions of dollars
+monthly
+
+.
+
+100
+
+Investment-grade bond mutual funds
+Bank loan mutual funds
+High-yield bond mutual funds
+
+.
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+150
+
+50
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+0
+
+.
+
+−50
+−100
+Feb.
+
+may aug. Nov. Feb.
+2017
+
+may aug. Nov. Feb.
+2018
+
+may aug. Nov. Feb.
+2019
+
+may aug. Nov. Feb.
+2020
+
+may aug.
+2021
+
+−150
+
+Source: Investment Company Institute.
+
+Central counterparties managed risks while adapting to persistent volatility and
+elevated activity in some markets
+CCPs continued to operate as designed in the first half of 2021, managing the risks created
+by spikes in market volatility and high trading volumes. CCPs’ total prefunded resources
+relative to expected market volatility remained higher at the end of March than before the
+bursts of retail-led trading volatility in January 2021.27 In addition, cash increased as a share
+of CCPs’ total prefunded resources in the first half of 2021. However, there were some
+signs of higher liquidity stress in equities clearing. For a broader discussion of liquidity
+vulnerabilities, see the box “Liquidity Vulnerabilities from Noncash Collateral at Central
+Counterparties.”
+
+27
+
+Prefunded resources represent financial assets, including cash and securities, transferred by the clearing members to the CCP
+to cover that CCP’s potential credit exposure in case of default by one or more clearing members. These prefunded resources
+are held as initial margin and prefunded mutualized resources. For more information on retail-led trading volatility, see the
+box “Retail Investors, Social Media, and Equity Trading.”
+
+50  Funding Risk
+
+Liquidity risks at life insurers remained at post-2008 highs and have been increasing
+Over the past decade, the gap between the liquidity of the assets and liabilities of life insurers has increased, potentially making it harder for life insurers to meet sudden withdrawals
+of their deposit-like liabilities. On the asset side, life insurers’ share of liquid assets on their
+balance sheets has decreased, reaching historically low levels (figure 4-8). In addition, life
+insurers’ exposure to risky and illiquid assets—including CLOs—has increased, in part in
+response to low long-term interest rates. On the liability side, life insurers have increased
+their reliance on nontraditional liabilities, such as funding-agreement-backed securities,
+Federal Home Loan Bank advances, securities lending and repurchase agreements, and cash
+reinvestments, through the first half of 2021 (figure 4-9). In general, these liabilities are more
+vulnerable to rapid withdrawals than most policyholder liabilities.
+
+4-8. Less Liquid General Account Assets Held by U.S. Insurers
+Percent share
+1. other asset-backed securities
+2. Commercial real estate
+3. Commercial real estate,
+40
+securitized
+
+Billions of dollars
+2750
+Share of life insurer assets (left scale)
+2500
+Share of P&C insurer assets (left scale)
+2250
+2000
+1750
+1500
+1250
+1000
+750
+500
+250
+0
+2016
+2018
+2020
+
+4. alternative investments
+5. Illiquid corporate debt
+6. Illiquid corporate debt,
+securitized
+
+50
+
+30
+20
+10
+0
+
+2006
+
+2008
+
+2010
+
+2012
+
+2014
+
+Source: Staff estimates based on data from Bloomberg Finance L.P. and National Association of Insurance Commissioners Annual
+Statutory Filings.
+
+4-9. Nontraditional Liabilities of U.S. Life Insurers, by Liability Type
+Billions of dollars (real)
+Quarterly
+
+FHLB advances
+Funding-agreement-backed securities
+
+350
+
+Billions of dollars (real)
+Quarterly
+
+repurchase agreements
+Securities lending
+Q2
+
+300
+Q2
+
+250
+
+100
+80
+
+200
+
+60
+
+150
+
+40
+
+100
+20
+
+50
+0
+2007
+
+2009
+
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+0
+2011
+
+2013
+
+2015
+
+2017
+
+2019
+
+2021
+
+Source: Bureau of Labor Statistics, consumer price index via Haver Analytics; Moody’s Analytics, Inc., CreditView, Asset-Backed Commercial
+Paper Program Index; Securities and Exchange Commission, Forms 10-Q and 10-K; National Association of Insurance Commissioners,
+quarterly and annual statutory filings accessed via S&P Global, Capital IQ Pro; Bloomberg Finance L.P.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  51
+
+Liquidity Vulnerabilities from Noncash Collateral at Central
+Counterparties
+CCPs serve a critical role in managing and reducing risk in many financial markets in the United
+States.1 A CCP interposes itself between counterparties to financial transactions, becoming the buyer
+to every seller and the seller to every buyer. The credit and liquidity risk associated with the transactions is thus managed by the CCP. As part of that risk management, clearing members—the counterparties that directly face the CCP—are required to meet certain financial and operational requirements.
+The CCP is required to complete the daily payments associated with all cleared trades even if one of
+its clearing members subsequently defaults on its obligations to the CCP. CCPs must therefore ensure
+they have or can obtain sufficient cash in the correct currency to meet payment obligations to their
+participants in the event of a participant default. Participants post collateral to cover potential credit
+losses on their positions, but, to the extent this collateral is not posted in cash in the required currency, CCPs may need to monetize collateral, sometimes within only a few hours and under potentially
+extremely volatile market conditions.
+At the onset of the COVID-19 pandemic in March 2020, the CCPs designated as systemically important in the United States endured a real-life stress test when volumes and price volatility of cleared
+products spiked, leading to significant increases in initial margin and variation margin collection. The
+designated CCPs performed as designed during that period, but their ability to manage the default of a
+large clearing member was not tested because no large clearing members defaulted.2
+The turmoil in March 2020 also stressed the markets on which some CCPs might rely to monetize
+noncash collateral.3 These experiences raise questions about whether CCPs could successfully use
+these markets to monetize noncash collateral in the time required. If a CCP were unable to monetize
+its noncash collateral, clearing members relying on receiving those funds might fail to meet their own
+obligations, propagating stress through the financial system.
+A CCP’s payment obligations, and hence the need for liquidity if a clearing member defaults, are generally larger than the credit losses ultimately realized and are frequently more immediate.4 Each
+day, a CCP estimates the largest liquidity need it would have in the event of a default by a single
+(continued on next page)
+
+1
+
+The expansion of central clearing in the over-the-counter derivatives markets and simultaneous reforms to strengthen the standards
+applicable to CCPs were key pillars in the regulatory actions that improved the resilience of the u.S. financial system in response to the
+Global Financial Crisis. The Dodd-Frank wall Street reform and Consumer Protection act of 2010 created a process for the designation of CCPs as systemically important by the Financial Stability oversight Council; these designated CCPs are subject to enhanced
+supervision, including by the Federal reserve, and have all been permitted to open Federal reserve accounts to hold cash.
+
+2
+
+In march 2020, Cme Clearing auctioned the portfolio of clearing member ronin Capital, and the Fixed Income Clearing Corporation
+ceased to act for ronin Capital. ronin Capital was not a large clearing member at either CCP.
+
+3
+
+For more information on the march 2020 turmoil in the Treasury market and the roles of other market participants, including hedge
+funds, mortgage real estate investment trusts, principal trading firms, and dealers, see the box “a retrospective on the march 2020
+Turmoil in Treasury and mortgage-Backed Securities markets” in Board of Governors of the Federal reserve System (2020), Financial
+Stability Report (washington: Board of Governors, November), pp. 32–38, https://www.federalreserve.gov/publications/files/financialstability-report-20201109.pdf.
+
+4
+
+For example, if a clearing member has posted collateral with a market value of $100 million and defaults before making a required
+variation margin payment of $100 million, the CCP may not realize any credit loss when the defaulter’s portfolio is liquidated. However,
+the CCP still would need $100 million in cash in the correct currency, usually on the same day and potentially within a few hours after
+the default, to meet payment obligations to nondefaulting clearing members.
+
+52  Funding Risk
+
+Liquidity Vulnerabilities from Noncash Collateral (continued)
+clearing member and its affiliates under extreme but plausible market conditions. Each CCP is required
+to maintain liquid resources—including cash as well as highly reliable tools for monetizing noncash
+assets—sufficient to cover this need. Securities CCPs, shown in the top panel of figure A, generally
+have larger potential payment obligations than derivatives CCPs, shown in the bottom panel, because
+securities CCPs need to settle the full net notional value of securities trades, whereas derivatives CCPs
+generally need to cover only the net change in the value of a portfolio over a short period. Nevertheless, liquidity needs are material even at some derivatives CCPs.
+
+Figure a. Largest Liquidity Need in the event of a Single member’s Default, in extreme but Plausible
+market Conditions
+Securities Central Counterparties
+Billions of dollars
+Quarterly
+
+160
+140
+
+Fixed Income Clearing Corporation
+National Securities Clearing Corporation
+
+120
+100
+80
+
+Q2
+
+60
+40
+20
+0
+
+2017
+
+2018
+
+2019
+
+2020
+
+2021
+
+Derivatives Central Counterparties
+Billions of dollars
+Quarterly
+
+CME Clearing
+Options Clearing Corporation
+ICE Clear Credit LLC
+
+2017
+
+2018
+
+Q2
+
+2019
+
+2020
+
+20
+18
+16
+14
+12
+10
+8
+6
+4
+2
+0
+
+2021
+
+Source: Clarus Financial Technology Ltd., CCPView.
+
+A CCP’s vulnerability to collateral illiquidity depends not only on the size of its potential payment obligations, but also on the amount of noncash collateral it would need to monetize to meet those obligations. To limit exposure to collateral illiquidity, some CCPs require that a certain percentage of initial
+margin be posted in cash or limit their acceptance of certain types of noncash collateral. Subject to
+these restrictions, clearing members are generally free to substitute one type of collateral for another.
+(continued)
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  53
+
+The composition of collateral varies both across CCPs and over time (figure B). One important factor
+that drives members’ choices of collateral to post to a CCP is the interest rate environment. At some
+CCPs, members are currently posting a greater portion of their collateral in cash because the opportunity cost of doing so is low given the current interest rate environment and the high level of bank
+reserves. Members’ collateral preferences can change rapidly. Even if a CCP currently holds a significant amount of cash collateral, its need to rely on tools to monetize noncash collateral can increase
+quickly if clearing members substitute noncash collateral for cash.
+Figure B. Proportion of Collateral, by Type
+Cme Clearing
+
+Fixed Income Clearing Corporation
+Percent
+7
+6
+5
+4
+3
+2
+
+Percent
+
+100
+
+4
+
+100
+
+80
+
+80
+2
+
+60
+
+60
+
+40
+
+40
+
+1
+
+20
+Q4
+2017
+
+Q2 Q4
+2018
+
+Q2 Q4
+2019
+
+0
+
+Q2 Q4 Q2
+2020
+2021
+
+20
+
+1
+
+Q4
+2017
+
+Q2 Q4
+2018
+
+Q2 Q4
+2019
+
+0
+
+Q2 Q4 Q2
+2020
+2021
+
+National Securities Clearing Corporation
+
+ICe Clear Credit LLC
+Percent
+
+Percent
+
+100
+
+2
+
+2
+
+100
+
+80
+
+80
+
+60
+
+60
+1
+
+1
+
+Q4
+2017
+
+Q2 Q4
+2018
+
+Q2 Q4
+2019
+
+40
+
+40
+
+20
+
+20
+
+0
+
+Q2 Q4 Q2
+2020
+2021
+
+Q4
+2017
+
+Q2
+Q4
+2018
+
+Q2
+Q4
+2019
+
+Q2
+Q4
+Q2
+2020
+2021
+
+0
+
+options Clearing Corporation
+Percent
+7
+
+5
+
+3
+2
+
+100
+80
+
+1. Cash
+
+5. Equities, mutual funds,
+and UCITs
+
+60
+
+2. U.S. Treasury
+securities
+
+6. Commodities
+
+40
+
+3. Foreign sovereign
+bonds
+
+7. Other
+
+20
+
+4. Other fixed-income
+securities
+
+1
+
+Q4
+2017
+
+Q2 Q4
+2018
+
+Q2 Q4
+2019
+
+Q2 Q4 Q2
+2020
+2021
+
+0
+
+Source: Clarus Financial Technology Ltd., CCPView; Cme Group.
+
+(continued on next page)
+
+54  Funding Risk
+
+Liquidity Vulnerabilities from Noncash Collateral (continued)
+The designated CCPs generally rely on three types of tools to monetize noncash collateral: (1) committed tools, such as committed lines of credit or committed foreign exchange swap facilities; (2) rulesbased tools, for which the CCP rule book requires nondefaulting clearing members to provide liquidity
+support to the CCP; and (3) uncommitted or best-efforts tools, such as repurchase agreement (repo)
+transactions executed under an uncommitted master repo agreement or market transactions that may
+include sales of noncash collateral for same-day settlement.
+While some types of tools may be expected to perform better than others, the reliability of all of these
+tools during extreme stress events is subject to some uncertainty. In the United States, the largest
+clearing members have overlapping participation at most of the designated CCPs. Severe stress at a
+large clearing member could cause that firm to default at many CCPs simultaneously. Multiple CCPs
+could then attempt to use their liquidity tools at the same time, potentially relying on the same market
+participants for liquidity. In such circumstances, using even ordinarily highly reliable tools to monetize
+noncash collateral may be challenging for CCPs. The current high level of bank reserves has mitigated
+this vulnerability to a certain extent, as designated CCPs’ committed credit lines now total around
+14 percent of large domestic banks’ cash holdings, down by half since 2019.5
+The reliability of uncommitted and best-efforts liquidity tools is less certain than that of committed or
+rules-based tools. As Treasury securities are commonly posted as collateral at CCPs, recent stresses
+in the Treasury markets illustrate some potential weaknesses of such tools. On September 17, 2019,
+Treasury repo rates rose dramatically in early-morning trading, and it is unclear whether, or at what
+rate, a CCP could have borrowed cash using best-efforts tools such as uncommitted master repo
+agreements in that environment. In the first few weeks of March 2020, liquidity in the cash market for
+Treasury securities deteriorated sharply, with wider bid-ask spreads, a higher price effect of trades, and
+diminished order-book depth. This deterioration was worse for off-the-run securities, which clearing
+members may be more likely to post as collateral, than for on-the-run securities.6 It is unclear whether,
+or at what price, a CCP relying on best-efforts market transactions would have been able to sell Treasury collateral at the peak of the March stress period for a regular one-business-day settlement, let
+alone for the unconventional same-day settlement that might be needed to meet immediate payment
+obligations.
+These events occurred without the default of a large clearing member, such as a systemically important
+U.S. banking organization. The default of a large clearing member almost certainly would have exacerbated market stress, further reducing the likelihood that CCPs would be able to use uncommitted
+liquidity tools to monetize noncash collateral and meet their payment obligations. Although the official
+sector is examining ways to enhance the resilience of the Treasury market, the timing and effect of any
+such reforms cannot yet be determined.
+CCPs are responsible for meeting payment obligations on time even when a participant defaults during
+market stress. A CCP’s ability to meet its obligations depends on maintaining highly reliable liquidity
+tools that are sufficient to monetize any noncash collateral when needed, even under extreme market
+stress. A CCP that fails to adequately anticipate and prepare for liquidity needs may pose a vulnerability to financial stability rather than serving as a source of strength to the market.
+
+5
+
+See the public quantitative disclosures of CCPs and Board of Governors of the Federal reserve System (2021), Statistical release H.8,
+“assets and Liabilities of Commercial Banks in the united States,” https://www.federalreserve.gov/releases/h8/current/default.htm.
+
+6
+
+on-the-run Treasury securities are the most recently issued Treasury bonds or notes of a particular maturity. off-the-run securities are
+those issued less recently.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  55
+
+LIBOR Transition Update
+The Federal Reserve and other regulators have issued supervisory guidance encouraging banks to end
+new use of USD LIBOR as soon as practicable and, in any event, by the end of this year. In general,
+institutions of all sizes have acknowledged year-end as the stop date for new LIBOR contracts. To reinforce the need to smoothly wind down new activity by year-end rather than to risk missing the deadline, Alternative Reference Rates Committee (ARRC) communications have urged market participants
+to materially reduce the use of LIBOR before December so that any remaining LIBOR use can be fully
+stopped before year-end.
+With supervisory guidance encouraging supervised institutions to stop new use of USD LIBOR by the
+end of the year, the ARRC and the Commodity Futures Trading Commission’s Market Risk Advisory
+Committee (MRAC) took several steps over the summer to encourage a swifter transition of derivatives markets to the Secured Overnight Financing Rate (SOFR). The success of these measures,
+dubbed “SOFR First,” allowed the ARRC to recommend term SOFR rates produced by CME Group,
+which is expected to help speed the transition of certain key lending markets. Nonetheless, serious
+risks remain, particularly for business loans, where most new lending in the United States still references LIBOR.
+
+Transition to SOFR
+The ARRC had previously issued a recommendation that market conventions for quoting USD derivatives move to SOFR as of March 31, 2021, but dealers had been slow to move from LIBOR trading
+conventions. Recognizing the need for a more coordinated transition effort, the MRAC’s subgroup on
+the LIBOR transition recommended that trading conventions in the interdealer market for interest rate
+swaps (the largest derivatives market referencing LIBOR) move from USD LIBOR to SOFR on July 26,
+2021. This recommendation followed a similar “SONIA (Sterling Overnight Index Average) First” initiative in the United Kingdom and was the first phase of a broader plan envisioned by the MRAC to
+switch conventions in other segments of derivatives markets.
+The application of SOFR First to interdealer swap trading was successful. Since July 26, trading in the
+interdealer market has moved from nearly all USD LIBOR to between 70 and 100 percent SOFR, and
+the volumes of LIBOR trading fell sharply (figure A). The switch in interdealer swap trading conventions
+spilled over into the dealer-to-customer market, leading to a significant increase in the total share of
+swap trading referencing SOFR from less than 5 percent to about 30 percent (figure B).
+
+Term SOFR
+The success of the SOFR First initiative allowed the ARRC to formally recommend SOFR-based term
+rates, which are produced by CME Group based on transactions in SOFR derivatives markets. SOFR
+term rates are expected to be especially helpful for the business loans market, where transitioning
+from LIBOR has been slow. ARRC recommendations also recognized the use of SOFR term rates in
+end-user-facing derivatives or securitizations that are directly tied to business loans or legacy cash
+instruments referencing the SOFR term rates.
+(continued on next page)
+
+56  Funding Risk
+
+LIBOR Transition Update (continued)
+Figure a. Interdealer SoFr Swaps risk Traded versus LIBor risk Traded
+50
+45
+40
+35
+30
+25
+20
+15
+10
+5
+0
+
+Dollar value of a
+basis point in millions
+SOFR risk as a percentage
+of total swaps (right scale)
+
+LIBOR (left scale)
+SOFR (left scale)
+
+July 26
+
+Percentage
+
+100
+80
+60
+40
+20
+0
+
+July 16
+
+July 27
+
+Aug. 6
+
+Aug. 16
+
+Aug. 25
+
+Sept. 3
+
+Sept. 15
+
+Sept. 24
+
+Oct. 5
+
+Oct. 15
+
+2021
+
+Source: Clarus Financial Technology Ltd., Swap execution Facility data.
+
+Figure B. SoFr Swaps risk Traded as a Proportion of Total Swaps risk Traded
+140
+
+Dollar value of a
+basis point in millions
+
+120
+
+July 26
+
+100
+
+Percentage
+LIBOR (left scale)
+SOFR (left scale)
+
+SOFR risk as a percentage
+of total swaps (right scale)
+
+100
+80
+
+80
+
+60
+
+60
+
+40
+
+40
+
+20
+
+20
+0
+
+0
+July 16
+
+July 27
+
+Aug. 6
+
+Aug. 16
+
+Aug. 25
+
+Sept. 3
+
+Sept. 15
+
+Sept. 24
+
+Oct. 5
+
+Oct. 15
+
+2021
+
+Source: Clarus Financial Technology Ltd., Swap execution Facility data.
+
+The ARRC has cautioned against widespread use of term SOFR in derivatives markets and other markets where overnight SOFR and SOFR averages, which are both considered to be more robust than
+term SOFR, have been successfully used, including floating-rate notes, consumer loans, and most
+securitizations. CME Group’s licensing agreements restrict the use of CME term rates in derivatives
+markets, which will mitigate the risk that a large portion of the derivatives markets will reference term
+SOFR rather than overnight SOFR.
+
+Other rates
+The success of the SOFR First initiative and development of SOFR term rates have shifted momentum
+toward the use of SOFR. Many banks have reported that they will offer several forms of SOFR (term
+rates, overnight SOFR, and SOFR averages) to business clients, in line with the ARRC’s recommendations. However, some market participants have continued to pursue the use of other rates based
+(continued)
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  57
+
+on the same unsecured, wholesale bank funding markets underlying LIBOR. Supervisory guidance
+has noted that lenders will not be criticized for using rates other than SOFR in business loans. At the
+same time, leading officials from financial regulators, including the Federal Reserve, FSOC, the Office
+of the Comptroller of the Currency, and the SEC, as well as the International Organization of Securities
+Commissions, have emphasized the importance of robust underlying activity for reference rates used
+in derivative and capital markets and noted the importance of those markets moving to SOFR.1
+
+Legacy contracts
+Some legacy LIBOR contracts lack adequate fallback language and extend past June 2023, when the
+main tenors of USD LIBOR will cease to be published on a representative basis. In March 2021, the
+ARRC estimated outstanding legacy USD LIBOR exposures at roughly $223 trillion. Approximately
+$74 trillion of these legacy contracts are set to mature beyond the critical date of June 2023, and some
+of those contracts will lack adequate fallback language. Federal legislation that would address these
+contracts has been introduced in the Congress. Earlier in the year, the states of New York and Alabama
+enacted legislation that will allow legacy contracts governed by each state’s law to transition to SOFRbased rates, but federal legislation would establish a clear and uniform solution on a nationwide basis.
+1
+
+See u.S. Department of the Treasury (2021), “Financial Stability oversight Council,” June 11, https://treas.yorkcast.com/webcast/
+Play/f5be3d221c084e9ea64adba4bd6c15aa1d; michael J. Hsu (2021), “Statement by the acting Comptroller of the Currency at the
+Financial Stability oversight Council,” speech delivered at the FSoC virtual meeting, June 11, https://www.occ.gov/news-issuances/
+speeches/2021/pub-speech-2021-65.pdf; and Gary Gensler (2021), “LIBor Statement,” prepared remarks by the Chair of the Securities and exchange Commission before the Financial Stability oversight Council, June 11, https://www.sec.gov/news/public-statement/
+gensler-fsoc-libor-2021-06-11.
+
+59
+
+Near-Term Risks to the Financial System
+The Federal Reserve routinely engages in discussions with domestic and international policymakers, academics, community groups, and others to gauge the set of risks of particular
+concern to these groups. As noted in the box “Salient Shocks to Financial Stability Cited in
+Market Outreach,” contacts were mostly focused on the possibility of a worsening of the
+pandemic and on the risk of a sudden increase in interest rates, both of which could inhibit
+the economic recovery or cause another downturn. The following analysis considers possible
+interactions of existing vulnerabilities with three broad categories of risk, some of which
+were also raised in these discussions: a significant reduction in the pace of the ongoing economic recovery, a sudden increase in interest rates, and risks emanating from China, other
+EMEs, and Europe.
+
+A potential worsening of the public health situation may result in a reduction in business
+and household confidence, negatively affecting future economic activity and financial
+vulnerabilities
+A possible deterioration in the public health situation could slow the recent economic recovery, particularly if widespread business closures returned and supply chains were further
+disrupted. In that case, several vulnerabilities identified in this report could amplify the
+economic effects of these shocks. An economic slowdown could weaken business and household balance sheets, leading to an increase in delinquencies, bankruptcies, and other forms
+of financial distress. These rising losses on nonfinancial debt could put strains on banks and
+other lenders.
+Such developments could also interact with existing vulnerabilities at financial institutions.
+Although banks are well-capitalized and leverage at broker-dealers remains low, the leverage
+of some nonbank financial institutions, such as life insurance companies and hedge funds,
+remains high. Furthermore, prime and tax-exempt MMFs, as well as some mutual funds
+holding illiquid assets, remain vulnerable to sudden redemptions, as demonstrated during the
+acute period of extreme market volatility at the onset of the pandemic.
+
+A sharp rise in interest rates could slow the pace of economic recovery and lead to
+sharp declines in asset valuations and stresses at financial institutions, businesses, and
+households
+A steep rise in interest rates could lead to a large correction in prices of risky assets. Valuations of many assets have benefited from low interest rates and therefore may be susceptible
+to a spike in yields, especially if unaccompanied by an improvement in the economic outlook. A range of financial intermediaries hold long-duration assets and could take mark-tomarket losses. Such losses would reduce their ability to raise capital and retain the confidence
+of their counterparties, even if accounting conventions prevented the losses from appearing
+on financial statements.
+
+60  Near-Term Risks to the Financial System
+
+A sharp increase in interest rates could also lower housing demand and thus reduce house
+prices, weakening the balance sheets of households. The resulting stresses may be especially
+pronounced for homeowners currently in mortgage forbearance or in the subprime and nearprime risk categories.
+Additionally, the effect of a rise in interest rates on business borrowing costs would likely be
+amplified if spreads widened from their current low levels. This increase in business borrowing costs could have negative consequences for employment and business investment.
+
+Stresses in China’s real estate sector could strain the Chinese financial system, with
+possible spillovers to the United States
+In China, business and local government debt remain large; the financial sector’s leverage is
+high, especially at small and medium-sized banks; and real estate valuations are stretched. In
+this environment, the ongoing regulatory focus on leveraged institutions has the potential to
+stress some highly indebted corporations, especially in the real estate sector, as exemplified by
+the recent concerns around China Evergrande Group. Stresses could, in turn, propagate to
+the Chinese financial system through spillovers to financial firms, a sudden correction of real
+estate prices, or a reduction in investor risk appetite. Given the size of China’s economy and
+financial system as well as its extensive trade linkages with the rest of the world, financial
+stresses in China could strain global financial markets through a deterioration of risk sentiment, pose risks to global economic growth, and affect the United States.
+
+Adverse developments in other emerging market economies spurred by a sudden and
+sharp tightening in financial conditions could also spill over to the United States
+The uneven economic recovery and the high debt levels in EMEs also pose a risk to financial
+stability. A sharp tightening of financial conditions, possibly triggered by a rise in bond yields
+in advanced economies or a deterioration in global risk sentiment, could push up debt­
+servicing costs for EME sovereigns and businesses, trigger capital outflows, and stress EMEs’
+financial systems. Widespread and persistent EME stresses could, in turn, have repercussions
+for the U.S. financial system through its direct exposures to stressed EME businesses and sovereigns and through its indirect exposures via U.S. businesses with strong links to EMEs.
+
+In Europe, a slower-than-expected recovery could trigger financial stresses and pose
+risks to the United States because of strong transmission channels
+Despite high vaccination rates, the emergence of new variants and a resurgence of COVID-19
+infections could weigh on the ongoing recovery in Europe. Slower growth could stress the
+European financial system by reducing asset quality and profitability of financial institutions
+and increasing solvency risk. A premature withdrawal of existing support measures could also
+materially reduce economic growth and affect financial stability, while a belated withdrawal
+of support measures could further stretch elevated valuations in some asset classes, including
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  61
+
+segments of the housing market, raising the risk of sudden market corrections. Stresses in
+Europe could, in turn, affect the U.S. economy and financial system through a deterioration
+in global risk appetite, a pullback in lending from European banks to U.S. businesses and
+households, strains in dollar funding markets, and losses due to large direct and indirect
+credit exposures.
+
+62  Near-Term Risks to the Financial System
+
+The Financial Stability Oversight Council’s Climate Report and the
+Federal Reserve’s Actions
+The FSOC, of which the Federal Reserve Chair is a member, was established by the Dodd-Frank Wall
+Street Reform and Consumer Protection Act. It is charged with identifying risks to the financial stability
+of the United States, promoting market discipline, and responding to emerging threats to the stability
+of the U.S. financial system.
+In response to President Biden’s Executive Order 14030 (regarding climate-related financial risk), the
+FSOC published its Report on Climate-Related Financial Risk on October 21, 2021.1 The report summarizes members’ efforts to identify and assess climate-related financial risks and outlines a number
+of recommendations encouraging members to expand their investments in the resources needed to
+fill climate-related data and methodological gaps, enhance climate-related financial disclosures, and
+assess and mitigate climate-related financial stability risks.
+The Federal Reserve’s work to identify and address climate-related financial risks is broadly aligned
+with the recommendations in the report.
+
+Expanding the Federal Reserve’s capacity to assess and mitigate climate-related
+financial risks
+The Federal Reserve’s November 2020 Financial Stability Report discussed how climate change may
+create or amplify risks to the financial system.2 Following the January 2021 announcement of the creation of the Supervision Climate Committee (SCC), in March 2021, the Federal Reserve announced the
+formation of the Financial Stability Climate Committee.3 This Federal Reserve System staff committee
+complements the microprudential focus of the SCC and is undertaking work to identify links between
+climate change and financial stability, including by investigating how climate change can increase
+financial-sector vulnerabilities and looking for climate-related amplification channels.
+
+Filling climate-related data and methodological gaps
+As the FSOC report noted, the assessment of climate-related financial risks requires both data
+that regulators may be unaccustomed to working with and new methods to analyze those data. To
+address these challenges, the Federal Reserve is identifying additional data, technology, and modeling resources, including those available through other U.S. government agencies, that are needed to
+support the Federal Reserve’s efforts to understand the financial and economic risks associated with
+climate change.
+(continued)
+1
+
+See Financial Stability oversight Council (2021), Report on Climate-Related Financial Risk (washington: FSoC, october), https://home.
+treasury.gov/system/files/261/FSoC-Climate-report.pdf.
+
+2
+
+See the box “The Implications of Climate Change for Financial Stability” in Board of Governors of the Federal reserve System (2020),
+Financial Stability Report (washington: Board of Governors, November), pp. 58–59, https://www.federalreserve.gov/publications/2020november-financial-stability-report-purpose.htm.
+
+3
+
+See Federal reserve Bank of New York (2021), “kevin Stiroh to Step Down as Head of New York Fed Supervision to assume New
+System Leadership role at Board of Governors on Climate,” press release, January 25, https://www.newyorkfed.org/newsevents/
+news/aboutthefed/2021/20210125; and Lael Brainard (2021), “Financial Stability Implications of Climate Change,” speech delivered
+at “Transform Tomorrow Today,” Ceres 2021 Conference, Boston, march 23, https://www.federalreserve.gov/newsevents/speech/
+brainard20210323a.htm.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  63
+
+Enhancing climate-related disclosures
+The Federal Reserve supports the FSOC report’s emphasis on the need for consistent and comparable
+disclosures, which are fundamental to a rigorous and thorough analysis of climate-related risks. The
+Federal Reserve will work with FSOC colleagues to support the development and implementation of
+effective approaches in this area.
+
+Assessing and mitigating climate-related risks that could threaten financial stability
+The Federal Reserve is developing a program of climate-related scenario analysis, a tool increasingly
+used by individual firms and regulatory agencies, to evaluate the potential economic and financial risks
+posed by different climate outcomes. The Federal Reserve considers an effective scenario analysis
+program, which is designed to be forward looking over a period of years or decades, to be separate from its existing regulatory stress-testing regime. This undertaking is complex, and the Federal
+Reserve is committed to developing an analytically rigorous program that supports all of its statutory
+responsibilities.
+
+Conclusion
+Climate change poses significant challenges for the global economy and the financial system. The
+public rightly expects the Federal Reserve to work to ensure that the financial system is resilient to
+climate-related financial risks.
+The Federal Reserve will share its progress and looks forward to coordinating with its FSOC colleagues to meet the critical challenges outlined in the FSOC report. As the Federal Reserve advances
+its understanding of the financial stability risks associated with climate change and gains experience
+with policies to strengthen the system, it will continue to work together with domestic and international
+colleagues to sharpen its responses.
+
+64  Near-Term Risks to the Financial System
+
+Cyber Risk and Financial Stability
+Cyber risk, defined as the risk of loss from dependence on computer systems and digital technologies,
+has grown in the financial system. Cyber events, especially cyberattacks, are among the top risks cited
+in financial stability surveys in the United States and globally, presenting both microprudential and
+macroprudential concerns.1 While substantial attention has been paid to improving resilience to cyber
+risk at individual institutions, this discussion focuses on the ramifications of cyber risk for the financial
+system and financial stability.
+The implications of cyber events for the financial system are distinct from other financial system
+vulnerabilities because fire sales, liquidity freezes, and potential solvency issues may play out differently when stemming from a cyber shock. For example, if a cyber incident compromises a financial
+institution’s data, the firm may be unable to carry out normal operations, in contrast to a traditional run.
+Enhancements in service offerings, such as longer operating hours of payment systems and shorter
+clearing and settlement windows, have left the financial system less downtime in which operations
+can be more easily restored after a cyber incident. More high-frequency trading means that greater
+volumes of transactions depend on instantaneous information flow. Uncertainty about the nature and
+extent of an incident may prompt runs on counterparties, competitors, or unaffected segments of
+the firm’s operations. The 2021 ransomware attack on Colonial Pipeline, though not a financial firm,
+illustrates how a cyberattack can spark a run (in this case, a run on gas stations), amplifying the effects
+well beyond the original shock (in this case, on fuel distribution).
+Cyber shocks may spread through the financial system through complex and often unrecognized
+interdependencies across firms, including a layer of exposures to shared technologies and third-party
+service providers. This layer is in addition to the connections from financial payments and exposures
+typically captured in measures of counterparty risk.
+Another distinction of cyber risk is the possible intentional nature of events. Most cyber events experienced thus far appear to have been motivated by a desire to maximize profits rather than a desire
+to create havoc. However, a small group intending to cause widespread harm can target and time its
+attacks with the goal of impairing the financial system.
+Strategies for reducing traditional financial stability vulnerabilities may be less effective for addressing
+cyber vulnerabilities. Capital and liquidity can reduce the likelihood of solvency runs and serve as a
+buffer for cyber-related losses—and thus may help contain some amplification—but they may not do
+much to prevent runs if customers fear a loss of access to their funds. They also may not speed up
+the restoration process. In addition, cyber vulnerabilities are not transparent to counterparties, and
+affected firms may be reluctant to disclose attacks, which could allow attacks to spread longer and to
+more firms.
+(continued)
+
+1
+
+See the Depository Trust and Clearing Corporation’s 2021 Systemic risk Barometer Survey (https://www.dtcc.com/-/media/Files/
+Downloads/Thought-Leadership/26362-Systemic-risk-2020.pdf), the Bank of england’s Systemic risk Survey for the second half
+of 2021 (https://www.bankofengland.co.uk/systemic-risk-survey/2021/2021-h2), and the Bank of Canada’s spring 2021 Financial
+System Survey (https://www.bankofcanada.ca/2021/05/financial-system-survey-highlights-spring-2021/).
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  65
+
+Cyber risk in the Federal Reserve framework
+The Federal Reserve’s financial stability monitoring framework distinguishes between shocks to and
+vulnerabilities of the financial system. That framework naturally translates to considering cyber risk to
+financial stability (figure A).
+Figure A. Transmission of Cyber Shocks to Affect Financial Stability
+Shocks
+
+Cyber events are
+occurrences, malicious or
+not, within an information
+system or network.
+
+Vulnerabilities
+Firm Level
+
+System Level
+
+weaknesses in a firm’s
+controls, defenses, and
+recovery ability can
+allow cyber events to
+become cyber incidents,
+impairing operations (for
+example, by causing a
+loss of funds or data,
+corrupting data, halting
+operations, or causing
+other monetary or
+reputational losses).
+
+Financial system
+features (for example,
+interconnections
+from financial and
+digital exposures,
+data and operational
+dependencies, market
+concentration and lack
+of substitutes for critical
+services, time sensitivity,
+and confidence) can
+amplify and spread a
+cyber incident to disrupt
+the system’s functioning.
+
+Implications
+
+Incidents that sufficiently
+disrupt the financial
+system’s functioning can
+affect financial stability (for
+example, by causing a
+lack of availability of critical
+services or data, runs
+and asset fire sales, lack
+of access to funding, or
+disrupted payments or price
+discovery).
+
+Shocks associated with cyber risk are cyber events—occurrences, whether malicious or not, in an
+information system or network. Cyber events can be external or internal in origin.
+For a cyber event to affect financial stability, it must first exploit firm-level vulnerabilities so that the
+event becomes an incident—an event that impairs the firm. Firm-level vulnerabilities are weaknesses
+in a firm’s cybersecurity and ability to recover from a cyber event before damage is done. Potential
+adverse firm-level effects include a loss of funds or data, data corruption, and disrupted operations.
+System-level vulnerabilities are features of the financial system that can amplify and spread a cyber
+incident so that the incident disrupts the system’s functioning. Examples of system-level vulnerabilities
+include interconnectedness from financial and digital exposures, data and operational dependencies,
+markets with dominant firms and a lack of available substitutes for critical services, the time sensitivity
+of payments, and the level of confidence in financial relationships.
+Cyber incidents that sufficiently disrupt the financial system’s functioning can affect financial stability.
+Consequences could include a lack of availability or accessibility of critical services, data, or funding;
+a loss of confidence, resulting in runs and asset fire sales; or disruptions to payment flows or price
+discovery. Less significant cyber incidents could also affect financial stability by interacting with and
+amplifying other financial system vulnerabilities. This prospect is made more likely by the possible
+intentional nature of cyber events.
+
+Examples through the lens of the framework
+While no cyber incident has yet significantly impaired the financial system, four examples illustrate
+the application of the framework and the ways in which a more significant incident may do so. The
+(continued on next page)
+
+66  Near-Term Risks to the Financial System
+
+Cyber Risk and Financial Stability (continued)
+first example is a cyberattack directed at a bank holding company that impairs the firm’s data. For
+instance, in 2019, the data of more than 100 million Capital One customers were accessed after an
+attacker exploited a vulnerability in the firewall configuration of the bank’s cloud-based infrastructure. A
+cyberattack that affects data at multiple large financial institutions could lead to a broad loss of confidence in the security of the financial sector. If the institutions’ data are corrupted during the attack, the
+recovery process could be extensive.
+The second example is a cyberattack on a financial market exchange that disrupts trading. In 2020,
+distributed denial-of-service attacks overwhelmed the website of New Zealand’s Exchange (NZX).
+The exchange had to halt trading in cash, debt, and derivatives for most of four days, which disrupted
+access to price information for assets traded only on its exchange. NZX was vulnerable because it
+lacked adequate defenses and a response playbook. An attack that shuts down trading at a large and
+interconnected financial market exchange could disrupt price information more widely, as well as clearing and settlement, and trigger a loss of confidence.
+An attack on a third-party vendor represents the third example. In 2020, a nation-state actor inserted
+malware into a routine update of network management software sold by SolarWinds, a third-party vendor. SolarWinds customers, which included large financial institutions, were infected by the malware
+when they installed the software update. The attack opened a backdoor through which the attackers
+could have exploited the customers’ computer systems. While financial institutions do not appear to
+have been the intended targets, if they had been, the outcome for financial stability could have been
+much worse, as the attackers reportedly had access to the computer systems for some time.2
+Finally, a study by Federal Reserve Bank of New York staff simulated the extent of a hypothetical
+cyberattack that prevents one of the five most active banks from sending payments for one day.3
+Using data from 2018, the study found that, on average across trading days that year, 31 percent of
+banking-sector assets (excluding the directly affected bank) would face compromised liquidity. The
+majority of forgone payments in a disruption support other financial market activity, so the original
+disruption could have broad ramifications.
+
+Data gaps
+While there is extensive ongoing supervisory attention to firm-level cyber resilience, data gaps remain,
+particularly for monitoring system-level vulnerabilities. At the firm level, consistent data on cyber
+incidents are needed. At the system level, measures of digital interdependencies and the speed with
+which backup systems and providers can be quickly enabled would be beneficial. Federal Reserve
+staff are working to help close these data gaps and improve understanding of amplification through
+tabletop exercises and premortem and postmortem studies of cyber events.
+
+2
+
+See the joint statement by the Federal Bureau of Investigation, Cybersecurity and Infrastructure Security agency, office of the Director
+of National Intelligence, and National Security agency (https://www.cisa.gov/news/2021/01/05/joint-statement-federal-bureauinvestigation-fbi-cybersecurity-and-infrastructure).
+
+3
+
+See Thomas m. eisenbach, anna kovner, and michael Junho Lee (forthcoming), “Cyber risk and the u.S. Financial System: a
+Pre-mortem analysis,” Journal of Financial Economics.
+
+FINANCIAL STABILITY REPORT: NOVEMBER 2021  67
+
+Salient Shocks to Financial Stability Cited in Market Outreach
+As part of its market intelligence gathering, Federal Reserve staff solicited views from a wide range of
+contacts on risks to U.S. financial stability. From August to mid-October, the staff surveyed 26 market
+contacts, including professionals at broker-dealers, investment funds, political advisory firms, and
+Fall 2021: most Cited Potential Shocks over Next 12 to 18 months
+Persistent inflation; monetary tightening
+Vaccine-resistant variants
+China regulatory/property risks
+U.S.–China tensions
+Cryptocurrencies/stablecoins
+Climate/weather
+Risk-asset valuations/correction
+Political uncertainty
+Fiscal cliff effects
+Cyberattacks
+Real yield spike/taper tantrum
+EME risks
+China slowdown
+
+Percent
+
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+Source: Federal reserve Bank of New York survey of 26 market contacts from august to october.
+
+Spring 2021: most Cited Potential Shocks over Next 12 to 18 months
+Vaccine-resistant variants
+Sharp rise in real interest rates
+Inflation surge
+U.S.–China tensions
+Risk-asset valuations/correction
+TGA drawdown/debt ceiling
+Cyberattacks
+Reach for yield/leverage
+Cryptocurrencies/stablecoins
+Under-regulated nonbanks
+SLR extension
+EME stress
+Bank asset quality
+Percent
+
+CRE
+0
+
+10
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+Source: Federal reserve Bank of New York survey of 24 market contacts from early February to early april.
+
+(continued on next page)
+
+68  Near-Term Risks to the Financial System
+
+Salient Shocks to Financial Stability (continued)
+universities. Since the previous survey results published in May, concerns related to inflation, new
+COVID variants, and elevated risk-asset valuations have remained top of mind, while several new risks
+have surfaced, including possible fallout from Chinese regulatory changes, the risk of a sharply declining fiscal impulse, and the prospect of monetary policy tightening into a slowdown. Some other risks
+that ranked highly earlier this year declined in prominence, including fears of a disruptive rise in interest
+rates from heavy Treasury issuance and concerns related to increases in bank reserves. This discussion summarizes the most cited shocks in this round of outreach.
+
+Persistent inflationary pressures
+A majority of respondents cited the prospect of inflation pressures being more persistent than anticipated. A few noted that longer-lasting supply constraints in various product and labor markets could
+sustain inflation at elevated levels and potentially contaminate inflation expectations even as growth
+momentum stalls. Most contacts noted that the risk of sustained high inflation would likely be accompanied by monetary policy tightening, with potential effects on elevated risk-asset valuations. A few
+noted that a monetary policy response to stagflation risks would underpin a particularly sharp tightening of financial conditions.
+
+Fallout from the Chinese regulatory tightening
+Respondents also widely discussed market shocks and spillovers that could emanate from the Chinese authorities’ de-risking campaign, with a focus on their efforts to reduce leverage in the property
+development sector. Several noted that the Chinese authorities appear willing to countenance more
+volatility than in the past as they pursue their deleveraging and regulatory goals, while worrying that
+officials could misjudge the scale of instability and contagion emanating from the campaign. Respondents focused largely on the extent to which the authorities would take measures to avert a disorderly
+default at Evergrande, the country’s largest property developer, and attenuate broader property-sector
+and financial system stress.
+
+New COVID-19 variants
+Respondents remained focused on the risk of new COVID variants that could diminish the effectiveness of available vaccines and prolong pandemic effects on the global economy. A few noted risks of
+perpetual COVID mutations that lead to enduring behavioral changes amid recurrent outbreaks, with
+permanent effects on COVID-sensitive sectors.
+
+Fading fiscal impulse
+Several respondents raised concerns regarding the potential for a deeply negative fiscal impulse next
+year to weigh on an economy that is already showing signs of slowing momentum. A few contacts
+highlighted contentious debt ceiling negotiations and the prospect that legislated infrastructure spending would be lower than previously expected.
+
+Escalation of U.S.–China tensions
+As with previous surveys, a number of respondents also cited various geopolitical threats that could
+destabilize markets. Several contacts worried about the possible escalation of tensions between the
+United States and China, particularly surrounding Taiwan.
+
+  69
+
+Figure Notes
+Figure 1-1
+The 2-year and 10-year Treasury rates are the constant-maturity yields based on the most
+actively traded securities.
+Figure 1-2
+Term premiums are estimated from a 3-factor term structure model using Treasury yields
+and Blue Chip interest rate forecasts.
+Figure 1-3
+Implied volatility on the 10-year swap rate, 1 month ahead, is derived from swaptions.
+Figure 1-4
+Market depth is defined as the average top 3 bid and ask quote sizes for on-the-run Treasury
+securities.
+Figure 1-5
+The triple-B series reflects the effective yield of the ICE Bank of America Merrill Lynch
+(BofAML) triple-B U.S. Corporate Index (C0A4), and the high-yield series reflects the effective yield of the ICE BofAML U.S. High Yield Index (H0A0).
+Figure 1-6
+The triple-B series reflects the option-adjusted spread of the ICE Bank of America Merrill
+Lynch (BofAML) triple-B U.S. Corporate Index (C0A4), and the high-yield series reflects
+the option-adjusted spread of the ICE BofAML U.S. High Yield Index (H0A0).
+Figure 1-7
+The excess bond premium (EBP) is the residual of a regression of corporate bond spreads
+on controls for firms’ expected defaults. By construction, its historical mean is zero. Positive
+(negative) EBP values indicate that investors’ risk appetite is below (above) its historical mean.
+Figure 1-8
+The data show secondary-market discounted spreads to maturity. Spreads are the constant spread used to equate discounted loan cash flows to the current market price. B-rated
+spreads begin in July 1997.
+Figure 1-9
+The figure shows aggregate forward price-to-earnings ratio of S&P 500 firms, based on
+expected earnings for 12 months ahead.
+Figure 1-10
+The figure shows aggregate forward earnings-to-price ratio of S&P 500 firms based on
+expected earnings for 12 months ahead. Expected real Treasury yields are calculated from
+the 10-year consumer price index inflation forecast, and the smoothed nominal yield curve is
+estimated from off-the-run securities.
+
+70  Figure Notes
+
+Figure 1-11
+Realized volatility is estimated from 5-minute returns using an exponentially weighted moving average with 75 percent of the weight distributed over the past 20 days.
+Figure 1-12
+Series are deflated using the consumer price index and seasonally adjusted by Federal
+Reserve Board staff. The data begin in 1998 for the equal-weighted curve and 1996 for the
+value-weighted curve.
+Figure 1-13
+The data are a 12-month moving average of weighted capitalization rates in the industrial,
+retail, office, and multifamily sectors, based on national square footage in 2009.
+Figure 1-14
+Banks’ responses are weighted by their commercial real estate loan market shares. The
+shaded bars indicate periods of business recession as defined by the National Bureau of
+­Economic Research: March 2001–November 2001, December 2007–June 2009, and
+February 2020–April 2020. Survey respondents to the Senior Loan Officer Opinion Survey
+on Bank Lending Practices are asked about the changes over the quarter.
+Figure 1-15
+The data for the United States start in 1997. Midwest index is a weighted average of Corn
+Belt and Great Plains states derived from staff calculations. Values are given in real terms.
+The data extend through July 2021.
+Figure 1-16
+The data for the United States start in 1998. Midwest index is the weighted average of
+Corn Belt and Great Plains states derived from staff calculations. The data extend through
+July 2021.
+Figure 1-18
+Valuation is measured as the deviation from the long-run relationship between the price-torent ratio and the real 10-year Treasury yield.
+Figure 1-19
+The data are seasonally adjusted. The data for Phoenix start in 2002. Monthly rent values for
+Phoenix are interpolated from semiannual numbers. Percentiles are based on 19 metropolitan
+statistical areas.
+Box: Retail Investors, Social Media, and Equity Trading
+Figure A
+The black line is the share of households who are willing to take substantial or above-­
+average financial risks and expecting to earn substantial or above-average returns. The
+shaded bars with top caps indicate periods of business recession as defined by the National
+Bureau of Economic Research: July 1990–March 1991, March 2001–November 2001, and
+December 2007–June 2009.
+
+FINANCIAL STABILITY REPORT: MAY 2021  71
+
+Figure B
+The key identifies bars in order from bottom to top.
+Figure C
+“Other” consists of all other venues. Includes payment for order flow from only E-Trade, TD
+Ameritrade, Robinhood, and Schwab. The key identifies bars in order from top to bottom.
+Box: The Role of Foreign Investors in the March 2020 Turmoil in the U.S. Treasury Market
+Figure B
+The key identifies bars in order from left to right.
+Figure C
+The sample includes foreign-domiciled funds with a reported investment mandate for either
+U.S. or global bonds, excluding funds domiciled in Caribbean offshore financial centers.
+Figure D
+Percent reduction in security holdings by foreign-domiciled bond funds associated with net
+outflows equivalent to 1 percent of assets in March 2020, by type of security. This is estimated from fund-level regressions of changes in portfolio holdings, by type of security,
+on net outflows—while controlling for fund size, returns, and fund type—for a sample of
+840 foreign-domiciled bond funds with a reported investment mandate for either U.S. or
+global bonds.
+Figure 2-1
+The shaded bars with top caps indicate periods of business recession as defined by the
+National Bureau of Economic Research: January 1980–July 1980, July 1981–
+November 1982, July 1990–March 1991, March 2001–November 2001, ­December 2007–
+June 2009, and February 2020–April 2020. GDP is gross domestic product.
+Figure 2-2
+The shaded bars with top caps indicate periods of business recession as defined by the
+National Bureau of Economic Research: January 1980–July 1980, July 1981–
+November 1982, July 1990–March 1991, March 2001–November 2001, ­December 2007–
+June 2009, and February 2020–April 2020. GDP is gross domestic product.
+Figure 2-3
+Nominal debt growth is seasonally adjusted and is translated into real terms after subtracting
+the growth rate of the price deflator for the core personal consumption expenditures price.
+Figure 2-4
+Institutional leveraged loans generally exclude loan commitments held by banks.
+Figure 2-5
+Gross leverage is an asset-weighted average of the ratio of firms’ book value of total debt to
+book value of total assets. The 75th percentile is calculated from a sample of the 2,500 largest firms by assets. The dashed sections of the lines in the first quarter of 2019 reflect the
+structural break in the series due to the 2019 compliance deadline for Financial Accounting
+Standards Board rule Accounting Standards Update 2016-02. The new accounting standard
+
+72  Figure Notes
+
+requires operating leases, previously considered off-balance-sheet activities, to be included in
+measures of debt and assets.
+Figure 2-6
+The interest coverage ratio is earnings before interest and taxes divided by interest payments. Firms with leverage less than 5 percent and interest payments less than $500,000 are
+excluded.
+Figure 2-7
+The data begin in December 1998. The default rate is calculated as the amount in default
+over the past 12 months divided by the total outstanding volume at the beginning of the
+12‑month period. The shaded bars with top caps indicate periods of business recession
+as defined by the National Bureau of Economic Research: March 2001–­November 2001,
+December 2007–June 2009, and February 2020–April 2020.
+Figure 2-8
+Volumes are for large corporations with earnings before interest, taxes, depreciation, and
+amortization (EBITDA) greater than $50 million and exclude existing tranches of add-ons
+and amendments as well as restatements with no new money. The key identifies bars in order
+from top to bottom.
+Figure 2-9
+Subprime are those with an Equifax Risk Score below 620; near prime are from 620 to 719;
+prime are greater than 719. Scores are measured contemporaneously. Student loan balances
+before 2004 are estimated using average growth from 2004 to 2007, by risk score. The data
+are converted to constant 2021 dollars using the consumer price index.
+Figure 2-10
+Year-over-year change in balances for the second quarter of each year among those households whose balance increased over this window. Subprime are those with an Equifax Risk
+Score below 620; near prime are from 620 to 719; prime are greater than 719. Scores were
+measured one year ago. The data are converted to constant 2021 dollars using the consumer
+price index. The key identifies bars in order from left to right.
+Figure 2-11
+Loss mitigation includes tradelines that have a narrative code of forbearance, natural disaster, payment deferral (including partial), loan modification (including federal government
+plans), or loans with no scheduled payment and a nonzero balance. Delinquent includes
+loans reported to the credit bureau at least 30 days past due. The line break represents the
+data transitioning from quarterly to monthly beginning January 2020.
+Figure 2-13
+Housing leverage is estimated as the ratio of the average outstanding mortgage loan balance
+for owner-occupied homes with a mortgage to (1) current home values using the Zillow
+national house price index and (2) model-implied house prices estimated by a staff model
+based on rents, interest rates, and a time trend.
+
+FINANCIAL STABILITY REPORT: MAY 2021  73
+
+Figure 2-14
+The data are converted to constant 2021 dollars using the consumer price index. Student
+loan data begin in 2005.
+Figure 2-15
+Subprime are those with an Equifax Risk Score below 620; near prime are from 620 to 719;
+prime are greater than 719. Scores are measured contemporaneously. The data are converted
+to constant 2021 dollars using the consumer price index.
+Figure 2-16
+Loss mitigation includes tradelines that have a narrative code of forbearance, natural disaster, payment deferral (including partial), loan modification (including federal government
+plans), or loans with no scheduled payment and a nonzero balance. Delinquent includes
+loans reported to the credit bureau as at least 30 days past due. The line break represents the
+data transitioning from quarterly to monthly beginning in January 2020. The data for auto
+loans are reported semiannually by Risk Assessment, Data Analysis and Research until 2017,
+after which they are reported quarterly until 2020. The data for delinquent/loss mitigation
+begin in Q1 of 2001.
+Figure 2-17
+Subprime are those with an Equifax Risk Score below 620; near prime are from 620 to 719;
+prime are greater than 719. Scores are measured contemporaneously. The data are converted
+to constant 2021 dollars using the consumer price index.
+Figure 2-18
+Delinquency is at least 30 days past due, excluding severe derogatory loans. The data are
+four-quarter moving averages. Subprime are those with an Equifax Risk Score below 620;
+near prime are from 620 to 719; prime are greater than 719. Credit scores are lagged four
+quarters.
+Figure 3-1
+The data are seasonally adjusted by Federal Reserve Board staff. Sample consists of domestic bank holding companies (BHCs) and intermediate holding companies (IHCs) with a
+substantial U.S. commercial banking presence. G-SIBs are global systemically important
+U.S. banks. Large non–G-SIBs are BHCs and IHCs with greater than $100 billion in total
+assets that are not G-SIBs. Before 2014:Q1 (advanced-approaches BHCs) or before 2015:Q1
+(non-advanced-approaches BHCs), the numerator of the common equity Tier 1 ratio is
+Tier 1 common capital. Afterward, the numerator is common equity Tier 1 capital. The
+denominator is risk-weighted assets. The shaded bars with top caps indicate periods of
+business recession as defined by the National Bureau of Economic Research: March 2001–
+November 2001, December 2007–June 2009, and February 2020–April 2020.
+Figure 3-2
+The data are seasonally adjusted by Federal Reserve Board staff. Sample consists of
+domestic bank holding companies (BHCs), intermediate holding companies (IHCs) with
+a substantial U.S. commercial banking presence, and commercial banks. G-SIBs are global
+
+74  Figure Notes
+
+systemically important U.S. banks. Large non–G-SIBs are BHCs and IHCs with greater
+than $100 billion in total assets that are not G-SIBs. Bank equity is total equity capital net
+of ­preferred equity and intangible assets. The shaded bars with top caps indicate periods
+of business recession as defined by the National Bureau of Economic Research: July 1990–
+March 1991, March 2001–November 2001, December 2007–June 2009, and February 2020–
+April 2020.
+Figure 3-3
+Weighted median leverage of nonfinancial firms that borrow using commercial and industrial loans from the 26 banks that have filed in every quarter since 2013:Q1. Leverage is
+measured as the ratio of the book value of total debt to the book value of total assets of the
+borrower, as reported by the lender, and the median is weighted by committed amounts.
+Figure 3-4
+Banks’ responses are weighted by their commercial and industrial loan market shares.
+Survey respondents to the Senior Loan Officer Opinion Survey on Bank Lending Practices are asked about the changes over the quarter. Results are shown for loans to large and
+medium-sized firms. The shaded bars with top caps indicate periods of business recession
+as defined by the National Bureau of Economic Research: March 2001–November 2001,
+December 2007–June 2009, and February 2020–April 2020.
+Figure 3-5
+Leverage is calculated by dividing total assets by equity.
+Figure 3-6
+Ratio is calculated as (total assets − separate account assets)/(total capital − accumulated
+other comprehensive income) using generally accepted accounting principles. The largest
+10 publicly traded life and property and casualty insurers are represented.
+Figure 3-7
+Leverage is computed as the ratio of hedge funds’ gross notional exposure to net asset value.
+Gross notional exposure includes the nominal value of all long and short positions and
+derivative notional exposures. Options are delta adjusted, and interest rate derivatives are
+reported at 10-year bond equivalents. The mean is weighted by net asset value. The data are
+reported on a two-quarter lag, starting in the first quarter of 2013.
+Figure 3-8
+Net percentage equals the percentage of institutions that reported increased use of financial leverage over the past three months minus the percentage of institutions that reported
+decreased use of financial leverage over the past three months. REIT is real estate investment trust.
+Figure 3-9
+The data from the first and second quarters of 2021 are annualized to create the 2021 bar.
+RMBS is residential mortgage-backed securities. CMBS is commercial mortgage-backed
+securities. CDO is collateralized debt obligation. CLO is collateralized loan obligation. The
+
+FINANCIAL STABILITY REPORT: MAY 2021  75
+
+“Other” category consists of other asset-backed securities (ABS) backed by credit card debt,
+student loans, equipment, floor plans, and miscellaneous receivables; resecuritized real estate
+mortgage investment conduit (Re-REMIC) RMBS; and Re-REMIC CMBS. The data are
+converted to constant 2021 dollars using the consumer price index. The key identifies bars in
+order from top to bottom.
+Figure 3-10
+Committed amounts on credit lines and term loans extended to nonbank financial firms by
+a balanced panel of 26 bank holding companies that have filed Form FR Y-14Q in every
+quarter since 2018:Q1. Nonbank financial firms are identified based on reported North
+American Industry Classification System (NAICS) codes. In addition to NAICS codes, a
+name-matching algorithm is applied to identify specific entities such as real estate investment
+trusts (REITs), special purpose entities, collateralized loan obligations (CLOs), and assetbacked securities (ABS). REITs incorporate both mortgage (trading) REITs and equity
+REITs. Broker-dealers also include commodity contracts dealers and brokerages and other
+securities and commodity exchanges. Other financial vehicles include closed-end investment
+and mutual funds. BDC is business development company.
+Figure 3-11
+2021:Q2-over-2020:Q2 growth rates as of 2021:Q2. REIT is real estate investment trust. PE
+is private equity. BDC is business development company. SPE is special purpose entity. CLO
+is collateralized loan obligation. ABS is asset-backed securities. The key identifies bars in
+order from left to right.
+Figure 4-1
+The black striped area denotes the period from 2008:Q4 to 2012:Q4, when insured deposits
+increased because of the Transaction Account Guarantee program. “Other” consists of variable-rate demand obligations (VRDOs), federal funds, funding-agreement-backed securities,
+private liquidity funds, offshore money market funds, and local government investment
+pools. Securities lending includes only lending collateralized by cash. GDP is gross domestic product. Values for VRDOs come from Bloomberg beginning in 2019:Q1. See Jack Bao,
+Josh David, and Song Han (2015), “The Runnables,” FEDS Notes (Washington: Board of
+Governors of the Federal Reserve System, September 3), https://www.federalreserve.gov/
+econresdata/notes/feds-notes/2015/the-runnables-20150903.html.
+Figure 4-2
+Sample consists of domestic bank holding companies (BHCs), intermediate holding companies (IHCs) with a substantial U.S. commercial banking presence, and commercial banks.
+G-SIBs are global systemically important U.S. banks. Large non–G-SIBs are BHCs and
+IHCs with greater than $100 billion in total assets that are not G-SIBs. Liquid assets are cash
+plus estimates of securities that qualify as high-quality liquid assets as defined by the Liquidity Coverage Ratio requirement. Accordingly, Level 1 assets and discounts and restrictions
+on Level 2 assets are incorporated into the estimate.
+
+76  Figure Notes
+
+Figure 4-3
+Short-term wholesale funding is defined as the sum of large time deposits with maturity less
+than one year, federal funds purchased and securities sold under agreements to repurchase,
+deposits in foreign offices with maturity less than one year, trading liabilities (excluding
+revaluation losses on derivatives), and other borrowed money with maturity less than one
+year. The shaded bars with top caps indicate periods of business recession as defined by the
+National Bureau of Economic Research: March 2001–November 2001, ­December 2007–
+June 2009, and February 2020–April 2020.
+Figure 4-4
+The data are converted to constant 2021 dollars using the consumer price index.
+Figure 4-5
+The data show holdings of all U.S. corporate bonds by all U.S.-domiciled mutual funds
+(holdings of foreign bonds are excluded). The figure reflects an update in methodology from
+the corresponding chart in the May 2021 Financial Stability Report. The data are converted
+to constant 2021 dollars using the consumer price index.
+Figure 4-6
+The data are converted to constant 2021 dollars using the consumer price index. The key
+identifies series in order from top to bottom.
+Figure 4-7
+Mutual fund assets under management as of August 2021 included $2,660 billion in
+­investment-grade bond funds, $295 billion in high-yield bond funds, and $90 billion in bank
+loan funds. The key identifies series in order from top to bottom.
+Figure 4-8
+Securitized products include collateralized loan obligations for corporate debt, private-­label
+commercial mortgage-backed securities for commercial real estate, and private-label residential mortgage-backed securities and asset-backed securities backed by autos, credit cards,
+consumer loans, and student loans, and other asset-backed securities. Illiquid corporate
+debt includes private placements, bank/syndicated loans, and high-yield bonds. Alternative
+investments include assets filed under Schedule BA. P&C is property and casualty. The key
+identifies bars in order from top to bottom.
+Figure 4-9
+The data are converted to constant 2021 dollars using the consumer price index. FHLB is
+Federal Home Loan Bank. The keys identify series in order from top to bottom.
+Box: Liquidity Vulnerabilities from Noncash Collateral at Central Counterparties
+Figure B
+The key identifies the bars by number, from bottom to top. UCITs is undertakings for the
+collective investment in transferable securities.
+
+FINANCIAL STABILITY REPORT: MAY 2021  77
+
+Box: LIBOR Transition Update
+Figure A
+The key identifies bars in order from bottom to top. SOFR is secured overnight financ­ing rate.
+Figure B
+SOFR is secured overnight financing rate. The key identifies bars in order from bottom
+to top.
+Box: Salient Shocks to Financial Stability Cited in Market Outreach
+Figure A
+Responses are to the following question: “Over the next 12 to 18 months, which shocks, if
+realized, do you think would have the greatest negative effect on the functioning of the U.S.
+financial system?” EME is emerging market economy.
+Figure B
+Responses are to the following question: “Over the next 12 to 18 months, which shocks, if
+realized, do you think would have the greatest negative effect on the functioning of the U.S.
+financial system?” TGA is Treasury General Account. EME is emerging market economy.
+SLR is supplementary leverage ratio. CRE is commercial real estate.
+
+Board of Governors of the Federal Reserve System
+www.federalreserve.gov
+1121
+
+

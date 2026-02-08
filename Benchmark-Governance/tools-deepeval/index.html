@@ -26,7 +26,7 @@
     
     
       
-        <title>DeepEval - LLM 評測知識庫</title>
+        <title>DeepEval 完整教學 - LLM 評測知識庫</title>
       
     
     
@@ -124,7 +124,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DeepEval
+              DeepEval 完整教學
             
           </span>
         </div>
@@ -1192,7 +1192,7 @@
   <span class="md-ellipsis">
     
   
-    RAGAS
+    RAGAS 完整教學
   
 
     
@@ -1229,7 +1229,7 @@
   <span class="md-ellipsis">
     
   
-    DeepEval
+    DeepEval 完整教學
   
 
     
@@ -1247,7 +1247,7 @@
   <span class="md-ellipsis">
     
   
-    DeepEval
+    DeepEval 完整教學
   
 
     
@@ -1273,10 +1273,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#deepeval_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 DeepEval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deepeval_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DeepEval 在團隊工作流的位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        指標體系如何設計
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        與 RAG 場景最相關的指標解讀
       
     </span>
   </a>
@@ -1287,38 +1331,32 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#llm" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        測試驅動的 LLM 開發
+        實戰導入步驟（無程式碼版）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        多維度評測
+        你專案中的金融共用測試集
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#geval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GEval 在企業情境的最佳用途
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1326,38 +1364,32 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心指標
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="核心指標">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#g-eval" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        G-Eval
+        常見失敗模式
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        預定義指標
+        流程圖：回歸測試治理
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1365,107 +1397,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        方法論貢獻
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="方法論貢獻">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        可複製評測
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回歸測試
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與其他框架比較
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        應用場景
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="應用場景">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        開發階段
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        部署階段
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -1495,7 +1427,63 @@
   <span class="md-ellipsis">
     
   
-    Arize Phoenix
+    Arize Phoenix 完整教學
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cross-tool-rag-benchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    金融文件橫向比較
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook 實作
   
 
     
@@ -1921,10 +1909,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#deepeval_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        為什麼用 DeepEval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-02-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本基準（截至 2026-02-08）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deepeval_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DeepEval 在團隊工作流的位置
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        概述
+        指標體系如何設計
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        與 RAG 場景最相關的指標解讀
       
     </span>
   </a>
@@ -1935,38 +1967,32 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        理論基礎
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="理論基礎">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#llm" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        測試驅動的 LLM 開發
+        實戰導入步驟（無程式碼版）
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        多維度評測
+        你專案中的金融共用測試集
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#geval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GEval 在企業情境的最佳用途
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1974,38 +2000,32 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        核心指標
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="核心指標">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#g-eval" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        G-Eval
+        常見失敗模式
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        預定義指標
+        流程圖：回歸測試治理
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對應 Notebook
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2013,107 +2033,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        方法論貢獻
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="方法論貢獻">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        可複製評測
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回歸測試
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        與其他框架比較
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        應用場景
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="應用場景">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        開發階段
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        部署階段
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        相關主題
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        參考文獻
+        官方資源
       
     </span>
   </a>
@@ -2137,303 +2057,146 @@
 
 
 
-<h1 id="deepeval">DeepEval 評測框架</h1>
+<h1 id="deepeval">DeepEval 完整教學（深入版）</h1>
 <blockquote>
-<p>全方位 LLM 應用評測的開源解決方案</p>
+<p>適用對象：想把 LLM 評測正式納入工程流程（測試、回歸、CI）的團隊。</p>
 </blockquote>
-<h2 id="_1">概述</h2>
-<p><strong>DeepEval</strong> 是一個功能豐富的 LLM 評測框架，整合多種評測方法論，支援從單元測試到整合測試的完整評測流程。其設計理念借鏡軟體工程的測試實務，將測試驅動開發（TDD）概念引入 LLM 應用開發。</p>
-<hr>
-<h2 id="_2">理論基礎</h2>
-<h3 id="llm">測試驅動的 LLM 開發</h3>
-<p>借鏡 TDD 的理念：</p>
+<h2 id="deepeval_1">為什麼用 DeepEval</h2>
+<p>DeepEval 的優勢不是只在指標數量，而是它的工程化測試語意：</p>
+<ol>
+<li>把每個問題視為 test case。</li>
+<li>把品質規則視為可重複執行的 metric。</li>
+<li>把評測結果納入版本迭代與 CI 準入。</li>
+</ol>
+<p>如果 RAGAS 偏向「RAG 體檢」，DeepEval 更像是「品質工程作業系統」。</p>
+<h2 id="2026-02-08">版本基準（截至 2026-02-08）</h2>
 <table>
 <thead>
 <tr>
-<th>傳統 TDD</th>
-<th>LLM TDD</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>單元測試</td>
-<td>單一互動評測</td>
-</tr>
-<tr>
-<td>整合測試</td>
-<td>端對端對話評測</td>
-</tr>
-<tr>
-<td>回歸測試</td>
-<td>模型更新後驗證</td>
-</tr>
-<tr>
-<td>CI/CD 整合</td>
-<td>自動化評測流水線</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_3">多維度評測</h3>
-<p>DeepEval 支援的評測維度：</p>
-<table>
-<thead>
-<tr>
-<th>維度</th>
-<th>評測重點</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>正確性</td>
-<td>答案與預期的匹配程度</td>
-</tr>
-<tr>
-<td>忠實度</td>
-<td>對上下文的忠實程度</td>
-</tr>
-<tr>
-<td>有害性</td>
-<td>有害內容的產生</td>
-</tr>
-<tr>
-<td>偏見</td>
-<td>輸出中的偏見</td>
-</tr>
-<tr>
-<td>相關性</td>
-<td>回答的切題程度</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_4">核心指標</h2>
-<h3 id="g-eval">G-Eval</h3>
-<p>基於 Chain-of-Thought 的通用評測方法（Liu et al., 2023）：</p>
-<table>
-<thead>
-<tr>
-<th>特點</th>
+<th>元件</th>
+<th style="text-align: right;">建議版本</th>
 <th>說明</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>靈活性</strong></td>
-<td>可自訂評測標準</td>
+<td><code>deepeval</code></td>
+<td style="text-align: right;"><code>3.8.4</code></td>
+<td>目前 PyPI 最新版</td>
 </tr>
 <tr>
-<td><strong>可解釋</strong></td>
-<td>提供評分理由</td>
-</tr>
-<tr>
-<td><strong>可擴展</strong></td>
-<td>適用於各種任務</td>
+<td>評審模型</td>
+<td style="text-align: right;">固定單一版本</td>
+<td>確保跨版本可比較</td>
 </tr>
 </tbody>
 </table>
-<p>G-Eval 的基本流程：
-1. 定義評測維度和標準
-2. LLM 生成評估思考過程
-3. 根據思考給出評分</p>
-<h3 id="_5">預定義指標</h3>
+<h2 id="deepeval_2">DeepEval 在團隊工作流的位置</h2>
+<pre class="mermaid"><code>flowchart LR
+    A[「需求或缺陷」] --&gt; B[「定義測試案例」]
+    B --&gt; C[「套用指標組合」]
+    C --&gt; D[「產出測試報告」]
+    D --&gt; E{「是否達門檻」}
+    E -- 否 --&gt; F[「修 Prompt/檢索/模型」]
+    E -- 是 --&gt; G[「進入發布流程」]
+    F --&gt; C</code></pre>
+<h2 id="_1">指標體系如何設計</h2>
+<p>建議把指標分成三層：</p>
+<ol>
+<li>基礎品質：Answer Relevancy、Faithfulness。</li>
+<li>風險品質：Hallucination、Toxicity、Bias。</li>
+<li>業務品質：GEval（自訂標準）。</li>
+</ol>
+<p>這能避免只看單一分數導致誤判。</p>
+<h2 id="rag">與 RAG 場景最相關的指標解讀</h2>
 <table>
 <thead>
 <tr>
 <th>指標</th>
-<th>說明</th>
-<th>對應研究</th>
+<th>管理目的</th>
+<th>常見 fail 訊號</th>
+<th>改善建議</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Answer Relevancy</strong></td>
-<td>答案相關性</td>
-<td>RAGAS</td>
+<td>Answer Relevancy</td>
+<td>確保回答切題</td>
+<td>回答偏題、重複、閃避</td>
+<td>重寫系統指令與任務邊界</td>
 </tr>
 <tr>
-<td><strong>Faithfulness</strong></td>
-<td>忠實度</td>
-<td>TRUE</td>
+<td>Faithfulness</td>
+<td>降低憑空捏造</td>
+<td>引用不存在事實</td>
+<td>強化 grounding、限制自由發揮</td>
 </tr>
 <tr>
-<td><strong>Contextual Precision</strong></td>
-<td>上下文精確度</td>
-<td>RAGAS</td>
+<td>Contextual Precision</td>
+<td>提升檢索含金量</td>
+<td>前位結果噪音高</td>
+<td>改 retriever 與 reranker</td>
 </tr>
 <tr>
-<td><strong>Hallucination</strong></td>
-<td>幻覺程度</td>
-<td>SummaC</td>
+<td>Hallucination</td>
+<td>追蹤風險輸出</td>
+<td>高風險敘述無證據</td>
+<td>建立拒答與引用策略</td>
 </tr>
 <tr>
-<td><strong>Toxicity</strong></td>
-<td>有害性</td>
-<td>Perspective API</td>
-</tr>
-<tr>
-<td><strong>Bias</strong></td>
-<td>偏見程度</td>
-<td>StereoSet</td>
+<td>GEval</td>
+<td>反映企業標準</td>
+<td>指標高但業務不可用</td>
+<td>將業務規範轉成 rubric</td>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2 id="_6">方法論貢獻</h2>
-<h3 id="_7">可複製評測</h3>
-<p>確保評測結果可複製的關鍵要素：</p>
-<table>
-<thead>
-<tr>
-<th>要素</th>
-<th>實務建議</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>版本控制</td>
-<td>固定模型版本和參數</td>
-</tr>
-<tr>
-<td>種子設定</td>
-<td>設定隨機種子確保一致</td>
-</tr>
-<tr>
-<td>環境隔離</td>
-<td>標準化評測環境</td>
-</tr>
-<tr>
-<td>結果記錄</td>
-<td>完整記錄每次評測</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_8">回歸測試</h3>
-<p>追蹤模型更新後的表現變化：</p>
-<table>
-<thead>
-<tr>
-<th>檢測項目</th>
-<th>關注指標</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>能力衰退</td>
-<td>新版低於舊版</td>
-</tr>
-<tr>
-<td>新問題</td>
-<td>以前通過現在失敗</td>
-</tr>
-<tr>
-<td>改善驗證</td>
-<td>目標指標確實提升</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_9">與其他框架比較</h2>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>DeepEval</th>
-<th>RAGAS</th>
-<th>Arize</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>RAG 評測</td>
-<td>✓</td>
-<td>✓✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>通用 LLM 評測</td>
-<td>✓✓</td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>視覺化 Dashboard</td>
-<td>✓</td>
-<td>✗</td>
-<td>✓✓</td>
-</tr>
-<tr>
-<td>CI/CD 整合</td>
-<td>✓✓</td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>自訂指標</td>
-<td>✓✓</td>
-<td>✓</td>
-<td>✓</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_10">應用場景</h2>
-<h3 id="_11">開發階段</h3>
-<table>
-<thead>
-<tr>
-<th>場景</th>
-<th>應用方式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Prompt 迭代</td>
-<td>比較不同 prompt 的效果</td>
-</tr>
-<tr>
-<td>模型選擇</td>
-<td>評估不同模型的表現</td>
-</tr>
-<tr>
-<td>參數調優</td>
-<td>測試不同參數設定</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_12">部署階段</h3>
-<table>
-<thead>
-<tr>
-<th>場景</th>
-<th>應用方式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>發布把關</td>
-<td>上線前品質驗證</td>
-</tr>
-<tr>
-<td>回歸測試</td>
-<td>更新後確保無退化</td>
-</tr>
-<tr>
-<td>A/B 測試</td>
-<td>比較不同版本效果</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="_13">相關主題</h2>
+<h2 id="_2">實戰導入步驟（無程式碼版）</h2>
+<ol>
+<li>先定義最小可行測試集（10-30 題）。</li>
+<li>為每題建立期望輸出與必要上下文。</li>
+<li>定義「必過」和「可觀察」指標。</li>
+<li>設定各指標門檻與阻擋規則。</li>
+<li>產出每輪回歸報告並追蹤退化案例。</li>
+</ol>
+<h2 id="_3">你專案中的金融共用測試集</h2>
+<p>DeepEval Notebook 已對齊以下共用資料：</p>
 <ul>
-<li><a href="../tools-ragas/">RAGAS 指南</a></li>
-<li><a href="../tools-arize/">Arize Phoenix 指南</a></li>
+<li>文件：<code>/Benchmark-Governance/data/financial-stability-report-20211108.pdf</code></li>
+<li>問題集：<code>/Benchmark-Governance/data/finance-rag-benchmark.json</code></li>
 </ul>
-<hr>
-<h2 id="_14">參考文獻</h2>
+<p>這讓 DeepEval、RAGAS、Phoenix 的結果可以直接對照。</p>
+<h2 id="geval">GEval 在企業情境的最佳用途</h2>
+<p>GEval 適合處理「通用指標看不出，但業務很在意」的條件，例如：</p>
+<ol>
+<li>是否明確揭露不確定性。</li>
+<li>是否保持金融敘述保守性。</li>
+<li>是否避免過度推論政策含義。</li>
+</ol>
+<h2 id="_4">常見失敗模式</h2>
+<ol>
+<li>指標太多但沒有優先級。</li>
+<li>每輪都改資料與模型，無法判讀改動效果。</li>
+<li>只看 aggregate，不追失敗案例。</li>
+<li>把 GEval 當黑箱，沒有定義明確 rubric。</li>
+</ol>
+<h2 id="_5">流程圖：回歸測試治理</h2>
+<pre class="mermaid"><code>flowchart TD
+    A[「新模型或新 prompt」] --&gt; B[「跑 DeepEval 全量回歸」]
+    B --&gt; C{「關鍵指標退化？」}
+    C -- 是 --&gt; D[「標記阻擋發布」]
+    C -- 否 --&gt; E[「允許進入下一階段」]
+    D --&gt; F[「定位退化案例」]
+    F --&gt; G[「修正後重測」]
+    G --&gt; B</code></pre>
+<h2 id="notebook">對應 Notebook</h2>
 <ul>
-<li>Liu, Y., et al. (2023). "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"</li>
-<li>DeepEval Documentation (2024)</li>
+<li><code>/Benchmark-Governance/notebooks/deepeval-tutorial.ipynb</code></li>
+</ul>
+<h2 id="_6">官方資源</h2>
+<ul>
+<li>DeepEval Docs: <a href="https://docs.confident-ai.com/">https://docs.confident-ai.com/</a></li>
+<li>DeepEval PyPI: <a href="https://pypi.org/project/deepeval/">https://pypi.org/project/deepeval/</a></li>
 </ul>
 
 
@@ -2457,7 +2220,7 @@
     <span class="md-icon" title="最後更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 15:24:24 CST">2026年2月6日 15:24:24</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月9日 00:53:03 CST">2026年2月9日 00:53:03</span>
   </span>
 
     
