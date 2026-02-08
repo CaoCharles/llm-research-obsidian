@@ -23,6 +23,13 @@ window.INITIAL_PROMPT = "👋 嗨！我是 LLM 評測助教\n\n可以問我關�
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
 
 function fixBrokenLinks(text) {
+    // 先將裸的 [] 在 URL 中轉為 %5B %5D（避免和 Markdown 語法衝突）
+    text = text.replace(/\[([^\]]+)\]\(([^)]*\[[^\]]*\][^)]*)\)/g, (match, linkText, url) => {
+        // URL 中包含未編碼的 []，進行編碼
+        const fixedUrl = url.replace(/\[/g, '%5B').replace(/\]/g, '%5D');
+        return `[${linkText}](${fixedUrl})`;
+    });
+
     return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
         if (url.startsWith('http://') || url.startsWith('https://')) {
             // 修正已有完整 URL 但帶 .md 的情況
@@ -135,7 +142,7 @@ async function loadContent() {
 
         const data = await response.json();
         allDocsContent = data.map((doc) =>
-            `## ${doc.title}\nURL: ${doc.url}\n\n${doc.content}`
+            `## ${doc.title}\nURL: ${doc.url}\n引用時請用: [${doc.title}](${doc.url})\n\n${doc.content}`
         ).join("\n\n---\n\n");
 
         if (window.INITIAL_PROMPT && chatHistory.length === 0) {
@@ -162,10 +169,16 @@ async function sendMessage() {
 
 ## 回答規則
 1. 使用繁體中文回答
-2. 當提到相關主題時，提供文章的 Markdown 連結（使用 URL 欄位）
-3. 使用清晰的 Markdown 格式（標題、列點、程式碼區塊）
-4. 優先使用文件內容回答，如果沒有相關內容才用一般知識
-5. 程式碼使用 \`\`\`bash 格式
+2. 使用清晰的 Markdown 格式（標題、列點、程式碼區塊）
+3. 優先使用文件內容回答，如果沒有相關內容才用一般知識
+4. 程式碼使用 \`\`\`bash 格式
+
+## 連結格式規則（非常重要）
+- 當引用文件時，**必須**使用每篇文件開頭的 URL 欄位作為連結目標
+- 連結格式：[文章標題](URL)
+- 例如：[Prompt Injection Attack](https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2504.19793%5D%20Prompt%20Injection%20Attack%20to%20Tool%20Selection%20in%20LLM%20Agents/)
+- **禁止**在連結的 URL 部分使用中括號 [ ]，必須用 %5B %5D 替代
+- **禁止**在回答中直接貼上長 URL，一律用 Markdown 連結格式包裝
 
 ## 課程文件
 ${allDocsContent || "文件載入中..."}`;
