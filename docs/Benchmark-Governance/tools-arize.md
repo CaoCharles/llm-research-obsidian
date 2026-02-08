@@ -1,141 +1,117 @@
-# Arize Phoenix
+# Arize Phoenix 完整教學（深入版）
 
-> LLM 可觀測性與評測的整合平台
+> 適用對象：需要「線上可觀測性 + 離線評測」一體化治理的團隊。
 
-## 概述
+## 為什麼用 Phoenix
 
-**Arize Phoenix** 是一個開源的 LLM 可觀測性（Observability）平台，將追蹤、評測和分析整合在統一的框架中。其設計理念源於軟體工程的可觀測性實務，將 Tracing、Metrics、Logging 的概念應用於 LLM 系統。
+Phoenix 和另外兩個工具最大的差異是：它不只做評分，還把 trace、評分、錯誤分析放在同一個操作面。
 
----
+你可以用它回答這些問題：
 
-## 理論基礎
+1. 哪個 pipeline step 最常導致低品質回答。
+2. 哪些失敗案例在特定版本突然變多。
+3. 線上流量與離線評測是否一致。
 
-### LLM 可觀測性
+## 版本基準（截至 2026-02-08）
 
-借鏡分散式系統的可觀測性三支柱：
+| 元件 | 建議版本 | 說明 |
+|---|---:|---|
+| `arize-phoenix` | `12.33.1` | 目前 PyPI 最新版 |
+| `arize-phoenix-evals` | `2.9.0` | 目前 PyPI 最新版 |
 
-| 支柱 | 傳統系統 | LLM 系統 |
-|------|----------|----------|
-| **Traces** | 請求追蹤 | Prompt Chain 追蹤 |
-| **Metrics** | 效能指標 | 品質評測指標 |
-| **Logs** | 事件記錄 | 輸入輸出記錄 |
+## Phoenix 在整體治理中的位置
 
-### 追蹤的重要性
-
-LLM 應用通常涉及複雜的 Chain：
-
+```mermaid
+flowchart LR
+    A[「線上請求與 trace」] --> B[「Phoenix 收集與儲存」]
+    B --> C[「批次評測」]
+    C --> D[「儀表板觀察趨勢」]
+    D --> E[「回灌測試集」]
+    E --> F[「版本迭代」]
+    F --> A
 ```
-Query → Embedding → Retrieval → Reranking → Generation → Response
+
+## 兩條能力線：Observability 與 Evaluation
+
+| 能力線 | 你會得到什麼 | 適用時機 |
+|---|---|---|
+| Observability | trace、延遲、步驟級失敗定位 | 線上診斷與根因分析 |
+| Evaluation | 批次分數與標籤 | 發版前驗收與週期回歸 |
+
+## 你在專案裡應優先使用的能力
+
+1. 先用 code evaluator 建立本地可重現的規則評測。
+2. 再加入 LLM evaluator（如 hallucination、relevance）。
+3. 最後把線上 traces 納入同一套評測節奏。
+
+## 常用評測器應該怎麼看
+
+| 評測器 | 主要用途 | 低分時先查哪裡 |
+|---|---|---|
+| HallucinationEvaluator | 檢查回答是否無根據 | 檢索內容覆蓋率、回答約束 |
+| RelevanceEvaluator | 檢查檢索與問題相關性 | 檢索查詢改寫、rerank |
+| QAEvaluator | 檢查回答品質 | 回答結構、資訊完整度 |
+| 自訂 code evaluator | 將內規落地 | 規則定義是否可執行 |
+
+## 與金融共用測試集的對接
+
+Phoenix Notebook 與其他兩套工具共用：
+
+- 文件：`/Benchmark-Governance/data/financial-stability-report-20211108.pdf`
+- 問題集：`/Benchmark-Governance/data/finance-rag-benchmark.json`
+
+這可直接比較同一份回答在三個框架中的評分差異。
+
+## LangChain Tracing 整合（你提供的重點資源）
+
+若你的 RAG pipeline 是 LangChain，建議優先完成 Phoenix tracing 整合，再進入評測。  
+這樣你不只知道「分數低」，還能直接知道「哪個鏈路步驟造成低分」。
+
+建議閱讀順序：
+
+1. Phoenix 官方整合文件（LangChain tracing）  
+<https://arize.com/docs/phoenix/integrations/python/langchain/langchain-tracing>
+2. 官方 Colab 教學（LangChain tracing tutorial）  
+<https://colab.research.google.com/github/Arize-ai/phoenix/blob/main/tutorials/tracing/langchain_tracing_tutorial.ipynb>
+
+建議導入流程：
+
+1. 先把 LangChain pipeline trace 成功送進 Phoenix。
+2. 確認每個 step（檢索、重排、生成）都能在 trace 中被區分。
+3. 將低分樣本對回 trace，做步驟級根因分析。
+4. 依 trace 結論修正後，回到三工具共同 benchmark 重跑。
+
+整合後你的收益：
+
+1. 評分與根因不再分離，排障速度提升。
+2. 能建立「線上異常 -> 離線重現 -> 修正驗證」閉環。
+3. 可把 LangChain trace 直接納入團隊週期性品質審查。
+
+## 實務上最容易踩的坑
+
+1. 只建 dashboard，不做失敗案例閉環。
+2. 評測規則沒有版本化，歷史趨勢不可解釋。
+3. 把所有問題丟給 LLM evaluator，忽略可 deterministic 的 code rules。
+4. 線上 trace 沒做抽樣策略，噪音太大。
+
+## 流程圖：線上問題回灌機制
+
+```mermaid
+flowchart TD
+    A[「線上低品質回覆」] --> B[「從 trace 定位失敗步驟」]
+    B --> C[「加入金融測試集」]
+    C --> D[「Phoenix 批次評測」]
+    D --> E[「與 RAGAS / DeepEval 對照」]
+    E --> F[「修檢索、修生成、修規則」]
+    F --> G[「重新發布並持續監控」]
 ```
 
-追蹤使得：
-- 識別慢速步驟
-- 定位錯誤來源
-- 分析成本分佈
+## 對應 Notebook
 
----
+- `/Benchmark-Governance/notebooks/arize-phoenix-tutorial.ipynb`
 
-## 核心功能
+## 官方資源
 
-### 追蹤（Tracing）
-
-| 追蹤層次 | 內容 |
-|----------|------|
-| **Span** | 單一操作（如一次 LLM 呼叫）|
-| **Trace** | 完整請求的所有操作 |
-| **Attributes** | 操作的元資料（Token 數、延遲等）|
-
-### 評測（Evaluation）
-
-Phoenix 內建的評測模組：
-
-| 評測類型 | 說明 |
-|----------|------|
-| **幻覺評測** | 檢測生成內容中的幻覺 |
-| **QA 評測** | 問答品質評估 |
-| **相關性評測** | 檢索相關性評估 |
-| **有害性評測** | 有害內容檢測 |
-
-### 實驗（Experimentation）
-
-支援系統化的實驗管理：
-
-| 功能 | 說明 |
-|------|------|
-| 實驗追蹤 | 記錄每次實驗的配置和結果 |
-| A/B 比較 | 視覺化比較不同配置 |
-| 版本控制 | 追蹤 Prompt 和模型版本 |
-
----
-
-## 學術應用
-
-### 研究可複製性
-
-Phoenix 的追蹤機制支援研究可複製性：
-
-| 記錄項目 | 用途 |
-|----------|------|
-| 完整輸入 | 精確複製請求 |
-| 模型版本 | 確保使用相同模型 |
-| 參數設定 | 溫度、Top-p 等 |
-| 完整輸出 | 比對輸出結果 |
-
-### 錯誤分析
-
-系統化的錯誤分類和分析：
-
-| 分析維度 | 說明 |
-|----------|------|
-| 時間分佈 | 錯誤隨時間的變化 |
-| 類型分佈 | 不同錯誤類型的比例 |
-| 根因分析 | 追蹤錯誤到具體步驟 |
-
----
-
-## 與研究工作流整合
-
-### 評測流程
-
-| 階段 | Phoenix 功能 |
-|------|--------------|
-| 資料收集 | 自動記錄生產請求 |
-| 評測執行 | 批量執行評測 |
-| 結果分析 | 視覺化儀表板 |
-| 報告生成 | 匯出評測報告 |
-
-### 與學術基準整合
-
-Phoenix 可與標準基準測試配合：
-
-| 基準 | 整合方式 |
-|------|----------|
-| MMLU | 批量評測 + 結果追蹤 |
-| GSM8K | 追蹤推理過程 |
-| HumanEval | 代碼執行結果追蹤 |
-
----
-
-## 工具比較
-
-| 特性 | Phoenix | RAGAS | DeepEval |
-|------|---------|-------|----------|
-| 追蹤功能 | ✓✓ | ✗ | ✓ |
-| RAG 評測 | ✓ | ✓✓ | ✓ |
-| 視覺化 | ✓✓ | ✗ | ✓ |
-| 開源 | ✓ | ✓ | ✓ |
-| 本地部署 | ✓✓ | ✓ | ✓ |
-
----
-
-## 相關主題
-
-- [RAGAS 指南](tools-ragas.md)
-- [DeepEval 指南](tools-deepeval.md)
-
----
-
-## 參考文獻
-
-- Arize AI (2024). "Phoenix: Open-Source LLM Observability"
-- Software Engineering Institute (2020). "Observability Primer"
+- Phoenix Docs: <https://arize.com/docs/phoenix>
+- arize-phoenix PyPI: <https://pypi.org/project/arize-phoenix/>
+- arize-phoenix-evals PyPI: <https://pypi.org/project/arize-phoenix-evals/>

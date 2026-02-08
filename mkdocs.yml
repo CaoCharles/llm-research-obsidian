@@ -107,9 +107,11 @@ nav:
           - 邊緣案例: Benchmark-Governance/edge-cases.md
           - 對抗性樣本: Benchmark-Governance/adversarial-samples.md
       - 評測工具:
-          - RAGAS: Benchmark-Governance/tools-ragas.md
-          - DeepEval: Benchmark-Governance/tools-deepeval.md
-          - Arize Phoenix: Benchmark-Governance/tools-arize.md
+          - RAGAS 完整教學: Benchmark-Governance/tools-ragas.md
+          - DeepEval 完整教學: Benchmark-Governance/tools-deepeval.md
+          - Arize Phoenix 完整教學: Benchmark-Governance/tools-arize.md
+          - 金融文件橫向比較: Benchmark-Governance/cross-tool-rag-benchmark.md
+          - Notebook 實作: Benchmark-Governance/notebooks.md
   - 安全性與紅隊演練:
       - 概述: Security-RedTeam/index.md
       - AI 安全防護: Security-RedTeam/ai-security.md
@@ -121,4 +123,3 @@ nav:
           - PII 洩露防護: Security-RedTeam/defense-pii.md
       - 壓力測試: Security-RedTeam/stress-testing.md
   - 論文庫: Papers/index.md
-

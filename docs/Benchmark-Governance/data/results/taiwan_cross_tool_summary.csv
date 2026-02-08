@@ -1,0 +1,4 @@
+tool,rows,groundedness,answer_quality,retrieval_relevance,hallucination
+deepeval,8,0.5927683273667945,0.9375,0.9375,0.40723167263320553
+phoenix,8,0.875,0.75,1.0,0.125
+ragas,8,0.875,0.5293548188279179,0.9833333333115972,0.125
