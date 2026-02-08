@@ -219,6 +219,32 @@ def cmd_write(args) -> None:
     output_json(result)
 
 
+def cmd_reindex(args) -> None:
+    """重建 docs/Papers/index.md 索引"""
+    load_dotenv()
+
+    vault_path = Path(
+        args.vault or
+        os.environ.get("OBSIDIAN_VAULT_PATH") or
+        load_config()["obsidian"]["vault_path"]
+    ).expanduser()
+
+    try:
+        from writer import rebuild_papers_index
+        index_path = rebuild_papers_index(vault_path)
+        result = {
+            "status": "success",
+            "output_path": str(index_path)
+        }
+    except Exception as e:
+        result = {
+            "status": "error",
+            "message": str(e)
+        }
+
+    output_json(result)
+
+
 def cmd_write_daily(args) -> None:
     """寫入每日摘要子命令"""
     load_dotenv()
@@ -661,6 +687,11 @@ def main():
     export_parser.add_argument("--max-results", type=int, default=1000, help="arXiv 最大抓取數量")
     export_parser.add_argument("--output", type=str, help="輸出檔案路徑（預設 Exports/llm-papers-{date}.xlsx）")
     export_parser.set_defaults(func=cmd_export)
+
+    # reindex 子命令
+    reindex_parser = subparsers.add_parser("reindex", help="重建 docs/Papers/index.md 索引")
+    reindex_parser.add_argument("--vault", type=str, help="Obsidian Vault 路徑")
+    reindex_parser.set_defaults(func=cmd_reindex)
 
     # write 子命令
     write_parser = subparsers.add_parser("write", help="寫入論文筆記到 Obsidian")

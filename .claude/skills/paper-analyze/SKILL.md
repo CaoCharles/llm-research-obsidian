@@ -118,13 +118,20 @@ cd lpdd && uv run python cli.py get {arxiv_id}
 cd lpdd && uv run python cli.py write {json_file_path}
 ```
 
-### Step 3.5: 自動同步（已內建）
+### Step 3.5: 重建索引
 
-CLI 的 `write` 命令現在會自動：
-- 同步寫入 `docs/Papers/`（MkDocs 用）
-- 同步複製 PDF 到 `docs/PDFs/`
+寫入後執行 reindex 更新論文庫首頁：
 
-**不需要手動複製檔案到 docs/ 目錄。**
+```bash
+cd lpdd && uv run python cli.py reindex
+```
+
+此命令會自動：
+- 掃描 `docs/Papers/` 下所有論文 markdown
+- 根據 frontmatter tags 分類
+- 重建 `docs/Papers/index.md`
+
+**注意**：`write` 命令已自動同步 `docs/Papers/` 和 `docs/PDFs/`，不需要手動複製。
 
 ### Step 4: 回報結果
 

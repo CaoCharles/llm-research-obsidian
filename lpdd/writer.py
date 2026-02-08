@@ -490,6 +490,146 @@ def write_daily_from_json(
     )
 
 
+def rebuild_papers_index(vault_path: Path, verbose: bool = True) -> Path:
+    """
+    掃描 docs/Papers/ 下所有論文 markdown，根據 frontmatter tags 重建 index.md
+
+    Args:
+        vault_path: Obsidian Vault 路徑
+        verbose: 是否顯示進度
+
+    Returns:
+        index.md 的路徑
+    """
+    import yaml as _yaml
+
+    docs_papers_dir = vault_path / "docs" / "Papers"
+    if not docs_papers_dir.exists():
+        docs_papers_dir = vault_path / "Papers"
+
+    # 分類定義（順序 = 顯示順序）
+    CATEGORIES = [
+        {
+            "name": "安全性 (Safety)",
+            "desc": "確保 LLM 不會生成有害、偏見或危險的內容。包括防止模型被濫用、避免輸出有毒內容、以及保護用戶隱私。",
+            "match_tags": {"safety"},
+        },
+        {
+            "name": "RAG 評測 (RAG Evaluation)",
+            "desc": "評估檢索增強生成系統的效果。RAG 結合了檢索和生成，需要同時評估檢索品質和生成品質。",
+            "match_tags": {"rag", "rag-evaluation", "retrieval"},
+        },
+        {
+            "name": "代理評測 (Agent Evaluation)",
+            "desc": "評估 LLM 代理在複雜任務中的表現。代理需要規劃、使用工具、與環境互動，評測比單純對話更複雜。",
+            "match_tags": {"agent", "agent-evaluation", "agent-benchmark", "agentic-rag", "embodied-ai", "tool-use", "multi-agent"},
+        },
+        {
+            "name": "基準測試 (Benchmark)",
+            "desc": "用於評估 LLM 能力的標準化測試集和評測框架。提供可比較的指標來衡量模型在特定任務上的表現。",
+            "match_tags": {"benchmark", "evaluation"},
+        },
+        {
+            "name": "紅隊測試 (Red-Teaming)",
+            "desc": "主動尋找 LLM 的漏洞和弱點。模擬攻擊者視角，發現模型可能被濫用的方式。",
+            "match_tags": {"red-teaming", "jailbreak"},
+        },
+        {
+            "name": "提示注入 (Prompt Injection)",
+            "desc": "攻擊者通過惡意輸入操縱 LLM 的行為，繞過安全限制或竊取資料。類似於傳統的 SQL 注入攻擊。",
+            "match_tags": {"prompt-injection"},
+        },
+        {
+            "name": "對齊 (Alignment)",
+            "desc": "讓 LLM 的行為符合人類意圖和價值觀。確保模型「做人類想要的事」而不是「字面上被要求的事」。",
+            "match_tags": {"alignment", "rlhf"},
+        },
+        {
+            "name": "幻覺 (Hallucination)",
+            "desc": "LLM 生成與事實不符或虛構內容的現象。模型可能「一本正經地胡說八道」，生成看似合理但實際上錯誤或不存在的資訊。",
+            "match_tags": {"hallucination", "factuality"},
+        },
+        {
+            "name": "忠實度 (Faithfulness)",
+            "desc": "生成內容是否忠於來源資料。在 RAG 系統中尤為重要——模型應該基於檢索到的資料回答，而不是編造。",
+            "match_tags": {"faithfulness", "faithful-reasoning"},
+        },
+        {
+            "name": "LLM 評審 (LLM-as-Judge)",
+            "desc": "使用 LLM 來評估其他 LLM 的輸出品質。以 AI 評 AI，減少人工評測成本。",
+            "match_tags": {"llm-as-judge"},
+        },
+        {
+            "name": "對抗魯棒性 (Adversarial Robustness)",
+            "desc": "模型對精心設計的對抗性輸入的抵抗能力。測試模型在面對惡意構造的輸入時能否維持正確行為。",
+            "match_tags": {"adversarial-robustness", "certified-defense"},
+        },
+        {
+            "name": "多模態 (Multimodal)",
+            "desc": "同時處理文字、圖像、音訊等多種模態的 LLM 評測。跨模態能力是下一代 AI 系統的關鍵。",
+            "match_tags": {"multimodal", "vlm", "vision-language", "multimodal-safety", "omni-models"},
+        },
+    ]
+
+    # 掃描所有論文 markdown
+    papers = []
+    for md_file in sorted(docs_papers_dir.glob("[[]*.md")):
+        if md_file.name == "index.md":
+            continue
+        try:
+            text = md_file.read_text(encoding="utf-8")
+            # 解析 YAML frontmatter
+            if text.startswith("---"):
+                end = text.index("---", 3)
+                fm = _yaml.safe_load(text[3:end])
+                if fm:
+                    papers.append({
+                        "arxiv_id": fm.get("arxiv_id", ""),
+                        "title": fm.get("title", ""),
+                        "tags": [t.lower() for t in fm.get("tags", [])],
+                        "filename": md_file.name,
+                    })
+        except Exception:
+            continue
+
+    total = len(papers)
+    if verbose:
+        print(f"📋 掃描到 {total} 篇論文")
+
+    # 建構各分類的論文清單
+    lines = [
+        "# 論文庫\n",
+        f"> 收錄並分析 **{total} 篇** LLM 相關論文，依主題分類整理。一篇論文可能同時出現在多個相關分類中。\n",
+        "---\n",
+    ]
+
+    for cat in CATEGORIES:
+        matched = [
+            p for p in papers if set(p["tags"]) & cat["match_tags"]
+        ]
+        if not matched:
+            continue
+        # 按 arxiv_id 降序
+        matched.sort(key=lambda p: p["arxiv_id"], reverse=True)
+
+        lines.append(f'## {cat["name"]}\n')
+        lines.append(f'> {cat["desc"]}\n')
+        lines.append("| arXiv ID | 論文標題 |")
+        lines.append("|----------|----------|")
+        for p in matched:
+            fname_no_ext = p["filename"][:-3] if p["filename"].endswith(".md") else p["filename"]
+            lines.append(f'| {p["arxiv_id"]} | [{p["title"]}]({p["filename"]}) |')
+        lines.append("")
+
+    index_path = docs_papers_dir / "index.md"
+    index_path.write_text("\n".join(lines), encoding="utf-8")
+
+    if verbose:
+        print(f"✅ 已重建 index.md（{total} 篇論文）")
+
+    return index_path
+
+
 if __name__ == "__main__":
     from datetime import timezone
     
