@@ -8,6 +8,26 @@ import re
 from pathlib import Path
 
 
+def _fix_wiki_links(text, site_url):
+    """
+    將 Obsidian [[wiki links]] 轉換為標準 Markdown 連結。
+    例如: [[Topics/AI-Agent|AI-Agent]] -> [AI-Agent](https://site/Topics/AI-Agent/)
+    """
+    def replace_wiki(match):
+        target = match.group(1)
+        display = match.group(2) if match.group(2) else target
+        # 清理路徑
+        url_path = target.replace(' ', '-')
+        full_url = f"{site_url}/{url_path}/"
+        full_url = full_url.replace('//', '/').replace('https:/', 'https://')
+        return f"[{display}]({full_url})"
+
+    # [[target|display]] 或 [[target]]
+    text = re.sub(r'\[\[([^\]|]+)\|([^\]]+)\]\]', replace_wiki, text)
+    text = re.sub(r'\[\[([^\]]+)\]\]', replace_wiki, text)
+    return text
+
+
 def _fix_md_links(text, site_url, current_file_dir):
     """
     將 markdown 內容中的 .md 相對連結轉換為正確的網站 URL。
@@ -104,13 +124,25 @@ def on_post_build(config, **kwargs):
                     title = line.strip()[2:].strip()
                     break
 
-            # 處理內容：移除 frontmatter + 修正 .md 連結
+            # 處理內容：移除 frontmatter + 修正連結
             cleaned_text = _strip_frontmatter(text)
+            cleaned_text = _fix_wiki_links(cleaned_text, site_url)
             cleaned_text = _fix_md_links(cleaned_text, site_url, md_file.parent)
+
+            # URL encode special characters in URLs for paper pages
+            safe_url = full_url
+            if '[' in full_url or ']' in full_url:
+                # 只對路徑部分的特殊字元做 encode
+                parts = full_url.split('/', 3)
+                if len(parts) > 3:
+                    path_part = parts[3]
+                    path_part = path_part.replace('[', '%5B').replace(']', '%5D')
+                    path_part = path_part.replace(' ', '%20')
+                    safe_url = '/'.join(parts[:3]) + '/' + path_part
 
             content.append({
                 'title': title,
-                'url': full_url,
+                'url': safe_url,
                 'content': cleaned_text
             })
 
