@@ -15,6 +15,16 @@
 
 ---
 
+## 📘 Enterprise LLM Trust Blueprint
+
+企業 LLM 信任治理藍圖文件：
+
+[📥 下載 Enterprise LLM Trust Blueprint (PDF)](PDFs/Enterprise_LLM_Trust_Blueprint.pdf)
+
+![Enterprise LLM Trust Blueprint](PDFs/Enterprise_LLM_Trust_Blueprint.pdf#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
+
+---
+
 ## 🎧 專題講解
 
 <audio controls style="width:100%">
@@ -91,7 +101,7 @@ LLM 系統安全評估的學術框架與威脅防禦：
 ## 📄 論文庫
 
 !!! success "收錄統計"
-    目前已收錄並分析 **35 篇** LLM 相關論文
+    目前已收錄並分析 **51 篇** LLM 相關論文
 
 瀏覽收錄的 [LLM 相關論文](Papers/index.md)，包含深度分析與關鍵見解摘要。
 
