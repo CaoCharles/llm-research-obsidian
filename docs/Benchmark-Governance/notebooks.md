@@ -16,10 +16,10 @@
 
 ## 下載與開啟
 
-1. RAGAS：[ragas-tutorial.ipynb](/llm-research-obsidian/Benchmark-Governance/notebooks/ragas-tutorial.ipynb)
-2. DeepEval：[deepeval-tutorial.ipynb](/llm-research-obsidian/Benchmark-Governance/notebooks/deepeval-tutorial.ipynb)
-3. Arize Phoenix：[arize-phoenix-tutorial.ipynb](/llm-research-obsidian/Benchmark-Governance/notebooks/arize-phoenix-tutorial.ipynb)
-4. 跨工具統整版（台灣金融文件）：[taiwan-finance-cross-tool-eval.ipynb](/llm-research-obsidian/Benchmark-Governance/notebooks/taiwan-finance-cross-tool-eval.ipynb)
+1. RAGAS：[ragas-tutorial](/llm-research-obsidian/Benchmark-Governance/notebooks/ragas-tutorial/)
+2. DeepEval：[deepeval-tutorial](/llm-research-obsidian/Benchmark-Governance/notebooks/deepeval-tutorial/)
+3. Arize Phoenix：[arize-phoenix-tutorial](/llm-research-obsidian/Benchmark-Governance/notebooks/arize-phoenix-tutorial/)
+4. 跨工具統整版（台灣金融文件）：[taiwan-finance-cross-tool-eval](/llm-research-obsidian/Benchmark-Governance/notebooks/taiwan-finance-cross-tool-eval/)
 5. 橫向比較導讀：[cross-tool-rag-benchmark.md](/llm-research-obsidian/Benchmark-Governance/cross-tool-rag-benchmark/)
 
 ## 建議啟動方式（uv）
