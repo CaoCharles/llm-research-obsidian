@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Benchmark]` [[[2307.03109] A Survey on Evaluation of Large Language Models|A Survey on Evaluation of Large Language Models]] (2023-07-06)
+
 - `[Safety-Alignment]` [[[2512.10449] When Reject Turns into Accept - Quantifying the Vulnerability of LLM-Based Scien...|When Reject Turns into Accept: Quantifying the Vul...]] (2025-12-11)
 
 - `[Safety-Alignment]` [[[2512.09321] ObliInjection - Order-Oblivious Prompt Injection Attack to LLM Agents with Multi...|ObliInjection: Order-Oblivious Prompt Injection At...]] (2025-12-10)

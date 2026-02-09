@@ -1,6 +1,6 @@
 # 論文庫
 
-> 收錄並分析 **51 篇** LLM 相關論文，依主題分類整理。一篇論文可能同時出現在多個相關分類中。
+> 收錄並分析 **54 篇** LLM 相關論文，依主題分類整理。一篇論文可能同時出現在多個相關分類中。
 
 ---
 
@@ -121,6 +121,9 @@
 | 2602.01640 | [A2Eval: Agentic and Automated Evaluation for Embodied Brain]([2602.01640] A2Eval - Agentic and Automated Evaluation for Embodied Brain.md) |
 | 2602.00352 | [DETOUR: An Interactive Benchmark for Dual-Agent Search and Reasoning]([2602.00352] DETOUR - An Interactive Benchmark for Dual-Agent Search and Reasoning.md) |
 | 2512.10449 | [When Reject Turns into Accept: Quantifying the Vulnerability of LLM-Based Scientific Reviewers to Indirect Prompt Injection]([2512.10449] When Reject Turns into Accept - Quantifying the Vulnerability of LLM-Based Scien....md) |
+| 2307.03109 | [A Survey on Evaluation of Large Language Models]([2307.03109] A Survey on Evaluation of Large Language Models.md) |
+| 2306.05685 | [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena]([2306.05685] Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.md) |
+| 2211.09110 | [Holistic Evaluation of Language Models]([2211.09110] Holistic Evaluation of Language Models.md) |
 
 ## 紅隊測試 (Red-Teaming)
 
@@ -208,6 +211,7 @@
 | 2602.03704 | [Cognitively Diverse Multiple-Choice Question Generation: A Hybrid Multi-Agent Framework with Large Language Models]([2602.03704] Cognitively Diverse Multiple-Choice Question Generation - A Hybrid Multi-Agent F....md) |
 | 2602.02287 | [Cross-Lingual Stability of LLM Judges Under Controlled Generation: Evidence from Finno-Ugric Languages]([2602.02287] Cross-Lingual Stability of LLM Judges Under Controlled Generation.md) |
 | 2512.10449 | [When Reject Turns into Accept: Quantifying the Vulnerability of LLM-Based Scientific Reviewers to Indirect Prompt Injection]([2512.10449] When Reject Turns into Accept - Quantifying the Vulnerability of LLM-Based Scien....md) |
+| 2306.05685 | [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena]([2306.05685] Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.md) |
 
 ## 對抗魯棒性 (Adversarial Robustness)
 

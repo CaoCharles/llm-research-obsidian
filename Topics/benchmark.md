@@ -45,6 +45,12 @@ SORT date DESC
 
 ## 相關論文
 
+- `[Benchmark]` [[[2307.03109] A Survey on Evaluation of Large Language Models|A Survey on Evaluation of Large Language Models]] (2023-07-06)
+
+- `[Benchmark]` [[[2306.05685] Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena|Judging LLM-as-a-Judge with MT-Bench and Chatbot A...]] (2023-06-09)
+
+- `[Benchmark]` [[[2211.09110] Holistic Evaluation of Language Models|Holistic Evaluation of Language Models]] (2022-11-16)
+
 - `[Safety-Alignment]` [[[2512.10449] When Reject Turns into Accept - Quantifying the Vulnerability of LLM-Based Scien...|When Reject Turns into Accept: Quantifying the Vul...]] (2025-12-11)
 
 - `[Safety-Alignment]` [[[2602.05656] Alignment Verifiability in Large Language Models - Normative Indistinguishabilit...|Alignment Verifiability in Large Language Models: ...]] (2026-02-05)
