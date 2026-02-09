@@ -111,7 +111,12 @@ nav:
           - DeepEval 完整教學: Benchmark-Governance/tools-deepeval.md
           - Arize Phoenix 完整教學: Benchmark-Governance/tools-arize.md
           - 金融文件橫向比較: Benchmark-Governance/cross-tool-rag-benchmark.md
-          - Notebook 實作: Benchmark-Governance/notebooks.md
+          - Notebook 實作:
+              - Notebook 導覽: Benchmark-Governance/notebooks.md
+              - RAGAS Notebook: Benchmark-Governance/notebooks/ragas-tutorial.ipynb
+              - DeepEval Notebook: Benchmark-Governance/notebooks/deepeval-tutorial.ipynb
+              - Arize Phoenix Notebook: Benchmark-Governance/notebooks/arize-phoenix-tutorial.ipynb
+              - 跨工具統整 Notebook: Benchmark-Governance/notebooks/taiwan-finance-cross-tool-eval.ipynb
   - 安全性與紅隊演練:
       - 概述: Security-RedTeam/index.md
       - AI 安全防護: Security-RedTeam/ai-security.md
