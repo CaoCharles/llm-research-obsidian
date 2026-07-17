@@ -1,19 +1,33 @@
-name: Daily Digest and Deploy
+name: Daily paper digest
 
 on:
   schedule:
-    - cron: "30 0 * * *" # 00:30 UTC daily
+    # GitHub Actions cron uses UTC: 00:00 UTC = 08:00 Asia/Taipei.
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: daily-paper-digest
+  cancel-in-progress: false
+
 jobs:
-  build:
+  digest:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OBSIDIAN_VAULT_PATH: ${{ github.workspace }}
+      TZ: Asia/Taipei
+      TOP_N: "10"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,16 +37,10 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v3
 
-      - name: Install MkDocs dependencies
+      - name: Configure Git
         run: |
-          uv sync --project .agent/skills/mkdocs-setup/assets --no-install-project
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Sync content for MkDocs
-        run: |
-          python scripts/sync_docs.py
-
-      - name: Deploy with mkdocs gh-deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          uv run --project .agent/skills/mkdocs-setup/assets mkdocs gh-deploy --force
+      - name: Fetch, summarize, sync, build, and push
+        run: bash scripts/daily_run.sh

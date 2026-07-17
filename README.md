@@ -61,6 +61,24 @@ graph TD
 
 ## 常用指令
 
+### 每天 08:00 自動化
+
+GitHub Actions 會在每天 **08:00（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
+
+1. 從 arXiv 抓取並篩選 Top 10 論文
+2. 使用 OpenAI 生成繁體中文結構化摘要與 `DailyJSON/YYYY-MM-DD.json`
+3. 寫入 Obsidian 的 `Papers/`、`Topics/`、`Daily/` 與 `PDFs/`
+4. 同步到 `docs/`，以 strict mode 驗證 MkDocs build
+5. 自動 commit 並 push 回目前分支
+
+Repository 必須設定 Actions secret：`OPENAI_API_KEY`。工作流程也可從 Actions 頁面手動執行。
+
+本機可在乾淨工作樹中測試指定日期：
+
+```bash
+OPENAI_API_KEY=... bash scripts/daily_run.sh 2026-07-15
+```
+
 ### Claude Code 生成後匯入
 ```bash
 python3 scripts/ingest_claude_json.py --dir /tmp --date 2026-02-05
