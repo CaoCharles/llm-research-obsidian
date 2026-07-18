@@ -1,11 +1,11 @@
 /* ====== AI Chatbot 樣式範本 ======
-   黑灰色主題 - 可複製到新專案使用
+   深紫色主題 - 可複製到新專案使用
    ================================== */
 
 :root {
     /* ====== 淺色模式配色 (可自訂) ====== */
     --chatbot-bg: #ffffff;
-    --chatbot-header-bg: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+    --chatbot-header-bg: linear-gradient(135deg, #512da8 0%, #673ab7 100%);
     --chatbot-header-text: #ffffff;
     --chatbot-messages-bg: #f5f5f5;
     --chatbot-bot-bubble-bg: #ffffff;
@@ -13,17 +13,17 @@
     --chatbot-bot-bubble-border: #e0e0e0;
     --chatbot-user-bubble-bg: #ffffff;
     --chatbot-user-bubble-text: #333333;
-    --chatbot-user-bubble-border: #00897B;
+    --chatbot-user-bubble-border: #673ab7;
     --chatbot-input-bg: #ffffff;
     --chatbot-input-border: #e0e0e0;
     --chatbot-input-text: #333333;
-    --chatbot-input-focus: #00897B;
+    --chatbot-input-focus: #673ab7;
     --chatbot-code-bg: #f5f5f5;
     --chatbot-pre-bg: #1e1e2e;
     --chatbot-pre-text: #e5e7eb;
-    --chatbot-button-bg: #00897B;
+    --chatbot-button-bg: #673ab7;
     --chatbot-button-text: #ffffff;
-    --chatbot-link-color: #00796B;
+    --chatbot-link-color: #512da8;
     --chatbot-shadow: rgba(0, 0, 0, 0.15);
 }
 
@@ -38,17 +38,17 @@
     --chatbot-bot-bubble-border: #4a4a5f;
     --chatbot-user-bubble-bg: #3a3a4f;
     --chatbot-user-bubble-text: #e5e7eb;
-    --chatbot-user-bubble-border: #26A69A;
+    --chatbot-user-bubble-border: #9575cd;
     --chatbot-input-bg: #3a3a4f;
     --chatbot-input-border: #4a4a5f;
     --chatbot-input-text: #e5e7eb;
-    --chatbot-input-focus: #26A69A;
+    --chatbot-input-focus: #9575cd;
     --chatbot-code-bg: #3a3a4f;
     --chatbot-pre-bg: #0f0f17;
-    --chatbot-pre-text: #80CBC4;
-    --chatbot-button-bg: #00897B;
+    --chatbot-pre-text: #b39ddb;
+    --chatbot-button-bg: #673ab7;
     --chatbot-button-text: #ffffff;
-    --chatbot-link-color: #80CBC4;
+    --chatbot-link-color: #b39ddb;
     --chatbot-shadow: rgba(0, 0, 0, 0.4);
 }
 
@@ -76,7 +76,7 @@
 #open-chat:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 20px var(--chatbot-shadow);
-    background: #00796B;
+    background: #7c4dff;
 }
 
 #open-chat svg {
@@ -137,7 +137,7 @@
 }
 
 #chat-header span::before {
-    content: "⚔️";
+    content: "🤖";
     font-size: 20px;
 }
 
@@ -226,7 +226,7 @@
 }
 
 #send-chat:hover {
-    background: #00796B;
+    background: #7c4dff;
     transform: scale(1.05);
 }
 
@@ -243,15 +243,8 @@
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .user-message {
@@ -324,7 +317,7 @@
 
 .bot-message a:hover {
     text-decoration: underline;
-    color: #00796B;
+    color: #7c4dff;
 }
 
 /* ====== 載入動畫 ====== */
@@ -346,27 +339,12 @@
     animation: typing 1.2s infinite;
 }
 
-.typing-indicator span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-    animation-delay: 0.4s;
-}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes typing {
-
-    0%,
-    60%,
-    100% {
-        transform: translateY(0);
-        opacity: 0.5;
-    }
-
-    30% {
-        transform: translateY(-4px);
-        opacity: 1;
-    }
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
 }
 
 /* ====== RWD 響應式 ====== */

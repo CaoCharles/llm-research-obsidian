@@ -1,5 +1,5 @@
-// ====== AI 聊天機器人 ======
-// LLM 評測知識庫
+// ====== AI 聊天機器人範本 ======
+// 版本：2.0 - 可複製到新專案使用
 
 // ====== 全域狀態 ======
 let chatContainer, chatMessages, chatInput, sendChatBtn;
@@ -9,42 +9,33 @@ let allDocsContent = null;
 let isContentLoading = false;
 let chatHistory = [];
 
-// ====== 設定 ======
-window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-obsidian-production.up.railway.app";
+// ====== 設定 (請修改這些值) ======
+// TODO: 修改為你的 Railway 後端 URL
+window.BACKEND_API_URL = window.BACKEND_API_URL || "https://YOUR-APP.up.railway.app";
 
+// TODO: 修改為你的 GitHub Repo 名稱
 const isGitHubPages = window.location.hostname.includes('github.io');
 const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-window.INITIAL_PROMPT = "👋 嗨！我是 LLM 評測助教\n\n可以問我關於：\n📊 評測指標與框架\n🔬 RAGAS、DeepEval 工具\n🛡️ 紅隊演練與安全測試\n📄 論文摘要與見解";
+// TODO: 修改歡迎訊息
+window.INITIAL_PROMPT = "嗨！我是 LLM 論文摘要助教 🤖\n\n我可以幫你查找與解釋這個知識庫的內容。\n\n試試問我：\n- 最近有哪些 RAG 評測論文？\n- 某篇論文的關鍵貢獻是什麼？";
 
-// ====== 連結修正 ======
+// ====== 連結修正 (請修改 BASE_URL) ======
+// TODO: 修改為你的網站 URL
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
 
 function fixBrokenLinks(text) {
-    // 先將裸的 [] 在 URL 中轉為 %5B %5D（避免和 Markdown 語法衝突）
-    text = text.replace(/\[([^\]]+)\]\(([^)]*\[[^\]]*\][^)]*)\)/g, (match, linkText, url) => {
-        // URL 中包含未編碼的 []，進行編碼
-        const fixedUrl = url.replace(/\[/g, '%5B').replace(/\]/g, '%5D');
-        return `[${linkText}](${fixedUrl})`;
-    });
-
     return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
         if (url.startsWith('http://') || url.startsWith('https://')) {
-            // 修正已有完整 URL 但帶 .md 的情況
-            url = url.replace(/\.md(#|$)/, '/$1').replace(/\/\/$/, '/');
-            return `[${linkText}](${url})`;
+            return match;
         }
-        // 移除 .md 副檔名，轉為目錄式 URL
-        let cleanUrl = url.replace(/\.md(#|$)/, '/$1').replace(/\/\/$/, '/');
-        // 移除相對路徑前綴 ../
-        cleanUrl = cleanUrl.replace(/^(\.\.\/)+/, '');
-        if (cleanUrl.startsWith('/')) {
-            return `[${linkText}](${BASE_URL}${cleanUrl})`;
+        if (url.startsWith('/')) {
+            return `[${linkText}](${BASE_URL}${url})`;
         }
-        if (!cleanUrl.startsWith('#')) {
-            return `[${linkText}](${BASE_URL}/${cleanUrl})`;
+        if (!url.startsWith('#')) {
+            return `[${linkText}](${BASE_URL}/${url})`;
         }
         return match;
     });
@@ -142,7 +133,7 @@ async function loadContent() {
 
         const data = await response.json();
         allDocsContent = data.map((doc) =>
-            `## ${doc.title}\nURL: ${doc.url}\n引用時請用: [${doc.title}](${doc.url})\n\n${doc.content}`
+            `## ${doc.title}\nURL: ${doc.url}\n\n${doc.content}`
         ).join("\n\n---\n\n");
 
         if (window.INITIAL_PROMPT && chatHistory.length === 0) {
@@ -165,20 +156,14 @@ async function sendMessage() {
     chatInput.value = "";
     showTypingIndicator();
 
-    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教。
+    // TODO: 修改 System Instruction
+    const systemInstruction = `你是網站的 AI 助教。
 
 ## 回答規則
 1. 使用繁體中文回答
-2. 使用清晰的 Markdown 格式（標題、列點、程式碼區塊）
-3. 優先使用文件內容回答，如果沒有相關內容才用一般知識
+2. 使用文件中的完整 URL
+3. 使用 Markdown 格式
 4. 程式碼使用 \`\`\`bash 格式
-
-## 連結格式規則（非常重要）
-- 當引用文件時，**必須**使用每篇文件開頭的 URL 欄位作為連結目標
-- 連結格式：[文章標題](URL)
-- 例如：[Prompt Injection Attack](https://CaoCharles.github.io/llm-research-obsidian/Papers/%5B2504.19793%5D%20Prompt%20Injection%20Attack%20to%20Tool%20Selection%20in%20LLM%20Agents/)
-- **禁止**在連結的 URL 部分使用中括號 [ ]，必須用 %5B %5D 替代
-- **禁止**在回答中直接貼上長 URL，一律用 Markdown 連結格式包裝
 
 ## 課程文件
 ${allDocsContent || "文件載入中..."}`;
@@ -199,10 +184,10 @@ ${allDocsContent || "文件載入中..."}`;
         if (!response.ok) throw new Error("API request failed");
 
         const data = await response.json();
-        addMessage("bot", data.text);
+        addMessage("bot", data.response);
     } catch (error) {
         removeTypingIndicator();
-        addMessage("bot", `⚠️ 發生錯誤：${error.message}。請檢查網路連線或稍後再試。`);
+        addMessage("bot", "⚠️ 發生錯誤，請稍後再試。");
         console.error("Chat error:", error);
     }
 }
@@ -307,7 +292,7 @@ function initChatbot() {
 
     if (chatInput) {
         chatInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+            if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
