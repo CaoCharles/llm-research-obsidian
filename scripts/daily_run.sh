@@ -42,7 +42,10 @@ uv sync --project .agent/skills/mkdocs-setup/assets --locked --no-install-projec
 # into a failed daily ingestion run.
 uv run --project .agent/skills/mkdocs-setup/assets --no-sync mkdocs build --clean
 
-git add -- Daily DailyJSON Papers Topics PDFs docs
+git add -- Daily DailyJSON Papers Topics docs
+if [[ -d PDFs ]]; then
+  git add -- PDFs
+fi
 if git diff --cached --quiet; then
   echo "No digest changes to commit."
   exit 0
