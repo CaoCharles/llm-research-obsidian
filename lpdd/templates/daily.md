@@ -1,25 +1,21 @@
-# {{ date }} 論文摘要
+# {{ date }} 每日論文摘要
 
 今日分析 **{{ paper_count }}** 篇 LLM 評測相關論文。
 
-## 今日論文
-
-| 分類 | 論文 | 相關度 |
-|------|------|--------|
-{% for p in papers %}
-| `[{{ p.category }}]` | [[{{ p.link_name }}\|{{ p.title }}]] | {{ p.relevance_stars }} |
-{% endfor %}
-
-## 論文摘要
+## 今日精選
 
 {% for p in papers %}
-### `[{{ p.category }}]` [[{{ p.link_name }}\|{{ p.title }}]]
+### [{{ p.full_title }}](<../Papers/{{ p.link_name }}.md>)
+
+`{{ p.category }}` · **相關度** {{ p.relevance_stars }} · **arXiv** {{ p.arxiv_id }}
+
+#### 中文摘要
 
 {{ p.abstract_zh }}
 
 {% endfor %}
 
-## 重點發現
+## 今日洞察
 {% for highlight in highlights %}
 - {{ highlight }}
 {% endfor %}
