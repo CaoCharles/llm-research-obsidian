@@ -5,18 +5,11 @@
 let chatContainer, chatMessages, chatInput, sendChatBtn;
 let openChatBtn, closeChatBtn, toggleFullscreenBtn, clearHistoryBtn;
 
-let allDocsContent = null;
-let isContentLoading = false;
 let chatHistory = [];
 
 // ====== 設定 ======
 // 部署後由 Cloud Run URL 取代此值。
 window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-chatbot-359359105644.asia-east1.run.app";
-
-const isGitHubPages = window.location.hostname.includes('github.io');
-const repoName = '/llm-research-obsidian';
-const basePath = isGitHubPages ? repoName : '';
-window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
 window.INITIAL_PROMPT = "👋 嗨！我是 LLM 評測助教\n\n可以問我關於：\n📊 評測指標與框架\n🔬 RAGAS、DeepEval 工具\n🛡️ 紅隊演練與安全測試\n📄 論文摘要與見解";
 
@@ -119,29 +112,10 @@ function removeTypingIndicator() {
     if (indicator) indicator.remove();
 }
 
-// ====== 載入文件內容 ======
-async function loadContent() {
-    if (isContentLoading || allDocsContent) return;
-    isContentLoading = true;
-
-    try {
-        const response = await fetch(window.ALL_CONTENT_URL);
-        if (!response.ok) throw new Error("Failed to load content.json");
-
-        const data = await response.json();
-        allDocsContent = data.map((doc) =>
-            `## ${doc.title}\nURL: ${doc.url}\n\n${doc.content}`
-        ).join("\n\n---\n\n");
-
-        if (window.INITIAL_PROMPT && chatHistory.length === 0) {
-            addMessage("bot", window.INITIAL_PROMPT);
-        }
-    } catch (error) {
-        console.error("Error loading content:", error);
-        addMessage("bot", "⚠️ 無法載入文件內容，但仍可回答一般問題。");
-    } finally {
-        isContentLoading = false;
-    }
+function appendSources(text, sources) {
+    if (!Array.isArray(sources) || sources.length === 0) return text;
+    const links = sources.map((source) => `- [${source.title}](${source.url})`);
+    return `${text}\n\n---\n\n**檢索來源**\n${links.join("\n")}`;
 }
 
 // ====== 發送訊息 ======
@@ -153,25 +127,13 @@ async function sendMessage() {
     chatInput.value = "";
     showTypingIndicator();
 
-    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教。
-
-## 回答規則
-1. 使用繁體中文回答
-2. 使用文件中的完整 URL
-3. 使用 Markdown 格式
-4. 程式碼使用 \`\`\`bash 格式
-
-## 課程文件
-${allDocsContent || "文件載入中..."}`;
-
     try {
         const response = await fetch(`${window.BACKEND_API_URL}/api/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                history: chatHistory.slice(0, -1),
+                history: chatHistory.slice(-13, -1),
                 message: userMessage,
-                system_instruction: systemInstruction,
             }),
         });
 
@@ -190,7 +152,7 @@ ${allDocsContent || "文件載入中..."}`;
 
         const data = await response.json();
         if (!data.text) throw new Error("API 未回傳文字內容");
-        addMessage("bot", data.text);
+        addMessage("bot", appendSources(data.text, data.sources));
     } catch (error) {
         removeTypingIndicator();
         addMessage("bot", `⚠️ 發生錯誤：${error.message}。請稍後再試。`);
@@ -268,9 +230,7 @@ function initChatbot() {
             rebuildChatFromHistory();
         }
 
-        if (!allDocsContent) {
-            loadContent();
-        } else if (!savedHistory && window.INITIAL_PROMPT) {
+        if (!savedHistory && window.INITIAL_PROMPT) {
             addMessage("bot", window.INITIAL_PROMPT);
         }
     });
