@@ -79,6 +79,26 @@ Repository 必須設定 Actions secret：`OPENAI_API_KEY`。工作流程也可�
 OPENAI_API_KEY=... bash scripts/daily_run.sh 2026-07-15
 ```
 
+## Gemini 聊天與 Notebook Enterprise
+
+網站 AI 助教使用 Cloud Run 上的 Vertex AI Gemini 後端：
+
+```text
+https://llm-research-chatbot-359359105644.asia-east1.run.app
+```
+
+健康檢查：
+
+```bash
+curl https://llm-research-chatbot-359359105644.asia-east1.run.app/api/health
+```
+
+Gemini Notebook Enterprise 使用 GCP OAuth 與 Discovery Engine API，不使用 `GEMINI_API_KEY`。完成 Notebook Enterprise license 指派後，可執行唯讀測試：
+
+```bash
+GOOGLE_CLOUD_PROJECT=ai-asst-km-prod bash scripts/test_gemini_notebook.sh
+```
+
 ### Claude Code 生成後匯入
 ```bash
 python3 scripts/ingest_claude_json.py --dir /tmp --date 2026-02-05
