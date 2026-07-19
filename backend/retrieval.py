@@ -19,6 +19,7 @@ KNOWLEDGE_URL = os.getenv("KNOWLEDGE_BASE_URL", DEFAULT_KNOWLEDGE_URL)
 CACHE_TTL_SECONDS = int(os.getenv("KNOWLEDGE_CACHE_TTL_SECONDS", "900"))
 MAX_CHUNK_CHARS = int(os.getenv("RAG_CHUNK_CHARS", "2400"))
 TOP_K = int(os.getenv("RAG_TOP_K", "5"))
+MIN_RELATIVE_SCORE = float(os.getenv("RAG_MIN_RELATIVE_SCORE", "0.6"))
 
 
 @dataclass(frozen=True)
@@ -157,9 +158,12 @@ class KnowledgeRetriever:
             scored.append((score, chunk))
 
         scored.sort(key=lambda item: item[0], reverse=True)
+        minimum_score = scored[0][0] * MIN_RELATIVE_SCORE if scored else 0.0
         results: list[RetrievedSource] = []
         seen_urls: set[str] = set()
         for score, chunk in scored:
+            if score < minimum_score:
+                break
             if chunk.url in seen_urls:
                 continue
             seen_urls.add(chunk.url)

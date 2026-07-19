@@ -67,6 +67,29 @@ def test_distinctive_title_term_beats_index_page_mention():
     assert results[0].url.endswith("/papers/scidiagramedit/")
 
 
+def test_low_scoring_sources_are_excluded():
+    retriever = KnowledgeRetriever("https://example.test/content.json")
+    documents = [
+        {
+            "title": "SciDiagramEdit",
+            "url": "https://example.test/scidiagramedit/",
+            "content": "SciDiagramEdit scientific diagram benchmark revision editing.",
+        },
+        {
+            "title": "Unrelated paper",
+            "url": "https://example.test/unrelated/",
+            "content": "This paper mentions editing once but studies another subject.",
+        },
+    ]
+
+    with patch.object(retriever, "_fetch_documents", return_value=documents):
+        results = retriever.retrieve("SciDiagramEdit editing benchmark", top_k=5)
+
+    assert [result.url for result in results] == [
+        "https://example.test/scidiagramedit/"
+    ]
+
+
 def test_expired_cache_falls_back_to_stale_documents():
     retriever = KnowledgeRetriever("https://example.test/content.json")
 
