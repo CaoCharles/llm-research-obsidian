@@ -1,0 +1,57 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2607.15272",
+      "title": "SciDiagramEdit: Learning to Edit Scientific Diagrams from Paper Revisions",
+      "abstract": "Editing the figures in a research paper is a routine and time-consuming part of everyday research practice: authors relabel components, rearrange panels, and restyle visuals as they revise their manuscripts. Automating this editing workflow under a natural-language instruction, however, is challenging, because a scientific figure is a dense infographic in which heterogeneous visual elements such as schematics, plots, photos, captions, and arrows are composed under a tight visual grammar to advance a specific argument. To address this, we present SciDiagramEdit, a benchmark and skill-evolution framework that learns from natural paper revisions and operates on the figure's editable vector source, where users can inspect and co-edit individual primitives alongside the agent. Our benchmark mines before/after figure pairs from arXiv version histories, each grounded in the authors' own revision intent. To accommodate the diversity of editing instructions, we adopt agentic learning via skill evolution: an agentic proposer continually refines the agent's skill specification from execution traces over multiple epochs. The resulting skill progressively lifts edit accuracy on a held-out validation set, providing evidence that natural paper revisions are an effective training signal for instruction-driven figure editing.",
+      "authors": [
+        "Yasheng Sun",
+        "Zezi Zeng",
+        "Yifan Yang",
+        "Chong Luo",
+        "Wenyi Wang",
+        "Ziwei Liu",
+        "Jürgen Schmidhuber"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-16T17:58:36+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.15272v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.15272",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "在研究論文修訂過程中，編輯圖表是日常且耗時的工作：作者會重新標註元件、重排面板，並調整視覺風格。然而，根據自然語言指令自動完成這類編輯十分困難，因為 scientific figure 是一種高度密集的 infographic，包含示意圖、曲線圖、照片、圖說與箭頭等異質視覺元素，並依循嚴格的 visual grammar 來傳達特定論證。為此，我們提出 SciDiagramEdit，一個 benchmark 與 skill-evolution framework，從自然產生的論文修訂中學習，並直接操作圖表的 editable vector source，使使用者能檢視並共同編輯個別 primitives。該 benchmark 從 arXiv 版本歷史中挖掘 before/after figure pairs，並以作者自身的修訂意圖作為依據。為涵蓋多樣化的編輯指令，我們採用 agentic learning 與 skill evolution：agentic proposer 根據多個 epoch 的 execution traces，持續改進代理的 skill specification。結果顯示，逐步演化的 skill 能提升 held-out validation set 上的編輯準確率，證明自然論文修訂可作為 instruction-driven figure editing 的有效訓練訊號。",
+      "problem_statement": "論文旨在解決根據自然語言指令自動編輯科學論文圖表的問題。現有圖像生成或一般視覺編輯方法難以處理科學圖表中示意圖、曲線、照片、圖說與箭頭的異質組合，也難以維持面板配置、視覺語法與論證意義；若只修改 raster image，還缺乏可檢查、可回溯及可局部共編輯的能力。",
+      "proposed_solution": "作者提出 SciDiagramEdit，結合 benchmark 與 skill-evolution framework。系統從 arXiv 版本歷史取得真實 before/after 圖表，將作者的自然修訂視為編輯 supervision，並直接在 editable vector source 上操作圖表 primitives。其核心創新是 agentic skill evolution：agentic proposer 根據代理跨多個 epochs 的 execution traces，持續精煉 skill specification，使代理逐步學會多樣化的圖表編輯策略。這種方法同時整合真實修訂資料、可解釋的向量級操作，以及人機共同檢查流程。",
+      "core_contributions": [
+        "提出 SciDiagramEdit benchmark，從 arXiv 版本歷史挖掘具作者修訂意圖的 before/after 科學圖表配對，將真實論文修訂轉化為自然語言驅動的編輯任務。",
+        "建立以 editable vector source 為核心的圖表編輯設定，允許代理操作個別 primitives，也支援使用者檢查與共同編輯，較適合真實研究工作流程。",
+        "提出 agentic skill evolution 框架，利用 execution traces 由 proposer 跨多個 epochs 持續改寫與精煉 skill specification，提升未見 validation 任務上的編輯準確率。"
+      ],
+      "methodology": "SciDiagramEdit 的資料處理首先利用 arXiv 論文版本歷史，對同一論文不同版本中的圖表進行配對，形成 before/after figure pairs；這些變化由作者在真實修訂流程中產生，因此可保留實際修改意圖，而非只依賴人工合成範例。系統的操作對象不是單一 raster image，而是 figure 的 editable vector source，將示意圖元件、文字、面板、箭頭、圖例與其他圖形視為可檢查、可定位及可修改的 primitives。代理接收自然語言編輯需求後，需規劃修改步驟、辨識相關視覺元素，並透過向量編輯工具執行重標註、面板重排、樣式調整或元素增刪。核心學習機制是 agentic skill evolution：代理在多個 epochs 執行任務並產生 execution traces；agentic proposer 分析成功與失敗軌跡，持續修訂代理的 skill specification，使其累積更精確的操作規則與流程。評估以 held-out validation set 為主，觀察演化前後的 edit accuracy，並以 before/after 目標作為結果比對依據。摘要未說明模型架構、資料切分細節、指令標註方式、向量格式、評估公式、基線、消融設定及人工評審流程，因此無法進一步確認語意正確性、幾何精度與視覺品質是否被分開衡量。",
+      "key_results": "論文摘要未提供具體數值、基線模型或消融實驗結果，因此只能整理其宣稱的主要發現：\n\n| 評估面向 | SciDiagramEdit 的結果 | 可比較資訊 |\n|---|---|---|\n| 資料來源 | arXiv 版本歷史中的 before/after figure pairs | 摘要未報告資料規模 |\n| 編輯形式 | 操作 editable vector source 中的個別 primitives | 摘要未提供其他表示法基線 |\n| 學習方法 | agentic skill evolution，根據 execution traces 漸進更新 skill | 摘要未列出具體 baseline |\n| 泛化表現 | 演化後 skill 在 held-out validation set 上提升 edit accuracy | 未提供提升幅度或統計顯著性 |\n| 整體結論 | 自然論文修訂被證實是 instruction-driven figure editing 的有效訓練訊號 | 仍需完整論文數據驗證效果大小 |",
+      "insights": [
+        "對科學視覺化自動化而言，保留 editable vector source 比只生成 raster image 更重要，因為它支援可驗證、可回溯且可局部修改的工作流程。",
+        "真實世界的版本修訂可作為高價值 supervision，不必完全依賴人工撰寫指令；但應同步保存修改前後狀態、修改區域與語意意圖。",
+        "Skill evolution 可用於處理長尾編輯需求：透過 execution trace 分析失敗模式，逐步補充操作規則、版面約束與工具使用策略。"
+      ],
+      "limitations": "根據提供的摘要，論文未交代資料集規模、圖表類型分布、自然語言指令生成方式、edit accuracy 定義、基線與提升幅度，因此難以判斷方法的絕對效能與可重現性。未來可加入更嚴格的語意、版面與視覺品質評估，並測試跨領域泛化、複雜多步編輯、人機協作安全性及對不可編輯格式的支援。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "科學圖表理解與編輯",
+        "多模態代理與工具使用",
+        "向量圖形表示",
+        "人機協作創作"
+      ],
+      "category": "benchmark"
+    }
+  }
+]
