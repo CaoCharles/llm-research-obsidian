@@ -123,7 +123,11 @@ def write_paper_note(
         "insights": analysis.insights,
         "limitations": analysis.limitations,
         "related_topics": analysis.related_topics,
-        "pdf_embed": pdf_path is not None,
+        "local_pdf": pdf_path is not None,
+        "pdf_embed": bool(paper.pdf_url),
+        "pdf_embed_url": (
+            f"../PDFs/{pdf_filename}" if pdf_filename else paper.pdf_url
+        ),
         "pdf_filename": pdf_filename,
     }
     

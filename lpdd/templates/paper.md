@@ -23,7 +23,7 @@ aliases:
 ## 連結
 - 📄 [arXiv]({{ arxiv_url }})
 - 📥 [PDF]({{ pdf_url }})
-{% if pdf_embed %}
+{% if local_pdf %}
 - 📎 本地 PDF: [PDF](../PDFs/{{ pdf_filename }})
 {% endif %}
 
@@ -34,9 +34,9 @@ aliases:
 {% if pdf_embed %}
 ## 論文預覽
 
-[📥 點選查看論文 (PDF)](../PDFs/{{ pdf_filename }})
+[📥 點選查看論文 (PDF)]({{ pdf_url }})
 
-![{{ title }}](../PDFs/{{ pdf_filename }}#navpanes=0&toolbar=0){ type=application/pdf style="min-height:60vh;width:100%" }
+![{{ title }}]({{ pdf_embed_url }}#navpanes=0&toolbar=0){ type=application/pdf class="paper-pdf-embed" }
 
 {% endif %}
 ## 問題背景

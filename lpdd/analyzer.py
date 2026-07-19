@@ -8,6 +8,7 @@ import time
 from openai import OpenAI
 from typing import Optional
 from models import Paper, AnalysisResult
+from paper_text import extract_pdf_text
 
 
 ALLOWED_TAGS = [
@@ -61,12 +62,23 @@ class AnalysisError(RuntimeError):
     """論文分析無法產生可發布的結果。"""
 
 
-ANALYSIS_PROMPT = """你是 LLM 評測專家。請詳細分析這篇論文：
+ANALYSIS_PROMPT = """你是 LLM 評測專家。請根據提供的論文證據詳細分析這篇論文：
 
 標題: {title}
 摘要: {abstract}
 作者: {authors}
 分類: {categories}
+
+分析依據: {source_scope}
+
+論文內容：
+{paper_content}
+
+準確性規則：
+1. 只能陳述論文內容中可以找到依據的主張、設定與數字。
+2. 不得推測未提供的模型架構、資料規模、baseline 或實驗結果。
+3. 若論文沒有提供具體數字，key_results 必須明確寫「論文未報告」，不可補造數據。
+4. 區分作者的實驗結果、理論主張，以及你提出的實務洞察。
 
 請用繁體中文回答，**只輸出 JSON，不要加任何其他文字**：
 {{
@@ -191,6 +203,7 @@ def analyze_paper(
     max_tokens: int = 8000,
     max_retries: int = 2,
     strict: bool = False,
+    full_text: str = "",
 ) -> AnalysisResult:
     """使用 OpenAI GPT 分析論文（含重試機制）"""
     if client is None:
@@ -210,11 +223,15 @@ def analyze_paper(
             related_topics=["benchmark"],
             category="benchmark",
         )
+    paper_content = full_text.strip() or paper.abstract
+    source_scope = "完整 PDF 文字" if full_text.strip() else "arXiv 摘要（PDF 取文失敗或未啟用）"
     prompt = ANALYSIS_PROMPT.format(
         title=paper.title,
         abstract=paper.abstract,
         authors=", ".join(paper.authors[:5]),
         categories=", ".join(paper.categories),
+        source_scope=source_scope,
+        paper_content=paper_content,
     )
     
     last_error = None
@@ -313,6 +330,7 @@ def analyze_papers(
     max_tokens: int = 8000,
     verbose: bool = True,
     strict: bool = False,
+    use_full_text: bool = True,
 ) -> list[tuple[Paper, AnalysisResult]]:
     """批次分析多篇論文"""
     results = []
@@ -321,7 +339,26 @@ def analyze_papers(
         if verbose:
             print(f"[{i}/{len(papers)}] 分析中: {paper.title[:50]}...")
         
-        analysis = analyze_paper(paper, client, model, max_tokens, strict=strict)
+        full_text = ""
+        if use_full_text:
+            try:
+                if verbose:
+                    print("  → 擷取完整 PDF 文字...")
+                full_text = extract_pdf_text(paper.pdf_url)
+                if verbose:
+                    print(f"  → 已取得 {len(full_text):,} 字元論文內容")
+            except Exception as exc:
+                if verbose:
+                    print(f"  ⚠️ PDF 取文失敗，改用 arXiv 摘要: {exc}")
+
+        analysis = analyze_paper(
+            paper,
+            client,
+            model,
+            max_tokens,
+            strict=strict,
+            full_text=full_text,
+        )
         results.append((paper, analysis))
         
         if verbose:
