@@ -99,6 +99,17 @@ Gemini Notebook Enterprise 使用 GCP OAuth 與 Discovery Engine API，不使用
 GOOGLE_CLOUD_PROJECT=ai-asst-km-prod bash scripts/test_gemini_notebook.sh
 ```
 
+## 自動化維運
+
+| Workflow | 排程（Asia/Taipei） | 輸出 |
+|---|---|---|
+| Daily paper digest | 每日 08:17 | `automation/paper-digest` PR |
+| Weekly paper digest | 每週一 08:37 | `Weekly/` 週報 PR（空週自動跳過） |
+| Deploy documentation | `main` 更新後 | GitHub Pages |
+| Deploy Gemini backend | `backend/` 合併至 `main` 後 | Cloud Run |
+
+Cloud Run 部署透過 GitHub OIDC 與 Google Workload Identity Federation 取得短期憑證，不儲存 service-account JSON key。
+
 ### Claude Code 生成後匯入
 ```bash
 python3 scripts/ingest_claude_json.py --dir /tmp --date 2026-02-05

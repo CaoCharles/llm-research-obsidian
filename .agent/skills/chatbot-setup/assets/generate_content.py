@@ -15,17 +15,16 @@ def _fix_wiki_links(text, site_url):
     """
     def replace_wiki(match):
         target = match.group(1)
-        display = match.group(2) if match.group(2) else target
+        display = match.group(2) or target
         # 清理路徑
         url_path = target.replace(' ', '-')
         full_url = f"{site_url}/{url_path}/"
         full_url = full_url.replace('//', '/').replace('https:/', 'https://')
         return f"[{display}]({full_url})"
 
-    # [[target|display]] 或 [[target]]
-    text = re.sub(r'\[\[([^\]|]+)\|([^\]]+)\]\]', replace_wiki, text)
-    text = re.sub(r'\[\[([^\]]+)\]\]', replace_wiki, text)
-    return text
+    # 使用單一正則同時處理 [[target|display]] 與 [[target]]，
+    # 避免無 display group 時存取不存在的 group(2)。
+    return re.sub(r'\[\[([^\]|]+)(?:\|([^\]]+))?\]\]', replace_wiki, text)
 
 
 def _fix_md_links(text, site_url, current_file_dir):

@@ -1,22 +1,17 @@
-name: Daily paper digest
+name: Weekly paper digest
 
 on:
   schedule:
-    # GitHub Actions cron uses UTC: 00:17 UTC = 08:17 Asia/Taipei.
-    - cron: "17 0 * * *"
+    # 00:37 UTC Monday = 08:37 Monday in Asia/Taipei.
+    - cron: "37 0 * * 1"
   workflow_dispatch:
     inputs:
-      date:
-        description: "Digest date (YYYY-MM-DD; blank means today)"
+      end_date:
+        description: "Last date included (YYYY-MM-DD; blank means yesterday)"
         required: false
         type: string
-      top_n:
-        description: "Number of papers to analyze"
-        required: false
-        default: "10"
-        type: string
-      lookback_days:
-        description: "Calendar days included in one arXiv query"
+      days:
+        description: "Number of calendar days to aggregate"
         required: false
         default: "7"
         type: string
@@ -26,22 +21,19 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: daily-paper-digest
+  group: weekly-paper-digest
   cancel-in-progress: false
 
 jobs:
-  digest:
+  weekly:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GH_TOKEN: ${{ github.token }}
-      OBSIDIAN_VAULT_PATH: ${{ github.workspace }}
       TZ: Asia/Taipei
-      TOP_N: ${{ inputs.top_n || '10' }}
-      LOOKBACK_DAYS: ${{ inputs.lookback_days || '7' }}
-      DIGEST_DATE: ${{ inputs.date || '' }}
-      AUTOMATION_BRANCH: automation/paper-digest
+      END_DATE: ${{ inputs.end_date || '' }}
+      DAYS: ${{ inputs.days || '7' }}
+      AUTOMATION_BRANCH: automation/weekly-digest
 
     steps:
       - name: Checkout
@@ -53,9 +45,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v8.3.2
 
       - name: Configure Git
         run: |
@@ -70,30 +59,35 @@ jobs:
           fi
           git switch -C "$AUTOMATION_BRANCH" origin/main
 
-      - name: Fetch, summarize, sync, and build
-        run: bash scripts/daily_run.sh "${DIGEST_DATE:-$(date +%F)}"
+      - name: Build weekly digest
+        run: |
+          effective_end_date="${END_DATE:-$(date -d yesterday +%F)}"
+          python scripts/build_weekly_digest.py \
+            --end-date "$effective_end_date" \
+            --days "$DAYS" \
+            --skip-empty
 
-      - name: Commit automation output
+      - name: Commit weekly digest
         id: commit
         run: |
-          git add -- Daily DailyJSON Papers Topics
+          git add -- Weekly
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "daily digest ${DIGEST_DATE:-$(date +%F)}"
+          git commit -m "weekly digest $(date +%G-W%V)"
           git push --force-with-lease --set-upstream origin "$AUTOMATION_BRANCH"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Create or update digest pull request
+      - name: Create or update weekly pull request
         if: steps.commit.outputs.changed == 'true'
         run: |
           if gh pr list --head "$AUTOMATION_BRANCH" --base main --state open --json number --jq 'length' | grep -q '^0$'; then
             gh pr create \
               --base main \
               --head "$AUTOMATION_BRANCH" \
-              --title "Automated paper digest updates" \
-              --body "Automated arXiv paper digest updates. Review the generated summaries before merging."
+              --title "Automated weekly paper digest" \
+              --body "Automated seven-day research digest. Review the generated weekly summary before merging."
           else
-            echo "Existing digest pull request updated."
+            echo "Existing weekly digest pull request updated."
           fi

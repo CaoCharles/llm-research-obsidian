@@ -2,7 +2,7 @@
 """
 Sync Obsidian vault content into MkDocs docs/.
 
-- Copies Daily/ Topics/ Papers/ into docs/ preserving structure.
+- Copies Daily/ Weekly/ Topics/ Papers/ into docs/ preserving structure.
 - Converts Obsidian PDF embeds to mkdocs-pdf embeds.
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = ROOT / "docs"
-SOURCE_DIRS = ["Daily", "Topics", "Papers"]
+SOURCE_DIRS = ["Daily", "Weekly", "Topics", "Papers"]
 
 PDF_EMBED_RE = re.compile(r"!\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
 PDF_LINK_RE = re.compile(r"\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
@@ -153,6 +153,7 @@ def main() -> None:
         copy_markdown_tree(src, dst, pdf_index)
 
     write_section_index("Daily", "Daily", reverse=True)
+    write_section_index("Weekly", "Weekly", reverse=True)
     write_section_index("Topics", "Topics")
     write_section_index("Papers", "Papers", reverse=True)
     ensure_index()
