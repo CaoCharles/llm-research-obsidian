@@ -10,6 +10,57 @@ from typing import Optional
 from models import Paper, AnalysisResult
 
 
+ALLOWED_TAGS = [
+    "llm-as-judge", "rag-evaluation", "red-teaming", "prompt-injection",
+    "faithfulness", "hallucination", "benchmark", "safety", "alignment",
+    "agent-evaluation",
+]
+
+ANALYSIS_JSON_SCHEMA = {
+    "name": "paper_analysis",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "abstract_zh": {"type": "string"},
+            "problem_statement": {"type": "string"},
+            "proposed_solution": {"type": "string"},
+            "methodology": {"type": "string"},
+            "key_results": {"type": "string"},
+            "core_contributions": {
+                "type": "array", "items": {"type": "string"},
+                "minItems": 3, "maxItems": 3,
+            },
+            "insights": {
+                "type": "array", "items": {"type": "string"},
+                "minItems": 3, "maxItems": 3,
+            },
+            "limitations": {"type": "string"},
+            "tags": {
+                "type": "array",
+                "items": {"type": "string", "enum": ALLOWED_TAGS},
+                "minItems": 2, "maxItems": 3,
+            },
+            "relevance": {"type": "integer", "minimum": 1, "maximum": 5},
+            "related_topics": {
+                "type": "array", "items": {"type": "string"}, "minItems": 1,
+            },
+            "category": {"type": "string", "enum": ALLOWED_TAGS},
+        },
+        "required": [
+            "abstract_zh", "problem_statement", "proposed_solution",
+            "methodology", "key_results", "core_contributions", "insights",
+            "limitations", "tags", "relevance", "related_topics", "category",
+        ],
+    },
+}
+
+
+class AnalysisError(RuntimeError):
+    """論文分析無法產生可發布的結果。"""
+
+
 ANALYSIS_PROMPT = """你是 LLM 評測專家。請詳細分析這篇論文：
 
 標題: {title}
@@ -108,15 +159,43 @@ def fix_json_string(json_str: str) -> str:
     return json_str
 
 
+def validate_analysis(data: dict, paper: Paper) -> None:
+    """拒絕空白、佔位或明顯未翻譯的分析。"""
+    required_text = [
+        "abstract_zh", "problem_statement", "proposed_solution", "methodology",
+        "key_results", "limitations", "category",
+    ]
+    for field in required_text:
+        value = data.get(field)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"分析缺少必要欄位: {field}")
+
+    for field in ("core_contributions", "insights"):
+        value = data.get(field)
+        if not isinstance(value, list) or len(value) < 3 or any(
+            not isinstance(item, str) or not item.strip() for item in value
+        ):
+            raise ValueError(f"分析欄位不完整: {field}")
+
+    serialized = json.dumps(data, ensure_ascii=False)
+    if "手動補充" in serialized or "未設定 API Key" in serialized:
+        raise ValueError("分析含有不可發布的佔位內容")
+    if data["abstract_zh"].strip() == paper.abstract.strip():
+        raise ValueError("中文摘要未翻譯")
+
+
 def analyze_paper(
     paper: Paper,
     client: Optional[OpenAI],
-    model: str = "gpt-5-mini",
-    max_tokens: int = 3500,
-    max_retries: int = 2
+    model: str = "gpt-5.6-luna",
+    max_tokens: int = 8000,
+    max_retries: int = 2,
+    strict: bool = False,
 ) -> AnalysisResult:
     """使用 OpenAI GPT 分析論文（含重試機制）"""
     if client is None:
+        if strict:
+            raise AnalysisError(f"論文 {paper.arxiv_id} 分析失敗: 未設定 API Key")
         return AnalysisResult(
             abstract_zh=paper.abstract[:800],
             problem_statement="（未設定 API Key，請手動補充）",
@@ -142,26 +221,33 @@ def analyze_paper(
     
     for attempt in range(max_retries + 1):
         try:
-            response = client.chat.completions.create(
-                model=model,
-                max_completion_tokens=max_tokens,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            
-            response_text = response.choices[0].message.content
+            request = {
+                "model": model,
+                "max_completion_tokens": max_tokens,
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": ANALYSIS_JSON_SCHEMA,
+                },
+            }
+            # GPT-5 completion token 上限同時包含推理與可見輸出。
+            # 此任務以結構化長文為主，使用 low 避免推理用完預算。
+            if model.startswith("gpt-5"):
+                request["reasoning_effort"] = "low"
+
+            response = client.chat.completions.create(**request)
+
+            choice = response.choices[0]
+            message = choice.message
+            if getattr(message, "refusal", None):
+                raise ValueError(f"模型拒絕分析: {message.refusal}")
+            if choice.finish_reason == "length":
+                raise ValueError("模型輸出超過 token 上限")
+            response_text = message.content
+            if not response_text:
+                raise ValueError("模型未回傳分析內容")
             data = extract_json(response_text)
-            
-            # 驗證並補充必要欄位
-            if "abstract_zh" not in data or not data["abstract_zh"]:
-                data["abstract_zh"] = paper.abstract[:500]
-            if "problem_statement" not in data:
-                data["problem_statement"] = ""
-            if "proposed_solution" not in data:
-                data["proposed_solution"] = ""
-            if "tags" not in data or not data["tags"]:
-                data["tags"] = ["benchmark"]
-            if "category" not in data or not data["category"]:
-                data["category"] = data["tags"][0] if data["tags"] else "benchmark"
+            validate_analysis(data, paper)
             
             return AnalysisResult.from_dict(data)
             
@@ -173,6 +259,9 @@ def analyze_paper(
             continue
     
     print(f"    ❌ 分析失敗（已重試 {max_retries} 次）: {last_error}")
+
+    if strict:
+        raise AnalysisError(f"論文 {paper.arxiv_id} 分析失敗: {last_error}") from last_error
     
     return AnalysisResult(
         abstract_zh=paper.abstract[:800],
@@ -220,9 +309,10 @@ def guess_tags_from_abstract(abstract: str) -> list[str]:
 def analyze_papers(
     papers: list[Paper],
     client: Optional[OpenAI],
-    model: str = "gpt-5-mini",
-    max_tokens: int = 3500,
-    verbose: bool = True
+    model: str = "gpt-5.6-luna",
+    max_tokens: int = 8000,
+    verbose: bool = True,
+    strict: bool = False,
 ) -> list[tuple[Paper, AnalysisResult]]:
     """批次分析多篇論文"""
     results = []
@@ -231,7 +321,7 @@ def analyze_papers(
         if verbose:
             print(f"[{i}/{len(papers)}] 分析中: {paper.title[:50]}...")
         
-        analysis = analyze_paper(paper, client, model, max_tokens)
+        analysis = analyze_paper(paper, client, model, max_tokens, strict=strict)
         results.append((paper, analysis))
         
         if verbose:

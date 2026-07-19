@@ -502,7 +502,8 @@ def cmd_digest(args) -> None:
         client=client,
         model=model,
         max_tokens=max_tokens,
-        verbose=True
+        verbose=True,
+        strict=args.strict_analysis,
     )
 
     items = []
@@ -719,6 +720,7 @@ def main():
     digest_parser.add_argument("--model", type=str, help="OpenAI model（覆蓋 config.yaml）")
     digest_parser.add_argument("--max-tokens", type=int, help="max_completion_tokens（覆蓋 config.yaml）")
     digest_parser.add_argument("--require-api-key", action="store_true", help="若缺少 OPENAI_API_KEY 則視為錯誤並退出")
+    digest_parser.add_argument("--strict-analysis", action="store_true", help="任一 AI 分析失敗時停止，不寫入佔位內容")
     digest_parser.add_argument("--no-download-pdfs", action="store_true", help="寫入 Obsidian 時不下載 PDF")
     digest_parser.add_argument("--tmp-dir", type=str, help="寫入流程使用的暫存 JSON 目錄（預設 /tmp）")
     digest_parser.set_defaults(func=cmd_digest)

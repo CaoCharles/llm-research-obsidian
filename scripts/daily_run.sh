@@ -32,7 +32,8 @@ uv run --project lpdd python lpdd/cli.py digest \
   --write \
   --vault "$OBSIDIAN_VAULT_PATH" \
   --no-download-pdfs \
-  --require-api-key
+  --require-api-key \
+  --strict-analysis
 
 python3 scripts/sync_docs.py
 
