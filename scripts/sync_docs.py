@@ -21,6 +21,33 @@ SOURCE_DIRS = ["Daily", "Weekly", "Topics", "Papers"]
 HOME_GUIDE_SOURCE = Path("ppt/LLM_Evaluation_and_Safety_Guide.pdf")
 HOME_GUIDE_TARGET = Path("assets/guides/LLM_Evaluation_and_Safety_Guide.pdf")
 
+CANONICAL_CATEGORIES = [
+    "Benchmark",
+    "RAG Evaluation",
+    "Safety & Alignment",
+    "Agent Evaluation",
+    "Hallucination & Faithfulness",
+    "Multimodal Evaluation",
+]
+
+CATEGORY_ALIASES = {
+    "benchmark": "Benchmark",
+    "rag": "RAG Evaluation",
+    "rag-evaluation": "RAG Evaluation",
+    "safety": "Safety & Alignment",
+    "safety-alignment": "Safety & Alignment",
+    "alignment": "Safety & Alignment",
+    "prompt-injection": "Safety & Alignment",
+    "jailbreak": "Safety & Alignment",
+    "agent": "Agent Evaluation",
+    "agent-evaluation": "Agent Evaluation",
+    "cs.se": "Agent Evaluation",
+    "hallucination": "Hallucination & Faithfulness",
+    "faithfulness": "Hallucination & Faithfulness",
+    "multimodal": "Multimodal Evaluation",
+    "multimodal-safety": "Multimodal Evaluation",
+}
+
 PDF_EMBED_RE = re.compile(r"!\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
 PDF_LINK_RE = re.compile(r"\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
 LOCAL_ARXIV_PDF_RE = re.compile(
@@ -178,6 +205,26 @@ def extract_section(path: Path, heading: str, max_chars: int = 220) -> str:
     return value if len(value) <= max_chars else value[: max_chars - 1].rstrip() + "…"
 
 
+def normalize_paper_category(category: str, tags: list[str]) -> str:
+    """Collapse historical labels into the six categories used by the site."""
+    normalized = CATEGORY_ALIASES.get(category.strip().lower())
+    if normalized:
+        return normalized
+
+    tag_set = {tag.strip().lower() for tag in tags}
+    fallbacks = (
+        ({"multimodal", "multimodal-safety"}, "Multimodal Evaluation"),
+        ({"safety", "alignment", "red-teaming", "prompt-injection", "jailbreak"}, "Safety & Alignment"),
+        ({"rag", "rag-evaluation"}, "RAG Evaluation"),
+        ({"hallucination", "faithfulness"}, "Hallucination & Faithfulness"),
+        ({"agent", "agent-evaluation"}, "Agent Evaluation"),
+    )
+    for candidates, canonical in fallbacks:
+        if tag_set & candidates:
+            return canonical
+    return "Benchmark"
+
+
 def paper_records() -> list[dict[str, object]]:
     paper_dir = DOCS_DIR / "Papers"
     if not paper_dir.exists():
@@ -192,15 +239,19 @@ def paper_records() -> list[dict[str, object]]:
         tags = metadata.get("tags") or []
         if not isinstance(tags, list):
             tags = []
+        tag_values = [str(tag) for tag in tags]
         records.append({
             "path": path,
             "url": f"{quote(path.stem, safe='')}/",
             "title": title,
             "date": str(metadata.get("date") or ""),
             "arxiv_id": str(metadata.get("arxiv_id") or ""),
-            "category": str(metadata.get("category") or "uncategorized"),
+            "category": normalize_paper_category(
+                str(metadata.get("category") or ""), tag_values
+            ),
             "relevance": int(str(metadata.get("relevance") or "0")),
-            "tags": [str(tag) for tag in tags],
+            "tags": tag_values,
+            "authors": str(metadata.get("authors") or ""),
             "summary": extract_section(path, "摘要（中文翻譯）"),
         })
     return sorted(
@@ -358,11 +409,12 @@ def write_papers_index() -> None:
     records = paper_records()
     paper_dir = DOCS_DIR / "Papers"
     paper_dir.mkdir(parents=True, exist_ok=True)
-    categories = sorted({str(record["category"]) for record in records})
+    present_categories = {str(record["category"]) for record in records}
+    categories = [value for value in CANONICAL_CATEGORIES if value in present_categories]
     tags = sorted({tag for record in records for tag in record["tags"]})
 
-    category_options = "\n".join(
-        f'<option value="{html.escape(value, quote=True)}">{html.escape(value)}</option>'
+    category_buttons = "\n".join(
+        f'<button class="paper-category-chip" type="button" data-category="{html.escape(value, quote=True)}" aria-pressed="false">{html.escape(value)}</button>'
         for value in categories
     )
     tag_options = "\n".join(
@@ -376,51 +428,81 @@ def write_papers_index() -> None:
         tags_value = " ".join(str(tag) for tag in record["tags"])
         search_value = " ".join([
             str(record["title"]), str(record["arxiv_id"]),
-            str(record["category"]), tags_value,
+            str(record["category"]), tags_value, str(record["authors"]),
+            str(record["summary"]),
         ]).lower()
         stars = "★" * int(record["relevance"]) or "待評分"
+        arxiv_id = html.escape(str(record["arxiv_id"]), quote=True)
         cards.append(f"""
 <article class="research-card paper-entry"
   data-search="{html.escape(search_value, quote=True)}"
   data-category="{html.escape(str(record['category']), quote=True)}"
-  data-tags="{html.escape(tags_value, quote=True)}">
+  data-tags="{html.escape(tags_value, quote=True)}"
+  data-date="{html.escape(str(record['date']), quote=True)}"
+  data-relevance="{int(record['relevance'])}"
+  data-title="{html.escape(str(record['title']).lower(), quote=True)}">
   <div class="research-card__meta">
     <span>{html.escape(str(record['date']))}</span>
     <span>{html.escape(str(record['arxiv_id']))}</span>
     <span class="research-relevance" aria-label="相關度 {int(record['relevance'])} 顆星">{stars}</span>
   </div>
   <h2><a href="{record['url']}">{title}</a></h2>
-  <p>{html.escape(str(record['summary']) or '尚無中文摘要。')}</p>
+  <p class="research-card__summary">{html.escape(str(record['summary']) or '尚無中文摘要。')}</p>
   <div class="research-card__tags"><span class="research-category">{category}</span>{_tag_badges(record['tags'])}</div>
+  <div class="paper-card-actions">
+    <a class="paper-card-action paper-card-action--primary" href="{record['url']}">閱讀分析</a>
+    <a class="paper-card-action" href="https://arxiv.org/abs/{arxiv_id}" target="_blank" rel="noopener">arXiv ↗</a>
+    <a class="paper-card-action" href="https://arxiv.org/pdf/{arxiv_id}" target="_blank" rel="noopener">PDF ↗</a>
+  </div>
 </article>""".strip())
 
+    latest_date = max((str(record["date"]) for record in records), default="—")
     content = f"""# 論文庫
 
-收錄 **{len(records)}** 篇 LLM 評測、RAG、安全性與 Agent 相關論文。可以用關鍵字、主分類或標籤快速篩選。
+聚焦 LLM 評測、RAG、安全對齊、Agent 與多模態評估。主分類已統一為六類，細節仍可用標籤深入篩選。
 
 <div id="paper-library" class="paper-library">
-  <div class="paper-filters" role="search" aria-label="篩選論文">
-    <label>關鍵字
-      <input id="paper-search" type="search" placeholder="標題、arXiv ID、分類或標籤" autocomplete="off">
+  <div class="paper-library-hero" aria-label="論文庫摘要">
+    <div><strong>{len(records)}</strong><span>篇論文</span></div>
+    <div><strong>{len(categories)}</strong><span>個核心分類</span></div>
+    <div><strong>{html.escape(latest_date)}</strong><span>最近更新</span></div>
+  </div>
+  <div class="paper-toolbar" role="search" aria-label="搜尋與排序論文">
+    <label><span>搜尋論文</span>
+      <input id="paper-search" type="search" placeholder="輸入標題、arXiv ID、作者或摘要關鍵字" autocomplete="off">
     </label>
-    <label>主分類
-      <select id="paper-category">
-        <option value="">全部分類</option>
-        {category_options}
-      </select>
-    </label>
-    <label>標籤
-      <select id="paper-tag">
-        <option value="">全部標籤</option>
-        {tag_options}
+    <label><span>排序方式</span>
+      <select id="paper-sort">
+        <option value="date-desc">最新發布</option>
+        <option value="relevance-desc">相關度最高</option>
+        <option value="title-asc">標題 A–Z</option>
       </select>
     </label>
   </div>
-  <p id="paper-results" class="paper-results" aria-live="polite">顯示 {len(records)} 篇論文</p>
+  <div class="paper-category-filter" aria-label="主分類">
+    <button class="paper-category-chip is-active" type="button" data-category="" aria-pressed="true">全部</button>
+    {category_buttons}
+  </div>
+  <details class="paper-advanced-filters">
+    <summary>進階篩選</summary>
+    <div>
+      <label><span>研究標籤</span>
+        <select id="paper-tag">
+          <option value="">全部標籤</option>
+          {tag_options}
+        </select>
+      </label>
+      <button id="paper-reset" type="button">清除條件</button>
+    </div>
+  </details>
+  <div class="paper-results-row">
+    <p id="paper-results" class="paper-results" aria-live="polite">顯示 {min(12, len(records))} / {len(records)} 篇論文</p>
+  </div>
   <div class="research-grid paper-grid">
     {chr(10).join(cards) if cards else '<p>尚無論文。</p>'}
   </div>
   <p id="paper-empty" class="paper-empty" hidden>找不到符合條件的論文，請調整篩選條件。</p>
+  <div class="paper-load-more-wrap"><button id="paper-load-more" class="paper-load-more" type="button">載入更多論文</button></div>
 </div>
 """
     (paper_dir / "index.md").write_text(content, encoding="utf-8")

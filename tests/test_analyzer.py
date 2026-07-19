@@ -38,7 +38,7 @@ def valid_analysis() -> dict:
         "tags": ["benchmark", "llm-as-judge"],
         "relevance": 4,
         "related_topics": ["evaluation"],
-        "category": "benchmark",
+        "category": "Benchmark",
     }
 
 
@@ -68,7 +68,7 @@ class AnalyzerTests(unittest.TestCase):
         completions = FakeCompletions(json.dumps(valid_analysis(), ensure_ascii=False))
         result = analyze_paper(sample_paper(), FakeClient(completions), strict=True)
 
-        self.assertEqual(result.category, "benchmark")
+        self.assertEqual(result.category, "Benchmark")
         request = completions.requests[0]
         self.assertEqual(request["model"], "gpt-5.6-luna")
         self.assertEqual(request["response_format"]["type"], "json_schema")

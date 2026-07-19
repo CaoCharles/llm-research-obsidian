@@ -35,6 +35,20 @@ class SyncDocsTests(unittest.TestCase):
         self.assertNotIn("../PDFs/", converted)
         self.assertEqual(converted.count("https://arxiv.org/pdf/2607.01234"), 2)
 
+    def test_normalizes_historical_categories_into_six_core_groups(self):
+        self.assertEqual(
+            sync_docs.normalize_paper_category("safety", []),
+            "Safety & Alignment",
+        )
+        self.assertEqual(
+            sync_docs.normalize_paper_category("cs.SE", ["agent-evaluation"]),
+            "Agent Evaluation",
+        )
+        self.assertEqual(
+            sync_docs.normalize_paper_category("unknown", ["faithfulness"]),
+            "Hallucination & Faithfulness",
+        )
+
     def test_generates_research_home_daily_and_filterable_paper_indexes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -110,7 +124,10 @@ relevance: 5
             self.assertIn("assets/guides/LLM_Evaluation_and_Safety_Guide.pdf", home)
             self.assertIn("1</strong><span>篇論文", home)
             self.assertIn('id="paper-search"', papers)
-            self.assertIn('data-category="benchmark"', papers)
+            self.assertIn('id="paper-sort"', papers)
+            self.assertIn('id="paper-load-more"', papers)
+            self.assertIn('data-category="Benchmark"', papers)
+            self.assertIn("閱讀分析", papers)
             self.assertIn("這是用來驗證", papers)
             self.assertIn("2026-07-19", daily)
             self.assertIn("1 篇論文", daily)
