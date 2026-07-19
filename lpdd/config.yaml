@@ -14,10 +14,9 @@ filter:
 
 # OpenAI 設定
 openai:
-  model: gpt-5-mini  # 400K context，性價比高
-  # model: gpt-5-nano  # 最便宜
-  # model: gpt-4o-mini # 舊版備選
-  max_tokens: 2000
+  model: gpt-5.6-luna  # GPT-5.6 高吞吐、低延遲批次分析
+  # GPT-5 的上限同時包含推理與可見輸出 token。
+  max_tokens: 8000
 
 # Obsidian 設定
 obsidian:
