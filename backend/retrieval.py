@@ -147,12 +147,17 @@ class KnowledgeRetriever:
                 1 for term in overlap & title_terms
                 if len(term) >= 4 and re.search(r"[a-z0-9]", term)
             )
+            date_title_matches = sum(
+                1 for term in overlap & title_terms
+                if re.fullmatch(r"\d{4}-\d{2}-\d{2}", term)
+            )
             exact_bonus = 4.0 if normalized_query in chunk.search_text else 0.0
             score = (
                 coverage * 8.0
                 + specificity
                 + title_overlap * 2.5
                 + distinctive_title_matches * 22.0
+                + date_title_matches * 24.0
                 + exact_bonus
             )
             scored.append((score, chunk))

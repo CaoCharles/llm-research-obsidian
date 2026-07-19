@@ -105,3 +105,24 @@ def test_expired_cache_falls_back_to_stale_documents():
         stale_results = retriever.retrieve("RAGAS")
 
     assert stale_results[0].url == first_results[0].url
+
+
+def test_current_date_title_outranks_generic_update_content():
+    retriever = KnowledgeRetriever("https://example.test/content.json")
+    documents = [
+        {
+            "title": "數據集生命週期",
+            "url": "https://example.test/lifecycle/",
+            "content": "今天更新評測資料時需要版本治理。",
+        },
+        {
+            "title": "2026-07-19 論文摘要",
+            "url": "https://example.test/daily/2026-07-19/",
+            "content": "今日新增 SciDiagramEdit 論文。",
+        },
+    ]
+
+    with patch.object(retriever, "_fetch_documents", return_value=documents):
+        results = retriever.retrieve("今天更新了哪些\n今日日期 2026-07-19")
+
+    assert [result.title for result in results] == ["2026-07-19 論文摘要"]

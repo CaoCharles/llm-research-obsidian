@@ -1,6 +1,9 @@
 import os
+import re
+from datetime import datetime
 from functools import lru_cache
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -24,6 +27,11 @@ ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 retriever = KnowledgeRetriever()
+TAIPEI_TIMEZONE = ZoneInfo("Asia/Taipei")
+TEMPORAL_QUERY_RE = re.compile(
+    r"今天|今日|最新|最近|更新|本週|這週|today|latest|recent|this\s+week",
+    re.IGNORECASE,
+)
 
 
 def _backend_name() -> str:
@@ -99,17 +107,24 @@ Rules:
 """
 
 
-def _retrieval_query(request: ChatRequest) -> str:
+def _current_date() -> str:
+    return datetime.now(TAIPEI_TIMEZONE).date().isoformat()
+
+
+def _retrieval_query(request: ChatRequest, current_date: str) -> str:
     recent_user_turns = [
         part.text
         for message in request.history[-6:]
         if message.role == "user"
         for part in message.parts
     ]
-    return "\n".join([*recent_user_turns, request.message])[-12_000:]
+    query = "\n".join([*recent_user_turns, request.message])[-12_000:]
+    if TEMPORAL_QUERY_RE.search(request.message):
+        query = f"{query}\n今日日期 {current_date}"
+    return query
 
 
-def _rag_instruction(sources: list[RetrievedSource]) -> str:
+def _rag_instruction(sources: list[RetrievedSource], current_date: str) -> str:
     if not sources:
         context = "No relevant knowledge-base excerpt was retrieved."
     else:
@@ -117,7 +132,13 @@ def _rag_instruction(sources: list[RetrievedSource]) -> str:
             f"[Source {index}]\nTitle: {source.title}\nURL: {source.url}\nExcerpt:\n{source.content}"
             for index, source in enumerate(sources, start=1)
         )
-    return f"{BASE_SYSTEM_INSTRUCTION}\n\nRetrieved knowledge-base excerpts:\n{context}"
+    return (
+        f"{BASE_SYSTEM_INSTRUCTION}\n\n"
+        f"Current date in Asia/Taipei: {current_date}. For questions about today, "
+        "latest, or recent updates, use this date and do not describe older pages "
+        "as the latest update.\n\n"
+        f"Retrieved knowledge-base excerpts:\n{context}"
+    )
 
 
 @app.get("/")
@@ -135,6 +156,7 @@ def health() -> dict[str, object]:
 
 @app.post("/api/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest) -> ChatResponse:
+    current_date = _current_date()
     contents = [
         types.Content(
             role=message.role,
@@ -147,7 +169,7 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
     )
 
     try:
-        sources = retriever.retrieve(_retrieval_query(request))
+        sources = retriever.retrieve(_retrieval_query(request, current_date))
     except Exception as exc:
         # Retrieval failure should not take down the assistant. Provider logs retain
         # enough detail to diagnose an unavailable or malformed content index.
@@ -159,7 +181,7 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
             model=MODEL_NAME,
             contents=contents,
             config=types.GenerateContentConfig(
-                system_instruction=_rag_instruction(sources),
+                system_instruction=_rag_instruction(sources, current_date),
                 temperature=0.2,
             ),
         )

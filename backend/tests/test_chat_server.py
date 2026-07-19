@@ -59,6 +59,22 @@ def test_chat_returns_frontend_contract():
     assert "https://example.test/ragas/" in instruction
 
 
+def test_temporal_query_includes_taipei_date():
+    request = chat_server.ChatRequest(message="今天更新了哪些")
+
+    query = chat_server._retrieval_query(request, "2026-07-19")
+
+    assert "今日日期 2026-07-19" in query
+
+
+def test_non_temporal_query_does_not_force_current_date():
+    request = chat_server.ChatRequest(message="RAGAS 如何評估 faithfulness？")
+
+    query = chat_server._retrieval_query(request, "2026-07-19")
+
+    assert "2026-07-19" not in query
+
+
 def test_chat_rejects_invalid_role():
     response = client.post(
         "/api/chat",

@@ -41,6 +41,10 @@ class SyncDocsTests(unittest.TestCase):
             (root / "Papers").mkdir()
             (root / "Daily").mkdir()
             (root / "Topics").mkdir()
+            (root / "ppt").mkdir()
+            (root / "ppt" / "LLM_Evaluation_and_Safety_Guide.pdf").write_bytes(
+                b"%PDF-1.4 test guide"
+            )
             (root / "Papers" / "paper.md").write_text(
                 """---
 arxiv_id: "2607.12345"
@@ -79,12 +83,18 @@ relevance: 5
 
             self.assertIn("LLM 評測知識庫", home)
             self.assertIn("A New Evaluation Benchmark", home)
+            self.assertIn("NotebookLM 評測與安全指南", home)
+            self.assertIn("assets/guides/LLM_Evaluation_and_Safety_Guide.pdf", home)
             self.assertIn("1</strong><span>篇論文", home)
             self.assertIn('id="paper-search"', papers)
             self.assertIn('data-category="benchmark"', papers)
             self.assertIn("這是用來驗證", papers)
             self.assertIn("2026-07-19", daily)
             self.assertIn("1 篇論文", daily)
+            self.assertEqual(
+                (docs / "assets/guides/LLM_Evaluation_and_Safety_Guide.pdf").read_bytes(),
+                b"%PDF-1.4 test guide",
+            )
 
 
 if __name__ == "__main__":
