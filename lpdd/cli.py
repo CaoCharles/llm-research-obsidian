@@ -8,7 +8,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 from models import Paper, AnalysisResult
 from fetcher import fetch_papers, fetch_papers_by_date, fetch_paper_by_id
-from filter import load_keywords, get_top_papers, filter_papers, search_by_keyword
+from filter import calculate_score, load_keywords, get_top_papers, filter_papers, search_by_keyword
 from analyzer import analyze_papers
 from writer import write_from_json, write_daily_from_json
 from exporter import export_to_excel, parse_date_range
@@ -132,7 +132,6 @@ def cmd_filter(args) -> None:
         min_score=min_score,
         top_n=top_n
     )
-
     result = {
         "status": "success",
         "count": len(top_papers),
@@ -395,6 +394,40 @@ def _parse_date_arg(date_arg: str | None) -> str:
     return date_arg
 
 
+def _fetch_digest_candidates(
+    categories: list[str],
+    date: str,
+    lookback_days: int,
+    max_results: int,
+    target_count: int | None = None,
+) -> tuple[list[Paper], list[str]]:
+    """Fetch unique papers from the target date and preceding calendar days.
+
+    arXiv does not normally publish on weekends and holidays. A daily automation
+    therefore needs a bounded lookback window instead of treating an empty
+    calendar date as a successful digest.
+    """
+    target = datetime.strptime(date, "%Y-%m-%d")
+    papers_by_id: dict[str, Paper] = {}
+    source_dates: list[str] = []
+
+    for offset in range(max(lookback_days, 1)):
+        source_date = (target - timedelta(days=offset)).strftime("%Y-%m-%d")
+        fetched = fetch_papers_by_date(
+            categories=categories,
+            date=source_date,
+            max_results=max_results,
+        )
+        if fetched:
+            source_dates.append(source_date)
+        for paper in fetched:
+            papers_by_id.setdefault(paper.arxiv_id, paper)
+        if target_count and len(papers_by_id) >= target_count:
+            break
+
+    return list(papers_by_id.values()), source_dates
+
+
 def cmd_digest(args) -> None:
     """完整每日摘要流程（抓取 → 篩選 → 分析 → 產 JSON → 寫入 Obsidian）"""
     load_dotenv()
@@ -416,10 +449,14 @@ def cmd_digest(args) -> None:
     keywords_path = Path(__file__).parent / "keywords.yaml"
     keywords = load_keywords(str(keywords_path))
 
-    papers = fetch_papers_by_date(
+    papers, source_dates = _fetch_digest_candidates(
         categories=categories,
         date=date,
-        max_results=config["arxiv"]["max_results"]
+        lookback_days=args.lookback_days,
+        max_results=config["arxiv"]["max_results"],
+        # Fetch extra candidates so keyword filtering can still yield Top N,
+        # while avoiding redundant arXiv requests once the pool is large enough.
+        target_count=top_n * 3,
     )
 
     min_score = args.min_score or config["filter"]["min_score"]
@@ -429,6 +466,16 @@ def cmd_digest(args) -> None:
         min_score=min_score,
         top_n=top_n
     )
+    # The scheduled digest promises up to Top N items. If the strict relevance
+    # threshold yields fewer, fill the remaining slots with the next-best
+    # candidates instead of publishing an unexpectedly short/empty digest.
+    if len(top_papers) < top_n:
+        selected_ids = {paper.arxiv_id for paper in top_papers}
+        remaining = [paper for paper in papers if paper.arxiv_id not in selected_ids]
+        for paper in remaining:
+            paper.score = calculate_score(paper, keywords)
+        remaining.sort(key=lambda paper: paper.score, reverse=True)
+        top_papers.extend(remaining[: top_n - len(top_papers)])
 
     # 分析
     from openai import OpenAI
@@ -511,6 +558,8 @@ def cmd_digest(args) -> None:
         "status": "success",
         "date": date,
         "total_fetched": len(papers),
+        "source_dates": source_dates,
+        "lookback_days": args.lookback_days,
         "min_score": min_score,
         "count": len(items),
         "json_path": str(out_path) if out_path else None,
@@ -649,6 +698,7 @@ def main():
     digest_parser = subparsers.add_parser("digest", help="完整每日流程：抓取/篩選/分析/輸出 JSON/寫入 Obsidian")
     digest_parser.add_argument("--top", type=int, default=10, help="取 Top N 篇進行分析")
     digest_parser.add_argument("--date", type=str, help="指定日期 (YYYY-MM-DD) 或 today")
+    digest_parser.add_argument("--lookback-days", type=int, default=7, help="若當日無論文，向前累積候選論文的天數（預設 7）")
     digest_parser.add_argument("--min-score", type=int, help="最低分數（覆蓋 config.yaml）")
     digest_parser.add_argument("--out", type=str, help="輸出 JSON 檔案路徑（陣列格式）")
     digest_parser.add_argument("--write", action="store_true", help="寫入 Obsidian（論文筆記 + Topics + Daily）")

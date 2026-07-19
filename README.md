@@ -65,7 +65,7 @@ graph TD
 
 GitHub Actions 會在每天 **08:00（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
 
-1. 從 arXiv 抓取並篩選 Top 10 論文
+1. 從 arXiv 抓取並篩選 Top 10 論文（週末/假日會向前回溯 7 天，避免產生空摘要）
 2. 使用 OpenAI 生成繁體中文結構化摘要與 `DailyJSON/YYYY-MM-DD.json`
 3. 寫入 Obsidian 的 `Papers/`、`Topics/`、`Daily/` 與 `PDFs/`
 4. 同步到 `docs/`，驗證 MkDocs 完整 build（保留 Obsidian wikilink 警告，不中斷每日流程）

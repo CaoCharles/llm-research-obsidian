@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export TZ="${TZ:-Asia/Taipei}"
 DATE_STR="${1:-$(date +%F)}"
 TOP_N="${TOP_N:-10}"
+LOOKBACK_DAYS="${LOOKBACK_DAYS:-7}"
 export OBSIDIAN_VAULT_PATH="${OBSIDIAN_VAULT_PATH:-$ROOT_DIR}"
 
 if [[ -z "${OPENAI_API_KEY:-}" ]]; then
@@ -26,6 +27,7 @@ uv sync --project lpdd --locked
 uv run --project lpdd python lpdd/cli.py digest \
   --date "$DATE_STR" \
   --top "$TOP_N" \
+  --lookback-days "$LOOKBACK_DAYS" \
   --out "DailyJSON/${DATE_STR}.json" \
   --write \
   --vault "$OBSIDIAN_VAULT_PATH" \
