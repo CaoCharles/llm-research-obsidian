@@ -40,7 +40,7 @@
                                     │ 3. 呼叫 Gemini API
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                    Vertex AI (Gemini 2.5 Flash)                         │
+│                    Vertex AI (Gemini 3.5 Flash)                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -95,6 +95,7 @@ backend/
 
 ```bash
 export GEMINI_API_KEY=your_api_key_here
+export GEMINI_MODEL=gemini-3.5-flash
 ```
 
 > 📌 **取得 API Key**：前往 [Google AI Studio](https://aistudio.google.com/) 建立。在 Cloud Run 生產環境建議改用 `GOOGLE_CLOUD_PROJECT` 與 Vertex AI IAM。
@@ -123,7 +124,7 @@ gcloud run deploy llm-research-chatbot \
   --source=. \
   --region=asia-east1 \
   --allow-unauthenticated \
-  --set-env-vars=GOOGLE_CLOUD_PROJECT=YOUR_PROJECT,GOOGLE_CLOUD_LOCATION=global
+  --set-env-vars=GOOGLE_CLOUD_PROJECT=YOUR_PROJECT,GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-3.5-flash
 ```
 
 Cloud Run 執行帳號需要 `roles/aiplatform.user`。前端的 `BACKEND_API_URL` 必須指向部署完成後的 Cloud Run URL。
