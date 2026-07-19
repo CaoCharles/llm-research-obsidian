@@ -17,6 +17,8 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = ROOT / "docs"
 SOURCE_DIRS = ["Daily", "Weekly", "Topics", "Papers"]
+HOME_GUIDE_SOURCE = Path("ppt/LLM_Evaluation_and_Safety_Guide.pdf")
+HOME_GUIDE_TARGET = Path("assets/guides/LLM_Evaluation_and_Safety_Guide.pdf")
 
 PDF_EMBED_RE = re.compile(r"!\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
 PDF_LINK_RE = re.compile(r"\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
@@ -97,6 +99,15 @@ def copy_markdown_tree(src: Path, dst: Path, pdf_index: dict[str, Path]) -> None
             target.write_text(content, encoding="utf-8")
         else:
             shutil.copy2(path, target)
+
+
+def copy_home_assets() -> None:
+    source = ROOT / HOME_GUIDE_SOURCE
+    if not source.exists():
+        return
+    target = DOCS_DIR / HOME_GUIDE_TARGET
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, target)
 
 
 def ensure_index() -> None:
@@ -373,6 +384,16 @@ def write_home_index() -> None:
 
 <p class="section-action"><a class="research-button research-button--secondary" href="Papers/">查看完整論文庫 →</a></p>
 
+## NotebookLM 評測與安全指南
+
+<div class="home-guide-panel" markdown>
+這份由 NotebookLM 協助整理的完整指南，涵蓋企業級 LLM 品質驗證、評測指標與安全防禦策略。
+
+[📥 下載完整評測與安全指南 (PDF)]({HOME_GUIDE_TARGET.as_posix()})
+
+![LLM Evaluation Guide]({HOME_GUIDE_TARGET.as_posix()}#navpanes=0&toolbar=0){{ type=application/pdf class="home-guide-embed" }}
+</div>
+
 !!! tip "詢問 AI 助教"
     點擊右下角聊天按鈕，可以詢問評測方法、RAG 工具、安全測試與論文重點。
 """
@@ -405,6 +426,7 @@ def write_section_index(section: str, title: str, limit: int | None = None, reve
 def main() -> None:
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     pdf_index = build_pdf_index(ROOT)
+    copy_home_assets()
 
     for name in SOURCE_DIRS:
         src = ROOT / name

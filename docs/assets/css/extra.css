@@ -519,3 +519,32 @@
         transition: none;
     }
 }
+
+.home-guide-panel {
+    margin-top: 1rem;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 1rem;
+    background: var(--md-code-bg-color);
+    box-shadow: 0 10px 30px rgba(30, 35, 45, 0.08);
+}
+
+.home-guide-panel .home-guide-embed,
+.home-guide-panel object,
+.home-guide-panel iframe {
+    display: block;
+    width: 100%;
+    min-height: min(70vh, 760px);
+    margin-top: 1rem;
+    border: 0;
+    border-radius: 0.75rem;
+    background: #fff;
+}
+
+@media screen and (max-width: 37.5em) {
+    .home-guide-panel .home-guide-embed,
+    .home-guide-panel object,
+    .home-guide-panel iframe {
+        min-height: 58vh;
+    }
+}
