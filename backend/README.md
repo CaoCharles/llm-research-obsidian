@@ -33,14 +33,14 @@
                                     │ 2. POST /api/chat
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                     Railway (後端 API 服務)                              │
-│  FastAPI (chat_server.py) + GEMINI_API_KEY                              │
+│                   Google Cloud Run (後端 API 服務)                     │
+│  FastAPI (chat_server.py) + Cloud Run service identity                  │
 └─────────────────────────────────────────────────────────────────────────┘
                                     │
                                     │ 3. 呼叫 Gemini API
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                   Google Cloud (Gemini 2.5 Flash)                       │
+│                    Vertex AI (Gemini 2.5 Flash)                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,7 +63,7 @@ backend/
 
 | 端點 | 方法 | 說明 |
 |------|------|------|
-| `/` | GET | 健康檢查，回傳 `{"status": "ok"}` |
+| `/` 、`/api/health` | GET | 健康檢查，回傳後端與模型狀態 |
 | `/api/chat` | POST | 處理聊天請求 |
 
 ### 請求格式
@@ -97,7 +97,7 @@ backend/
 export GEMINI_API_KEY=your_api_key_here
 ```
 
-> 📌 **取得 API Key**：前往 [Google AI Studio](https://aistudio.google.com/) 建立
+> 📌 **取得 API Key**：前往 [Google AI Studio](https://aistudio.google.com/) 建立。在 Cloud Run 生產環境建議改用 `GOOGLE_CLOUD_PROJECT` 與 Vertex AI IAM。
 
 ### 2. 啟動後端服務
 
@@ -110,36 +110,23 @@ uv run uvicorn chat_server:app --reload --port 8001
 ### 3. 測試 API
 
 ```bash
-curl http://localhost:8001/
+curl http://localhost:8001/api/health
 ```
 
 ---
 
-## ☁️ 部署到 Railway
+## ☁️ 部署到 Google Cloud Run
 
-### Step 1：建立 Railway 專案
+```bash
+gcloud services enable aiplatform.googleapis.com
+gcloud run deploy llm-research-chatbot \
+  --source=. \
+  --region=asia-east1 \
+  --allow-unauthenticated \
+  --set-env-vars=GOOGLE_CLOUD_PROJECT=YOUR_PROJECT,GOOGLE_CLOUD_LOCATION=global
+```
 
-1. 前往 [Railway.app](https://railway.app/)
-2. 點選 **New Project** → **Deploy from GitHub repo**
-3. 選擇 `llm-research-obsidian` Repository
-
-### Step 2：設定 Root Directory
-
-1. 進入專案 **Settings**
-2. 設定 **Root Directory**：`backend`
-
-### Step 3：設定環境變數
-
-在 **Variables** 標籤新增：
-
-| Variable | Value |
-|----------|-------|
-| `GEMINI_API_KEY` | 你的 Gemini API Key |
-
-### Step 4：取得公開網址
-
-1. 進入 **Settings** → **Networking**
-2. 點選 **Generate Domain**
+Cloud Run 執行帳號需要 `roles/aiplatform.user`。前端的 `BACKEND_API_URL` 必須指向部署完成後的 Cloud Run URL。
 
 ---
 
@@ -147,9 +134,9 @@ curl http://localhost:8001/
 
 | 問題 | 原因 | 解決 |
 |------|------|------|
-| Build Failed | 環境變數未設定 | 確認 `GEMINI_API_KEY` 已設定 |
+| Build Failed | 環境變數未設定 | 確認 `GEMINI_API_KEY` 或 `GOOGLE_CLOUD_PROJECT` 已設定 |
 | CORS Error | 前端網址未授權 | 修改 `allow_origins` 設定 |
-| 回應很慢 | 免費方案服務睡眠 | 首次請求需喚醒，屬正常現象 |
+| 回應很慢 | Cloud Run 冷啟動 | 首次請求可能需要數秒 |
 
 ---
 

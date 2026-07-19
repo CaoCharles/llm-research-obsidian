@@ -1,5 +1,5 @@
-// ====== AI 聊天機器人範本 ======
-// 版本：2.0 - 可複製到新專案使用
+// ====== AI 聊天機器人 ======
+// LLM 評測知識庫
 
 // ====== 全域狀態 ======
 let chatContainer, chatMessages, chatInput, sendChatBtn;
@@ -9,21 +9,18 @@ let allDocsContent = null;
 let isContentLoading = false;
 let chatHistory = [];
 
-// ====== 設定 (請修改這些值) ======
-// TODO: 修改為你的 Railway 後端 URL
-window.BACKEND_API_URL = window.BACKEND_API_URL || "https://YOUR-APP.up.railway.app";
+// ====== 設定 ======
+// 部署後由 Cloud Run URL 取代此值。
+window.BACKEND_API_URL = window.BACKEND_API_URL || "https://llm-research-chatbot-359359105644.asia-east1.run.app";
 
-// TODO: 修改為你的 GitHub Repo 名稱
 const isGitHubPages = window.location.hostname.includes('github.io');
 const repoName = '/llm-research-obsidian';
 const basePath = isGitHubPages ? repoName : '';
 window.ALL_CONTENT_URL = window.ALL_CONTENT_URL || `${basePath}/content.json`;
 
-// TODO: 修改歡迎訊息
-window.INITIAL_PROMPT = "嗨！我是 LLM 論文摘要助教 🤖\n\n我可以幫你查找與解釋這個知識庫的內容。\n\n試試問我：\n- 最近有哪些 RAG 評測論文？\n- 某篇論文的關鍵貢獻是什麼？";
+window.INITIAL_PROMPT = "👋 嗨！我是 LLM 評測助教\n\n可以問我關於：\n📊 評測指標與框架\n🔬 RAGAS、DeepEval 工具\n🛡️ 紅隊演練與安全測試\n📄 論文摘要與見解";
 
-// ====== 連結修正 (請修改 BASE_URL) ======
-// TODO: 修改為你的網站 URL
+// ====== 連結修正 ======
 const BASE_URL = "https://CaoCharles.github.io/llm-research-obsidian";
 
 function fixBrokenLinks(text) {
@@ -156,8 +153,7 @@ async function sendMessage() {
     chatInput.value = "";
     showTypingIndicator();
 
-    // TODO: 修改 System Instruction
-    const systemInstruction = `你是網站的 AI 助教。
+    const systemInstruction = `你是 LLM 評測知識庫的 AI 助教。
 
 ## 回答規則
 1. 使用繁體中文回答
@@ -181,13 +177,23 @@ ${allDocsContent || "文件載入中..."}`;
 
         removeTypingIndicator();
 
-        if (!response.ok) throw new Error("API request failed");
+        if (!response.ok) {
+            let detail = `API 回應 ${response.status}`;
+            try {
+                const errorBody = await response.json();
+                if (errorBody.detail) detail = errorBody.detail;
+            } catch (_) {
+                // Non-JSON errors keep the status-based message.
+            }
+            throw new Error(detail);
+        }
 
         const data = await response.json();
-        addMessage("bot", data.response);
+        if (!data.text) throw new Error("API 未回傳文字內容");
+        addMessage("bot", data.text);
     } catch (error) {
         removeTypingIndicator();
-        addMessage("bot", "⚠️ 發生錯誤，請稍後再試。");
+        addMessage("bot", `⚠️ 發生錯誤：${error.message}。請稍後再試。`);
         console.error("Chat error:", error);
     }
 }
