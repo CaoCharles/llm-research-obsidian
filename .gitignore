@@ -9,6 +9,7 @@ venv/
 # Environment
 .env
 .env.local
+gha-creds-*.json
 
 # IDE
 .idea/
@@ -26,6 +27,7 @@ PDFs/
 /docs/Daily/
 /docs/Papers/
 /docs/Topics/
+/docs/Weekly/
 
 # Obsidian
 .obsidian/

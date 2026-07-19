@@ -129,4 +129,5 @@ nav:
           - Jailbreaking: Security-RedTeam/defense-jailbreaking.md
           - PII 洩露防護: Security-RedTeam/defense-pii.md
       - 壓力測試: Security-RedTeam/stress-testing.md
+  - 論文週報: Weekly/index.md
   - 論文庫: Papers/index.md
