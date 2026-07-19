@@ -74,6 +74,21 @@ class AnalyzerTests(unittest.TestCase):
         self.assertEqual(request["response_format"]["type"], "json_schema")
         self.assertTrue(request["response_format"]["json_schema"]["strict"])
         self.assertEqual(request["reasoning_effort"], "low")
+        self.assertIn("arXiv 摘要", request["messages"][0]["content"])
+
+    def test_includes_full_pdf_text_when_available(self):
+        completions = FakeCompletions(json.dumps(valid_analysis(), ensure_ascii=False))
+        analyze_paper(
+            sample_paper(),
+            FakeClient(completions),
+            strict=True,
+            full_text="Methods: We evaluate three baselines and report exact results.",
+        )
+
+        prompt = completions.requests[0]["messages"][0]["content"]
+        self.assertIn("完整 PDF 文字", prompt)
+        self.assertIn("We evaluate three baselines", prompt)
+        self.assertIn("不得推測", prompt)
 
     def test_strict_mode_raises_instead_of_publishing_placeholder(self):
         completions = FakeCompletions('{"abstract_zh": "未完成"', finish_reason="length")

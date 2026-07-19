@@ -751,7 +751,25 @@
     background: #fff;
 }
 
+.paper-pdf-embed,
+.md-content object.paper-pdf-embed,
+.md-content iframe.paper-pdf-embed {
+    display: block;
+    width: 100%;
+    min-height: min(72vh, 820px);
+    margin: 1rem 0 1.6rem;
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 0.75rem;
+    background: #fff;
+}
+
 @media screen and (max-width: 37.5em) {
+    .paper-pdf-embed,
+    .md-content object.paper-pdf-embed,
+    .md-content iframe.paper-pdf-embed {
+        min-height: 56vh;
+    }
+
     .home-guide-panel .home-guide-embed,
     .home-guide-panel object,
     .home-guide-panel iframe {
