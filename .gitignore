@@ -28,6 +28,7 @@ PDFs/
 # Temp
 *.tmp
 *.log
+.cache/
 .deepeval/
 docs/Benchmark-Governance/data/results/embedding_cache*.json
 
