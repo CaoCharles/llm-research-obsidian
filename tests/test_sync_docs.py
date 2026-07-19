@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import sys
 import tempfile
 import unittest
@@ -40,12 +41,13 @@ class SyncDocsTests(unittest.TestCase):
             docs = root / "docs"
             (root / "Papers").mkdir()
             (root / "Daily").mkdir()
+            (root / "DailyJSON").mkdir()
             (root / "Topics").mkdir()
             (root / "ppt").mkdir()
             (root / "ppt" / "LLM_Evaluation_and_Safety_Guide.pdf").write_bytes(
                 b"%PDF-1.4 test guide"
             )
-            (root / "Papers" / "paper.md").write_text(
+            (root / "Papers" / "[2607.12345] A New Evaluation Benchmark.md").write_text(
                 """---
 arxiv_id: "2607.12345"
 title: "A New Evaluation Benchmark"
@@ -68,6 +70,26 @@ relevance: 5
                 "# 2026-07-19 論文摘要\n\n今日分析 **1** 篇 LLM 評測相關論文。\n",
                 encoding="utf-8",
             )
+            (root / "DailyJSON" / "2026-07-19.json").write_text(
+                json.dumps([{
+                    "paper": {
+                        "arxiv_id": "2607.12345",
+                        "title": "A New Evaluation Benchmark",
+                        "published": "2026-07-19T00:00:00+00:00",
+                        "arxiv_url": "https://arxiv.org/abs/2607.12345",
+                        "pdf_url": "https://arxiv.org/pdf/2607.12345",
+                    },
+                    "analysis": {
+                        "category": "benchmark",
+                        "relevance": 5,
+                        "tags": ["benchmark", "llm-as-judge"],
+                        "problem_statement": "這是一個適合快速閱讀的研究重點。",
+                        "abstract_zh": "這是完整的中文摘要。",
+                        "insights": ["這是一項重要洞察。"],
+                    },
+                }], ensure_ascii=False),
+                encoding="utf-8",
+            )
             (root / "Topics" / "benchmark.md").write_text(
                 "# benchmark\n", encoding="utf-8"
             )
@@ -80,6 +102,7 @@ relevance: 5
             home = (docs / "index.md").read_text(encoding="utf-8")
             papers = (docs / "Papers" / "index.md").read_text(encoding="utf-8")
             daily = (docs / "Daily" / "index.md").read_text(encoding="utf-8")
+            daily_detail = (docs / "Daily" / "2026-07-19.md").read_text(encoding="utf-8")
 
             self.assertIn("LLM 評測知識庫", home)
             self.assertIn("A New Evaluation Benchmark", home)
@@ -91,6 +114,12 @@ relevance: 5
             self.assertIn("這是用來驗證", papers)
             self.assertIn("2026-07-19", daily)
             self.assertIn("1 篇論文", daily)
+            self.assertIn('class="daily-paper-card"', daily_detail)
+            self.assertIn("這是一個適合快速閱讀的研究重點", daily_detail)
+            self.assertIn("展開完整中文摘要", daily_detail)
+            self.assertIn("閱讀完整分析", daily_detail)
+            self.assertNotIn("| 分類 | 論文 |", daily_detail)
+            self.assertNotIn("[[[", daily_detail)
             self.assertEqual(
                 (docs / "assets/guides/LLM_Evaluation_and_Safety_Guide.pdf").read_bytes(),
                 b"%PDF-1.4 test guide",

@@ -8,6 +8,7 @@ Sync Obsidian vault content into MkDocs docs/.
 from __future__ import annotations
 
 import html
+import json
 import re
 import shutil
 from os import path as osp
@@ -218,7 +219,9 @@ def daily_records() -> list[dict[str, object]]:
         if path.name == "index.md":
             continue
         text = path.read_text(encoding="utf-8")
-        count_match = re.search(r"今日分析\s+\*\*(\d+)\*\*", text)
+        count_match = re.search(r'data-paper-count="(\d+)"', text)
+        if not count_match:
+            count_match = re.search(r"今日分析\s+\*\*(\d+)\*\*", text)
         records.append({
             "date": path.stem,
             "title": extract_title(path),
@@ -226,6 +229,123 @@ def daily_records() -> list[dict[str, object]]:
             "url": f"{quote(path.stem, safe='')}/",
         })
     return sorted(records, key=lambda item: str(item["date"]), reverse=True)
+
+
+def _shorten(value: object, max_chars: int = 280) -> str:
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 1].rstrip("，。、；： ") + "…"
+
+
+def _paper_note_url(arxiv_id: str) -> str | None:
+    paper_dir = DOCS_DIR / "Papers"
+    # ``[]`` has special meaning in glob patterns, so compare the literal
+    # filename prefix instead of interpolating the arXiv ID into a glob.
+    matches = sorted(
+        path for path in paper_dir.glob("*.md")
+        if path.name.startswith(f"[{arxiv_id}]")
+    )
+    if not matches:
+        return None
+    return f"../../Papers/{quote(matches[0].stem, safe='')}/"
+
+
+def write_daily_detail_pages() -> None:
+    """Render structured DailyJSON data as mobile-friendly web digest cards."""
+    json_dir = ROOT / "DailyJSON"
+    daily_dir = DOCS_DIR / "Daily"
+    if not json_dir.exists() or not daily_dir.exists():
+        return
+
+    for json_path in sorted(json_dir.glob("????-??-??.json")):
+        output_path = daily_dir / f"{json_path.stem}.md"
+        if not output_path.exists():
+            continue
+        try:
+            records = json.loads(json_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        if not isinstance(records, list) or not records:
+            continue
+
+        cards: list[str] = []
+        for item in records:
+            if not isinstance(item, dict):
+                continue
+            paper = item.get("paper") or {}
+            analysis = item.get("analysis") or {}
+            if not isinstance(paper, dict) or not isinstance(analysis, dict):
+                continue
+
+            arxiv_id = str(paper.get("arxiv_id") or "")
+            title = html.escape(str(paper.get("title") or arxiv_id or "未命名論文"))
+            category = html.escape(str(analysis.get("category") or "uncategorized"))
+            relevance = max(0, min(5, int(analysis.get("relevance") or 0)))
+            stars = "★" * relevance + "☆" * (5 - relevance)
+            tags = [str(tag) for tag in analysis.get("tags") or []]
+            insights = [str(value) for value in analysis.get("insights") or []]
+            contributions = [str(value) for value in analysis.get("core_contributions") or []]
+            published = str(paper.get("published") or "")[:10]
+            note_url = _paper_note_url(arxiv_id)
+
+            insight_items = "".join(
+                f"<li>{html.escape(_shorten(value, 220))}</li>"
+                for value in (insights or contributions)[:3]
+            )
+            note_action = (
+                f'<a class="daily-action daily-action--primary" href="{note_url}">閱讀完整分析</a>'
+                if note_url else ""
+            )
+            arxiv_url = html.escape(str(paper.get("arxiv_url") or ""), quote=True)
+            pdf_url = html.escape(str(paper.get("pdf_url") or ""), quote=True)
+            external_actions = "".join([
+                f'<a class="daily-action" href="{arxiv_url}" target="_blank" rel="noopener">arXiv 摘要 ↗</a>' if arxiv_url else "",
+                f'<a class="daily-action" href="{pdf_url}" target="_blank" rel="noopener">開啟 PDF ↗</a>' if pdf_url else "",
+            ])
+
+            cards.append(f"""
+<article class="daily-paper-card">
+  <div class="daily-paper-card__meta">
+    <span class="research-category">{category}</span>
+    <span>arXiv {html.escape(arxiv_id)}</span>
+    {f'<span>{html.escape(published)}</span>' if published else ''}
+    <span class="daily-paper-card__rating" aria-label="相關度 {relevance} 顆星">{stars}</span>
+  </div>
+  <h2>{title}</h2>
+  <div class="daily-paper-card__tags">{_tag_badges(tags)}</div>
+  <section class="daily-takeaway" aria-label="研究重點">
+    <span>研究重點</span>
+    <p>{html.escape(_shorten(analysis.get('problem_statement') or analysis.get('abstract_zh'), 330))}</p>
+  </section>
+  {f'<h3>值得注意的洞察</h3><ul class="daily-insights">{insight_items}</ul>' if insight_items else ''}
+  <details class="daily-abstract">
+    <summary>展開完整中文摘要</summary>
+    <p>{html.escape(str(analysis.get('abstract_zh') or '尚無中文摘要。'))}</p>
+  </details>
+  <div class="daily-paper-card__actions">{note_action}{external_actions}</div>
+</article>""".strip())
+
+        if not cards:
+            continue
+        count = len(cards)
+        content = f"""# {json_path.stem} 每日論文摘要
+
+<div class="daily-detail-hero" data-paper-count="{count}">
+  <span class="daily-detail-hero__eyebrow">DAILY RESEARCH DIGEST</span>
+  <div><strong>{count}</strong><span>篇精選論文</span></div>
+  <p>今日分析 <strong>{count}</strong> 篇 LLM 評測相關論文。先讀研究重點與洞察，需要細節時再展開完整摘要。</p>
+</div>
+
+## 今日精選
+
+<div class="daily-paper-list">
+{chr(10).join(cards)}
+</div>
+
+<p class="daily-generated-note">由 LLM Paper Daily Digest 自動整理；重要研究結論請以原始論文為準。</p>
+"""
+        output_path.write_text(content, encoding="utf-8")
 
 
 def _tag_badges(tags: list[str]) -> str:
@@ -435,6 +555,7 @@ def main() -> None:
         dst = DOCS_DIR / name
         copy_markdown_tree(src, dst, pdf_index)
 
+    write_daily_detail_pages()
     write_daily_index()
     write_section_index("Weekly", "Weekly", reverse=True)
     write_section_index("Topics", "Topics")
