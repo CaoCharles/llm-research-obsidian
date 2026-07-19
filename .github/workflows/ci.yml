@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.3.2
+
+      - name: Run unit tests
+        run: |
+          uv sync --project lpdd --locked
+          uv run --project lpdd python -m unittest discover -s tests -v
+
+      - name: Build MkDocs site
+        env:
+          UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/llm-paper-obsidian-mkdocs-venv
+        run: |
+          python scripts/sync_docs.py
+          uv sync --project .agent/skills/mkdocs-setup/assets --locked --no-install-project
+          uv run --project .agent/skills/mkdocs-setup/assets --no-sync mkdocs build --clean

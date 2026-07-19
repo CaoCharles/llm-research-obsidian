@@ -22,12 +22,18 @@ Thumbs.db
 # PDFs (large files)
 PDFs/
 
+# Generated MkDocs content (source of truth is the Obsidian folders)
+/docs/Daily/
+/docs/Papers/
+/docs/Topics/
+
 # Obsidian
 .obsidian/
 
 # Temp
 *.tmp
 *.log
+.cache/
 .deepeval/
 docs/Benchmark-Governance/data/results/embedding_cache*.json
 

@@ -1,0 +1,118 @@
+---
+name: paper-digest
+description: 執行完整的每日論文摘要流程
+argument-hint: "[date] [top_n]"
+---
+
+# /paper-digest - 每日論文摘要
+
+執行完整的每日論文摘要流程：抓取 → 篩選 → 分析 → 寫入 Obsidian。
+
+## 參數
+
+- `$ARGUMENTS[0]` - 日期（可選，預設今天，格式：YYYY-MM-DD 或 "today"）
+- `$ARGUMENTS[1]` - Top N（可選，預設 5）
+
+## 範例
+
+```
+/paper-digest              # 處理今天的論文，取 Top 5
+/paper-digest 2025-02-03   # 處理指定日期
+/paper-digest today 10     # 處理今天，取 Top 10
+```
+
+## 執行步驟
+
+### Step 1: 抓取並篩選論文
+
+**優先嘗試 CLI**：
+
+```bash
+cd lpdd && uv run python cli.py list --top {top_n} [--date {date}]
+```
+
+**若 CLI 因 proxy/網路問題失敗，改用 WebSearch 備援**：
+
+使用 WebSearch 工具搜尋當日論文：
+- 搜尋 `arxiv {date_month} LLM evaluation safety alignment jailbreak benchmark site:arxiv.org`
+- 進行多組關鍵字搜尋以覆蓋不同研究領域
+- 從搜尋結果中篩選最相關的 top N 篇論文
+- 檢查 Papers/ 目錄避免重複分析
+
+顯示進度：「正在抓取 {date} 的論文...」
+
+### Step 2: 逐篇分析論文（Codex 生成 JSON）
+
+對於篩選出的每篇論文，使用 Codex 生成分析 JSON。
+
+對每篇論文生成以下結構化內容（使用繁體中文），並寫入 `/tmp/paper_<arxiv_id>.json`：
+
+```json
+{
+  "paper": {
+    "arxiv_id": "論文 ID",
+    "title": "論文標題",
+    "abstract": "原文摘要",
+    "authors": ["作者列表"],
+    "categories": ["分類"],
+    "published": "發布日期",
+    "pdf_url": "PDF 連結"
+  },
+  "analysis": {
+    "abstract_zh": "摘要的完整中文翻譯（保留技術術語英文，約200-300字）",
+    "problem_statement": "論文解決什麼問題？現有方法有什麼不足？（100-150字）",
+    "proposed_solution": "作者提出什麼解決方案或框架？核心創新點是什麼？（150-200字）",
+    "core_contributions": ["核心貢獻1", "核心貢獻2", "核心貢獻3"],
+    "methodology": "技術方法詳細說明（300-400字）",
+    "key_results": "關鍵實驗結果，使用 Markdown 表格呈現",
+    "insights": ["啟發1", "啟發2", "啟發3"],
+    "limitations": "論文的限制（80-100字）",
+    "tags": ["tag1", "tag2"],
+    "relevance": 4,
+    "related_topics": ["topic1", "topic2"],
+    "category": "主分類"
+  }
+}
+```
+
+**可用的 tags**:
+llm-as-judge, rag-evaluation, red-teaming, prompt-injection, faithfulness, hallucination, benchmark, safety, alignment, agent-evaluation
+
+**relevance 評分（1-5）**:
+- 5 = 突破性研究
+- 4 = 有實用價值
+- 3 = 可參考
+- 2 = 間接相關
+- 1 = 相關性低
+
+顯示進度：「[{i}/{total}] 分析中: {title}...」
+
+### Step 3: 寫入 Obsidian（自動）
+
+用整合腳本將 `/tmp` 內的 JSON 寫入 Obsidian，並同時生成每日摘要：
+
+```bash
+python3 scripts/ingest_claude_json.py --dir /tmp --date {date}
+```
+
+### Step 5: 回報結果
+
+顯示總結：
+- 處理日期
+- 處理論文數量
+- 各論文標題和相關度
+- Obsidian 檔案路徑
+
+## 輸出格式
+
+終端輸出：顯示處理進度
+Obsidian 寫入：
+- Papers/[{arxiv_id}] {title}.md（每篇論文）
+- Daily/{date}.md（每日摘要）
+- 更新相關主題頁面（AI-Agent/, Safety-Alignment/, Hallucination/, RAG/, Benchmark/, Multimodal/）
+
+## 注意事項
+
+- 分析過程會消耗一些時間，請耐心等待
+- 確保 OBSIDIAN_VAULT_PATH 環境變數已設定
+- 論文 PDF 會自動下載到 PDFs/ 目錄

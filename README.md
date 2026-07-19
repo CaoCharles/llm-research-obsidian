@@ -61,15 +61,15 @@ graph TD
 
 ## 常用指令
 
-### 每天 08:00 自動化
+### 每天 08:17 自動化
 
-GitHub Actions 會在每天 **08:00（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
+GitHub Actions 會在每天 **08:17（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
 
-1. 從 arXiv 抓取並篩選 Top 10 論文（週末/假日會向前回溯 7 天，避免產生空摘要）
+1. 以單一 arXiv 查詢抓取近 7 天候選論文，處理週末/假日並避免重複請求
 2. 使用 OpenAI 生成繁體中文結構化摘要與 `DailyJSON/YYYY-MM-DD.json`
-3. 寫入 Obsidian 的 `Papers/`、`Topics/`、`Daily/` 與 `PDFs/`
-4. 同步到 `docs/`，驗證 MkDocs 完整 build（保留 Obsidian wikilink 警告，不中斷每日流程）
-5. 自動 commit 並 push 回目前分支
+3. 寫入 Obsidian 的 `Papers/`、`Topics/` 與 `Daily/`，保留 arXiv PDF 連結但不下載 PDF
+4. 建置時將內容產生到 `docs/`，驗證 MkDocs 完整 build
+5. 推送至 `automation/paper-digest` 並建立或更新 Pull Request，不直接修改 `main`
 
 Repository 必須設定 Actions secret：`OPENAI_API_KEY`。工作流程也可從 Actions 頁面手動執行。
 
@@ -100,10 +100,10 @@ uv run --project .agent/skills/mkdocs-setup/assets mkdocs serve
 ```
 llm-paper-obsidian/
 ├── Daily/
-├── PDFs/
+├── PDFs/            # 僅本機可選快取，不進 Git
 ├── Papers/
 ├── Topics/
-├── docs/              # 由 sync_docs.py 生成
+├── docs/              # 網站手寫內容；Daily/Papers/Topics 建置時生成
 ├── lpdd/              # 抓取/篩選/寫入程式
 ├── scripts/           # sync_docs / ingest_json
 ├── .claude/skills/    # Claude Code 指令 skills
