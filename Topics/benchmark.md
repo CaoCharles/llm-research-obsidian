@@ -8,8 +8,6 @@
 
 - `[benchmark]` [[[2602.03794] Understanding Agent Scaling in LLM-Based Multi-Agent Systems via Diversity|Understanding Agent Scaling in LLM-Based Multi-Age...]] (2026-02-03)
 
-- `[benchmark]` [[[2602.03828] AutoFigure - Generating and Refining Publication-Ready Scientific Illustrations|AutoFigure: Generating and Refining Publication-Re...]] (2026-02-03)
-
 - `[benchmark]` [[[2602.03822] They Said Memes Were Harmless-We Found the Ones That Hurt - Decoding Jokes, Symb...|They Said Memes Were Harmless-We Found the Ones Th...]] (2026-02-03)
 
 - `[benchmark]` [[[2602.03792] WebSentinel - Detecting and Localizing Prompt Injection Attacks for Web Agents|WebSentinel: Detecting and Localizing Prompt Injec...]] (2026-02-03)

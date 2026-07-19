@@ -17,6 +17,15 @@ ALLOWED_TAGS = [
     "agent-evaluation",
 ]
 
+MAIN_CATEGORIES = [
+    "Benchmark",
+    "RAG Evaluation",
+    "Safety & Alignment",
+    "Agent Evaluation",
+    "Hallucination & Faithfulness",
+    "Multimodal Evaluation",
+]
+
 ANALYSIS_JSON_SCHEMA = {
     "name": "paper_analysis",
     "strict": True,
@@ -47,7 +56,7 @@ ANALYSIS_JSON_SCHEMA = {
             "related_topics": {
                 "type": "array", "items": {"type": "string"}, "minItems": 1,
             },
-            "category": {"type": "string", "enum": ALLOWED_TAGS},
+            "category": {"type": "string", "enum": MAIN_CATEGORIES},
         },
         "required": [
             "abstract_zh", "problem_statement", "proposed_solution",
@@ -101,7 +110,7 @@ ANALYSIS_PROMPT = """你是 LLM 評測專家。請根據提供的論文證據詳
     "tags": ["tag1", "tag2", "tag3"],
     "relevance": 4,
     "related_topics": ["topic1", "topic2"],
-    "category": "最主要的分類標籤"
+    "category": "六個核心主分類之一"
 }}
 
 可用的 tags（請選擇 2-3 個）: 
@@ -110,6 +119,10 @@ faithfulness, hallucination, benchmark, safety, alignment, agent-evaluation
 
 relevance 評分（1-5）：
 5=突破性研究, 4=有實用價值, 3=可參考, 2=間接相關, 1=相關性低
+
+category 只能選擇一個核心主分類：
+Benchmark, RAG Evaluation, Safety & Alignment, Agent Evaluation,
+Hallucination & Faithfulness, Multimodal Evaluation
 
 重要：直接輸出 JSON 物件，開頭必須是 {{ ，結尾必須是 }}。"""
 
@@ -221,7 +234,7 @@ def analyze_paper(
             tags=guess_tags_from_abstract(paper.abstract),
             relevance=3,
             related_topics=["benchmark"],
-            category="benchmark",
+            category="Benchmark",
         )
     paper_content = full_text.strip() or paper.abstract
     source_scope = "完整 PDF 文字" if full_text.strip() else "arXiv 摘要（PDF 取文失敗或未啟用）"
@@ -292,7 +305,7 @@ def analyze_paper(
         tags=guess_tags_from_abstract(paper.abstract),
         relevance=3,
         related_topics=["benchmark"],
-        category="benchmark",
+        category="Benchmark",
     )
 
 
