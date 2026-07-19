@@ -31,6 +31,7 @@ uv run --project lpdd python lpdd/cli.py digest \
   --out "DailyJSON/${DATE_STR}.json" \
   --write \
   --vault "$OBSIDIAN_VAULT_PATH" \
+  --no-download-pdfs \
   --require-api-key
 
 python3 scripts/sync_docs.py
@@ -43,15 +44,3 @@ uv sync --project .agent/skills/mkdocs-setup/assets --locked --no-install-projec
 # warnings. Build the complete site, but do not turn those content warnings
 # into a failed daily ingestion run.
 uv run --project .agent/skills/mkdocs-setup/assets --no-sync mkdocs build --clean
-
-git add -- Daily DailyJSON Papers Topics docs
-if [[ -d PDFs ]]; then
-  git add -- PDFs
-fi
-if git diff --cached --quiet; then
-  echo "No digest changes to commit."
-  exit 0
-fi
-
-git commit -m "daily digest ${DATE_STR}"
-git push

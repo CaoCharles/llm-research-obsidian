@@ -2,8 +2,7 @@
 """
 Sync Obsidian vault content into MkDocs docs/.
 
-- Copies Daily/ Topics/ Papers/ PDFs/ into docs/ preserving structure.
-- Copies MkDocs theme/chatbot assets into docs/assets.
+- Copies Daily/ Topics/ Papers/ into docs/ preserving structure.
 - Converts Obsidian PDF embeds to mkdocs-pdf embeds.
 """
 from __future__ import annotations
@@ -15,16 +14,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS_DIR = ROOT / "docs"
-SOURCE_DIRS = ["Daily", "Topics", "Papers", "PDFs"]
-
-ASSET_SOURCES = [
-    (ROOT / ".agent/skills/mkdocs-setup/assets/extra.css", DOCS_DIR / "assets/css/extra.css"),
-    (ROOT / ".agent/skills/chatbot-setup/assets/chatbot.css", DOCS_DIR / "assets/css/chatbot.css"),
-    (ROOT / ".agent/skills/chatbot-setup/assets/chatbot.js", DOCS_DIR / "assets/js/chatbot.js"),
-]
+SOURCE_DIRS = ["Daily", "Topics", "Papers"]
 
 PDF_EMBED_RE = re.compile(r"!\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
 PDF_LINK_RE = re.compile(r"\[\[([^\]]+?\.pdf)(#[^\]]+)?\]\]")
+LOCAL_ARXIV_PDF_RE = re.compile(
+    r"\.\./PDFs/(\d{4}\.\d{4,5})(?:v\d+)?\.pdf(?:#[^)\s]+)?"
+)
+
+
+def arxiv_pdf_url(filename: str) -> str | None:
+    match = re.fullmatch(r"(\d{4}\.\d{4,5})(?:v\d+)?\.pdf", Path(filename).name)
+    if not match:
+        return None
+    return f"https://arxiv.org/pdf/{match.group(1)}"
 
 
 def build_pdf_index(root: Path) -> dict[str, Path]:
@@ -40,6 +43,9 @@ def build_pdf_index(root: Path) -> dict[str, Path]:
 def replace_pdf_embeds(text: str, doc_path: Path, pdf_index: dict[str, Path]) -> str:
     def _embed_repl(match: re.Match) -> str:
         filename = match.group(1)
+        remote_url = arxiv_pdf_url(filename)
+        if remote_url:
+            return f"[開啟 arXiv PDF]({remote_url})"
         pdf_src = pdf_index.get(filename)
         if not pdf_src:
             return f"(PDF 未找到: {filename})"
@@ -52,6 +58,9 @@ def replace_pdf_embeds(text: str, doc_path: Path, pdf_index: dict[str, Path]) ->
 
     def _link_repl(match: re.Match) -> str:
         filename = match.group(1)
+        remote_url = arxiv_pdf_url(filename)
+        if remote_url:
+            return f"[PDF]({remote_url})"
         pdf_src = pdf_index.get(filename)
         if not pdf_src:
             return f"(PDF 未找到: {filename})"
@@ -61,6 +70,10 @@ def replace_pdf_embeds(text: str, doc_path: Path, pdf_index: dict[str, Path]) ->
 
     text = PDF_EMBED_RE.sub(_embed_repl, text)
     text = PDF_LINK_RE.sub(_link_repl, text)
+    text = LOCAL_ARXIV_PDF_RE.sub(
+        lambda match: f"https://arxiv.org/pdf/{match.group(1)}",
+        text,
+    )
     return text
 
 
@@ -93,26 +106,6 @@ def ensure_index() -> None:
         "這是一個每日自動抓取 arXiv LLM 論文、生成結構化摘要並同步到 Obsidian 的知識庫。\n",
         encoding="utf-8",
     )
-
-
-def copy_assets() -> None:
-    for src, dst in ASSET_SOURCES:
-        if not src.exists():
-            continue
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dst)
-
-
-def copy_index_template() -> None:
-    src = ROOT / ".agent/skills/mkdocs-setup/assets/index.md"
-    dst = DOCS_DIR / "index.md"
-    if not src.exists():
-        return
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    content = src.read_text(encoding="utf-8")
-    content = content.replace("我的課程網站", "LLM Paper Daily Digest")
-    content = content.replace("課程", "論文")
-    dst.write_text(content, encoding="utf-8")
 
 
 def extract_title(path: Path) -> str:
@@ -159,8 +152,6 @@ def main() -> None:
         dst = DOCS_DIR / name
         copy_markdown_tree(src, dst, pdf_index)
 
-    copy_assets()
-    copy_index_template()
     write_section_index("Daily", "Daily", reverse=True)
     write_section_index("Topics", "Topics")
     write_section_index("Papers", "Papers", reverse=True)

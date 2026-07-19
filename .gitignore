@@ -22,6 +22,11 @@ Thumbs.db
 # PDFs (large files)
 PDFs/
 
+# Generated MkDocs content (source of truth is the Obsidian folders)
+/docs/Daily/
+/docs/Papers/
+/docs/Topics/
+
 # Obsidian
 .obsidian/
 

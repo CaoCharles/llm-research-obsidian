@@ -15,7 +15,12 @@ import yaml
 from dotenv import load_dotenv
 
 from models import Paper, AnalysisResult
-from fetcher import fetch_papers, fetch_papers_by_date, fetch_paper_by_id
+from fetcher import (
+    fetch_paper_by_id,
+    fetch_papers,
+    fetch_papers_by_date,
+    fetch_papers_by_date_range,
+)
 from filter import calculate_score, load_keywords, get_top_papers, filter_papers, search_by_keyword
 from analyzer import analyze_papers
 from writer import write_from_json, write_daily_from_json
@@ -408,24 +413,32 @@ def _fetch_digest_candidates(
     calendar date as a successful digest.
     """
     target = datetime.strptime(date, "%Y-%m-%d")
+    window_days = max(lookback_days, 1)
+    start_date = (target - timedelta(days=window_days - 1)).strftime("%Y-%m-%d")
+    fetched = fetch_papers_by_date_range(
+        categories=categories,
+        start_date=start_date,
+        end_date=date,
+        max_results=max_results,
+    )
     papers_by_id: dict[str, Paper] = {}
-    source_dates: list[str] = []
+    dates_with_papers: set[str] = set()
+    local_tz = datetime.now().astimezone().tzinfo or timezone.utc
+    for paper in fetched:
+        papers_by_id.setdefault(paper.arxiv_id, paper)
+        dates_with_papers.add(paper.published.astimezone(local_tz).strftime("%Y-%m-%d"))
 
-    for offset in range(max(lookback_days, 1)):
-        source_date = (target - timedelta(days=offset)).strftime("%Y-%m-%d")
-        fetched = fetch_papers_by_date(
-            categories=categories,
-            date=source_date,
-            max_results=max_results,
-        )
-        if fetched:
-            source_dates.append(source_date)
-        for paper in fetched:
-            papers_by_id.setdefault(paper.arxiv_id, paper)
-        if target_count and len(papers_by_id) >= target_count:
-            break
+    source_dates = [
+        (target - timedelta(days=offset)).strftime("%Y-%m-%d")
+        for offset in range(window_days)
+        if (target - timedelta(days=offset)).strftime("%Y-%m-%d") in dates_with_papers
+    ]
 
-    return list(papers_by_id.values()), source_dates
+    papers = list(papers_by_id.values())
+    if target_count:
+        papers = papers[:target_count]
+
+    return papers, source_dates
 
 
 def cmd_digest(args) -> None:
