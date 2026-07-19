@@ -6,6 +6,8 @@ let chatContainer, chatMessages, chatInput, sendChatBtn;
 let openChatBtn, closeChatBtn, toggleFullscreenBtn, clearHistoryBtn;
 
 let chatHistory = [];
+let isSending = false;
+let isComposing = false;
 
 // ====== 設定 ======
 // 部署後由 Cloud Run URL 取代此值。
@@ -119,12 +121,23 @@ function appendSources(text, sources) {
 }
 
 // ====== 發送訊息 ======
+function updateSendButtonState() {
+    if (!sendChatBtn || !chatInput) return;
+    const hasMessage = chatInput.value.trim().length > 0;
+    sendChatBtn.disabled = isSending || !hasMessage;
+    sendChatBtn.setAttribute("aria-busy", String(isSending));
+    sendChatBtn.title = isSending ? "回答產生中" : "送出問題";
+}
+
 async function sendMessage() {
+    if (!chatInput || isSending || isComposing) return;
     const userMessage = chatInput.value.trim();
     if (!userMessage) return;
 
+    isSending = true;
     addMessage("user", userMessage);
     chatInput.value = "";
+    updateSendButtonState();
     showTypingIndicator();
 
     try {
@@ -157,6 +170,10 @@ async function sendMessage() {
         removeTypingIndicator();
         addMessage("bot", `⚠️ 發生錯誤：${error.message}。請稍後再試。`);
         console.error("Chat error:", error);
+    } finally {
+        isSending = false;
+        updateSendButtonState();
+        chatInput.focus();
     }
 }
 
@@ -165,10 +182,11 @@ function injectChatbotHTML() {
     if (document.getElementById('gemini-chatbot')) return;
 
     const chatbotHTML = `
-    <button id="open-chat">
+    <button id="open-chat" type="button" aria-label="開啟 AI 助教" title="開啟 AI 助教">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
         <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
       </svg>
+      <span class="open-chat-label">問 AI 助教</span>
     </button>
     <div id="gemini-chatbot">
       <div id="chat-header">
@@ -192,14 +210,14 @@ function injectChatbotHTML() {
         </div>
       </div>
       <div id="chat-messages"></div>
-      <div id="chat-input-container">
-        <input type="text" id="chat-input" placeholder="輸入問題..." autocomplete="off">
-        <button id="send-chat">
+      <form id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="輸入問題..." autocomplete="off" aria-label="輸入問題" enterkeyhint="send">
+        <button id="send-chat" type="submit" aria-label="送出問題" title="送出問題" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
             <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
           </svg>
         </button>
-      </div>
+      </form>
     </div>
   `;
     document.body.insertAdjacentHTML('beforeend', chatbotHTML);
@@ -219,6 +237,8 @@ function initChatbot() {
     clearHistoryBtn = document.getElementById("clear-history-btn");
 
     if (!chatContainer || !openChatBtn) return;
+    if (chatContainer.dataset.initialized === "true") return;
+    chatContainer.dataset.initialized = "true";
 
     openChatBtn.addEventListener("click", () => {
         chatContainer.style.display = "flex";
@@ -233,12 +253,14 @@ function initChatbot() {
         if (!savedHistory && window.INITIAL_PROMPT) {
             addMessage("bot", window.INITIAL_PROMPT);
         }
+
+        chatInput?.focus();
     });
 
     if (closeChatBtn) {
         closeChatBtn.addEventListener("click", () => {
             chatContainer.style.display = "none";
-            openChatBtn.style.display = "block";
+            openChatBtn.style.display = "flex";
         });
     }
 
@@ -252,20 +274,34 @@ function initChatbot() {
         clearHistoryBtn.addEventListener("click", clearHistory);
     }
 
-    if (sendChatBtn) {
-        sendChatBtn.addEventListener("click", sendMessage);
+    const chatForm = document.getElementById("chat-input-container");
+    if (chatForm) {
+        chatForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!isComposing) sendMessage();
+        });
     }
 
     if (chatInput) {
+        chatInput.addEventListener("compositionstart", () => {
+            isComposing = true;
+        });
+        chatInput.addEventListener("compositionend", () => {
+            isComposing = false;
+            updateSendButtonState();
+        });
+        chatInput.addEventListener("input", updateSendButtonState);
         chatInput.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
+                if (e.isComposing || isComposing || e.keyCode === 229) return;
                 e.preventDefault();
                 sendMessage();
             }
         });
     }
 
-    if (openChatBtn) openChatBtn.style.display = 'block';
+    updateSendButtonState();
+    if (openChatBtn) openChatBtn.style.display = 'flex';
 }
 
 // ====== 啟動 ======
