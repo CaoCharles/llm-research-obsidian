@@ -16,7 +16,7 @@ def test_health_reports_configured_backend():
 
     assert response.status_code == 200
     assert response.json()["backend"] == "vertex-ai"
-    assert response.json()["model"] == "gemini-2.5-flash"
+    assert response.json()["model"] == "gemini-3.5-flash"
 
 
 def test_chat_returns_frontend_contract():
@@ -37,7 +37,7 @@ def test_chat_returns_frontend_contract():
     assert response.status_code == 200
     assert response.json() == {"text": "Gemini API 測試成功"}
     call = fake_client.models.generate_content.call_args
-    assert call.kwargs["model"] == "gemini-2.5-flash"
+    assert call.kwargs["model"] == "gemini-3.5-flash"
 
 
 def test_chat_rejects_invalid_role():

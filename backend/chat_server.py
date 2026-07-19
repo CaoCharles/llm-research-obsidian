@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 load_dotenv()
 
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
 MAX_SYSTEM_INSTRUCTION_CHARS = int(
     os.getenv("MAX_SYSTEM_INSTRUCTION_CHARS", "120000")
 )

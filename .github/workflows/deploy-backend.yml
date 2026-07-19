@@ -56,7 +56,7 @@ jobs:
             --region "$REGION" \
             --image "$IMAGE" \
             --allow-unauthenticated \
-            --set-env-vars "GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-2.5-flash" \
+            --set-env-vars "GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-3.5-flash" \
             --memory 512Mi \
             --cpu 1 \
             --max-instances 3 \
@@ -72,3 +72,8 @@ jobs:
           curl --fail --show-error --silent \
             --retry 5 --retry-all-errors --retry-delay 3 \
             "$service_url/api/health"
+          curl --fail --show-error --silent \
+            --retry 3 --retry-all-errors --retry-delay 3 \
+            --header "Content-Type: application/json" \
+            --data '{"message":"Reply with exactly: Gemini Flash ready"}' \
+            "$service_url/api/chat"
