@@ -2,8 +2,8 @@ name: Daily paper digest
 
 on:
   schedule:
-    # GitHub Actions cron uses UTC: 00:17 UTC = 08:17 Asia/Taipei.
-    - cron: "17 0 * * *"
+    # GitHub Actions cron uses UTC: 00:00 UTC = 08:00 Asia/Taipei.
+    - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       date:

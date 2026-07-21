@@ -61,9 +61,9 @@ graph TD
 
 ## 常用指令
 
-### 每天 08:17 自動化
+### 每天 08:00 自動化
 
-GitHub Actions 會在每天 **08:17（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
+GitHub Actions 會在每天 **08:00（Asia/Taipei）** 執行 `.github/workflows/daily.yml`：
 
 1. 以單一 arXiv 查詢抓取近 7 天候選論文，處理週末/假日並避免重複請求
 2. 使用 OpenAI 生成繁體中文結構化摘要與 `DailyJSON/YYYY-MM-DD.json`
@@ -103,7 +103,7 @@ GOOGLE_CLOUD_PROJECT=ai-asst-km-prod bash scripts/test_gemini_notebook.sh
 
 | Workflow | 排程（Asia/Taipei） | 輸出 |
 |---|---|---|
-| Daily paper digest | 每日 08:17 | `automation/paper-digest` PR |
+| Daily paper digest | 每日 08:00 | `automation/paper-digest` PR |
 | Weekly paper digest | 每週一 08:37 | `Weekly/` 週報 PR（空週自動跳過） |
 | Deploy documentation | `main` 更新後 | GitHub Pages |
 | Deploy Gemini backend | `backend/` 合併至 `main` 後 | Cloud Run |

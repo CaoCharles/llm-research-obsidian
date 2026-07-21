@@ -3,6 +3,7 @@ Obsidian 寫入模組（含 PDF 下載）
 """
 import json
 import os
+import re
 import requests
 from pathlib import Path
 from datetime import datetime, timezone
@@ -22,6 +23,12 @@ def get_template_env(templates_dir: str = "templates") -> Environment:
 def ensure_dir(path: Path) -> None:
     """確保目錄存在"""
     path.mkdir(parents=True, exist_ok=True)
+
+
+def safe_topic_name(topic: str) -> str:
+    """Return a single, portable filename component for an AI-generated topic."""
+    name = re.sub(r'[\\/:*?"<>|]+', "-", str(topic)).strip(" .-")
+    return name or "未分類"
 
 
 def download_pdf(paper: Paper, vault_path: Path, verbose: bool = True) -> str | None:
@@ -122,7 +129,7 @@ def write_paper_note(
         "key_results": analysis.key_results,
         "insights": analysis.insights,
         "limitations": analysis.limitations,
-        "related_topics": analysis.related_topics,
+        "related_topics": [safe_topic_name(topic) for topic in analysis.related_topics],
         "local_pdf": pdf_path is not None,
         "pdf_embed": bool(paper.pdf_url),
         "pdf_embed_url": (
@@ -201,6 +208,7 @@ def update_topic_page(
     topics_dir = vault_path / "Topics"
     ensure_dir(topics_dir)
     
+    topic = safe_topic_name(topic)
     topic_file = topics_dir / f"{topic}.md"
     
     # 新論文連結（含分類標籤和標題）
