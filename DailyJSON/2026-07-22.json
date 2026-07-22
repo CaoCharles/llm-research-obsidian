@@ -1,0 +1,539 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2607.19297",
+      "title": "Graph-Based Agentic AI with LangGraph: Workflow Pathways for Long-Running Stateful Business Processes",
+      "abstract": "This paper is a practitioner guide to graph-based workflow pathways for long-running, stateful, multi-step generative AI systems in business processes. Rather than treating LangGraph, a low-level orchestration framework for stateful agents, as a model-quality benchmark target, we present three executable recipes -- SQL analytics with repair loops, agentic retrieval-augmented generation with evidence gating, and human-in-the-loop policy review with interrupt and checkpoint recovery -- to show how typed state, conditional routing, deterministic tools, retries, interrupts, checkpoints, and traces fit together. LangGraph is positioned by workflow-complexity fit, not as a universal default: simpler ReAct-style or plain SDK loops may be better for basic tool use, schema-first tools for structured extraction and validation, and DSPy when prompt or program optimization is the main goal. Each recipe explains when LangGraph is worth the extra structure and which implementation patterns make routes, pauses, and audit trails explicit product behavior rather than hidden prompt logic.",
+      "authors": [
+        "Daniel Pearson",
+        "Sidney Shapiro",
+        "Emiliano Sebastian Gonzalez Venegas",
+        "Sanad Al-Khatib",
+        "Aurora Pinzón Arzola"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-07-21T17:07:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19297v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19297",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "本文是一份實務指南，介紹以圖（graph）為基礎的 workflow pathways，支援企業流程中的長時間執行、有狀態、多步驟生成式 AI 系統。本文不把 LangGraph（用於 stateful agents 的低階 orchestration framework）視為模型品質 benchmark 的對象，而是提出三個可執行 recipe：具 repair loop 的 SQL analytics、具 evidence gating 的 agentic retrieval-augmented generation（RAG），以及具 interrupt 與 checkpoint recovery 的 human-in-the-loop（HITL）policy review。這些案例展示 typed state、conditional routing、deterministic tools、retries、interrupts、checkpoints 與 traces 如何協同運作。作者依 workflow complexity fit 定位 LangGraph，而非主張其為通用預設方案；簡單工具使用可採 ReAct 或 plain SDK loop，結構化抽取與驗證可採 schema-first tools，prompt 或 program optimization 則可採 DSPy。",
+      "problem_statement": "企業中的生成式 AI 常不是單次 prompt，而是包含工具呼叫、驗證、分支、失敗修復、長時間等待與人工核准的多步驟流程。plain SDK 或 ReAct loop 可處理簡單工具使用，但若狀態、路由與恢復邏輯留在 prompt 或應用程式巢狀控制流中，便難以檢查、測試、稽核與跨程序恢復。本文要解決的是如何判斷何時需要 LangGraph，並將這些流程需求具體組織成可執行 pathway，而非提升模型本身的品質。",
+      "proposed_solution": "作者以 LangGraph 作為低階 workflow orchestration layer，透過 typed shared state、nodes、conditional edges、deterministic tools、retry/repair routes、interrupts 與 checkpoints，把原本隱含的流程控制轉化為可觀察的 state graph。核心方案包含三條 pathway：SQL analytics 將驗證與執行錯誤導向修復；agentic RAG 將 evidence quality 與 citation verification 轉為 answer、retry 或 fail-closed 路由；HITL policy review 則以 risk score 觸發 durable interrupt，保存狀態並在 reviewer feedback 後 resume。其主要創新不在新模型或新推理演算法，而在以 workflow-complexity fit 選擇 orchestration，並使路由、暫停、恢復及 audit trail 成為明確產品行為。",
+      "core_contributions": [
+        "提出一套依工作流程需求選擇 LangGraph 或較簡單替代方案的 decision guide，明確區分 durable state、branching、repair、human review 與 prompt optimization 等問題類型。",
+        "提供三個可執行且可檢查的 workflow recipes：SQL generate–validate–execute–repair、agentic RAG retrieve–grade–generate–verify，以及 HITL policy review 的 risk–interrupt–resume 流程。",
+        "將 typed state、conditional edges、retry budgets、fail-closed termination、interrupt、checkpointer 與 route traces 組織為可測試、可稽核的產品流程行為，而非隱藏於模型提示中的控制邏輯。"
+      ],
+      "methodology": "本文採 practitioner-oriented、可執行 recipe 方法，而非模型訓練或統一 benchmark。三種 workflow 均以 LangGraph StateGraph 建構，使用 TypedDict 定義共享狀態，將 user input、中間 artifact、錯誤、retry 次數、路由相關欄位與最終輸出傳遞至多個 node。SQL 路徑依序進行 schema lookup、SQL generation、validation、query execution 與 business summary；validation 或 execution error 會由 conditional edge 導向 retry、fail 或下一步。RAG 路徑先分析問題，再 retrieval、document grading、answer generation 與 citation verification；evidence_grade 或引用驗證結果決定 retry、clarify、finalize 或 failed。HITL 路徑先 draft decision、risk score，再依 risk_level 導向低風險 finalize 或 interrupt_for_review；interrupt payload 暴露 draft、風險與 policy passages，透過 Command(resume=...) 提供 reviewer feedback，並以 checkpointer 保存可恢復的 thread state。節點邊界對應 schema lookup、驗證、評分與審核等產品事件；route function 應保持小型並回傳明確標籤。評估採 focused workflow tests 與 contract assertions，檢查 retry、拒答、interrupt/resume、狀態保存與 decision record，而非答案品質指標。",
+      "key_results": "論文未報告模型品質、準確率、延遲、成本或與其他框架的量化比較；其證據主要是三個可執行 recipe、mock 模式 fixture 與 workflow contract tests，重點在驗證路由與狀態轉移，而非 benchmark 排名。\n\n| 路徑 | 論文展示的流程與關鍵行為 | 量化結果 |\n|---|---|---|\n| SQL analytics | schema lookup → SQL generation → validation；驗證或執行失敗時依 retry budget 回到 generation，成功後 summary，耗盡則 fail | 論文未報告 |\n| Agentic RAG | question analysis → retrieve → grade evidence → generate → verify citations；弱證據或引用驗證失敗時重試，無法支持時以 failed 或 insufficiency response 結束 | 論文未報告 |\n| HITL policy review | draft → risk score；高風險時 interrupt，透過 checkpointer 保存 thread state，resume 後套用 reviewer feedback 並產生 decision record | 論文未報告 |\n| 框架比較 | 提供 plain SDK/ReAct、schema-first tools、DSPy 與 LangGraph 的選用指南，而非實證排名 | 論文未報告 |",
+      "insights": [
+        "若驗證失敗、證據不足或風險升高會改變下一步，應把這些條件建模為顯式 state 與 route，而不是只在 prompt 中要求模型自行處理。",
+        "應依任務複雜度選工具：線性工具呼叫可先用 plain SDK/ReAct，結構化輸出可優先採 schema-first，只有在持久狀態、分支、修復或人工審核是產品需求時才引入 LangGraph。",
+        "測試不應只檢查最終答案，也應驗證 route 與 state transition，例如 retry budget 是否生效、弱證據是否阻止 supported answer，以及 HITL resume 是否保留原始狀態並產生 decision record。"
+      ],
+      "limitations": "本文是 recipe 與設計指南，不是 empirical benchmark，未評估 production accuracy、latency、cost、model quality、streaming UX、observability、deployment topology 或框架量化比較。僅完整實作 SQL、agentic RAG 與 HITL 三條路徑；multi-agent subgraphs、customer support、跨 session memory 僅部分提及。HITL 範例使用適合本地測試的 InMemorySaver，生產環境需改用持久化 checkpointer。",
+      "tags": [
+        "agent-evaluation",
+        "rag-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "stateful agent orchestration",
+        "durable workflow與checkpoint recovery",
+        "agentic RAG evidence gating",
+        "human-in-the-loop governance",
+        "text-to-SQL repair loops"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19292",
+      "title": "The safety failures we are not instrumenting: a perspective on hidden safety-critical challenges in modern AI systems",
+      "abstract": "Current AI safety discourse still focuses disproportionately on visible failures, including obvious harms, dramatic misuse, and hypothetical catastrophic scenarios. That focus is incomplete. In deployed systems, many of the most consequential failures are quieter: plausible rather than spectacular, distributed across components rather than localized in a single output, and normalized by workflows before they are recognized as hazards. We argue that a central safety challenge in modern AI systems is increasingly not only whether a model emits a harmful response, but whether the broader socio-technical system preserves the conditions under which errors remain visible, contestable, containable, and recoverable. We propose a five-layer framework for diagnosing these hidden risks: (1) epistemic integrity, concerning whether evidence and uncertainty are represented honestly enough to support calibrated reliance; (2) control integrity, concerning whether authority, permissions, and action boundaries remain robust under attack and optimization; (3) temporal integrity, concerning whether safety holds across sessions, memory updates, and deployment drift; (4) organizational integrity, concerning whether institutions retain the capacity to audit, assign responsibility, and intervene effectively; and (5) ecosystem integrity, concerning whether AI systems preserve rather than erode the information environment on which future oversight depends. Across these layers, we identify under-recognized risk patterns, including overreliance, uncertainty and legitimacy laundering in retrieval, prompt injection, reward hacking, memory poisoning, evaluation deception, fictional human oversight, synthetic evidence pollution, and model collapse. We conclude with design and governance recommendations and a research agenda for shifting AI safety from model-centric evaluation toward socio-technical reliability.",
+      "authors": [
+        "Gjergji Kasneci",
+        "Enkelejda Kasneci"
+      ],
+      "categories": [
+        "cs.CY",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-07-21T17:02:37+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19292v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19292",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "目前的 AI safety 討論過度集中於可見失敗，例如明顯傷害、戲劇性濫用與假設性的災難情境；但這並不完整。部署後最具後果的失敗往往較安靜：它們合理而非驚悚，分散於多個元件，而非局限於單一輸出，並可能在被辨識為危害前已融入工作流程。作者主張，現代 AI safety 的核心挑戰不僅是模型是否產生有害回應，更是 socio-technical system 能否維持錯誤的可見性、可質疑性、可遏制性與可恢復性。論文提出五層診斷框架：epistemic integrity、control integrity、temporal integrity、organizational integrity 與 ecosystem integrity，並分析 overreliance、RAG 中的 uncertainty／legitimacy laundering、prompt injection、reward hacking、memory poisoning、evaluation deception、fictional human oversight、synthetic evidence pollution 與 model collapse 等風險。作者最後提出設計、治理建議及研究議程，主張將 AI safety 從以模型為中心的評估轉向 socio-technical reliability。",
+      "problem_statement": "現有 AI safety 多以 single-turn、可見輸出、靜態 benchmark 與模型中心測試為主，難以捕捉部署後合理但錯誤的內容、跨元件的控制失效、長期記憶污染、工具行動放大、形式化而非實質的人類監督，以及合成資訊對未來檢查能力的侵蝕。論文要處理的核心問題是：AI 融入工作流程後，是否削弱了錯誤的可見性、可質疑性、可遏制性與恢復能力。",
+      "proposed_solution": "作者提出五層 socio-technical integrity 框架，將安全從模型輸出層提升至部署系統與資訊生態層。Epistemic integrity 要求證據、來源與不確定性被忠實呈現；control integrity 要求資料與指令分離，並將授權置於模型之外；temporal integrity 要求以 trajectory 評估 multi-turn、memory 與 drift；organizational integrity 要求檢驗 human oversight 是否具備時間、證據、權限與責任；ecosystem integrity 則要求維持來源多樣性、可信 corpus 與人類資料。核心創新是把「保留錯誤修正能力」作為跨層安全目標，並以 safety cases、外部 policy enforcement、最小且可撤銷記憶、分級 agency、持續監控及 near-miss learning 落實。",
+      "core_contributions": [
+        "提出 epistemic、control、temporal、organizational、ecosystem integrity 五層框架，將 AI safety 的分析單位從孤立模型輸出擴展至完整部署堆疊。",
+        "系統化整理多種容易被現有測試忽略的隱性安全風險，包括 calibration debt、legitimacy laundering、prompt injection、action amplification、memory poisoning、evaluation deception 與 fictional human oversight。",
+        "將框架轉化為實務控制與 instrumentation 指標，例如觀察 accepted incorrect recommendations、instruction-hierarchy violations、跨 session 記憶污染、reviewer override、source diversity 與錯誤偵測恢復時間。"
+      ],
+      "methodology": "本文採 perspective 與 operational synthesis 方法，而非提出或訓練新模型。作者先以 systems-safety 觀點重新界定問題：安全不只是降低錯誤輸出，也要保留錯誤的 visibility、contestability、containment 與 recoverability。接著依部署堆疊建立五層分析框架：epistemic integrity 檢視證據、provenance 與 uncertainty 是否支持 calibrated reliance；control integrity 檢視 instruction hierarchy、permissions、tool authorization 與 optimization 壓力；temporal integrity 檢視 multi-turn interaction、persistent memory、更新與 drift；organizational integrity 檢視 audit、override、責任歸屬與實質 human oversight；ecosystem integrity 檢視 synthetic data、source diversity 與資訊環境的長期退化。作者以既有研究、systems-safety 文獻、NIST AI RMF、NIST Generative AI Profile 與 EU AI Act 作為證據基礎，逐層整理風險、控制與可觀測指標。表 1 建議的評估包括 observed reliance 與 warranted reliance 的差距、instruction-hierarchy violation、錯誤工具呼叫造成的 downstream state changes、proxy 與 true task 的落差、長軌跡安全邊界存活率、跨 session memory propagation、benchmark 與 live incident 的 divergence、reviewer override，以及 source diversity 與 detection/recovery 時間。論文未實際執行這些評估，亦未提供模型架構、演算法流程、資料處理實作或量化結果。",
+      "key_results": "論文是 perspective piece，作者明確說明其貢獻是 operational synthesis 與 organizing framework，而非新 empirical benchmark、formal theory 或 prevalence estimate；因此論文未報告模型實驗、baseline、資料集規模或統計數字。文中提供的是概念性控制與建議指標，而非已完成的實驗比較。\n\n| 評估面向 | 論文結果 |\n|---|---|\n| 新模型或演算法 | 論文未報告 |\n| 實驗資料集與樣本規模 | 論文未報告 |\n| baseline 對比 | 論文未報告 |\n| quantitative safety 結果 | 論文未報告 |\n| 五層 integrity 框架 | 作者提出之概念性與操作性框架 |\n| 建議 instrumentation | 提出指標，但未提供實測值或驗證結果 |",
+      "insights": [
+        "高風險 AI 介面應以 justified trust 而非 maximal trust 為設計目標；應提供來源段落、時間戳、結構化不確定性、衝突證據與高影響決策的 cognitive forcing。",
+        "對 agent 系統應嚴格分離 suggestion 與 permission：模型只提出計畫或工具呼叫候選，外部 policy engine、權限控制與獨立核驗機制負責授權，並採用分級 autonomy。",
+        "評測不應只測 single-turn refusal 或 accuracy；應加入多輪、工具使用、跨 session memory、長期 drift、真實工作流程與 human oversight 能力，並以 safety case 和持續監控補充 benchmark。"
+      ],
+      "limitations": "論文缺乏新實驗、模型架構、資料集、baseline、統計檢定與部署 prevalence，因此五層框架及部分新興風險仍主要是文獻整合與理論主張。作者也指出 retrieval collapse 等證據較新且異質，應視為風險指標而非已確立的普遍性估計。未來需建立可重現的 trajectory-level、memory、human oversight 與 ecosystem 評測，並驗證所提 instrumentation 指標與控制措施。",
+      "tags": [
+        "safety",
+        "prompt-injection",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "socio-technical systems safety",
+        "trajectory-level agent evaluation",
+        "retrieval provenance and synthetic data pollution"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19336",
+      "title": "Agents in the Wild: Where Research Meets Deployment",
+      "abstract": "Agentic systems large language model (LLM) based architectures capable of reasoning, planning, acting, and coordinating with tools and other agents are rapidly transitioning from research prototypes to production scale deployments across domains such as software engineering, scientific discovery, and finance. While academic work has emphasized benchmarks and algorithmic innovation, deployment raises new challenges around robustness, safety, and reliability. This tutorial brings together researchers and practitioners to explore advances in reasoning and planning, multi agent coordination, and evaluation, highlighting open challenges arising from deployment experience. Through applied case studies in pharmaceutical discovery and financial systems, we analyze common design patterns that make agentic systems successful, and discuss practical mitigation strategies for failure modes, such as verification pipelines, fallback mechanisms, and human in the loop supervision. Attendees will gain a comprehensive view of the field along with concrete design patterns, evaluation checklists, and templates for safe and reliable deployment across industries.",
+      "authors": [
+        "Grace Hui Yang",
+        "Pranav N. Venkit",
+        "Hooman Sedghamiz",
+        "Enrico Santus",
+        "Victor Dibia",
+        "Ioana Baldini"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-07-21T17:55:10+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19336v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19336",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "Agentic systems 是以大型語言模型（LLM）為基礎的架構，具備推理、規劃、行動，以及與工具和其他 agents 協作的能力，正快速從研究原型轉向軟體工程、科學發現與金融等領域的 production-scale deployment。學術研究過去著重 benchmarks 與演算法創新，但實際部署帶來 robustness、safety 與 reliability 等新挑戰。本 tutorial 結合研究者與實務工作者，探討 reasoning and planning、multi-agent coordination 與 evaluation 的進展，並整理部署經驗揭示的開放問題。透過 pharmaceutical discovery 與 financial systems 的案例，作者分析成功 agentic systems 的共同 design patterns，並討論 verification pipelines、fallback mechanisms 與 human-in-the-loop supervision 等失效緩解策略，提供 evaluation checklists 及安全可靠部署的 templates。",
+      "problem_statement": "Agentic systems 正從研究原型進入生產環境，但現有學術工作多以 static benchmarks 與演算法能力為中心，難以反映長流程互動、工具使用、多-agent 協作及真實部署中的安全與可靠性問題。實際系統可能出現 hallucination、deadlock、drift 與 cascading errors，且還須面對 latency、compute efficiency、monitoring、人工介入與跨領域風險，因此需要連結研究成果與部署經驗的評估及設計框架。",
+      "proposed_solution": "作者提出一套面向 tutorial 的整合性分析框架：以 reasoning、planning、execution、memory、retrieval 與 multi-agent coordination 為基礎，將 agent 從單一模型流程理解為可模組化編排的系統；再以互動、行為導向的 evaluation 取代僅依賴 static benchmarks。框架透過 pharmaceutical discovery 與 financial systems 案例，整理 planner–executor–verifier、iterative/adaptive retrieval、verification pipelines、cross-checking、fallback mechanisms 與 human-in-the-loop supervision 等 design patterns，並以安全、可靠、可監控及符合工業約束為部署目標。",
+      "core_contributions": [
+        "系統整理 agentic systems 從單一 LLM、prompting、tool use 與 heuristic control，演進至 modular、multi-agent orchestration 的發展脈絡。",
+        "將 reasoning、planning、execution、memory、retrieval 與 multi-agent coordination 等技術，置於實際部署的 robustness、safety、reliability 與工業限制下討論。",
+        "以 pharmaceutical and life sciences 與 finance 為應用案例，整理 hallucination、deadlock、drift、cascading errors 等失效模式，以及 verification、cross-checking、fallback 與 human-in-the-loop 等緩解設計。"
+      ],
+      "methodology": "本文採 tutorial 與文獻綜述方法，而非單一 agent 模型的實驗研究。首先，作者以演進脈絡介紹從 monolithic prompting-based agents 到 modular、multi-agent systems，將系統功能拆分為 reasoning、planning、execution、memory、tool/interface interaction 與環境感知。技術面涵蓋 task decomposition、multi-plan generation and selection、iterative reflection、memory-augmented planning，以及 peer-to-peer 或 hierarchical 的多-agent拓撲、communication protocols、negotiation/cooperation 與 fault tolerance。其次，本文討論 retrieval and reasoning pipelines，包括 iterative retrieval、adaptive retrieval，以及由 query generation、reranking、memory retrieval 組成的 modular retrieval。評估方面，作者主張由 static benchmarks 轉向 interactive、scenario-driven、behavior-centric evaluation，關注 robustness、reliability、safety、distribution shift、adversarial perturbation、cascading failures、recovery 與 human intervention。文中引用 AgentSafetyBench、ST-WebAgentBench、DeepTRACE、ASB、MobileSafetyBench、ScienceAgentBench 與 AGENTSAFE 等工作，但未在本文建立統一資料處理流程、模型架構、評估指標或實驗比較。應用案例則以 pharmaceutical discovery 與 finance 說明 multi-agent literature analysis、hypothesis/experiment planning、real-time data retrieval，以及 planner–executor–verifier 工作流。",
+      "key_results": "本文是 tutorial，主要提供文獻整理、部署案例與設計建議，並非提出具有統一實驗設定的新模型或 benchmark。論文未報告可直接比較的整體實驗數字、資料規模、baseline、統一評估指標或 ablation 結果。文中僅定性指出若干既有系統在特定任務中相較於 single-step prompting 有決策品質與 outcome explainability 的改善，且部分科學 agent 被描述為具備高於人類或相當於人類的表現；這些說法屬於對引用研究與案例的概述，非本 tutorial 的新實驗結果。\n\n| 論文範圍 | 主要數據對比 |\n|---|---|\n| 本 tutorial 的新實驗 | 論文未報告 |\n| 統一 benchmark、baseline 與 ablation | 論文未報告 |\n| Finance agent 相對 single-step prompting | 文中定性稱在 decision quality 與 outcome explainability 上較佳，具體數字未報告 |\n| Pharmaceutical/life-science systems | 文中稱部分系統 matching or exceeding human performance，具體數字與統一設定未報告 |\n| Moderna–OpenAI agentic applications | 文中引用超過 750 個應用，這是案例敘述，非本論文實驗結果 |",
+      "insights": [
+        "部署 agent 時不宜只依賴 static benchmark；應在互動環境中測試 distribution shift、adversarial perturbation、cascading failures、recovery 與 human intervention 行為。",
+        "對高風險工作流程，可採用 planner–executor–verifier 分工，並在關鍵輸出加入外部工具驗證、交叉檢查與人工覆核，而非讓單一 agent 直接完成全流程。",
+        "多-agent 系統的效能不只取決於個別模型能力，還受 communication protocols、協作拓撲、fault tolerance、latency、compute efficiency、monitoring 與 secure inter-agent communication 影響。"
+      ],
+      "limitations": "本文篇幅僅 5 頁且定位為 tutorial，未提供新的模型實作、資料集、統一實驗、數值結果或可重現的評估流程。因此不同案例的性能敘述無法直接比較，部署案例也缺乏成本、失敗率與長期監測細節。作者指出未來仍需研究 multi-agent scalability、collective reasoning explainability、secure communication、lifelong adaptation、embodied/multimodal agents，以及 latency、compute efficiency 與 monitoring。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM agent planning and tool use",
+        "Multi-agent systems",
+        "Interactive and behavior-centric evaluation",
+        "Retrieval-augmented reasoning",
+        "Trustworthy AI deployment"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19345",
+      "title": "Copy Less, Ground More: Overcoming Repetitive Copying in Long-Context Reasoning via Evidence-Aware Reinforcement Learning",
+      "abstract": "Large language models that generate step-by-step reasoning traces have achieved strong performance on complex tasks, and extending them to long-context settings has emerged as an important frontier. However, we identify a critical failure mode in this regime: \\emph{repetitive copying}, where models extensively copy text from the input into their reasoning traces rather than productively solving the problem. We show that this behavior is pervasive across frontier long-context LLMs and intensifies with context length. By separating each prompt into task-relevant key evidence and irrelevant distractor context, we further show that the root cause is insufficient grounding: models copy from the prompt indiscriminately, and those that fail to focus on key evidence are far more likely to answer incorrectly. Motivated by this diagnosis, we propose GEAR (Grounding Evidence-Aware Reward), a reward shaping method that augments the accuracy signal with a grounding reward for overlap with key evidence and a distractor penalty for overlap with irrelevant context. To enable GEAR on natural-language data, we develop an automated pipeline that constructs evidence-annotated training data from arbitrary documents. We validate GEAR across multiple model scales and benchmarks, showing consistent improvements of up to +4.6 average points over standard RL with accuracy-based rewards, with larger gains at longer contexts, while also reducing repetitive copying and thinking length. Our findings suggest that, even as long-context evaluation shifts from simple retrieval toward complex reasoning, accurate grounding in relevant evidence remains an indispensable capability with substantial room for improvement.",
+      "authors": [
+        "Lizhe Fang",
+        "Weizhou Shen",
+        "Tianyi Tang",
+        "Yisen Wang"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T17:59:21+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19345v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19345",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "具備逐步推理能力的大型語言模型在複雜任務上表現強勁，而延伸至長上下文推理已成為重要方向。然而，本文發現一項關鍵失效模式：repetitive copying，即模型在 reasoning trace 中大量複製輸入文字，而非有效解題。此現象普遍存在於七個 frontier long-context LLM，且會隨上下文長度增加。研究將 prompt 分為任務相關的 key evidence 與無關的 distractor context，指出根因是 insufficient grounding：模型未能區分重要證據與干擾內容。作者提出 GEAR（Grounding Evidence-Aware Reward），以 key evidence 重疊提供 grounding reward，並對 distractor 重疊施加 penalty。透過自動化流程建立 evidence-annotated 資料，GEAR 在多個模型與 benchmark 上相較 accuracy-only RL 平均提升最高 4.6 分，同時降低複製行為與 thinking length。結果顯示，精確 grounding 仍是長上下文推理不可或缺的能力。",
+      "problem_statement": "長上下文 thinking LLM 常把輸入中的大段文字直接複製進 reasoning trace，形成 repetitive copying；上下文越長，問題越嚴重，並可能耗盡 token budget、降低準確率。既有 accuracy-only RL 只看最終答案，缺乏對「模型引用了哪些證據」的密集訊號，無法區分有用的 evidence grounding 與對 distractor context 的無差別抄錄。",
+      "proposed_solution": "作者提出 GEAR（Grounding Evidence-Aware Reward），在標準答案正確性 reward 外加入兩個互補訊號：對 reasoning trace 與 key evidence 的 n-gram overlap 給予 grounding reward，對與 distractor context 的 overlap 施加 penalty。前者鼓勵模型接觸解題所需資訊，後者防止模型為提高證據重疊而複製整個 prompt。作者另提出 evidence-annotated data construction pipeline，透過合成 benchmark 的 support indices，以及從文件先抽 evidence、再生成問題並驗證答案的一致性，讓方法可用於自然語言資料。",
+      "core_contributions": [
+        "辨識並量化 long-context reasoning 中的 repetitive copying，證明其在七個 thinking LLM 中普遍存在、隨 context length 增加，且與較低準確率及較長 reasoning trace 相關。",
+        "提出 GEAR reward shaping，將 accuracy reward、key evidence grounding reward 與 distractor penalty 結合，直接鼓勵選擇性證據使用。",
+        "提出從結構化 synthetic data 與 RedPajama-v2 文件自動建立 evidence-annotated QA 的三階段流程，並在三種 Qwen3.5 模型及五個 held-out benchmark 驗證方法。"
+      ],
+      "methodology": "論文先以 GSM-Infinite 研究 repetitive copying。對 reasoning trace y 與 prompt x，建立 prompt 的 n-gram lookup set，計算輸出各滑動視窗是否直接出現在輸入中，得到 overlap rate；n=3 用於衡量整體複製量，n=10 用於辨識較長的連續抄錄。利用 GSM-Infinite 已知的 support indices，將輸入拆成 key evidence 與 distractor context，分別計算 10-gram overlap，並以 key overlap 除以 distractor overlap 定義 grounding ratio。訓練時採用三種 Qwen3.5 模型（9B、27B、35B-A3B）與 GSPO，最大 prompt 32k、最大 generation 16k，訓練資料 context length 為 16k–32k。GEAR reward 為 R=Racc+αOverlap_n(y|xkey)−βOverlap_n(y|xdist)，其中 Racc 是二元答案正確性 reward，α=0.1、β=0.3，n=3；同時出現在 key 與 distractor 的 n-gram 不納入 distractor penalty。資料包含 GSM-Infinite 1,000 筆、PhantomWiki 1,000 筆及由 RedPajama-v2 產生的自然語言 QA 1,200 筆。自然語言流程先分析文件並篩選，再切成每段 1,024 characters，抽取 1–3 段作為 evidence，生成可由該區域回答的問題、答案與引文，最後以獨立 re-answer verification 保留一致樣本。評估使用 Ruler、LongBench-v2、BrowseComp-LC、GraphWalks 與 AA-LCR，比較 pretrained base、accuracy-only GSPO、僅 grounding reward，以及完整 GEAR，並測量 benchmark score、input overlap 與 thinking length。",
+      "key_results": "主要結果如下；分數為論文報告的 benchmark 平均或單項結果，↑表示較高較佳，↓表示較低較佳。\n\n| 模型／上下文 | 方法 | 32k Avg | 128k Avg |\n|---|---|---:|---:|\n| Qwen3.5-9B | GSPO | 78.5 | 70.2 |\n| Qwen3.5-9B | GSPO + GEAR | **81.3** | **74.8** |\n| Qwen3.5-35B-A3B | GSPO | 80.2 | 73.4 |\n| Qwen3.5-35B-A3B | GSPO + GEAR | **82.3** | **76.2** |\n| Qwen3.5-27B | GSPO | 80.6 | 75.3 |\n| Qwen3.5-27B | GSPO + GEAR | **82.1** | **77.4** |\n\n相較 accuracy-only GSPO，GEAR 的平均提升在 32k 為 +2.8、+2.1、+1.5 分，在 128k 為 +4.6、+2.8、+2.1 分（依序對應 9B、35B-A3B、27B）。Qwen3.5-35B-A3B、32k：Ruler 的 overlap rate 由 GSPO 的 35.7% 降至 GEAR 的 27.0%，thinking length 由 2,808 降至 2,066 tokens；LongBench-v2 overlap 由 27.2% 降至 22.6%，thinking length 由 4,677 降至 3,989 tokens。GEAR 訓練為 α=0.1、β=0.3、n=3；論文報告單獨加入 grounding reward 會降低性能，最高下降 8.3 分（128k），顯示 distractor penalty 不可缺少。",
+      "insights": [
+        "實務上不應只將「引用輸入內容」視為有害；評估應區分模型是否引用 task-relevant evidence，並同時衡量對 distractor context 的不必要複製。",
+        "若以 reward 鼓勵證據重疊，必須搭配對無關內容的抑制項；論文顯示單獨加入 grounding reward 反而會增加 copying 與 thinking length，造成性能下降。",
+        "長上下文訓練可採用 n-gram overlap、支持片段標註與答案正確性等可計算訊號，塑造更精簡且 grounded 的 reasoning；但部署前仍應在不同任務與上下文長度上檢查是否誤抑制必要證據。"
+      ],
+      "limitations": "論文主要以 Qwen3.5 三種模型、3,200 筆訓練樣本及五個 benchmark 驗證，外部模型是否同樣能受益仍未完整測試。自然語言 evidence 由模型生成並以 constrained context 驗證，可能帶有資料生成偏差。GEAR 依賴支持片段標註與 n-gram overlap，對證據需改寫、跨段整合或語意推理的任務，其有效性尚未充分報告；論文也未提供更廣泛的統計顯著性分析。",
+      "tags": [
+        "faithfulness",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-context reasoning",
+        "evidence grounding",
+        "reinforcement learning for reasoning"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19261",
+      "title": "PathAgentBench: Benchmarking Evidence-Seeking Vision-Language Models on Whole-Slide Pathology Image",
+      "abstract": "Whole-slide image (WSI) diagnosis requires identifying diagnostically relevant regions, examining them across magnifications, and integrating multi-scale evidence. However, most existing pathology benchmarks evaluate models on pre-cropped patches or pre-extracted slide features, leaving their ability to acquire evidence directly from gigapixel WSIs largely untested. We introduce PathAgentBench, a benchmark for evaluating evidence-seeking vision-language models (VLMs) across four complementary capabilities: image-to-text matching for evidence interpretation, text-to-image retrieval for evidence verification, diagnostic-region localization for evidence acquisition, and multi-scale reasoning for evidence integration. The benchmark is organized as a diagnostic tree that links nested regions across magnifications with scale-specific findings and path-level diagnoses. It contains 1,822 TCGA WSIs and 17,135 diagnostic paths annotated by ten board-certified pathologists. An additional private cohort of 190 breast cancer WSIs with detailed annotations is used to evaluate autonomous whole-slide exploration. We evaluate 20 general-purpose, medical, and pathology-specialized models. Leading open-weight models achieve over 93% accuracy in multi-scale reasoning and over 50% accuracy in both cross-modal matching tasks. In contrast, diagnostic-region localization remains challenging: the best text-guided mean intersection-over-union is below 0.09, underperforming a simple center-based heuristic. During autonomous exploration, the unconditional hit rate decreases from 0.522 at low magnification to 0.185 at intermediate magnification and 0.020 at high magnification. These results reveal a pronounced gap between reasoning over curated evidence and acquiring that evidence directly from WSIs. PathAgentBench provides a unified framework for measuring and improving evidence-seeking pathology models.",
+      "authors": [
+        "Dankai Liao",
+        "Tianyi Zhang",
+        "Yufeng Wu",
+        "Xinyue Zhang",
+        "Qiaochu Xue",
+        "Zeyu Liu",
+        "Dachun Zhao",
+        "Linghan Cai",
+        "Yueming Jin"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T16:33:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19261v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19261",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Whole-slide image（WSI）診斷需要辨識具診斷價值的區域、跨不同 magnification 觀察，並整合 multi-scale evidence。然而，多數既有 pathology benchmark 僅評估預先裁切的 patches 或預先抽取的 slide features，未充分測試模型能否直接從 gigapixel WSI 主動取得證據。作者提出 PathAgentBench，用四項互補能力評估 evidence-seeking vision-language models（VLMs）：用於證據解讀的 image-to-text matching、用於證據驗證的 text-to-image retrieval、用於證據取得的 diagnostic-region localization，以及用於證據整合的 multi-scale reasoning。Benchmark 以 diagnostic tree 組織，連結不同 magnification 的巢狀區域、尺度特定 findings 與 path-level diagnoses，包含 1,822 張 TCGA WSIs 及 17,135 條由十位具專業認證的病理科醫師標註的診斷路徑，另以 190 張乳癌 WSI 私有資料評估自主探索。結果顯示，模型能有效推理已整理的證據，但直接從 WSI 取得證據仍是主要瓶頸。",
+      "problem_statement": "現有 pathology benchmark 多在預先裁切的 patch、人工選定 ROI 或預先抽取的 slide feature 上評估模型，因此只能測量證據解讀與診斷推理，無法回答模型是否能在 gigapixel WSI 中自行決定看哪裡、逐倍率取得證據並形成診斷路徑。這造成傳統 VQA 或 slide-level 高分與真實 WSI evidence-seeking 能力之間的評估缺口。",
+      "proposed_solution": "作者提出 PathAgentBench 與 multi-scale diagnostic tree，將 WSI 診斷拆成四個可分離但互補的階段：image-to-text matching 測試證據解讀、text-to-image retrieval 測試證據驗證、diagnostic-region localization 測試證據取得、multi-scale diagnostic reasoning 測試證據整合。Benchmark 同時提供 text-guided localization 與 autonomous whole-slide exploration，並以 TCGA 的 pathologist-authored nested regions、scale-specific findings 和 path-level diagnoses 建立可追蹤的診斷路徑，從而區分模型是無法理解證據，還是無法找到證據。",
+      "core_contributions": [
+        "提出以 multi-scale diagnostic tree 為基礎的 WSI evidence-seeking 評測形式，明確區分 evidence acquisition 與 evidence reasoning。",
+        "建立 PathAgentBench，涵蓋 image-to-text matching、text-to-image retrieval、diagnostic-region localization 與 multi-scale diagnostic reasoning 四項任務。",
+        "在 20 個 general-purpose、general-medical 與 pathology-specialised 模型上進行評估，揭示模型在已提供證據的推理能力與實際空間導航能力之間存在明顯落差。"
+      ],
+      "methodology": "PathAgentBench 將每張 WSI 表示為 image pyramid 上的 diagnostic tree。根節點是整張 slide，子節點依序位於 2.5×、10×、40×，每個節點包含病理醫師標註的 bounding box、scale-specific finding；每條 root-to-leaf path 另有 path-level diagnosis。資料包括 1,822 張 TCGA WSI、16 個器官類別、17,135 條 diagnostic paths，以及十位 board-certified pathologists 建立並經第二位病理醫師審查的節點與路徑標註。T1 將單一 diagnostic patch 與四個同器官、同倍率文字描述配對，評估 image-to-text matching；T2 將 finding 與四個候選影像配對，評估 text-to-image retrieval。兩者的 distractors 以 all-MiniLM-L6-v2 embedding 和 cosine-similarity 閾值 0.6 形成。T3A 給定 slide 與文字目標，agent 透過 get image info、extract roi、finish and report 三項工具跨倍率定位，使用 mean IoU 與 IoU≥0.3 比率；T3B 在 190 張私有乳癌 WSI 上，以 2.5×、10×、40× tile 的 top-K 遞迴保留進行自主探索，計算 conditional 與 unconditional hit rate。T4 固定提供三個倍率的 pathologist findings，要求模型在 Diagnose、Triage、Refine 四選一問題中整合證據，以 exact-match accuracy 評估。",
+      "key_results": "| 評估項目 | 代表結果 |\n|---|---|\n| T1 image-to-text matching | Gemini-3-Flash 最佳，整體準確率 63.48%；GPT-5.2 為 52.23%；隨機選擇基準為 25.00%。 |\n| T2 text-to-image retrieval | Gemini-3-Flash 最佳，整體準確率 67.74%；GPT-5.2 為 60.96%；隨機選擇基準為 25.00%。 |\n| T3A text-guided localization | 最佳模型 mean IoU 低於 0.09；GPT-5.2、Gemini-3-Flash、Qwen-3.5-Flash 分別為 0.069、0.065、0.071（跨三個 magnification 的平均）；parent-box center heuristic 為 0.061、0.247、0.283。 |\n| T3B autonomous exploration | 摘要報告的 unconditional hit rate 從 2.5× 的 0.522，降至 10× 的 0.185，再降至 40× 的 0.020；Gemini-3-Flash 的直接測量值為 52.2%、18.5%、2.02%。 |\n| T3B branching ablation | Qwen-3.5-Flash 使用 (6,3,2) 保留排程時，unconditional hit rate 為 51.75%、18.46%、2.06%；擴大至 (10,5,3) 後，40× 提升至 6.25%。 |\n| T4 multi-scale reasoning | InternVL2.5-8B 為 93.44%、Lingshu-7B 為 93.41%、InternVL2.5-26B 為 93.16%；專家參考表現為 96.6%。 |\n| 成本與延遲 | Task 3 佔 GPT-5.2 與 Gemini-3-Flash 總推論成本的 96.5% 與 92.3%；Mode B 每張 slide 推論時間為 20.7–46.8 分鐘。 |\n\n上述結果支持作者的主要結論：模型在供給好的 multi-scale evidence 上能進行高準確度整合，但 evidence acquisition，尤其是細尺度空間定位與階層式探索，仍是主要瓶頸。",
+      "insights": [
+        "實務評估不應只看模型在預先選定 patch 或文字 findings 上的診斷準確率，還應單獨測量區域搜尋、座標定位、工具使用與跨倍率導航。",
+        "WSI agent 可採用分階段設計：先評估模型的 tile scoring 與空間規劃，再整合成具 backtracking 的搜尋流程，以降低階層式 pruning 造成的早期錯誤累積。",
+        "若採用 top-K 階層探索，應搭配可靠的 confidence ranking、可重新進入已捨棄分支的機制，以及 segmentation 或 task-specific detector 進行 hybrid verification；論文結果顯示單純增加保留分支雖可提升 recall，仍無法解決精確定位問題。"
+      ],
+      "limitations": "自主探索 Mode B 僅涵蓋乳癌 WSI，尚未驗證跨器官與不同組織架構的泛化能力。Mode A 僅評估三個 VLM 與 Patho-R1，因其他模型缺乏可靠 tool-calling。定位實驗採固定預算或 branching schedule，adaptive policy 的影響尚未完整評估。Distractors 依賴 MiniLM 相似度，四選一 T4 也不能代表 open-ended diagnosis。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Whole-slide image analysis",
+        "Vision-language model evaluation",
+        "Agentic medical imaging",
+        "Multi-scale spatial reasoning"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19262",
+      "title": "BioSecBench-Surveillance: A Verifiable Benchmark for AI Agents in Pathogen Genomic Surveillance",
+      "abstract": "As pathogen genomic surveillance scales, the bottleneck is shifting from data generation to analysis. We present BioSecBench-Surveillance, a verifiable benchmark of 100 evaluations testing whether AI agents can infer the right analysis pipeline from raw sequencing data and surveillance context. Each evaluation gives an agent only the data and context a human analyst would have, then grades its structured answer deterministically. The tasks span seven categories, from taxonomic classification to genetic-engineering detection, across diverse sample types and sequencing technologies. Across 3,962 gradable attempts from sixteen model-harness pairs, the strongest configuration cleared only about half. Opus 4.8 with PI led at 50.2 percent, with a 95 percent confidence interval of 40.1 to 60.3 percent across 83 evaluations, tied with GPT-5.5 with Codex at 50.2 percent, with a 95 percent confidence interval of 40.8 to 59.6 percent, followed by Opus 4.7 with PI at 49.6 percent, with a 95 percent confidence interval of 40.0 to 59.2 percent, and Sonnet 4.6 with PI at 48.6 percent, with a 95 percent confidence interval of 38.9 to 58.3 percent. Even when agents invoked the correct workflows, their mistakes came from the choices around them, such as which references, thresholds, filters, and normalization to apply. BioSecBench-Surveillance provides a standard for measuring whether agents can be trusted to perform genomic surveillance when the next outbreak arrives.",
+      "authors": [
+        "Harmon Bhasin",
+        "Kevin Flyangolts",
+        "Dianzhuo Wang",
+        "Evan Seeyave",
+        "Arjun Banerjee",
+        "Amanda Darling",
+        "Joshua Stallings",
+        "David Stern",
+        "Shawn Higdon",
+        "Claire Duvallet",
+        "Bryan Tegomoh",
+        "Kenny Workman"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-21T16:33:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19262v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19262",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "隨著病原體 genomic surveillance 擴大，瓶頸正由資料產生轉向資料分析。本文提出 BioSecBench-Surveillance，一個可驗證的 benchmark，包含 100 項 evaluation，用以測試 AI agents 是否能根據 raw sequencing data 與 surveillance context 推斷正確分析流程。每項 evaluation 僅提供人類分析師可取得的資料與背景，並以 deterministic grader 評分 structured answer。任務涵蓋 taxonomic classification、variant detection、AMR、source tracking、toxin and virulence、genetic-engineering detection 與 anomaly detection，涉及多種樣本及 sequencing technology。3,962 次可評分嘗試顯示，最佳配置僅通過約一半；Opus 4.8/PI 與 GPT-5.5/Codex 均為 50.2%。錯誤多非工具選擇本身，而是 references、thresholds、filters 與 normalization 等周邊決策。",
+      "problem_statement": "Pathogen genomic surveillance 的資料量與樣本多樣性持續增加，但從 sequencing data 推導公共衛生決策仍依賴專家，難以擴展。現有 AI benchmark 多聚焦一般問答、程式修復、生物資訊特定領域，或僅測試資料庫檢索，未能驗證 agent 是否能自行選擇適當 workflow、tools、references、filters 與 thresholds，並產生正確 surveillance 結論。",
+      "proposed_solution": "作者提出 BioSecBench-Surveillance，將真實 biosurveillance workflow 在決策前的狀態封裝成 100 個 evaluation。每項只提供人類分析師可取得的 sequencing data、reference files 與 context，不直接揭示正確 workflow；agent 必須自行選擇分析工具、資料庫、references、thresholds 與 filters，最後依指定 schema 回傳 JSON。作者以 validated gold-standard workflows 或文獻建立 ground truth，透過 domain-expert review 與 typed deterministic grader 驗證答案。核心創新在於把「是否執行正確分析」而非「是否能描述分析」作為評測目標，並可由 trajectory 分析診斷工具配置與結果解讀失敗。",
+      "core_contributions": [
+        "提出包含 100 項 evaluation 的 BioSecBench-Surveillance，將 pathogen genomic surveillance 的實際分析決策轉化為可執行、可驗證的 agent benchmark。",
+        "設計以 raw 或 near-raw sequencing artifacts、surveillance context 與 structured JSON answer 為核心的評測流程，並使用 typed deterministic grader 進行可重現評分。",
+        "以 16 個 model–harness configurations、3,962 次可評分嘗試分析 agent 能力與失敗模式，指出正確工具之外的 references、thresholds、filters、normalization 及結果解讀是主要瓶頸。"
+      ],
+      "methodology": "Benchmark 由 100 個 evaluation 組成，每項以單一 biosurveillance workflow 中、接近 surveillance decision 前的 empirical decision 為核心。輸入為 raw 或 near-raw sequencing artifacts，包括 FASTQ reads、assembled contigs 或 aligned reads，資料來自 NCBI SRA 或帶有已知 ground truth 的 simulated reads；檔案會移除 identifying metadata，ground truth 則依 validated gold-standard workflows 或文獻建立，並由 domain experts peer-review。任務涵蓋七類：variant detection、taxonomic classification、AMR characterization、source tracking、toxin and virulence characterization、genetic-engineering characterization 及 anomaly detection；並涵蓋 isolate、wastewater、clinical、agricultural、air、water 等樣本，以及 short-read、long-read、hybrid sequencing。模型並非固定架構，而是 model 與 inference harness 的配對；測試 16 個 configurations，使用 Claude Code、PI 或 OpenAI Codex 提供 prompt、工具與檔案存取。所有 agent 在相同 containerized sandbox 執行，預載 assemblers、aligners、taxonomic classifiers、variant callers 及 AMR/virulence databases，並可透過 internet 取得額外 references。每個 configuration 對每項 evaluation 執行三次。agent 須輸出指定 schema 的 JSON；grader 以 typed field checks 評估數值 tolerance、Jaccard set overlap、exact/normalized categorical match、multiple choice 或 per-key dictionary，並依明確 all-of 規則合併。每次 run 分為 correct、incorrect 或 refused；endpoint pass rate 為 correct/(correct+incorrect)，以排除 refused 的 gradable attempts 計算。95% confidence intervals 使用以 evaluation 為 sampling unit 的 Student-t intervals。",
+      "key_results": "| 比較面向 | 主要結果 |\n|---|---|\n| 整體配置 | 16 個 model–harness configurations；endpoint pass rate 約 14%–50%，平均 41% |\n| 最佳配置 | Opus 4.8/PI：50.2%，95% CI 40.1%–60.3%，涵蓋 83 項 evaluations |\n| 並列最佳 | GPT-5.5/Codex：50.2%，95% CI 40.8%–59.6% |\n| 其他前段配置 | Opus 4.7/PI：49.6%；Sonnet 4.6/PI：48.6% |\n| 任務類別 | Source tracking 50%；taxonomic classification 46%；anomaly detection 20%；genetic-engineering characterization 35% |\n| 樣本類型 | Clinical 45%；isolate 44%；wastewater 37% |\n| Sequencing technology | Short-read 41%；long-read 26% |\n| Nucleic-acid target | DNA 39%；RNA 42% |\n| Assay type | Shotgun 與 targeted 均約 40% |\n| Refusal | 不同配置由 0% 至近三分之一；OpenAI 在 PI 為 27%–29%，在 Codex 為 8%–9% |\n\n作者指出，各配置的難度排序大致一致；agents 通常會使用 validated tools，但在 references、thresholds、filters、normalization 或輸出解讀上犯錯。",
+      "insights": [
+        "實務部署不應只檢查 agent 是否呼叫了合理工具，還應記錄並驗證 reference database、threshold、filter、normalization 與 control 等關鍵參數。",
+        "評測結果顯示應針對 anomaly detection、genetic-engineering characterization 及 long-read data 設計額外測試與人工覆核流程，因其通過率明顯較低。",
+        "benchmark 的 deterministic structured grading 適合驗證客觀分析決策；對於真實 surveillance 中的模糊判斷，仍需另建能處理多種合理答案的評測方法，並同步衡量 refusal。"
+      ],
+      "limitations": "任務在類別、樣本類型與 sequencing technology 間分布不均，aggregate score 因而偏重樣本較多的標籤。排除 refusals 的分母可能使高拒答配置看似受益，需搭配專門的 refusal evaluation。資料集完整版本受限存取。更根本的限制是 benchmark 僅納入具有單一客觀答案、可 deterministic grading 的任務，尚未涵蓋大量需要專業判斷的開放式 surveillance 分析。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "生物資訊工作流程評測",
+        "pathogen genomic surveillance",
+        "可驗證的 scientific agents",
+        "deterministic structured grading"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19243",
+      "title": "Inference-Time Steering for Cross-Lingual Factual Consistency in LLMs",
+      "abstract": "Although Large Language Models (LLMs) demonstrate remarkable multilingual fluency, their internal knowledge representations remain disproportionately biased toward high-resource languages. This leads to cross-lingual factual inconsistency, where they shift their empirical answer distributions based solely on the prompt language. We investigate whether these biases can be mitigated at inference time, forcing an English-prompted model to answer as if it were queried in target languages (German, Spanish, Bulgarian), and evaluate four intervention strategies: zero-shot contextual steering (persona prompting), internal representation manipulation via Contrastive Activation Addition (CAA), and lightweight weight modification via Direct Preference Optimization (DPO) trained on benchmark-derived factual data as well as conceptual generalization data. To assess alignment, we curate a multilingual factual dataset alongside a novel generalization benchmark comprising culturally rooted queries to determine whether factual interventions transfer to broader target-centric preferences. Experiments on Gemma 3 12B Instruct reveal persona prompting to be the strongest overall intervention, balancing efficacy, safety, and out-of-domain generalization. While CAA yields sharp inconsistency benchmark shifts, it is configuration-sensitive and risks knowledge degradation. DPO-based adapters offer permanent, yet narrower and less transferable gains. These findings suggest that cross-lingual inconsistency is at least partly a selection problem, and that simple contextual interventions may outperform more invasive methods for robust, transferable alignment.",
+      "authors": [
+        "Alexander Manev"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T16:15:05+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19243v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19243",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）雖具備多語言流暢性，其內部知識表徵仍偏重高資源語言，因而可能僅因提示語言不同而產生跨語言事實不一致。本文研究能否在 inference time 將英文提示的模型導向如同使用德文、西班牙文或保加利亞文提問時的回答分布，並比較四類介入策略：zero-shot contextual steering（persona prompting）、以 Contrastive Activation Addition（CAA）操弄內部表徵，以及使用基準資料或概念泛化資料訓練的 Direct Preference Optimization（DPO）LoRA adapters。作者建立多語言事實資料集與文化情境泛化基準，在 Gemma 3 12B Instruct 上實驗。結果顯示 persona prompting 在效能、安全性與分布外泛化間取得最佳整體平衡；CAA 能大幅改變不一致性基準，但對設定敏感且可能損害知識；DPO adapters 的效果較永久卻較狹窄。研究因此主張，跨語言不一致部分屬於答案選擇問題，簡單的 contextual intervention 可能比侵入性方法更穩健且可轉移。",
+      "problem_statement": "LLM 可能在提示語言改變時，對同一事實選擇不同答案，反映高資源語言與英語中心偏差。既有方法多依賴大規模預訓練或參數微調，成本高，且可能造成模型其他能力退化；單次正確率也難以捕捉多次生成下的答案分布差異。本文因此探討能否以 inference-time intervention，讓英文提示模型呈現目標語言的事實偏好，並同時驗證安全性與文化泛化。",
+      "proposed_solution": "作者建立由淺入深的比較框架。首先以 persona prompting 透過上下文指令喚回模型既有的目標文化訊號；其次以 CAA 從英文偏好與目標偏好 completion 的 hidden-state 差異計算 steering vector，於生成時加入 residual stream；最後以 DPO LoRA 將偏好固化為參數更新，並分別使用基準事實對比與文化泛化資料訓練。核心創新是把跨語言事實一致性重新表述為 preference realignment 問題，並以 JSD、TPM、普通事實保存及文化泛化共同判斷介入是否真正有效。",
+      "core_contributions": [
+        "建立涵蓋英文、德文、西班牙文、保加利亞文、瑞典文與韓文的多語言原子事實資料集，並以重複取樣與答案分布分析跨語言不一致。",
+        "提出包含每種目標語言50個文化根植情境的泛化基準，用於檢驗事實偏好介入是否能轉移至更廣泛的目標文化偏好。",
+        "在 Gemma 3 12B Instruct 上系統比較 persona prompting、CAA、基準衍生 DPO 與泛化衍生 DPO，指出 prompting 在目標對齊、普通事實保存與概念泛化之間具有最佳整體表現。"
+      ],
+      "methodology": "研究首先以 Gemma 3 12B Instruct 為主要實驗模型；初始跨語言比較另涵蓋 gpt-oss-20b、Qwen 3 30B-A3B 與 Llama 4 Maverick Instruct。多語言事實基準以 atomic triples（subject、relation、object）組成，涵蓋七種關係，包括 capital、city of origin、country of origin、country of citizenship、languages、occupation 與 religion。每個 subject-relation pair 使用隨機 prompt templates，在溫度 T=0.8 與1.2 各生成10次；輸出經 extraction 與 canonicalization 正規化為英文答案，再以 pairwise Jensen–Shannon distance（JSD）衡量分布差異，並以 target probability mass（TPM）評估目標偏好答案的機率質量。四種介入包括：一、在英文提示前加入「出生、成長並居住於目標國家」的 persona instruction；二、CAA，從英文偏好與目標語言偏好答案的 activation difference 建立 steering vector，於指定層加入 residual-stream 向量，並掃描 Gemma 的48層與 multiplier 0.5至30；三、以相同 factual contrast pairs 訓練 benchmark-derived DPO LoRA；四、以文化泛化資料訓練 generalization-derived DPO LoRA。DPO 使用 rank=16、alpha=32、dropout=0.05、learning rate=1e-5、5 epochs。安全性在排除實驗 subject union 的 held-out 普通事實上比較 ΔTPM、ΔJSD 及其絕對值；泛化測試則使用每種目標語言50個英文撰寫、二選一且採第二人稱的文化情境，分別以隨機取樣與 greedy decoding 評估目標中心選擇率。",
+      "key_results": "主要結果如下；JSD 越低代表越接近目標語言分布，TPM 越高代表目標偏好答案的經驗機率質量越高。\n\n| 目標/版本 | Baseline JSD/TPM | Prompting JSD/TPM | Steering JSD/TPM | DPO（Ben.）JSD/TPM | DPO（Gen.）JSD/TPM |\n|---|---:|---:|---:|---:|---:|\n| bg v1 | 0.583 / 0.662 | 0.490 / 0.729 | 0.504 / 0.755 | 0.501 / 0.745 | 0.522 / 0.726 |\n| de v1 | 0.524 / 0.707 | 0.396 / 0.789 | 0.436 / 0.748 | 0.458 / 0.743 | 0.439 / 0.739 |\n| es v2 | 0.423 / 0.778 | 0.468 / 0.737 | 0.433 / 0.796 | 0.348 / 0.837 | 0.413 / 0.776 |\n\n論文報告 prompting 在9個評估格中有8個改善 JSD 與 TPM；CAA 改善 JSD 的格數為8/9，但需要依語言、對比版本、層與 multiplier 調校。基準衍生 DPO 在9個格中全部改善 JSD、8個改善 TPM；泛化衍生 DPO 亦在9個格中全部改善 JSD、8個改善 TPM。v1 下的部分結果達統計顯著：prompting 對 Bulgarian 的 JSD 改善 p<0.01、CLES=0.672，對 German p<0.05、CLES=0.705；CAA 對 Bulgarian p<0.01、CLES=0.741，對 German p<0.01、CLES=0.705。\n\n安全性方面，普通事實的平均絕對變動為：prompting 的 |ΔTPM|=0.0041、|ΔJSD|=0.0034；steering 為0.0203、0.0181；DPO（Ben.）為0.0019、0.0019；DPO（Gen.）為0.0011、0.0015。泛化基準的目標偏好率中，baseline 平均約32.7%，prompting 提升至86.0%；steering 為33.3%，DPO（Ben.）為32.7%。",
+      "insights": [
+        "若模型已具備目標語言或文化相關訊號，部署時可優先採用明確的 persona prompting，避免先進行成本較高的權重更新或 activation engineering。",
+        "評估跨語言對齊不應只看目標基準上的 JSD 或 TPM；應同步檢查未介入的普通事實，因為 CAA 在部分設定下造成明顯的分布退化。",
+        "若採用 CAA 或 DPO，對比資料的結構十分關鍵：論文中的 v1（交叉配對且排除相同答案）比資料過稀的 v0 或包含矛盾相同配對的 v2 更穩定；但此結論僅由本研究設定支持。"
+      ],
+      "limitations": "研究只在單一模型 Gemma 3 12B Instruct、三種目標語言（德文、西班牙文、保加利亞文）上進行；CAA 與部分 DPO 使用的事實對比資料較小。答案 extraction 與 judgment 部分依賴 GPT-5.1，可能引入標註噪聲；研究重點是分布一致性而非完整事實正確性。未來可擴大文化資料、測試瑞典文與韓文，以及其他架構。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multilingual LLM evaluation",
+        "representation engineering",
+        "preference optimization",
+        "cultural alignment"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19235",
+      "title": "MeetingToM: Evaluating Multimodal LLMs on Theory-of-Mind Reasoning in Multi-Party Meetings",
+      "abstract": "Theory of Mind (ToM), the ability to infer other's beliefs, intentions, and states of knowledge, is central to social interaction, yet remains challenging for current Multimodal Large Language Models (MLLMs), especially in multi-party meetings where cues are distributed across speech and behavior. Existing multimodal ToM benchmarks mainly focus on video-grounded question answering over overt, externally verifiable signals, and provide limited coverage of latent social states and group dynamics. We introduce MeetingToM, a benchmark for complex social behavior reasoning in naturalistic multi-party meetings. MeetingToM targets meeting-specific phenomena such as \\textbf{pseudo-consensus}, where apparent agreement masks private dissent under social pressure. The benchmark is hierarchically organized to evaluate ToM at increasing levels of social granularity, including (i) subject-level mental state prediction, (ii) dyadic-level addressee understanding, and (iii) group-level consensus reasoning. We provide a unified evaluation protocol and conduct systematic analyses of representative MLLMs, revealing persistent limitations in integrating non-verbal cues, inferring hidden attitudes, and distinguishing genuine consensus from pseudo-consensus. Our results highlight key challenges and establish MeetingToM as a testbed for advancing meeting-grounded ToM in multimodal models.",
+      "authors": [
+        "Ziyi Wang",
+        "Yuhang Wu",
+        "Dongxu Piao",
+        "Xingyu Liu",
+        "Tianhui Zhou",
+        "Miao Liu"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.CV"
+      ],
+      "published": "2026-07-21T16:05:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19235v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19235",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Theory of Mind（ToM）是推斷他人信念、意圖與知識狀態的能力，對社會互動至關重要，但現有 Multimodal Large Language Models（MLLMs）在多方會議中仍面臨顯著挑戰，因為相關線索分散於語音、語言與行為之間。既有 multimodal ToM benchmark 多聚焦於影片問答及明顯、可外部驗證的訊號，較少涵蓋隱性社會狀態與群體動力。本文提出 MeetingToM，一個針對自然多方會議中複雜社會行為推理的 benchmark，特別評估 pseudo-consensus：表面同意在社會壓力下掩蓋私人異議。資料依社會粒度分為 subject-level mental state prediction、dyadic-level addressee understanding，以及 group-level consensus reasoning。統一評估顯示，現有 MLLMs 在整合非語言線索、推斷隱藏態度，以及區分真正共識與 pseudo-consensus 方面仍有持續限制。",
+      "problem_statement": "現有 multimodal ToM benchmark 多以影片問答評估明顯且可驗證的行為，較少處理自然多方會議中的隱性心理狀態、指涉關係與群體動力。模型因此不只要辨識「說了什麼」，還要整合凝視、姿勢、回應時序與社會壓力，判斷表面同意是否掩蓋私人異議。論文聚焦於現有 MLLMs 難以可靠完成這類 meeting-grounded ToM 推理的問題。",
+      "proposed_solution": "作者提出 MeetingToM，一個以 AMI 多視角會議影片與對齊逐字稿為基礎的階層式 benchmark。其核心設計按社會粒度與推理深度分成三層：個體 mental state prediction、雙人 addressee 與 attitude reasoning、群體 consensus 與 hidden dissent reasoning。基準特別引入 pseudo-consensus，並以統一的 multiple-choice evaluation protocol、人工審核標註及多面向消融實驗，檢驗模型是否真正整合語言、非語言與互動脈絡，而非依賴表面話語線索。",
+      "core_contributions": [
+        "提出 MeetingToM benchmark，將自然多方會議中的 multimodal Theory-of-Mind 推理系統化為三個遞進層級：個體心理狀態、雙人指涉與態度、群體共識。",
+        "引入並具體評估 pseudo-consensus，要求模型辨識表面語言同意與非語言保留或異議之間的不一致，並找出可能的隱性異議者。",
+        "基於 AMI Meeting Corpus 建立含同步多視角影片、音訊與逐字稿的資料集，並對代表性 proprietary 與 open-source MLLMs 進行主結果、模態、提示、話語標記與情境先驗分析。"
+      ],
+      "methodology": "MeetingToM 建立於 AMI Meeting Corpus 的 scenario-based product-design meetings，使用 60 個 meeting sessions、1,800 個 clips，三個 task family 各 600 筆。資料保留同步的 global view、四名參與者的 close-up view、2×2 mosaic view、音訊與 word-level transcript。Task 1 擷取 5 秒個人近景片段，從七類 mental state 中選擇：Active Engagement、Supportive Endorsement、Focused Listening、Cognitive Conflict、Confused Bewilderment、Hesitation、Disengaged Withdrawal。Task 2 使用約 50 秒脈絡，先依 global view、凝視、身體方向與話語判斷 “you” 的 addressee，再從相關視角判斷其對 speaker 的 Support、Oppose、Neutral 或 Uncertain 態度。Task 3 以 mosaic view 與逐字稿判斷 True Consensus、Pseudo Consensus、No Consensus 或 Uncertain；若為 pseudo-consensus，再辨識隱性異議者。候選片段由互動模式抽取，GPT-5 協助產生問題與選項，但不決定 gold answer；兩名訓練 annotators 獨立標註，第三名處理歧異，無多數共識者剔除。評估採 exact-match accuracy，並對 Task 1 與 Task 3.1 報告 Macro-F1；Task 3.2 條件式評估。實驗比較 GPT-4o、GPT-5、Gemini-3 Pro、Qwen2.5/3-VL，另分析 video、utterance 與聯合模態、Naive-CoT、Task-CoT、ECoT、話語標記移除及 role、phase、dialogue-act 先驗。",
+      "key_results": "主要結果如下；Task 3.2 的分數依論文設定，僅在正確判定 Task 3.1 後條件式評估。\n\n| 模型 | Task 1 Acc. / Macro-F1 | Task 2.1 Acc. | Task 2.2 Acc. | Task 3.1 Acc. / Macro-F1 | Task 3.2 Acc. |\n|---|---:|---:|---:|---:|---:|\n| Human | 86.33 / 75.79 | 86.00 | 83.33 | 80.33 / 74.97 | 79.67 |\n| Gemini-3 Pro | 59.00 / 30.39 | 74.33 | 51.67 | 40.67 / 22.13 | 88.52 |\n| GPT-5 | 55.67 / 28.69 | 54.33 | 51.00 | 43.00 / 28.99 | 90.70 |\n| GPT-4o | 36.06 / 14.23 | 29.10 | 46.15 | 21.28 / 10.13 | 58.73 |\n| Qwen2.5-VL-32B | 55.50 / 26.57 | 37.00 | 47.67 | 18.00 / 9.90 | 51.85 |\n| Qwen3-VL-8B | 42.17 / 23.74 | 37.67 | 47.67 | 23.33 / 11.19 | 65.71 |\n| Qwen3-VL-32B | 38.00 / 19.89 | 64.67 | 48.67 | 27.33 / 12.91 | 74.39 |\n\n人類表現在所有任務均明顯高於模型。Gemini-3 Pro 在 Task 1 與兩個 dyadic 任務表現最佳；GPT-5 在 group-level 任務最佳。模態消融中，Gemini-3 Pro 的 utterance-only 在 Task 1、Task 2.2、Task 3.1 與 Task 3.2 分別達 61.33、55.00、55.67、97.60，Task 2.1 則以 video-and-utterance 的 74.33 最佳。論文未報告統計顯著性檢定。",
+      "insights": [
+        "評估會議或協作助理時，不應只使用整體 accuracy；Task 1 與 Task 3.1 的 accuracy 和 Macro-F1 差距顯示，類別不平衡可能掩蓋模型對少數且關鍵社會狀態的失敗。",
+        "多模態輸入不必然帶來提升：Gemini-3 Pro 的 utterance-only 在多數任務優於 video-only 或 video-and-utterance，實務系統應採用任務導向的視覺—語言融合，而非直接堆疊模態。",
+        "Chain-of-Thought 與情緒導向提示的效果依模型與任務而變；部署時應分別驗證個體、雙人及群體推理，避免將較長推理誤視為普遍能力提升。"
+      ],
+      "limitations": "資料僅來自英語、結構化的 AMI 會議，且以約 5 秒或 50 秒片段取代完整 30 分鐘會議，限制了跨語言、非正式、線上與長期脈絡的泛化。心理狀態由第三方依可觀察線索推斷，無法取得原始參與者的自我報告，因此未必等同其真實私人信念或意圖。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Theory of Mind",
+        "多模態社會推理",
+        "會議理解與群體動力",
+        "非語言行為分析"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19322",
+      "title": "Two-Level Meta-Rubrics for Evaluating Open-Ended Generation: GAMUT, a Benchmark for Factual Completeness",
+      "abstract": "Evaluating the factuality of long-form generations has focused predominantly on precision, measuring whether the claims a model makes are correct. The dominant decompose-search-verify pipeline catches incorrect claims well but says little about whether a response contains all the information it should. Measuring factual completeness, the missing half of factuality, is harder: it requires enumerating the full set of facts a complete answer should contain, and these facts rarely form a flat list. They often involve open-ended sets where coverage is what matters, ordered processes, and relationships among facts that a list of independent boolean checks fails to capture. We introduce a two-level meta-rubric framework for evaluating open-ended generation, and instantiate it as Gamut (Grounded Assessment of Multimodal Factuality), a benchmark for factual completeness in long-form generation. The framework rests on a two-level rubric representation: a structured meta-rubric captures the organization and importance of the required content, which is then mechanically compiled into a flat checklist of binary, machine-gradable rubrics that an LLM judge scores reliably. We construct 1,813 questions grounded in real wearable imagery across 10 diverse domains, each paired with an evidence-backed rubric verified by expert human annotators. Because the framework is modality-agnostic, we also release a text-only variant. Evaluating 14 frontier and open-weight models, we find the benchmark genuinely challenging (best score 58.7% from Gemini 3.1 Pro), highly discriminative, and robust to the choice of judge.",
+      "authors": [
+        "Xilun Chen",
+        "Zhaleh Feizollahi",
+        "Ross Goodwin",
+        "Seungwhan Moon",
+        "Scott Yih",
+        "Pinar Donmez",
+        "Babak Damavandi",
+        "Luna Dong"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-07-21T17:42:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19322v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19322",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "長篇生成的 factuality 評估過去主要關注 precision，即模型提出的 claims 有多少正確；主流的 decompose-search-verify（DSV）流程能有效捕捉錯誤 claims，卻難以判斷回答是否涵蓋完整答案所需的資訊。factual completeness 是 factuality 的另一半，但更難測量，因為完整答案的 facts 很少是扁平清單，往往包含需衡量 coverage 的 open-ended sets、具有順序的 processes，以及 facts 之間的 relationships。本文提出 two-level meta-rubric framework，並實作為 Gamut（Grounded Assessment of Multimodal Factuality），用於評估長篇生成的 factual completeness。其 structured meta-rubric 描述必要內容的組織與重要性，再機械式編譯成 LLM judge 可可靠評分的 binary checklist。作者建立 1,813 個以真實穿戴式影像為基礎、涵蓋十個領域的問題，每題配有經專家驗證且有證據支持的 rubric，並釋出 text-only 版本。對 14 個 frontier 與 open-weight models 的評估顯示，最佳模型 Gemini 3.1 Pro 僅得 58.7%，benchmark 具挑戰性、鑑別力高，且對 judge 選擇具有穩健性。",
+      "problem_statement": "現有長篇 factuality 多以 DSV 將回答拆成 atomic claims，再逐項搜尋與驗證，主要測 precision；即使是評估 recall 的方法，也通常把完整答案表示成固定且互相獨立的 binary facts。這種 flat checklist 無法處理 open-ended facts 的 coverage、process 的必要順序、facts 間的 relationships、群組結構與不同重要性，因此可能錯誤懲罰合理但選擇不同內容的答案，也無法細緻區分遺漏與矛盾。",
+      "proposed_solution": "作者提出 two-level meta-rubric framework，將「描述好答案」與「實際評分」分離。結構化 meta-rubric 在建構階段表達必要內容的類型、群組、重要性、開放集合、流程順序、關係與 meta-insights，並以人類驗證的 web evidence grounding。接著透過固定且 deterministic 的 compilation rules，將複雜結構轉成許多 self-contained、pass/fail 的 binary checks，讓 LLM judge 個別判斷以降低 holistic grading 的 variance。Gamut 是此框架在影像導向 everyday deep research 上的具體 benchmark，同時提供 text-only variant，以區分視覺辨識與知識完整性。",
+      "core_contributions": [
+        "將 factual completeness 提升為長篇 factuality 評估中的一級目標，指出現有 precision 與 recall 方法共同依賴扁平、彼此獨立的 binary fact checks，無法表達 coverage、順序與關係。",
+        "提出 two-level meta-rubric framework：以具結構與重要性層級的 meta-rubric 進行知識表徵與人工驗證，再以固定規則編譯成可審計、可機械評分的 binary rubric。",
+        "建立 Gamut benchmark，包含 1,813 個 grounded in real wearable imagery 的 everyday deep-research 問題、十個領域、human-verified evidence-backed rubrics，以及可隔離視覺辨識因素的 text-only variant。"
+      ],
+      "methodology": "Gamut 採用兩層評測表示，而非特定被測模型架構。第一層是每題的 structured meta-rubric，由 evidence-backed items 組成，並標示三種重要性：Answer-Critical、Valuable、Context；每個 item 可屬於 Simple Knowledge、Strict List、Flexible List、Process 或 Relationship，另可包含跨項目的 meta-insight。作者先從 CRAG-MM 抽取 1,938 張穿戴式影像與實體，利用 Gemini 3.1 Pro 產生 image-dependent、需多步 web research 的 everyday deep-research 問題，再經兩名專家審查、第三人仲裁與自動 stranger test，最終保留 1,813 題。Rubric 建構由模型蒐集 web snippets、提出結構化 rubric；之後進行來源重新瀏覽、獨立重搜與自我修訂，並由受訓專家檢查 evidence、遺漏、分類與編譯結果。第二層依固定規則將 meta-rubric 編譯為 self-contained binary checklist：Strict List 逐項檢查；Flexible List 產生最低 coverage threshold 與較低層級的額外 coverage checks；Process 產生步驟存在檢查及順序檢查；Relationship 拆為實體與關係面向檢查。LLM judge 對每一項輸出 meets、partially meets、missing 或 contradicts。分數分別為 1、λ、0、μ；作者設定 λ=0.5、μ=-2，先計算各 tier 分數，再以 Answer-Critical、Valuable、Context 的 0.6、0.3、0.1 加權得到 Gamutscore。另以相同 rubric 評估 text-only 版本，並使用 Gemini 3.1 Pro、Claude Opus 4.8 與 Qwen3-VL 235B 三個 judges 比較排名穩健性。",
+      "key_results": "主要結果如下（分數為百分比；Gamutscore 為 importance-weighted headline score）：\n\n| 模型 | Gamut 多模態 | AC | Valuable | Context | Text-only |\n|---|---:|---:|---:|---:|---:|\n| Gemini 3.1 Pro | 58.7 | 63.9 | 51.9 | 45.1 | 74.1 |\n| Gemini 3 Flash | 57.9 | 63.0 | 51.6 | 44.7 | 71.2 |\n| Claude Opus 4.8 | 53.1 | 59.4 | 43.9 | 40.4 | 60.8 |\n| Gemini 2.5 Pro | 51.8 | 55.8 | 47.2 | 39.7 | 66.9 |\n| GPT-5.4 | 42.6 | 46.8 | 37.8 | 29.0 | 59.8 |\n| GPT-4o | 34.2 | 39.1 | 28.0 | 21.5 | 58.1 |\n| Qwen3-VL 235B | 33.0 | 34.1 | 32.6 | 26.4 | 48.7 |\n| Llama 4 Maverick | 18.3 | 19.5 | 17.3 | 12.3 | 39.9 |\n| Llama 3.2 11B | 5.1 | 3.8 | 7.8 | 4.3 | 22.7 |\n\n- 在 1,813 題多模態測試中，最佳 Gamutscore 為 58.7%，顯示 factual completeness 尚未解決。\n- 評測 rubric 平均每題 15.2 個 binary checks，中位數 15；平均約 5.9 個 Answer-Critical、5.8 個 Valuable、3.5 個 Context checks。\n- 98% 題目包含 Simple Knowledge 以外的結構；86% 有 Flexible List、49% 有 Strict List、17% 有 Process、6% 有 Relationship，13% 含 meta-insight。\n- Gemini 3.1 Pro 與 Claude Opus 4.8 作為 judge 產生相同模型排名，兩者模型分數差距不超過 1.8 個百分點；Qwen3-VL 235B judge 較寬鬆，但維持大致排序。\n- 從多模態改為 text-only 後，所有模型分數上升；Gemini 3.1 Pro 上升 15.4 個百分點，GPT-4o 上升 23.9 個百分點。作者據此認為視覺辨識較像近似一致的成本，而非主要排名來源。\n- 論文未報告與人工整體評分、既有 factuality benchmark 或其他 baseline metric 的直接相關係數。",
+      "insights": [
+        "設計開放式生成評測時，應先表徵「完整答案如何組成」，再將其轉換成細粒度評分項目；不要直接要求 judge 以整體印象評分。",
+        "對 open-ended knowledge，評測應使用最低 coverage threshold 加上額外覆蓋獎勵，而非要求模型命中固定 reference facts；對 process 則應同時檢查步驟出現與相對順序。",
+        "評測 factuality 不應只懲罰錯誤，也要區分 omission 與 contradiction。Gamut 使用 λ=0.5、μ=-2，使保守遺漏的回答優於自信但錯誤的回答，適合診斷模型的知識完整性。"
+      ],
+      "limitations": "資料集的問題與 rubric 初稿大量由 Gemini 3.1 Pro 產生，雖經專家多輪審查，仍可能帶入模型或來源選擇偏差。rubric 建構依賴 web snippets，來源品質與時效性可能不一致；LLM judge 仍可能有判斷偏差。論文也未提供完整的人類評分效度分析、跨語言結果或不同 λ、μ 與 tier weights 的敏感度實驗。文中 question creation 曾產生 1,843 題，最終因修正與淘汰留下 1,813 題，流程數字需留意。",
+      "tags": [
+        "llm-as-judge",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM-as-a-judge",
+        "long-form factuality evaluation",
+        "factual completeness",
+        "open-ended generation",
+        "wearable-image question answering"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.19318",
+      "title": "SoK: Adversarial Robustness of the Variational Quantum Eigensolver via Red-Teaming",
+      "abstract": "The Variational Quantum Eigensolver (VQE) is a leading algorithm for estimating molecular ground-state energies on near-term quantum hardware, with applications spanning quantum chemistry, materials science, and drug discovery. As VQE workloads are increasingly deployed through cloud-based ``VQE-as-a-service'' pipelines, they become exposed to adversaries such as compromised service components, malicious co-tenants, or insiders in the transpilation stack, any of which can corrupt results before they reach the user. A range of attacks on variational quantum circuits has been proposed, but each has been studied in isolation: some on quantum classifiers with accuracy-based metrics, others on variational quantum algorithms with energy-error metrics. This lack of a common evaluation setup makes their relative severity difficult to compare and leaves the security of VQE poorly characterized. In this work, we present \\textbf{VQE-AdvBench}, the first unified red-teaming benchmark for the Variational Quantum Eigensolver, systematizing these attacks under a single evaluation protocol to rigorously assess VQE's adversarial robustness. We organize attacks along a black-, gray-, and white-box access taxonomy, and evaluate seven representative attack scenarios -- the QTrojan circuit backdoor, the QDoor parameter backdoor, parameter-space adaptations of FGSM and PGD, and three QNBAD noise-induced variants -- over a fixed molecule-ansatz-backend-metric configuration, on H$_2$ and H$_3^+$ across five noise-calibrated IBM backends. Our results reveal a clear severity ordering: noise-induced attacks that manipulate the Zero-Noise Extrapolation (ZNE) pipeline are the most damaging (up to 8.84$\\times$ error amplification), followed by the QTrojan circuit-level backdoor (7.52$\\times$), while the QDoor parameter-level backdoor is the least effective, yielding only marginal amplification (up to 1.37$\\times$).",
+      "authors": [
+        "Ahmed Azaz Humdoon",
+        "Cheng Chu",
+        "Lei Jiang",
+        "Qian Lou",
+        "Mengxin Zheng"
+      ],
+      "categories": [
+        "quant-ph",
+        "cs.CR"
+      ],
+      "published": "2026-07-21T17:38:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.19318v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.19318",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "Variational Quantum Eigensolver（VQE）是近程量子硬體上估計分子基態能量的主要演算法，應用於量子化學、材料科學與藥物開發。隨著 VQE 透過雲端「VQE-as-a-service」流程部署，遭入侵的服務元件、惡意共租戶或轉譯堆疊內部人員可能在結果傳給使用者前加以篡改。既有變分量子電路攻擊多半各自研究，且分別採用分類準確率或能量誤差，缺乏共同評估設定。本文提出 VQE-AdvBench，首個針對 VQE 的統一 red-teaming benchmark，依 black-box、gray-box 與 white-box 存取層級整理攻擊，並在固定的分子、ansatz、backend 與指標設定下，評估七種攻擊情境。結果顯示，操縱 Zero-Noise Extrapolation（ZNE）流程的 noise-induced attacks 最具破壞性，最高可放大誤差 8.84 倍，其次為 QTrojan circuit backdoor 的 7.52 倍；QDoor parameter backdoor 最弱，最高僅達 1.37 倍放大。",
+      "problem_statement": "VQE 雲端服務中的電路、參數與噪聲處理流程可能被服務元件、共租戶或內部人員篡改，導致基態能量被污染。既有攻擊研究各自使用不同任務、設定與指標：量子分類器常用 accuracy，VQE 則使用 energy error，因此無法直接比較相對嚴重性。現有系統化工作也主要聚焦 QML classifiers，未充分描述 VQE 的安全風險與攻擊排序。",
+      "proposed_solution": "作者提出 VQE-AdvBench，透過統一的 red-teaming protocol 評估 VQE 對抗攻擊。框架固定 molecule、ansatz、backend 與 metric，並依攻擊者對電路、參數及硬體資訊的可見程度，分為 black-box、gray-box 與 white-box。其核心創新是把 QTrojan、QDoor、FGSM、PGD 與三種 QNBAD 變體置於同一比較環境，分別針對電路、最佳化參數及 ZNE noise trajectory，使用共同的能量誤差與 amplification 指標產生 VQE 攻擊嚴重性排序。",
+      "core_contributions": [
+        "提出 VQE-AdvBench，將七種涵蓋 circuit-level、parameter-level、gradient-based 與 noise-induced 的攻擊，置於統一 VQE red-teaming 評估協定中。",
+        "建立依 black-box、gray-box 與 white-box 存取權限劃分的攻擊分類，並對攻擊在 VQE 目標上的相對嚴重性進行直接比較。",
+        "在 H₂ 與 H₃⁺、五個具噪聲校準模型的 IBM fake backends 上，量化各攻擊相對 clean baseline 的絕對能量誤差放大，指出 ZNE 攻擊最具威脅。"
+      ],
+      "methodology": "研究建立固定的 VQE 評估流程。資料使用 PennyLane Molecules dataset 的 H₂ 與 H₃⁺，分別對應 4 與 6 qubits；電子費米子 Hamiltonian 以 Jordan–Wigner transformation 映射至 qubit Hamiltonian。電路採用 Qiskit 的 Hardware-Efficient Ansatz efficient_su2、linear entanglement；H₂ 使用 reps=2、24 個參數，H₃⁺ 使用 reps=3、48 個參數。噪聲實驗使用 fake_cairo、fake_montreal、fake_guadalupe、fake_almaden 與 fake_auckland 五個具真實硬體校準噪聲模型的 IBM fake backends。評估七種情境：gray-box 的 QTrojan circuit backdoor、white-box 的 QDoor parameter backdoor、直接擾動最佳參數 θ* 的 FGSM 與 PGD，以及攻擊 ZNE noise trajectory 的 QNBAD 三變體 FreeDrift、MimicSlope、SilentShift。QTrojan、QDoor、FGSM 與 PGD 使用 Adam，300 iterations、learning rate 0.1；FGSM/PGD 的擾動預算 ε=0.25 rad。QNBAD 使用 PennyLane 中結合 Adam 的 SPSA，300 steps、learning rate 0.1。ZNE 以 scaling factors T={1,…,6} 放大噪聲，並以 degree-2 polynomial 擬合後外推至零噪聲。電路與參數攻擊相對單一 noisy clean baseline 比較；QNBAD 則相對同一 ZNE pipeline 的 clean baseline 比較。指標為 adversarial 與 noise-free ideal energy estimate 的絕對誤差，並以 geometric mean 彙整兩個分子。",
+      "key_results": "論文以絕對誤差 \\(E_{abs}=|E_{adv}-f_{ideal}|\\) 及相對 clean baseline 的放大倍數評估攻擊。主要數據如下：\n\n| 攻擊類別 | 代表攻擊 | 主要觀察結果 |\n|---|---|---|\n| Noise-induced / ZNE | QNBAD-FreeDrift（QF） | CAI 的 geometric mean 最高為 8.84×；H₂ 最高 11.35×、H₃⁺ 最高 12.48× |\n| Noise-induced / ZNE | QNBAD-MimicSlope（QM） | CAI 的 geometric mean 最高為 8.35×；H₂ 在 ALM 最高 6.55×、H₃⁺ 在 CAI 最高 12.30× |\n| Noise-induced / ZNE | QNBAD-SilentShift（QS） | CAI 的 geometric mean 最高為 4.52×；H₂ 最高 4.32×、H₃⁺ 最高 4.73× |\n| Circuit-level backdoor | QTrojan | MON 的 geometric mean 最高為 7.52×；H₂ 最高 9.88×、H₃⁺ 最高 5.72× |\n| Gradient-based | PGD | 各 backend 的 geometric mean 為 3.32–6.15×，整體高於 FGSM |\n| Gradient-based | FGSM | 各 backend 的 geometric mean 為 2.07–3.38× |\n| Parameter-level backdoor | QDoor | 各 backend 的 geometric mean 為 0.94–1.37×，接近或低於 clean baseline |\n\n上述排序是作者在指定的小型分子、ansatz、噪聲模型與 ZNE 設定下得到的結果，不代表所有 VQE 配置。",
+      "insights": [
+        "實務上應將 ZNE 視為 VQE-as-a-service 的重要攻擊面：即使執行電路未直接被修改，攻擊者仍可透過改變不同 noise scaling levels 的 expectation-value trajectory 破壞 extrapolation。",
+        "VQE 安全評估應固定 molecule、ansatz、backend 與 metric，並同時報告絕對誤差及相對 clean baseline 的 amplification，避免不同研究因任務與指標異質而難以比較。",
+        "防禦措施需對應攻擊所在階段；論文建議對 QTrojan 使用 quantum-aware validation 與 classical–quantum consistency checks，對 QNBAD 考慮變換 noise model、randomized compiling 或 dynamical decoupling，並以 backend partitioning 限制白箱攻擊者的完整存取。"
+      ],
+      "limitations": "研究刻意限制於 H₂（4 qubits）與 H₃⁺（6 qubits）、Hardware-Efficient Ansatz，以及五個 IBM fake backends；防禦措施僅提出方向，未進行實證評估。脈衝層攻擊、僅查詢 black-box 攻擊與不受信任 compiler 內部攻擊均未涵蓋。作者將較大分子、其他 VQA（如 QAOA、VQD）及攻擊隨規模變化的研究留待未來。",
+      "tags": [
+        "benchmark",
+        "red-teaming",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Variational Quantum Eigensolver（VQE）安全性",
+        "Zero-Noise Extrapolation（ZNE）",
+        "量子電路 backdoor 與 adversarial robustness"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]
