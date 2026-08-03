@@ -3,6 +3,11 @@ name: Deploy documentation
 on:
   push:
     branches: [main]
+  # Pushes made with GITHUB_TOKEN do not start another workflow. Listen for
+  # the daily workflow explicitly so its generated main commit is deployed.
+  workflow_run:
+    workflows: [Daily paper digest]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -16,6 +21,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
