@@ -1,6 +1,7 @@
 """
 arXiv 論文抓取模組
 """
+import os
 import random
 import time
 from datetime import datetime, timedelta, timezone
@@ -16,8 +17,8 @@ RETRYABLE_HTTP_STATUSES = {429, 500, 502, 503, 504}
 def _fetch_results(
     search: arxiv.Search,
     *,
-    max_attempts: int = 4,
-    base_delay_seconds: float = 5.0,
+    max_attempts: int | None = None,
+    base_delay_seconds: float | None = None,
 ) -> list:
     """Fetch one arXiv query with bounded exponential backoff.
 
@@ -25,6 +26,16 @@ def _fetch_results(
     429/5xx responses from arXiv. The library retries individual page requests;
     this outer retry restarts the complete query after a longer cool-down.
     """
+    if max_attempts is None:
+        max_attempts = int(os.environ.get("ARXIV_MAX_ATTEMPTS", "8"))
+    if base_delay_seconds is None:
+        base_delay_seconds = float(os.environ.get("ARXIV_RETRY_BASE_SECONDS", "15"))
+
+    if max_attempts < 1:
+        raise ValueError("ARXIV_MAX_ATTEMPTS must be at least 1")
+    if base_delay_seconds < 0:
+        raise ValueError("ARXIV_RETRY_BASE_SECONDS must not be negative")
+
     for attempt in range(max_attempts):
         try:
             client = arxiv.Client(
@@ -36,7 +47,10 @@ def _fetch_results(
         except arxiv.HTTPError as exc:
             if exc.status not in RETRYABLE_HTTP_STATUSES or attempt + 1 >= max_attempts:
                 raise
-            delay = min(60.0, base_delay_seconds * (2**attempt))
+            # Scheduled GitHub runners share egress IPs and can remain throttled
+            # for several minutes. A longer cap gives arXiv time to recover while
+            # keeping the workflow inside its overall timeout.
+            delay = min(180.0, base_delay_seconds * (2**attempt))
             delay += random.uniform(0, min(3.0, delay * 0.2))
             print(
                 f"arXiv 回應 HTTP {exc.status}，{delay:.1f} 秒後重試 "
@@ -164,8 +178,30 @@ def fetch_papers_by_date_range(
         sort_order=arxiv.SortOrder.Descending,
     )
 
+    try:
+        results = _fetch_results(search)
+    except arxiv.HTTPError as exc:
+        if exc.status not in RETRYABLE_HTTP_STATUSES:
+            raise
+        # Date-range expressions are substantially more expensive for arXiv's
+        # API and are frequently throttled on shared GitHub runner IPs. Fall
+        # back to the same category query sorted by recency, then enforce the
+        # requested date window locally. This keeps the digest useful without
+        # silently widening its calendar range.
+        print(
+            f"arXiv 日期查詢持續失敗 (HTTP {exc.status})，"
+            "改用最新論文查詢並在本地過濾日期..."
+        )
+        fallback_search = arxiv.Search(
+            query=f"({category_query})",
+            max_results=max_results,
+            sort_by=arxiv.SortCriterion.SubmittedDate,
+            sort_order=arxiv.SortOrder.Descending,
+        )
+        results = _fetch_results(fallback_search)
+
     papers_by_id: dict[str, Paper] = {}
-    for result in _fetch_results(search):
+    for result in results:
         paper = _paper_from_result(result)
         if start_utc <= paper.published < end_utc_exclusive:
             papers_by_id.setdefault(paper.arxiv_id, paper)

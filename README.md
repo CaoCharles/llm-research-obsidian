@@ -69,7 +69,10 @@ GitHub Actions 會在每天 **08:00（Asia/Taipei）** 執行 `.github/workflows
 2. 使用 OpenAI 生成繁體中文結構化摘要與 `DailyJSON/YYYY-MM-DD.json`
 3. 寫入 Obsidian 的 `Papers/`、`Topics/` 與 `Daily/`，保留 arXiv PDF 連結但不下載 PDF
 4. 建置時將內容產生到 `docs/`，驗證 MkDocs 完整 build
-5. 推送至 `automation/paper-digest` 並建立或更新 Pull Request，不直接修改 `main`
+5. 將新增的摘要直接 push 至 `main`，觸發 GitHub Pages 重新建置
+
+arXiv 對 GitHub 共用 IP 限流時，抓取器會使用指數退避自動重試；可用
+`ARXIV_MAX_ATTEMPTS` 與 `ARXIV_RETRY_BASE_SECONDS` 調整重試預算。
 
 Repository 必須設定 Actions secret：`OPENAI_API_KEY`。工作流程也可從 Actions 頁面手動執行。
 
@@ -103,7 +106,7 @@ GOOGLE_CLOUD_PROJECT=ai-asst-km-prod bash scripts/test_gemini_notebook.sh
 
 | Workflow | 排程（Asia/Taipei） | 輸出 |
 |---|---|---|
-| Daily paper digest | 每日 08:00 | `automation/paper-digest` PR |
+| Daily paper digest | 每日 08:00 | `main` 摘要 commit 與 Pages 部署 |
 | Weekly paper digest | 每週一 08:37 | `Weekly/` 週報 PR（空週自動跳過） |
 | Deploy documentation | `main` 更新後 | GitHub Pages |
 | Deploy Gemini backend | `backend/` 合併至 `main` 後 | Cloud Run |
