@@ -1,0 +1,535 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2607.29677",
+      "title": "ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction",
+      "abstract": "Enterprise workflows increasingly rely on agents for \\emph{schema-guided extraction}: given a document and a user-defined schema, the agent faithfully follows the schema to produce the correct output with source evidence as grounding metadata. We present ExtractBench, a benchmark for schema-guided extraction and, to our knowledge, the first to score value accuracy, record completeness at scale, grounding, and measured cost together. The evaluation system contains 4,869 pages across 370 enterprise documents, 8 business domains, and 67 document types, with clear tags differentiating their challenge scenarios. The scalable schema and ground-truth curation pipeline combines independent-system agreement for real documents, known values for synthetic lists, and human verification for forms. We report order-insensitive value F1 for value accuracy, plus two grounding metrics for source traceability: word- and page-level F1. Commercial VLMs perform well on short documents but often truncate record lists on long ones, while coding agents retain higher accuracy at much higher cost. LlamaExtract Agentic Plus ranks first on all three metrics, with accuracy comparable to coding agents at a fraction of the cost. Dataset and evaluation code are available on \\href{https://huggingface.co/datasets/llamaindex/ExtractBench}{HuggingFace} and \\href{https://github.com/run-llama/ExtractBench}{GitHub}.",
+      "authors": [
+        "Boyang Zhang",
+        "Adrian Lyjak",
+        "Eli Stewart",
+        "Zhaoqi Li",
+        "Simon Suo"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-31T17:55:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29677v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29677",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "企業工作流程日益依賴 agents 執行 schema-guided extraction：系統根據文件與使用者定義的 schema，忠實產生正確輸出，並附上作為 grounding metadata 的來源證據。本文提出 ExtractBench，據作者所知，是首個同時大規模評估 value accuracy、record completeness、grounding 與實測成本的 benchmark。資料涵蓋 370 份企業文件、4,869 頁、8 個商業領域及 67 種文件類型，並以挑戰標籤區分不同情境。其 schema 與 ground truth 建構流程結合真實文件的獨立系統一致性、合成清單的已知值，以及表單的人工作業驗證。評估採用不計順序的 value F1，以及 word-level 與 page-level grounding F1。商業 VLM 在短文件表現良好，但長文件常截斷記錄清單；coding agents 維持較高準確率卻成本更高。LlamaExtract Agentic Plus 在三項指標均排名第一，準確率接近 coding agents，但成本僅為其一部分。資料集與評估程式碼已公開。",
+      "problem_statement": "企業文件抽取從固定欄位轉向 user-defined schema，但現有 benchmark 多半只覆蓋固定 ontology、少量 schema 或單一挑戰，未同時衡量長清單完整性、真實掃描與手寫、來源 grounding 及成本。單一 aggregate score 也無法區分截斷、錯配、過度填值與感知噪聲，因而不足以支援生產部署與人機稽核。",
+      "proposed_solution": "作者提出 ExtractBench，將 schema-guided extraction 定義為從文件與 JSON Schema 產生結構化 JSON 及逐值來源證據，並以五軸 taxonomy 標註 task challenge、perception challenge、table structure、document length 與 business domain。核心創新是把 value accuracy、重複記錄 completeness、page/word grounding 與 measured cost 統一評估。其 ground truth pipeline 依文件來源採用跨系統協議、人工作業驗證或程式化生成，兼顧真實版面多樣性、長清單可擴展性與表單標註可信度。",
+      "core_contributions": [
+        "提出涵蓋 370 份文件、4,869 頁、8 個領域、67 種文件類型與 13 個挑戰標籤的 schema-guided enterprise document extraction benchmark。",
+        "設計可擴展的 schema 與 ground-truth 建構流程，分別利用真實文件的跨系統協議與裁決、合成長清單的程式化已知值，以及掃描表單的人工作業驗證。",
+        "將 value accuracy、重複記錄完整性、word/page-level grounding 與每頁成本納入同一評估框架，並比較 14 個 extraction systems 的品質—成本取捨。"
+      ],
+      "methodology": "任務輸入是一份 born-digital 或 scanned 文件與使用者提供的 JSON Schema；schema 可包含 scalar、nullable field、nested object、record array 與 value constraints。系統輸出必須是 schema-valid JSON，並為每個值提供來源頁面與 bounding box。資料包含真實企業文件、依真實版面程式化生成的 synthetic long lists，以及真實掃描／手寫表單；每種文件類型共用一個 schema。真實文件先由不同模型與 pipeline 產生 schema 與抽取提案，對一致值採信，爭議欄位由人員依頁面裁決，若問題源於歧義則修訂 schema。合成清單先決定 records，再以 rendering code 產生 PDF，從渲染結果取得精確值與 word box，並透過機械檢查及模型池稽核。掃描表單由最多五個系統投票，爭議交由 agent 檢視，人員驗證每個欄位並修正框。評估 14 個系統，涵蓋 commercial/open-source VLM、coding agents 與 specialized APIs；所有系統使用相同 document-schema pairs，未作 benchmark-specific tuning。Value F1 將輸出攤平成 cells，陣列以 Hungarian algorithm 作不計順序的 record matching，經規定 normalization 後計算 precision、recall、F1；遺漏 scalar key 按 null 評分。Grounding 只在已驗證框的文件上計算，需同時值正確且 IoU≥0.5；page-level 僅要求來源頁正確。成本依實際 token 或 credit consumption 與公開價格計算，並按文件層級取平均，再依長度、任務、感知、表格結構及商業領域切片。",
+      "key_results": "| 系統 | Overall value F1 | Short / Medium / Long value F1 | Overall word-level grounding F1 | Overall page-level grounding F1 | 平均成本（¢/page） |\n|---|---:|---:|---:|---:|---:|\n| LlamaExtract Agentic Plus | 95.6% | 96.6% / 93.3% / 94.4% | 46.4% | 84.9% | 8.1 |\n| LlamaExtract Agentic | 89.5% | 92.0% / 85.4% / 78.6% | 44.1% | 66.1% | 3.1 |\n| LlamaExtract Cost-Effective | 86.8% | 90.8% / 80.1% / 69.2% | 40.4% | 64.2% | 1.0 |\n| Reducto Deep Extract | 90.4% | 94.2% / 80.5% / 92.0% | 43.3% | 71.7% | 34.4 |\n| Codex GPT-5.5 | 93.6% | 95.7% / 91.2% / 78.9% | 0.0% | 0.0% | 27.8 |\n| Claude Code Opus 4.8 | 87.1% | 90.1% / 79.2% / 88.1% | 0.0% | 0.0% | 16.2 |\n| Gemini 3.5 Flash | 79.8% | 87.9% / 69.8% / 27.9% | 0.0% | 0.0% | 1.0 |\n| GPT-5.4 Nano | 74.9% | 87.2% / 62.6% / 8.9% | 0.0% | 0.0% | 0.21 |\n\n論文報告：LlamaExtract Agentic Plus 在整體、長度切片及三項主要指標中表現最強；商業 VLM 在超過 50 頁的文件上大幅退化；超過 1,000 列的巨大表格中，多數 VLM 的 F1 低於 10%，而 LlamaExtract Agentic Plus、Reducto Deep Extract 與 Claude Code Opus 4.8 分別為 95.9%、95.3% 與 87.8%。",
+      "insights": [
+        "部署文件抽取系統時，不能只看整體 value F1；應額外切分長文件、長清單、跨頁表格、掃描與手寫等挑戰，以辨識具體失敗原因。",
+        "長文件的主要風險是 recall 下滑與整批記錄遺漏，而非單一欄位讀錯，因此生產流程應加入記錄數量檢查、跨頁續接驗證與完整性監控。",
+        "若工作流程需要可稽核輸出，應把來源頁面與精確 bounding box 視為一等指標；論文結果顯示 page-level grounding 明顯高於 word-level grounding，兩者不能互相替代。"
+      ],
+      "limitations": "資料集部分 ground truth 依賴跨模型一致性與裁決，而非所有真實文件欄位均由人工逐一標註；word-level grounding 僅在具驗證框的文件上評估。成本比較排除四個自託管 OSS pipeline，且結果反映 2026 年 7 月的供應商價格。文件與挑戰分布可能影響整體平均，論文未報告更廣泛產業或時間外推的結果；大 schema 導致失敗的因果關係也未經控制實驗確認。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "schema-guided information extraction",
+        "document AI 與視覺語言模型",
+        "source grounding 與可稽核 AI",
+        "長文件與表格完整性評估"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29459",
+      "title": "TFGformer: Multivariate Time Series Forecasting via Time-Frequency Graph Learning and Covariate Fusion",
+      "abstract": "Large-scale multivariate time series from heterogeneous IoT sensors demand accurate long-term forecasting for resource scheduling and predictive maintenance. While recent time series foundation models exhibit strong generalization, they rely on static parametric knowledge and lack dynamic access to external historical patterns during inference. Retrieval-Augmented Generation (RAG) offers a potential remedy, yet its application to time series forecasting is challenged by magnitude variations across heterogeneous sources and the mismatch between historical similarity and future consistency. We propose CrossRAG, a retrieval-augmented forecasting framework that integrates Shape-Aware Memory (SAM) with RevIN normalization for magnitude-robust shape-level retrieval, Future-Consistent Contrastive (FCC) learning to distinguish informative references from hard negatives with similar history but divergent futures, and Cross-Attention Temporal Fusion (CATF) to fuse retrieved historical--future reference pairs into the backbone's representations at the representation level. Experiments on seven public benchmarks show that CrossRAG consistently outperforms both parametric-only baselines and existing retrieval-augmented forecasting methods.",
+      "authors": [
+        "Yu Sun",
+        "Yuan Chang",
+        "Xiaohou Shi",
+        "Yan Sun"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-31T14:24:26+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29459v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29459",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "多變量時間序列 forecasting 需要建模複雜的 temporal dynamics 與變數間依賴關係。然而，實務中的 noisy correlations 可能造成干擾，而 calendar features、外部事件等重要 contextual covariates 也經常未被充分利用。為此，本文提出統一框架，結合 time–frequency graph structure learning 與 covariate-aware representation fusion。Time-Frequency Graph（TFG）模組利用 Short-Time Fourier Transform（STFT）捕捉互補的時間與頻譜模式，再透過 weighted Mahalanobis distance 學習 adaptive inter-variable correlations，並使用 Gumbel–Softmax sampling 建立 sparse、dynamic graphs，以抑制無關依賴。同時，MLP-based modules 將 historical 與 future covariates 融入主要序列表示，使模型利用 trend priors 與 contextual signals。於 electricity、traffic 與 meteorology benchmarks 的實驗顯示，TFGformer 持續優於多種 state-of-the-art Transformer-based models。",
+      "problem_statement": "本文處理多變量時間序列的長期 forecasting 問題。既有 channel-independent 方法缺乏明確的跨變數建模；channel-mixing 或 hybrid Transformer 雖能建模變數關係，卻可能假設所有變數對具有相近且靜態的關聯，無法處理稀疏、動態依賴。此外，calendar、weather 與事件等 covariates 常以簡單串接或額外 channel 使用，容易引入 noise，且未充分利用其歷史與未來情境資訊。",
+      "proposed_solution": "作者提出 TFGformer，由 Time-Frequency Graph（TFG）、Covariate Feature Fusion（CFM）與 Transformer sequence modeling backbone 組成。TFG 先以 STFT 擷取局部時間–頻率模式，再以 learnable Mahalanobis distance 衡量變數相似性，透過 Gumbel–Softmax 形成 sparse、dynamic graph，並將其與 causal time mask 結合以引導 attention。CFM 則分為輸入端的 I-CFM 與輸出端的 O-CFM：前者注入 historical covariates，後者融合 future covariates，兩者皆以 MLP 與 residual connection 保留原始表示。核心創新是將選擇性的時間–頻率跨變數關係學習，與分階段 covariate fusion 統一於 patch-based multivariate Transformer 中。",
+      "core_contributions": [
+        "提出 Time-Frequency Graph（TFG）結構學習模組，利用 STFT 與可學習的 Mahalanobis distance，在聯合時間–頻率特徵上估計變數關係，並以 Gumbel–Softmax 建立稀疏圖與 attention mask。",
+        "提出由 Input Covariate Fusion（I-CFM）與 Output Covariate Fusion（O-CFM）組成的 MLP-based covariate fusion module，分別融合 historical 與 future covariates。",
+        "在 ETT 四個子集、ECL、Traffic 與 Weather 共七個 benchmark datasets 上，針對多個 forecasting horizons 與 MSE、MAE 進行實驗，並提供消融、相關性視覺化與 Gumbel–Softmax 溫度敏感度分析。"
+      ],
+      "methodology": "問題設定為：給定長度 L、變數數量 C 的歷史序列 X∈R^{L×C}，以及 historical covariates C_his∈R^{L×Cz} 與 future covariates C_fut∈R^{S×Cz}，預測未來 S 步、C 個變數的序列。資料先沿時間維度進行 per-channel Z-score normalization，再以 sliding window 切成固定長度 patches。TFG 模組對每個變數計算 STFT，取得 magnitude spectrogram M_c∈R^{F×T}，其中 F=nfft/2+1；將時間–頻率特徵 flatten 成 channel vectors 後，以可學習的 symmetric PSD Mahalanobis matrix Q 計算變數對的 quadratic-form distance。距離透過 1/(D_ij+ε) 轉為相似度，進行非對角元素的 max normalization，再以 Bernoulli probability 與 Gumbel–Softmax 取得稀疏 binary graph G。該 channel mask 與 causal lower-triangular time mask 透過 Kronecker product 組成 attention mask，並在 Transformer attention softmax 前遮蔽不相關或非因果連接。CFM 包含 I-CFM 與 O-CFM：前者將 patch embedding 與 historical covariates 投影、串接，經 ReLU 與 MLP 後以 residual connection 加回；後者將 Transformer hidden states 與 future covariates 投影融合，再送入 forecasting head。future continuous covariates 缺失時 forward-fill，categorical covariates 則 zero-pad。實驗使用輸入長度 96、預測長度 96/192/336/720，指標為 MSE 與 MAE，baseline 包含 iTransformer、TiDE、PatchTST、Autoformer、FEDformer 與 DLinear。",
+      "key_results": "論文報告 TFGformer 在七個資料集中的六個取得最佳平均 MSE 與 MAE；在 ETTh1 上仍具競爭力。作者另報告，相較 iTransformer、PatchTST、TiDE 與 FEDformer，平均 MSE 分別降低 3.6%、6.4%、5.2% 與 16.4%。\n\n| Dataset | TFGformer Avg MSE | TFGformer Avg MAE |\n|---|---:|---:|\n| ETTh1 | 0.442 | 0.441 |\n| ETTh2 | 0.375 | 0.403 |\n| ETTm1 | 0.377 | 0.393 |\n| ETTm2 | 0.275 | 0.318 |\n| Weather | 0.249 | 0.273 |\n| Electricity | 0.171 | 0.259 |\n| Traffic | 0.422 | 0.276 |\n\n消融實驗在 Weather 與 ECL 上顯示，移除 CFM 後平均 MSE 相較完整模型增加 3.0%，移除 TFG 後增加 6.0%。Weather 的溫度敏感度結果為：τ=0.1/0.5/1.0/2.0/5.0 時，MSE 分別為 0.173/0.162/0.168/0.182/0.187，MAE 分別為 0.211/0.209/0.224/0.231/0.232。",
+      "insights": [
+        "若多變量資料中的變數關係稀疏或隨時間變化，可考慮先從 time–frequency 表示學習關係，再以稀疏 mask 限制 cross-variable attention，以降低無關互動造成的干擾。",
+        "外生變數不宜僅視為額外 channel；本文將 historical covariates 放在輸入端、future covariates 放在 Transformer 後融合，提供了依資訊可用時間點設計融合位置的實務參考。",
+        "稀疏圖的強度需要調校：論文在 Weather 上顯示 τ=0.5 的結果最佳，而過低溫度可能過度稀疏、過高溫度則可能重新引入 noise；實際部署時應以驗證集選擇設定。"
+      ],
+      "limitations": "論文未提供各資料集的完整模型參數量、訓練成本、重複試驗的變異度，以及 TFG 與 CFM 更細緻的組件消融。實驗主要集中於七個公開 benchmark，外部泛化與不同 covariate 缺失情況的驗證仍有限。作者提出的未來方向包括 anomaly detection、imputation 與 large-scale foundation models。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 3,
+      "related_topics": [
+        "多變量時間序列 forecasting",
+        "time–frequency analysis 與 STFT",
+        "dynamic graph learning",
+        "Transformer attention masking",
+        "exogenous covariate fusion"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29468",
+      "title": "Self-Play Meets Skill Evolution: Self-Evolving Search Agents that Pose, Solve, and Remember",
+      "abstract": "Self-play agents can generate training problems without questions from target benchmarks, but their curricula lack persistent state: failures affect gradients yet do not explicitly shape future practice. External skill memories preserve procedural experience but are typically learned from fixed task distributions. We introduce \\textbf{SESA} (Self-Evolving Skill-Augmented Agent), which makes procedural memory an evolving state of tool-augmented search self-play. A challenger poses problems, while a separately parameterized solver alone retrieves skills. Informative failures are distilled into reusable skills and written back to memory. The updated memory changes solver behavior and success, which changes the challenger's reward and the distribution of future problems; the resulting frontier produces new failures that rewrite memory. This bidirectional loop makes task generation and skill memory co-evolve. Because retrieved skills shape on-policy training trajectories, their benefits can enter the model parameters as well as remain in the external bank, enabling memory-free deployment and optional inference-time retrieval. Across seven open-domain and multi-hop question-answering benchmarks, SESA improves average accuracy over SSP by 1.2--3.2 points across multiple backbones and surpasses the skill-augmented SkillRL baseline by 0.9 points under a unified evaluation protocol. On Qwen3 models, SESA-Off retains 1.8--2.2 points of improvement over SSP, while the final skill bank adds a further 0.5--1.0 points. These results show that evolving skill memory is not merely an inference-time plug-in: it changes policy learning and the future training distribution while retaining value as optional external memory. Our code is available at https://github.com/Zenghuang-Fu/SESA-Self-Evolving-Search-Agents.",
+      "authors": [
+        "Zenghuang Fu",
+        "Zhaoyang Li",
+        "Qiuyuan Ai",
+        "Haoyu Wu",
+        "Minghui Wu",
+        "Chenxu Zhao",
+        "Ante Wang",
+        "Guannan He",
+        "Changwei Wang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-31T14:32:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29468v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29468",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Self-play agent 能在不使用目標 benchmark 題目的情況下生成訓練問題，但其課程缺乏持久狀態：失敗會影響梯度，卻不會明確塑造後續練習。外部 skill memory 能保存程序性經驗，但通常從固定任務分布中學習。本文提出 SESA（Self-Evolving Skill-Augmented Agent），將程序性記憶設為 tool-augmented search self-play 的演化狀態。challenger 負責提出問題，solver 由獨立參數化，且只有 solver 能檢索 skills。具資訊性的失敗會被蒸餾為可重用 skills 並寫回 memory。更新後的 memory 改變 solver 行為與成功率，進而改變 challenger 的 reward 及未來問題分布；新的能力前沿又會產生失敗並重寫 memory，形成任務生成與 skill memory 的雙向共同演化。由於 skills 參與 on-policy 訓練，其效益可內化至模型參數，也可保留在外部 bank，支援 memory-free deployment 與推論時檢索。於七個 open-domain 與 multi-hop QA benchmark 上，SESA 平均優於 SSP 1.2–3.2 個百分點，並在統一評估協議下優於 SkillRL 0.9 個百分點。",
+      "problem_statement": "現有 zero-data self-play 能自行產生問題並透過 reward 調整 solver，但失敗通常只作為暫時訓練軌跡，缺乏可重用、可維護的程序性記憶。相反地，skill-augmented RL 雖能保存經驗，通常依賴固定資料集或外加課程，無法讓任務生成與技能記憶共同演化。論文要解決的是如何在 self-play 中選擇可學習的失敗、避免記憶污染，並使更新後的技能反過來改變未來的 solver 行為與問題難度。",
+      "proposed_solution": "作者提出 SESA，將 skill memory 納入 tool-augmented search self-play 的訓練狀態。其核心閉環是：先以 seed 與 bootstrap skills 初始化 memory；由 challenger 生成問題，但只讓 solver 檢索 skills；依 solver 群組成功率以 frontier-shaped reward 引導 challenger 產生接近能力邊界的題目；再把具資訊性的失敗蒸餾為含觸發條件、辨識線索、反模式與 query template 的 skill，經去重、效用統計與淘汰後寫回 bank。技能因此改變後續 on-policy trajectories，也可能被內化到模型參數；部署時則可關閉或保留外部 memory。",
+      "core_contributions": [
+        "提出將 zero-data self-play 的問題生成與持久 skill memory 結合的 coupled self-evolution 設定，使 solver 的失敗能影響後續練習與記憶。",
+        "設計 SESA 閉環，包括 memory priming、solver-only asymmetric self-play、frontier shaping，以及 online failure distillation。",
+        "透過 SESA-Off 與 SESA-On 的 dual-path evaluation，區分 skill-conditioned training 所造成的參數內化效益與推論時外部 memory 的額外效益。"
+      ],
+      "methodology": "SESA 在 zero-data search self-play 中使用分離參數的 proposer/challenger 與 solver。challenger 從 SSP 提供的 50,000 個 target-answer／hop-requirement seed 中生成具唯一答案的問題，但不直接看到目標答案；solver 使用固定 search tool 進行檢索並回答。每個問題採 5 個 solver rollouts，使用 GRPO 進行 critic-free policy gradient 更新；solver reward 由 exact match 或 model-based semantic match 的可驗證答案判定，並以群組內 reward 正規化。系統維護最多 800 筆非參數化 skill bank，每筆 skill 包含描述、trigger、avoidance cues、query templates，以及 retrieval、helpfulness、hurt 計數。初始 bank 包含 15 筆手寫 skills 和 142 筆 bootstrap 去重 skills。solver 每次只檢索 top-3 相似 skills；challenger 不可存取 memory。Frontier shaping 以 solver 群組成功率計算 bell-shaped proposer reward，對全對或全錯問題施加端點懲罰，使問題集中在能力邊界。失敗 rollout 進入最多 300 筆的 queue；每 10 steps 且至少累積 20 筆時，最多選 30 筆由 judge 蒸餾，與 bank 相似度高於門檻者去重後寫回。非 seed skill 若至少被檢索三次且 helpful-hurt 為負則淘汰，超過 800 筆時移除低分 skill。評估使用 NQ、TriviaQA、PopQA、HotpotQA、2WikiMultiHopQA、MuSiQue、Bamboogle，共 3,125 題；主要指標是七個資料集 accuracy 的等權平均，推論採 greedy decoding、每題一次 rollout、最多 10 次 assistant/search turns。",
+      "key_results": "主要結果如下（accuracy，單位為 %；平均值為七個資料集分數等權平均）：\n\n| Backbone | SSP Avg. | SESA Avg. | SESA 相對 SSP | SESA-Off Avg. | SESA-On 相對 Off |\n|---|---:|---:|---:|---:|---:|\n| Qwen3-4B | 53.9 | 56.2 | +2.3 | 55.7 | +0.5 |\n| Qwen3-4B-Instruct | 55.2 | 57.9 | +2.7 | 論文未報告 | 論文未報告 |\n| Qwen3-8B | 56.3 | 59.5 | +3.2 | 58.5 | +1.0 |\n| Qwen2.5-7B-Base | 48.7 | 50.8 | +2.1 | 論文未報告 | 論文未報告 |\n| Qwen2.5-7B-Instruct | 49.5 | 51.0 | +1.5 | 論文未報告 | 論文未報告 |\n| LLaMA-3.1-8B | 46.3 | 47.5 | +1.2 | 論文未報告 | 論文未報告 |\n| Search-R1-7B | 55.7 | 57.5 | +1.8 | 論文未報告 | 論文未報告 |\n\nQwen3-4B 的 component ablation 顯示：完整 SESA 為 56.2；移除 memory priming、frontier shaping、failure distillation 後分別為 54.7、54.0、53.5。Qwen2.5-7B 統一協議下，SkillRL 平均為 50.1，SESA 為 51.0，領先 0.9 個百分點。評估涵蓋 3,125 個 held-out questions、七個 benchmark，採 normalized exact match，未匹配者再由 Qwen2.5-32B-Instruct 進行 semantic match。",
+      "insights": [
+        "若代理人的經驗會在訓練中反覆出現，應將具體失敗策略化、去重並維護效用，而不只依賴 policy gradient 暫時吸收。",
+        "skill memory 的存取權限應與角色分離：僅讓 solver 取得程序性 guidance，可避免 challenger 直接接觸解題策略並維持問題生成與解題的不對稱性。",
+        "可將 memory-free 與 memory-augmented 部署分開測量；本論文結果顯示，訓練期間使用 retrieval 可能把能力帶入參數，而外部 bank 作為可選增強，其效益依資料集而異。"
+      ],
+      "limitations": "實驗主要集中於七個 open-domain 與 multi-hop QA benchmark，論文未報告更廣泛任務、不同 search backend 或不同 memory 管理器的結果。skill distillation 依賴 DeepSeek-v4-pro，答案評估也包含 model-based semantic judge，可能引入評估器依賴。論文未提供統計顯著性、重複實驗變異或完整成本分析；此外，SESA 使用 15 個手寫 skills 與 142 個 bootstrap skills，對冷啟動情境的效果仍未充分驗證。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "zero-data self-play",
+        "skill-augmented reinforcement learning",
+        "tool-augmented search agents",
+        "procedural memory",
+        "multi-hop question answering"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29549",
+      "title": "AMTFV: Agentic Mathematical Tool-Flow Verification for LLM Self-Correction",
+      "abstract": "Large language models have demonstrated strong mathematical problem-solving capabilities, yet reliably verifying their candidate answers remains challenging. Existing representative methods mainly revise outputs through natural-language reflection or assist verification by directly generating verification programs; the former may not reliably support exact computation, whereas the latter prematurely couples mathematical modeling with low-level implementation. We propose AMTFV (Agentic Mathematical Tool-Flow Verification). By introducing Mathematical Tool Flow (MTF) as an interrupt--execute--resume interface, AMTFV decouples verification modeling from concrete execution and supports exact computation through a mathematical toolbox. Specifically, the verification agent first constructs a verification workflow, encodes the mathematical objects and computational intent requiring reliable execution in an MTF request, and sends it to the mathematical toolbox agent. The latter parses the request, generates executable calls, and dispatches them to the backend for exact computation. Tool outputs then support candidate-answer adjudication, answer revision, and verification-workflow revision. We evaluate AMTFV on five challenging mathematical reasoning datasets with seven model configurations from DeepSeek, GPT, and Gemini. Experimental results show that AMTFV outperforms the representative baselines evaluated in this study overall; under an individual model configuration, it improves average accuracy over the strongest baseline by up to 8.3 percentage points, with larger gains on samples of medium and high verification complexity.",
+      "authors": [
+        "Rui Zou",
+        "Yutao Zhu",
+        "Mengqi Wei",
+        "Ji-Rong Wen"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-31T15:42:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29549v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29549",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）已展現強大的數學解題能力，但可靠驗證候選答案仍具挑戰。現有方法主要透過自然語言反思修訂輸出，或直接生成驗證程式；前者難以穩定支援精確計算，後者則過早將數學建模與低階實作耦合。本文提出 AMTFV（Agentic Mathematical Tool-Flow Verification），以 Mathematical Tool Flow（MTF）作為中斷—執行—恢復介面，將驗證建模與具體執行分離，並透過數學工具箱支援精確計算。驗證 agent 先建立工作流程，將需可靠執行的數學物件與計算意圖編碼為 MTF 請求，再交由數學工具箱 agent 解析、產生可執行呼叫並執行。工具輸出可用於候選答案判定、答案修訂及驗證流程修訂。作者在五個數學推理資料集與七種 DeepSeek、GPT、Gemini 模型設定上評估，結果顯示 AMTFV 整體優於本文比較的代表性基線；單一模型設定下，相較最強基線平均準確率最高提升 8.3 個百分點，且在中、高驗證複雜度樣本上的增益更大。",
+      "problem_statement": "LLM 即使產生看似合理的數學答案，也可能因算術錯誤、錯誤假設、遺漏約束、不完整枚舉或錯判最優性而失效，因此需要能檢查並修正候選答案的 backward verification。自然語言反思缺乏可靠的精確計算與外部證據；直接生成 Python 等驗證程式，則把數學目標建模、約束抽象與低階實作過早混在一起，容易引入程式邊界、精度及實作錯誤，亦不利於定位失敗原因。",
+      "proposed_solution": "作者提出 AMTFV，以 Mathematical Tool Flow（MTF）作為數學驗證的中間表示與互動介面。驗證 agent 不直接撰寫完整程式，而是描述上下文、數學物件與所需回傳操作，例如精確值、符號差、完整解集合、基數、全域最優或可滿足性。數學工具箱 agent 再將此意圖編譯為適當工具呼叫並執行。工具結果回到 agent 後，用於候選答案判定、答案修訂，以及在局部檢查不足時修訂驗證工作流程。核心創新是把「驗證什麼」與「如何執行」分離，同時以可檢視的結構化結果形成驗證—修正閉環。",
+      "core_contributions": [
+        "提出 Mathematical Tool Flow（MTF）這個中間介面，採用中斷—執行—恢復互動模式，將數學驗證目標建模與低階工具執行分離，避免過早生成程式碼。",
+        "設計數學工具箱 agent，將包含上下文、數學物件與回傳操作的 MTF 請求，轉換為適合 SymPy、iter_tools、Fraction 或約束求解工具的可執行呼叫，並回傳可追蹤的計算結果。",
+        "建立包含候選驗證、答案修訂與驗證工作流程修訂的 agentic 閉環，並在五個數學推理資料集、七種模型設定上驗證其效果。"
+      ],
+      "methodology": "AMTFV 接收問題 q、初始回應 y₀ 與抽取出的候選答案 a₀。系統由左側驗證與修正模組、中央 MTF 介面，以及右側數學工具呼叫與執行模組組成。驗證 agent（Aver）先建立驗證工作流程 V，檢查候選是否滿足原題的約束與目標；若需符號化簡、精確運算、完整枚舉、最佳化或約束求解，便輸出以 <tool_flow> 標記包覆的 MTF 請求。MTF 以三元組表示：上下文 Γ、待計算或驗證的數學物件 M，以及要求的回傳操作 ρ，例如 cardinality、simplify、solutions、global optimum 或 satisfiability。生成請求後，模型生成會中斷，數學工具箱 agent（Atool）解析請求、選擇後端工具並產生可執行呼叫；後端使用 SymPy、iter_tools、Fraction 等工具進行符號、枚舉或精確算術執行，再將結果寫入 execution record R 並恢復模型推理。若候選未通過，答案修訂 agent（Aans）根據 q、V 與 R 產生回饋及新回應；若候選未改變，流程修訂 agent（Aflow）診斷驗證覆蓋範圍並更新工作流程。最多進行三輪外部迭代，成功驗證或達到上限即停止。實驗使用 AIME 2024、AIME 2025、BRUMO 2025、HMMT February 2025 與 AMO Bench，共 170 題；比較自然語言修正、CoT-Tool、ProgCo、ProgCo-Py 與 AMTFV。除 Initial Score 外，各方法共享同一初始回應與候選答案，主要評估指標為最終答案準確率，並分析校正狀態轉移與以 MTF 呼叫數定義的驗證複雜度。",
+      "key_results": "主要結果如下；Avg 為五個資料集依樣本數加權的平均最終答案準確率。\n\n| 模型設定 | Initial Score | ProgCo | ProgCo-Py | AMTFV | AMTFV 相對較佳 ProgCo 基線 |\n|---|---:|---:|---:|---:|---:|\n| DeepSeek-Flash | 44.1% | 51.2% | 52.9% | 61.2% | +8.3 個百分點 |\n| DeepSeek-Flash-Think | 88.8% | 87.6% | 88.2% | 89.4% | +1.2 個百分點 |\n| DeepSeek-Pro | 38.8% | 44.7% | 49.4% | 57.1% | +7.7 個百分點 |\n\n在三種 DeepSeek 設定中，AMTFV 的平均準確率均最高；相對初始答案的提升分別為 +17.1、+0.6 與 +18.3 個百分點。跨七種模型設定的比較中，論文報告 AMTFV 每一種設定皆高於 ProgCo 與 ProgCo-Py 中較佳者，提升幅度介於 +0.6 至 +8.3 個百分點。於 1,190 個模型—問題實例的校正狀態分析中，AMTFV 的錯誤轉正率 W→C 為 18.4%，高於 ProgCo 的 9.4% 與 ProgCo-Py 的 12.2%；正確轉錯率 C→W 為 2.8%，低於 ProgCo 的 3.7% 與 ProgCo-Py 的 4.2%。依 MTF 呼叫數劃分複雜度後，AMTFV 在中、高複雜度區間的正規化準確率增益分別為 39.2% 與 84.6%；論文未提供低複雜度區間的具體 AMTFV 增益數字。",
+      "insights": [
+        "實務上應先明確定義要驗證的數學物件、約束與計算目標，再交由工具決定具體執行方式；這比讓模型直接撰寫一次性驗證程式更容易檢查與除錯。",
+        "工具回傳不應只有布林值。案例顯示，同時回傳中間數學量、精確值、最終判定與候選比對結果，有助於定位錯誤並支援後續修訂。",
+        "驗證流程應涵蓋全域性質，例如最小性、完整枚舉、全域最優與可滿足性，而不只是檢查候選答案是否符合部分局部條件；論文結果顯示 AMTFV 在中、高驗證複雜度樣本上的優勢更明顯。"
+      ],
+      "limitations": "論文的評估集中於五個數學競賽型資料集、共 170 題，且主要指標是最終答案準確率；未報告完整的成本、延遲、工具失敗率或統計顯著性分析。框架也依賴模型正確建構 MTF 目標，工具箱能力與可處理的數學任務範圍可能限制泛化。作者提出未來將延伸至科學領域的專用工具系統。",
+      "tags": [
+        "agent-evaluation",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM 自我修正與自我驗證",
+        "工具增強數學推理",
+        "程式輔助驗證與 agentic workflow"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29624",
+      "title": "The Theoretical Foundation of Socratic Tests: Dynamic, Multimodal, Conversational Examinations",
+      "abstract": "Traditional static assessments rely on a subtractive, deficit-based grading model that often penalizes ambition and obscures diagnostic feedback. Conversely, traditional face-to-face oral examinations introduce severe construct-irrelevant variance by exacerbating performative anxiety and the sociological power imbalances inherent to academic hierarchies. This paper presents the theoretical foundation for the \"Socratic Test,\" an automated, computer-mediated conversational assessment. By integrating Dynamic Assessment principles, multimodal workspaces, Bloom's Taxonomy for real-time proctoring, and the SOLO Taxonomy for structural evaluation, the Socratic Test actively maps a student's cognitive boundaries. This paper formalizes the use of graduated scaffolding to quantify the Zone of Proximal Development (ZPD) and details a non-compensatory, additive grading architecture that prioritizes mastery over penalty and human-AI alignment to ensure unprecedented measurement reliability.",
+      "authors": [
+        "Ilya Mikhelson"
+      ],
+      "categories": [
+        "cs.CY",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-07-31T16:57:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29624v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29624",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "傳統靜態評量採用減法式、以缺陷為基礎的評分模式，往往懲罰有企圖心的作答，也掩蓋診斷性回饋。相較之下，傳統面對面口試會加劇表演焦慮與學術階層中的社會權力不對等，造成嚴重的 construct-irrelevant variance。本文提出「Socratic Test」的理論基礎：一種由電腦媒介、以自動化對話進行的評量。此方法整合 Dynamic Assessment 原則、multimodal workspace、用於即時監考的 Bloom’s Taxonomy，以及用於結構性評估的 SOLO Taxonomy，主動描繪學生的認知邊界。本文形式化 graduated scaffolding，以量化 Zone of Proximal Development（ZPD），並詳述一種重視 mastery 而非懲罰、採非補償式與加總式評分的人機對齊架構，主張可提升測量可靠性。",
+      "problem_statement": "論文認為靜態筆試雖易於一致批改，卻可能偏向記憶與應試策略、懲罰高風險創新，且難以揭露學生的認知邊界。傳統口試能深入追問，卻會引入焦慮、口語表現與權力關係等 construct-irrelevant variance。作者試圖在口試的效度與筆試的可靠性之間取得平衡。",
+      "proposed_solution": "作者提出 Socratic Test：以 AI 驅動的自適應、電腦媒介對話進行 summative assessment。它透過 Bloom’s Taxonomy 控制提示目標與難度，透過 SOLO Taxonomy 評估回答的結構品質，並用 Dynamic Assessment 與 graduated scaffolding 估計學生的 ZPD。多模態工作區讓學生以圖示、程式碼、計算與長文表達推理；非補償式 capped buckets 防止低層級題目累積補足高層級不足；Evidence Buffer、Shadow Ledger、事後人工稽核與校準流程則用於處理 AI 誤判、hallucination、跳題與公平性問題。",
+      "core_contributions": [
+        "提出 Socratic Test 理論框架，以自適應、具類型的 AI 對話取代固定題目，同時保留評量方法的一致性。",
+        "將 Bloom’s Taxonomy 用於提示難度與認知層級導航，將 SOLO Taxonomy 用於評估回答的結構複雜度，明確分離出題與評分框架。",
+        "提出包含 Evidence Buffer、Shadow Ledger、Out-of-Scope audit，以及七步驟 human-AI calibration pipeline 的非補償式評分架構。"
+      ],
+      "methodology": "系統採 real-time proctoring engine 與 final deterministic gradebook 分離的架構。教師先設定 Stair-Step 或 Organic mode；前者以主題與認知 tier 建立二維 capped-bucket matrix，後者只設定主題容量與允許的 Bloom levels。對話中，AI 依 Bloom 1–6 從低至高調整提示，學生回答則以 SOLO 1–5 評估結構。若遇到困難，依 System of Least Prompts 提供 General Nudge、Specific Cue、Targeted Scaffold，最後可 Direct Instruction 並 Graceful Exit。每次互動分數為 P(b,s,k)=γkV(b,s)，其中 γ 依提示次數折扣，V 隨 Bloom 難度增加；總分對每個主題—tier 桶分別截斷後加總，因此低層級分數不能補償高層級缺失。Evidence Buffer 以教師設定的 oversampling rate 暫時收集超額證據；跳題或耗盡提示則將預期強回答的基準值記入 Shadow Ledger，限制逃避行為。學生可在主題間 user-directed pivot，但狀態會保存。對 out-of-scope 或 AI 錯誤先按 skip 處理，事後由教師稽核並可轉回 Earned Points。評分流程包括 out-of-scope audit、20 個歧義互動校準、15 個隨機互動驗證、全量評分、教師 override、發布、申訴；若驗證中有 2 個以上不一致，則回到校準。系統亦支援 whiteboard、IDE、calculator 與長文介面，以保存 multimodal evidence。",
+      "key_results": "論文主要提出理論框架與系統設計，並報告 Spring 2026、三門課程、N=98 的學生感受調查；未提供與傳統筆試或面對面口試的受控比較、效度、信度或學業成績提升的統計檢驗。文中數據如下：\n\n| 調查項目 | Agree / Positive | Neutral | Disagree / Negative |\n|---|---:|---:|---:|\n| 壓力低於傳統考試 | 52.0% | 21.4% | 26.5% |\n| 準確揭露知識限制 | 52.0% | 22.4% | 25.5% |\n| 迫使解釋「為什麼」、避免記憶式作答 | 56.7% | 24.7% | 18.6% |\n| AI 準確理解並有效提供 scaffolding | 80.6% | 11.2% | 8.2% |\n\n論文未報告可與基準方法直接比較的量化評測結果，也未報告上述試點的樣本分組、統計顯著性或評分者一致性係數。",
+      "insights": [
+        "若將對話評量部署於高風險情境，應把即時 AI 判斷視為暫定結果，並保留人工校準、覆核、全體一致重評與學生申訴機制。",
+        "題目難度、提示次數、回答結構與主題或認知層級上限應分開記錄；這種 interaction-level telemetry 有助於診斷學生的具體知識邊界。",
+        "Evidence Buffer 與 Shadow Ledger 可作為對話式測驗的狀態管理原則：前者降低即時分類錯誤造成的不公平，後者限制跳題、逃避與無限換題等策略性行為。"
+      ],
+      "limitations": "論文的主要證據是理論論述、模擬逐字稿與 N=98 的學生感受調查，未提供受控實驗、傳統方法 baseline、客觀學習成效、效度或信度統計。作者也明確指出仍需直接比較 AI、面對面口試與筆試的控制研究；AI 評分與 hallucination 的防護仍依賴教師事後審核。",
+      "tags": [
+        "agent-evaluation",
+        "hallucination",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Dynamic Assessment 與 Zone of Proximal Development",
+        "Bloom’s Taxonomy 與 SOLO Taxonomy",
+        "自適應測驗與 Computerized Adaptive Testing",
+        "AI 輔助高等教育評量",
+        "多模態認知卸載"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29445",
+      "title": "QR-Structured Thermal Triggers for Targeted Semantic Attacks on Infrared Vision-Language Models",
+      "abstract": "Infrared vision-language models (IR-VLMs) extend thermal perception to open-vocabulary classification, image captioning, and visual question answering. However, their robustness to structured thermal perturbations and the stability of cross-modal semantic alignment remain insufficiently studied. We propose QR-Structured Thermal Triggers (QR-STT), a stealthy, training-free, black-box framework for targeted semantic steering of IR-VLMs. QR-STT preserves the functional regions of a QR pattern while optimizing its internal modules, each of which is assigned a cold, neutral, or hot thermal state. The framework jointly searches module topology and rendering parameters, including position, scale, rotation, intensity, blur, and roundness. A three-stage gradient-free procedure with greedy module-flip refinement efficiently handles the mixed discrete and continuous search space. The objective promotes alignment with an attacker-selected target, suppresses source-class evidence, and regularizes QR structure and visual similarity. Experiments on multiple CLIP-style encoders show that QR-STT consistently redirects image-text alignment toward chosen concepts while maintaining visual stealth. Perturbations optimized for classification also transfer to image captioning and VQA, causing target-consistent semantic drift in generated outputs. These results identify QR-structured thermal patterns as an interpretable attack surface for language-driven infrared perception and highlight the need for robustness evaluation against structured cross-task semantic attacks.",
+      "authors": [
+        "Xiang Chen",
+        "Yingying Zhao",
+        "Chao Li",
+        "Jiaju Han",
+        "Ben Zhang",
+        "Ang Li",
+        "Jiahuan Long",
+        "Yiwei Wei",
+        "Jiujiang Guo",
+        "Chengyin Hu"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-07-31T14:10:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29445v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29445",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "紅外線視覺語言模型（IR-VLM）將熱影像擴展至開放詞彙分類、影像描述與視覺問答（VQA），但其對結構化熱擾動及跨模態語義對齊穩定性的韌性仍研究不足。本文提出 QR-Structured Thermal Triggers（QR-STT），一種隱蔽、免訓練、黑箱式的目標語義操控框架。QR-STT 保留 QR pattern 的功能區域，並將內部模組分配為冷、 中性或熱狀態，同時搜尋模組拓撲及位置、尺度、旋轉、強度、模糊與圓角等渲染參數。三階段 gradient-free 搜尋與 greedy module-flip refinement 用於處理混合離散—連續搜尋空間。目標函數提升攻擊者指定概念的對齊、抑制來源類別證據，並正則化 QR 結構與視覺相似度。多個 CLIP-style encoder 的實驗顯示，QR-STT 能將 image-text alignment 導向指定概念；分類攻擊也能轉移至 image captioning 與 VQA，造成目標一致的語義偏移。",
+      "problem_statement": "IR-VLM 以 image-text alignment 支援開放詞彙分類、描述與問答，因此攻擊者可能不只讓模型失效，還能把語義導向指定概念。既有紅外線攻擊多針對 detector 的漏檢、誤檢或一般降級，常用 patch、區塊、網格或曲線；可否利用具結構的低對比熱載體，對 IR-VLM 實施目標式語義操控，仍缺乏研究。",
+      "proposed_solution": "作者提出 QR-Structured Thermal Triggers（QR-STT），以 QR code 的固定功能區域作為保留骨架，只在內部 editable modules 編碼攻擊訊號。每個模組可採 cold、neutral、hot 三態，並共同搜尋模組拓撲、位置、尺度、旋轉、熱強度、模糊與圓角，使觸發器兼具目標導向、結構可解釋性與低視覺失真。其核心演算法是三階段 gradient-free progressive search，先找粗略位置與拓撲，再細化單模組狀態及渲染，最後以 greedy module-flip refinement 改善離散配置；全程不需模型訓練、資料投毒或梯度存取。",
+      "core_contributions": [
+        "提出以攻擊者指定目標為導向的 IR-VLM 語義操控問題，將研究焦點由一般辨識失效擴展至 open-vocabulary image-text alignment。",
+        "將 QR code 的固定功能區域與可編輯內部模組分離，建立由 cold、neutral、hot 三態模組構成的可解釋結構化熱觸發器。",
+        "提出處理混合離散—連續黑箱搜尋的 progressive gradient-free optimization，並驗證其在分類、image captioning 與 VQA 的攻擊效果及跨任務轉移。"
+      ],
+      "methodology": "研究使用 frozen CLIP-style IR-VLM，包含 image encoder f_I 與 text encoder f_T；攻擊者只能查詢模型輸出，無法取得參數或梯度。資料來自 30-class infrared test set，每類 10 張影像，僅保留四個 CLIP backbone 正確預測的樣本，並為每張影像指定 dog、car、bicycle 三個不同於來源的目標。對每個類別，作者以多個文字 prompt 的 text embedding 平均後正規化，計算影像與文字 prototype 的 cosine similarity，並以目標成為 top-1 類別定義 ASR。\n\nQR-STT 使用 version-1 QR carrier（21×21 modules），固定 finder、timing-like、format-like、quiet-zone-like 等功能區域，只優化 editable regions。每個可編輯模組取 cold、neutral、hot 三態，分別代表局部強度下降、不變與上升。參數包含 trigger center、scale、rotation，以及 intensity、blur radius、module roundness。目標函數由 semantic loss、module-topology regularization 與 visual-distortion control 組成：前者提高目標相對其他類別及來源類別的 margin；拓撲正則控制 active-module ratio 並以 total variation 抑制破碎模式；視覺項以 mean absolute perturbation 與 SSIM 約束失真。\n\n搜尋流程分三階段：第一階段進行粗略 zone search，尋找位置、尺度、旋轉、強度與區域級拓撲；第二階段對單一模組進行 topology search；第三階段細化強度、模糊、圓角與幾何參數。最後以 greedy module-flip refinement 在離散模組狀態間局部搜尋。分類最佳化後的影像未再針對生成任務微調，直接測試六個 infrared-tuned generative IR-VLM，並以 clean-reference/source-preservation rate 與 GPT-5 LLM-as-a-judge 評估 captioning 和 VQA 的語義偏移。",
+      "key_results": "論文報告的主要結果如下：\n\n| 方法 | OpenCLIP ViT-B/16 | Meta-CLIP ViT-L/14 | EVA-CLIP ViT-G/14 | OpenAI CLIP ViT-L/14 | 平均 ASR |\n|---|---:|---:|---:|---:|---:|\n| AdvICRS | 論文未報告單一平均欄；三目標為 4.97/9.05/4.13 | 3.60/8.30/6.40 | 4.52/3.15/2.31 | 2.80/5.60/4.40 | 4.94% |\n| HCB | 3.30/10.67/11.50 | 5.65/5.20/13.60 | 7.52/6.80/7.40 | 9.35/4.40/17.60 | 8.58% |\n| AdvGrid | 8.13/14.20/11.16 | 15.30/11.52/19.20 | 10.40/17.10/15.80 | 6.80/11.20/25.60 | 13.87% |\n| QR-STT | 42.85/24.79/38.50 | 35.91/31.40/30.27 | 28.40/35.20/34.80 | 33.94/42.95/32.34 | **34.28%** |\n\n表中各模型欄位依序為 Bicycle/Car/Dog ASR。QR-STT 在 12 個 backbone–target 配對上皆優於三個 baseline。Image captioning 的 clean-reference/source-preservation rate 中，QR-STT 在六個模型設定的數值為 51.72%、29.56%、50.74%、67.00%、41.65%、52.40%；VQA 對應為 45.65%、37.27%、47.80%、66.17%、35.80%、41.60%。兩項指標皆為越低代表語義偏移越大。論文未報告各設定的具體 SSIM 數值；消融結果僅指出完整方法具有最佳 ASR–SSIM trade-off。",
+      "insights": [
+        "實務上評估 IR-VLM 時，不宜只測試隨機噪聲或一般熱區塊，也應納入具有結構先驗、低對比與目標導向的熱擾動。",
+        "由於分類端的 image-text alignment 偏移可轉移至 captioning 與 VQA，安全測試應採用跨任務評估，而非只觀察單一 zero-shot 分類準確率。",
+        "QR-STT 的模組拓撲與渲染參數可作為可控 red-teaming 變因；防禦評估可分別檢查結構化模式、熱強度、SSIM 約束與模型間轉移性。"
+      ],
+      "limitations": "論文的評估主要建立在 30 類紅外線測試集、每類 10 張影像，且只保留 frozen CLIP encoder 正確分類的樣本；這可能限制結果的代表性。研究在 digital infrared image domain 進行，未提供實體部署或感測器條件下的驗證。captioning 與 VQA 的語義偏移以 GPT-5 LLM-as-a-judge 評估，論文未提供人工評測、評審一致性或完整數值細節。",
+      "tags": [
+        "red-teaming",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "紅外線視覺語言模型安全性",
+        "CLIP image-text alignment robustness",
+        "跨任務對抗攻擊",
+        "LLM-as-a-judge 語義評估"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29602",
+      "title": "FriendBench: Benchmarking Dyadic Familiarity Inference in Humans and Multimodal Large Language Models",
+      "abstract": "Reading a social situation often depends on behavior, not words alone. We introduce FriendBench, a benchmark for inferring whether two people are already familiar or are meeting as strangers, from a 20-second clip of a dyadic ice-breaker conversation. Every pair answers the same type of prompt, so only the manner of interaction can reveal the answer. Across text, audio, and video, we compare 26 models from seven companies against matched human panels over 96 balanced dyads. The best model and the human crowd are statistically indistinguishable on accuracy in every modality, but reach it differently: humans stay balanced across the two answers, while the strongest models lean toward \"stranger\"---a difference in effective prior, not discrimination. Richer channels help both unequally, and only humans gain from visible behavior on top of speech. We release the stimuli, human ratings, and model predictions.",
+      "authors": [
+        "Jeffrey M. Girard",
+        "Jason Z. Zheng",
+        "Jacqueline R. Vertino",
+        "Antony D'Avirro",
+        "Benjamin Peloquin"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV",
+        "cs.HC"
+      ],
+      "published": "2026-07-31T16:33:39+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29602v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29602",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "人類理解社交情境時，依賴的不只是語言，也包括互動行為。本文提出 FriendBench，用來評估人類與 multimodal large language models 是否能根據一段 20 秒的雙人破冰對話，推斷兩人是彼此熟識，還是初次見面的陌生人。所有雙人組回答相同類型的問題，因此答案只能由互動方式揭示。研究在 text、audio 與 video 三種 modality 下，使用 96 個類別平衡的 dyads，比較來自七家公司、共 26 個模型與匹配的人類評審。每種 modality 中，最佳模型與人類群體在 accuracy 上均無統計顯著差異，但解題方式不同：人類對兩類答案保持平衡，而最佳模型傾向回答「stranger」，反映 effective prior 的差異而非 discrimination 差異。較豐富的 modality 對兩者的幫助不均，且只有人類能在 speech 之外，進一步從可見行為獲益。作者釋出刺激材料、人類評分與模型預測。",
+      "problem_statement": "現有 social intelligence 評測常依賴語義內容、外觀或主觀的關係類型判斷，難以純粹測量系統是否能從互動行為理解雙人關係，也通常缺少與人類在相同刺激、相同 modality 下的直接比較。本文聚焦一個具客觀 ground truth 的問題：僅根據 20 秒、內容受控制的雙人對話，判斷兩人是否曾見過面，並進一步區分真正的 discrimination 與 response bias。",
+      "proposed_solution": "作者提出 FriendBench，一個跨 text、audio、video 的 multimodal benchmark。其核心設計是讓 familiar 與 stranger dyads 回答相同類型的 Either-Or ice-breaker，抑制 shared history 或 getting-acquainted content 等語義洩漏，使互動協調、回應、停頓與可見行為成為主要訊號。研究同時建立匹配的人類 crowd baseline，讓 26 個模型在相同刺激與任務框架下 zero-shot 作答。分析不止於 accuracy，還以 per-class recall、d′ 與 criterion c 判斷模型是辨識能力不足，還是透過偏向某一類別取得表面準確率，並比較 text→audio→audiovisual 的增益。",
+      "core_contributions": [
+        "提出 FriendBench，將雙人熟悉度推斷定義為從 20 秒、內容匹配的 ice-breaker clip 判斷 familiar 或 strangers 的客觀二元分類任務。",
+        "建立與模型匹配的人類基準資料：96 個 participant-disjoint、50/50 平衡的 dyads，分別收集 text、audio、video 三種 modality、每種約 90 名評審的評分。",
+        "評估七家公司 26 個模型，並以 per-class recall、signal detection theory 的 d′ 與 criterion c 分離 discrimination 和 response bias，揭示模型雖達到接近人類群體的 accuracy，卻較常偏向 stranger，且未能像人類一樣利用 audiovisual 中的視覺訊號。"
+      ],
+      "methodology": "資料取自 Seamless Interaction，排除 improvised interaction，選用所有 dyad 都回答同類 Either-Or ice-breaker 的自然互動。研究在三個 recording site、familiar/stranger、same-gender/mixed-gender 之間完全交叉，每格 8 個 dyads，共 96 個 participant-disjoint dyads；每個互動抽取一段 20 秒片段，邊界對齊最近 turn start，並通過對話輪次、雙方語音時間、同步性、互動長度與 prompt adherence 檢查。三種輸入分別為 transcript、audio，以及包含聲音與畫面的 audiovisual video。人類研究使用 Prolific 與 GORILLA，每種 modality 約 90 名美國評審；planned-missing 設計讓每人評估 32 個 dyads，每個刺激由 25–35 人評估。模型方面，作者以相同任務說明與 JSON 輸出格式，對 26 個模型逐一評估所有刺激；文中未提供這些模型的內部架構，僅報告 API、temperature、seed、reasoning 設定與 coverage。主要指標包括 accuracy、familiar/stranger per-class recall、Wilson 95% CI、coverage、d′、criterion c、exact binomial、McNemar test，以及含 rater 與 dyad crossed random effects 的 Bayesian logistic model；另分析 crowd majority vote、TSIS-PS 個體差異與跨 modality 的 dyad difficulty correlation。",
+      "key_results": "| Modality | 人類個體 accuracy | 人類 crowd accuracy | 最佳模型 | 最佳模型 accuracy | 最佳模型 Fam./Str. recall | 主要觀察 |\n|---|---:|---:|---|---:|---:|---|\n| Text | 49.9% | 51.0% | gpt_text_mini | 56.2% | 20.8% / 91.7% | 人類與模型皆接近 chance；模型明顯偏向 stranger |\n| Audio | 56.3% | 63.5% | gemini_audio_pro | 66.7% | 39.6% / 93.8% | audio 相較 text 提供可靠增益，但模型偏置仍大 |\n| Video（視聽） | 60.9% | 71.9% | gemini_video | 66.7% | 41.7% / 91.7% | 人類 crowd 高於最佳模型；模型未比 audio 進一步提升 |\n\n人類 modality 的 Bayesian crossed random-effects logistic model 估計 accuracy 為 text 50.0%（95% HDI [46.7, 53.6]）、audio 56.6%（[52.2, 60.6]）、video 60.9%（[56.9, 64.9]）；audio-text、video-audio、video-text 的增益分別為 6.5、4.5、10.9 個百分點，後驗 P>0 均至少 0.999。最佳模型與人類 crowd 的 accuracy 差異在三種 modality 均未達顯著（McNemar p>.4）。人類 criterion 在各 modality 均接近 0；最佳模型則偏向 stranger，video 的 c=0.77，而人類 crowd c=0.06。",
+      "insights": [
+        "社交感知評測不應只報告整體 accuracy；應同時檢視 per-class recall、criterion 與 d′，避免將單一類別偏置誤認為真正的辨識能力。",
+        "對需要理解互動情境的系統，audio 與 video 應分開測試；本研究顯示模型可獲得 vocal signal 的增益，卻未必能把 visible behavior 轉化為額外準確率。",
+        "模型與人類對困難 dyad 的判斷具有部分一致性，表示可透過逐項難度分析找出系統性誤導樣本，而不只比較模型排名。"
+      ],
+      "limitations": "研究只涵蓋 Seamless Interaction 的首次 ice-breaker、20 秒雙人片段與 96 個 dyads，且將朋友、家人、伴侶與同事合併為單一 familiar 類別。資料來自固定攝影機與錄音室，外推至真實場景有限；人類評審全為美國居民。未來可擴展至不同互動階段、關係子類別、多人情境、真實環境、更多樣本與 realistic base-rate calibration，並測試 prompt robustness。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "social intelligence evaluation",
+        "thin-slice perception",
+        "signal detection theory",
+        "human–model comparison"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29539",
+      "title": "ARB: A Matched Authorship-Rewriting Benchmark Dataset for AI-Text Detector Evaluation",
+      "abstract": "Standard AI-text detection benchmarks compare human-written text against text generated directly by large language models (LLMs). While prior work has shown that rewriting and paraphrasing can degrade detector performance, it remains unclear whether performance measured on this conventional benchmark predicts detector behavior when human-authored content is rewritten by an LLM. To address this gap, we introduce Authorship-Rewriting Benchmark (ARB), built from 1,800 human source texts (600 each from XSum, WritingPrompts, and OpenWebText) and four open-weight generators (Llama-3.2-3B, Qwen2.5-7B, Mistral-7B, Gemma-2-9B). Each source item yields four matched variants: human-written (HUMAN), direct LLM generation (Free-LLM), LLM-rewritten human text (H2L), and same-generator LLM-rewritten LLM text (LLM2L). We evaluated five detectors (FastDetectGPT, Binoculars-falcon-7b, RADAR, BERT-Defense, RoBERTa-Defense) at a strict 1%-false-positive operating point (TPR@1%FPR). FastDetectGPT and Binoculars-falcon-7b detected 91.2% and 93.5\\% of direct LLM text, but only 30.8% and 15.1% of human text an LLM had rewritten, a drop of 60-78 percentage points. The same detectors retained 78.3% and 83.0% recall when LLM text was rewritten by the same model, a much smaller decline of 10-13 points. RADAR followed the same pattern (66.8% to 12.2%), while BERT-Defense and RoBERTa-Defense stayed below 3% recall across all regimes. These results show that detector performance measured on the conventional human-vs-LLM benchmark does not transfer to human-authored text revised by an LLM, even though the same detectors remain largely robust to LLM-only rewriting.",
+      "authors": [
+        "Gaetano Perrone",
+        "Simon Pietro Romano"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-07-31T15:35:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29539v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29539",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "現有 AI-text detection benchmark 通常比較人類撰寫文本與 LLM 直接生成文本；雖然既有研究顯示改寫與 paraphrase 會降低 detector 效能，但傳統 benchmark 的結果是否能預測「人類原創內容經 LLM 改寫」時的 detector 行為，仍不清楚。本文提出 Authorship-Rewriting Benchmark（ARB），由 XSum、WritingPrompts 與 OpenWebText 各 600 篇、共 1,800 篇人類來源文本，以及四個 open-weight generator 建構。每個來源產生 HUMAN、FREE-LLM、H2L（人類文本經 LLM 改寫）及 LLM2L（同一 generator 再改寫 LLM 文本）四種配對變體。五個 detector 在 1% false-positive 的嚴格操作點下評估。FastDetectGPT 與 Binoculars-falcon-7b 對直接生成文本的 recall 分別為 91.2% 與 93.5%，但對 H2L 僅 30.8% 與 15.1%；相較之下，LLM2L 仍保有 78.3% 與 83.0%。結果顯示，傳統 HUMAN-vs.-LLM benchmark 會高估 detector 對人類原創、LLM 輔助改寫文本的穩健性。",
+      "problem_statement": "AI-text detection 的標準任務多為 HUMAN 對 FREE-LLM，因而把 content origin 與 final linguistic surface 混在一起。真實寫作常是人類先產生內容，再由 LLM 進行潤飾、摘要或改寫；此類 H2L 文本可能不同於直接生成文本。既有 paraphrase 研究雖證明 detector 會退化，卻未充分回答傳統 benchmark 的效能能否轉移至 matched 的人類原創、LLM 輔助改寫情境。",
+      "proposed_solution": "作者提出 ARB，以同一 human source item 建立四種配對 regime：保留原文的 HUMAN、依來源 topic 直接生成的 FREE-LLM、將 HUMAN 改寫的 H2L，以及由同一 generator 對 FREE-LLM 再改寫的 LLM2L。H2L 與 LLM2L 使用平行的 meaning-preserving rewrite protocol，使 LLM-mediated surface 相近，但 content origin 不同；LLM2L 同時作為控制條件。透過 dataset×generator block 的 paired deltas、嚴格 TPR@1%FPR 與 AUROC，框架直接測試傳統 HUMAN-vs.-FREE-LLM benchmark 是否能預測 rewriting regime 的 detector 表現。核心創新不是單純加入 paraphrase attack，而是將問題重構為 matched benchmark-transfer evaluation。",
+      "core_contributions": [
+        "提出以 matched source item 為核心的四種 authorship–surface regime：HUMAN、FREE-LLM、H2L 與 LLM2L，將 content origin 與 linguistic surface 分離。",
+        "建立包含 XSum、WritingPrompts、OpenWebText、四個 open-weight generator 及 23,400 篇文本的 ARB benchmark，並提供同一 generator 的 LLM2L 控制條件。",
+        "以 dataset×generator block 進行配對差異分析、macro-averaging 與 bootstrap confidence intervals，並以 TPR@1%FPR 作為主要低誤報評估端點。"
+      ],
+      "methodology": "ARB 從 XSum、WritingPrompts 與 OpenWebText 的 training split 篩選 150–500 個 whitespace-delimited words 的英文文本，按 150–220、221–350、351–500 三個長度 strata，每個資料集各抽取 200 篇，共 1,800 篇 HUMAN source。四個 generator 為 Llama-3.2-3B-Instruct、Qwen2.5-7B-Instruct、Mistral-7B-Instruct-v0.3 與 Gemma-2-9B-it；每個 source–generator pair 產生 FREE-LLM、H2L 與 LLM2L，形成 7,200 個 matched quartets。FREE-LLM 依資料集特定 topic 直接生成；H2L 將完整 HUMAN 文本改寫，要求保留 meaning、factual claims、entities 與 relationships；LLM2L 則由產生 FREE-LLM 的同一模型進行第二次 meaning-preserving rewrite。生成採 bfloat16、do_sample=True、temperature=0.7、top_p=0.9、top_k=40、max_new_tokens=512，seed 為 42。評估五個 passive detector：FastDetectGPT、Binoculars-falcon-7b、RADAR、BERT-Defense 與 RoBERTa-Defense，固定 detector 設定，不依 ARB labels 調整。主要指標為以 HUMAN 為 negative reference 的 TPR@1%FPR，次要指標為 AUROC；比較在 dataset×generator matched block 內計算 target-minus-baseline paired deltas，再進行 macro-averaging、bootstrap confidence intervals 與 dataset/generator/detector 分層分析。",
+      "key_results": "主要結果如下（TPR@1%FPR）：\n\n| Detector | FREE-LLM | H2L | LLM2L | FREE-LLM→H2L 降幅 |\n|---|---:|---:|---:|---:|\n| FastDetectGPT | 91.2% | 30.8% | 78.3% | 60.4 個百分點 |\n| Binoculars-falcon-7b | 93.5% | 15.1% | 83.0% | 78.4 個百分點 |\n| RADAR | 66.8% | 12.2% | 論文未報告 | 54.6 個百分點 |\n| BERT-Defense | 低於 3% | 低於 3% | 低於 3% | 論文未報告 |\n| RoBERTa-Defense | 低於 3% | 低於 3% | 低於 3% | 論文未報告 |\n\n作者指出，FastDetectGPT 與 Binoculars-falcon-7b 在 LLM2L 的 recall 只比 FREE-LLM 低約 10–13 個百分點，顯著小於 H2L 的下降。RADAR 也呈現相同方向，但其 LLM2L 具體數值在提供內容中未報告。H2L 的 block-level 結果顯示 detector、dataset 與 generator 之間存在異質性；完整 AUROC 與 TPR@1%FPR 數值可見論文 Figures 6–7 的 heatmaps。",
+      "insights": [
+        "部署 AI-text detector 時，不應只引用 HUMAN-vs.-FREE-LLM 的高 recall；教育、出版與組織場景應額外測試人類草稿經 LLM 潤飾或改寫的 H2L 條件。",
+        "評估流程可採用共享來源文本、跨資料集與跨 generator 的 matched quartet，分別報告直接生成、AI 輔助改寫與 LLM 再改寫結果，而不是將所有 LLM 介入文本合併為單一正類。",
+        "固定 1% FPR 的結果比單獨 AUROC 更能反映高誤判成本場景；因此實務上應同時檢查低 FPR recall、資料集差異與 generator 異質性。"
+      ],
+      "limitations": "ARB 僅涵蓋英文、三個來源資料集與四個 open-weight instruction-tuned generator，結果不能直接推廣至 closed-source 模型、其他語言或真實共寫流程。H2L 與 LLM2L 由固定 prompt 和 moderate decoding 產生，未涵蓋多輪、人工介入或自適應攻擊。生成文本平均長度也與 HUMAN 不完全一致，且有 0.67% 生成文本含短文本、拒答、非英文或重複等標記。作者明確表示 ARB 不估計 source origin 的純因果效果。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "AI-generated text detection",
+        "paraphrase and rewriting robustness",
+        "low-false-positive evaluation",
+        "mixed authorship benchmarking"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29678",
+      "title": "TokTier: Exact Stateful Tokenization for Agentic LLM Serving",
+      "abstract": "LLM serving systems cache prompt KV state, yet most front ends still re-tokenize the full request text on every call. The cost lands on coding agents, which resubmit a long transcript after each small tool result, and reuse is hard because even a short append can change token boundaries near the end of the previous sequence. Across 153,951 calls from two agent ecosystems, the median call appends about 1.4K characters, and only 1.0-3.6% of calls start or rebuild a session with contexts of millions of characters. At a 94.1% fleet prompt-cache hit rate, tokenization reaches up to 64% of time to first token.   TokTier is a stateful tokenization service with one contract: emitted token IDs are always identical to full reference tokenization of the request text. For a session continuation, it re-tokenizes a small window around the append and splices only after a per-request stable-boundary check, widening the window or falling back to full tokenization on failure. For a call without a reusable prefix, it decomposes GPT-family regex pre-tokenization into run-local rules and runs exact pre-tokenization and BPE on a GPU. A sampled shadow verifier re-checks live traffic.   Across 17 tokenizer families, differential campaigns cover 1.5x10^10 split checks, a 12.4 TB real-text corpus, and 93,000+ replayed agent steps, with zero divergence. Incremental repair takes 0.5-1.1 ms from 100K to 3M characters, up to 437x faster than HF tokenization and 2.1x faster at 1M than the strongest cache-based baseline (Gigatoken) fully prewarmed. GPU full tokenization encodes a 1M-character request in 0.87 ms, up to 491x below HF and 23.4x below the fastest published CPU method. With vLLM, median time to first token drops 16-34% and P99 drops 23% under recorded bursts. Under a 50 ms P99 objective, four repair cores plus one GPU sustain 1,821 requests/s where a 16-core stateless front end saturates at 40.",
+      "authors": [
+        "Zhenyu Zhang",
+        "Zhichao Cao"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.DC",
+        "cs.PF"
+      ],
+      "published": "2026-07-31T17:56:30+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29678v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29678",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "LLM serving 系統會快取 prompt 的 KV state，但多數前端每次仍須對完整 request text 重新 tokenization。對 coding agent 而言，長 transcript 只追加少量 tool result，卻可能因 token boundary 改變而無法直接重用。TokTier 是具 stateful 的 tokenization service，保證輸出 token IDs 始終與完整 reference tokenizer 一致。session continuation 會針對 append 周邊小視窗重新 tokenization，經 per-request stable-boundary check 後才 splice；失敗則擴大視窗或完整重算。無可重用 prefix 的請求則以 run-local rules 在 GPU 執行 exact pre-tokenization 與 BPE，並以 shadow verifier 抽樣驗證。涵蓋 17 個 tokenizer families 的測試均無 divergence；incremental repair 為 0.5–1.1 ms，GPU 可在 0.87 ms 編碼 1M 字元請求，接入 vLLM 後 TTFT 中位數降低 16–34%。",
+      "problem_statement": "現有 LLM serving 雖能以 prefix/KV cache 跳過模型端的 cached prefill，前端仍在每次呼叫掃描並 tokenization 完整 transcript。coding agent 常只追加約 1.4K 字元，卻重算 86K–123K tokens；長期累積成 O(N²) 工作。直接串接舊 token IDs 與新 token IDs 又不正確，因 append 可能改變 pre-tokenization boundary 及 BPE merges。固定 overlap heuristic 沒有 correctness guarantee，而無 reusable prefix 的大型 rebuild 又造成 CPU latency tail。",
+      "proposed_solution": "TokTier 將 workload 分成 session continuation 與 state miss 兩條路徑，並以「輸出 token IDs 必須等同完整 reference tokenization」作為唯一 contract。continuation 保存 token IDs、byte spans 與 tokenizer hash，只重算 append 加舊文尾端視窗；藉由 matched run 與 family-specific stable-boundary certificate 決定是否 splice，任何不確定性都擴大視窗或 fallback。對大型 state miss，作者將 GPT-family sequential regex 轉換為 run-local、可平行的字元分類與 piece-start predicates，接上 GPU BPE。CPU reference path 處理小請求、未支援 family 與例外，另以 sampled shadow verifier 監控線上 divergence。",
+      "core_contributions": [
+        "刻畫 coding-agent 的 session-level tokenization workload：153,951 次呼叫中，多數請求只追加少量文字，少數 session initialization 或 rebuild 卻攜帶達百萬 token 的完整上下文。",
+        "提出具 exactness contract 的 stateful incremental repair：保存 token IDs 與 byte spans，僅重算 append 周邊視窗，並以 tokenizer-family-specific stable boundary certificate 保證安全 splice，失敗時退回更大視窗或 reference full tokenization。",
+        "提出 GPT-family pre-tokenization 的 run decomposition 與 GPU BPE pipeline，並建立結合形式化分析、差分測試、real-text sweep、agent replay 與 runtime shadow verification 的完整驗證方法。"
+      ],
+      "methodology": "TokTier 位於 request router 與 model engine 之間，以 content hash 綁定 tokenizer configuration、vocabulary、merge table 與 normalization 規則。router 先查找具相同 tokenizer version 且文字 prefix 相符的 session state；state hit 時保存的 token IDs、byte spans 與文字索引被用於 incremental repair。系統取舊文字末端 w=512 字元加 append，以 reference-compatible engine 重算，對比 cached 與 fresh token records，尋找位置與 ID 均一致的 run；只有在 run 至少含兩個 token、覆蓋字元數超過最長詞彙 token，且包含 family-specific stable/asynchronizing boundary certificate 時才 splice。檢查失敗便將視窗加倍，最多五次，最後 full retokenization。state miss 的大型請求則把 GPT-family regex pre-tokenization 改寫成 character-class maximal runs、run summaries、bounded lookback 與 per-character piece-start predicate，再在 GPU 以 size-specialized kernels 執行 BPE；小請求、unsupported family、normalization 或 backpressure 則走 reference CPU。評估涵蓋 17 個 tokenizer families、synthetic/adversarial inputs、12.4 TB real-text corpus、93,000+ agent replays、15,000 edits 與 vLLM 0.25 serving。指標包括 token-ID 與 piece-boundary divergence、單請求 P50/P99 latency、GB/s、TTFT、burst capacity、GPU/CPU contention 與 shadow verification mismatch。",
+      "key_results": "| 評估項目 | TokTier 結果 | 對照或條件 |\n|---|---:|---|\n| 差分 split checks | 1.50×10^10，0 divergence | 17 個 production tokenizer families；另有 12.4 TB real-text corpus sweep |\n| End-to-end GPU checks | 6.21×10^7，0 divergence | 6 個 production tokenizers |\n| Incremental repair | 0.5–1.1 ms | context 100K–3M 字元；最高較 HF 快 437× |\n| Cache-based baseline | 1M 字元時 TokTier 快 2.1× | 與 fully prewarmed Gigatoken 比較 |\n| GPU full tokenization | 1M 字元 0.87 ms | 最高較 HF 快 491×，較最快已發表 CPU 方法快 23.4× |\n| vLLM TTFT | 中位數降低 16–34%；P99 降低 23% | loaded regimes 與 recorded burst arrivals |\n| 服務容量 | 1,821 requests/s | 4 個 repair cores + 1 GPU、P99 目標 50 ms；16-core stateless front end 為 40 requests/s |\n| 正確性驗證 | 93,000+ replayed agent steps，0 divergence | 另測 15,000 adversarial edits；unsupported 或失敗案例走 fallback |",
+      "insights": [
+        "在 agent serving 中，KV-cache hit rate 高並不代表前端成本低；應將 tokenization state 視為與 KV state 分離、可具有更長 TTL 的服務層狀態。",
+        "任何跨請求 token reuse 都不應只依賴固定 overlap 或相同 token ID run；實務上應採用可證明的 boundary certificate，並設計 fail-safe fallback 以確保錯誤只增加成本、不改變輸出。",
+        "評估 tokenizer 優化時應同時測量 incremental continuation、large state miss、burst P99、TTFT 與容量，而不能只比較離線吞吐量；GPU path 還需驗證單請求同步與 host contention。"
+      ],
+      "limitations": "GPU full-tokenization path目前只涵蓋 cl100k、o200k 與 DeepSeek pattern families，部分 normalization、added-token handling、byte spans 與 unsupported tokenizer 仍需 CPU 或 fallback。兩個 tokenizer families 不符合 repair predicate。大型 append 的平行修復、cache engine 與 GPU span export仍屬 prototype，尚未通過完整 admission battery；runtime shadow verification亦是抽樣而非全量。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agentic LLM serving",
+        "tokenization",
+        "KV-cache與prefix caching",
+        "GPU systems",
+        "BPE與regex pre-tokenization"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2607.29626",
+      "title": "AgentHPOBench: A Benchmark For Evaluating LLM Agents as Sequential Hyperparameter Optimizers",
+      "abstract": "As LLMs evolve from code completion systems into autonomous scientific agents, evaluating their ability to conduct experiments has become increasingly important. Existing benchmarks typically focus on static code generation, paper replication, or final answer correctness, but do not directly assess whether agents can interpret experimental evidence and use it to guide subsequent hyperparameter decisions. To address this gap, we introduce AgentHPOBench, a sequential benchmark comprising 30 executable machine learning tasks across seven research categories. Each task begins with a validated baseline run, after which an agent performs several sequential interventions. At each step, the agent observes the accumulated configurations, metrics, and logs before proposing the next valid configuration. We evaluate 12 widely used agents and conventional HPO baselines under a unified protocol. The results show that current agents exhibit measurable experimental optimization ability across domains, but still face clear limitations in sustained iterative refinement, complex log diagnosis, and consistent progress toward reported reference performance.",
+      "authors": [
+        "Tianyu Huai",
+        "Tingshuo Fan",
+        "Xinchi Chen",
+        "Yining Zheng",
+        "Yuxin Wang",
+        "Shuang Chen",
+        "Jie Zhou",
+        "Xuanjing Huang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-31T16:58:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2607.29626v1",
+      "arxiv_url": "https://arxiv.org/abs/2607.29626",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "隨著 LLM 從程式碼補全系統發展為自主科學 agent，評估其執行實驗的能力日益重要。現有 benchmark 多聚焦於靜態程式碼生成、論文重現或最終答案正確性，未直接評估 agent 是否能解讀實驗證據，並據此引導後續的 hyperparameter 決策。為填補此缺口，作者提出 AgentHPOBench：一個 sequential benchmark，包含來自七個研究類別的 30 個可執行 machine learning tasks。每項任務先執行經驗證的 baseline，之後 agent 進行多次 sequential interventions；每一步均可觀察累積的 configurations、metrics 與 logs，再提出下一個有效 configuration。作者依統一 protocol 評估 12 個常用 agents 與傳統 HPO baselines。結果顯示，現有 agents 在不同領域具備可量測的實驗最佳化能力，但在持續迭代 refinement、複雜 log diagnosis，以及穩定朝向論文或 repository 所報告的 reference performance 改進方面仍有明顯限制。",
+      "problem_statement": "現有 LLM agent benchmark 多評估程式碼生成、論文重現、研究工程或最終答案，無法單獨衡量 agent 是否能根據已完成實驗的 metrics、auxiliary signals 與 logs，選擇下一個有效 hyperparameter configuration。傳統 HPO benchmark 則通常提供乾淨的 tabular、surrogate 或 scalar objective，抽象化了 repository 執行流程、文字 logs 與研究情境。因此，agent 能否在真實可執行 ML repository 中透過 sequential feedback 持續改善實驗，仍缺乏專門且統一的評估。",
+      "proposed_solution": "作者提出 AgentHPOBench 與配套 execution harness，將 30 個近期 ML repositories 轉化為可重複的 sequential hyperparameter optimization 任務。每個任務共享經驗證的 reference baseline，限制 agent 只能在預先定義的 intervention space 內修改 configuration；harness 負責 configuration validation、實驗執行、metric/log 擷取、trajectory recording 與結果 audit。每次 intervention 後，agent 可讀取累積的 configurations、target/auxiliary metrics 與 execution logs，再提出下一步決策。評估同時採用 MBNS、BWR 與 MAA，分別區分相對 baseline 改善、改善任務比例，以及對論文或 repository anchor 的絕對達成程度。",
+      "core_contributions": [
+        "提出 AgentHPOBench，將 30 個近期 machine learning research repositories 轉化為涵蓋 NLP、CV、time series、graph、RL、LLM 與 structured learning 七類別的 sequential HPO 任務。",
+        "建立統一 evaluation harness：固定 reference baseline、intervention space、執行預算與評分規則，驗證 agent configuration、執行實驗並記錄完整 trajectory、metrics 與 logs。",
+        "提出同時衡量相對 baseline 改善與絕對 reference anchor 達成程度的評估方式，並比較 12 個 agents 與 random search、TPE、BOHB variant 等 conventional HPO methods。"
+      ],
+      "methodology": "AgentHPOBench 將每個 executable research repository 定義為一個任務，指定 reference baseline configuration、target metric、paper/repository anchor、constrained intervention space、execution scripts 與 evaluation interface。資料集、data split、target metric、evaluation code 與 benchmark metadata 固定不變；agent 只能從官方 training scripts、configuration files 或 repository documentation 所暴露的有效欄位和值中修改 hyperparameters。論文沒有提出新的 LLM 模型架構；評估對象包括 open-weight agents、API-based agents，以及 random search、TPE 與 BOHB-style conventional HPO methods。\n\n執行流程為：首先以固定 baseline configuration 執行任務並取得 target metric、auxiliary metrics 與 logs；接著在每一個 intervention step，agent 觀察完整累積 history，提出下一個 configuration。harness 會驗證 configuration 是否屬於 intervention space，執行 repository experiment，回傳結果並記錄 configuration、metrics、logs、runtime metadata 與 completion status。limited-budget protocol 包含 baseline 加五次 interventions，baseline 與每次 intervention 約使用原始 training budget 的 10%；另以 full budget 評估三個 agent。評分先將指標轉為「越大越好」的方向，計算 normalized score NS=(final−baseline)/(anchor−baseline)，再截斷至 [-1,1] 得到 BNS，並對 30 個任務取平均形成 MBNS。BWR 衡量 final result 超越 baseline 的任務比例；MAA 則衡量 final result 相對 repository anchor 的平均達成率。",
+      "key_results": "論文在 limited-budget protocol 下先執行 baseline，再讓 agent 進行五次 sequential interventions；每次 baseline 與 intervention 約使用原始實驗 training budget 的 10%。主要結果如下：\n\n| Agent / Method | Overall MBNS | BWR | MAA |\n|---|---:|---:|---:|\n| Random search | -0.034 | 48.9% | 62.6% |\n| TPE | -0.113 | 40.0% | 62.4% |\n| BOHB variant | 0.018 | 45.6% | 65.3% |\n| Qwen3-32B | 0.148 | 60.0% | 69.1% |\n| Phi-4-14B | 0.130 | 63.3% | 66.9% |\n| GPT-5.5 | 0.305 | 66.7% | 76.7% |\n| Claude Sonnet 4.6 | **0.407** | **76.7%** | **79.5%** |\n\n在 full-budget protocol 中，Claude Sonnet 4.6 的 MBNS 為 0.472、BWR 為 76.7%、MAA 為 89.1%；Qwen3-32B 的 MBNS 為 0.191、BWR 為 56.7%、MAA 為 81.8%；DeepSeek-R1-Qwen-14B 的 MBNS 為 0.151、BWR 為 50.0%、MAA 為 78.6%。作者指出 full budget 提升三個 agent 的 MBNS 與 MAA，但不會一致提升 BWR。論文未報告統計顯著性檢定。",
+      "insights": [
+        "若要評估能執行實驗的 LLM agent，應保留 repository 的 logs、auxiliary metrics 與執行失敗資訊，而不只提供乾淨的 scalar objective。",
+        "實務系統應保存最佳 configuration 並加入 regression protection，因為論文的 sequential trajectories 顯示 agent 可能在後續 intervention 中丟失早期收益。",
+        "中間實驗回饋對 sequential decision making 具有實際價值；在 Qwen3-32B ablation 中，移除 intermediate feedback 使 overall MBNS 由 0.148 降至 0.052、BWR 由 60.0% 降至 50.0%。"
+      ],
+      "limitations": "任務數量為 30，且各類別任務數不均；limited-budget 設定下每次實驗約只有原始 training budget 的 10%，可能限制對長期訓練行為的觀察。API agents 僅於 canonical instance 評估一次，且最終分數使用最後一次 intervention 而非最佳中間結果。論文也未報告統計顯著性檢定或更廣泛的跨 benchmark 泛化結果。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Sequential hyperparameter optimization",
+        "Executable machine learning research repositories",
+        "Scientific LLM agents",
+        "Experimental feedback and trajectory evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]
