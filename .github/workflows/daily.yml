@@ -73,5 +73,8 @@ jobs:
             exit 0
           fi
           git commit -m "daily digest ${DIGEST_DATE:-$(date +%F)}"
-          git pull --rebase origin main
+          # sync_docs.py intentionally leaves generated docs/ changes out of
+          # the source commit; autostash them while rebasing concurrent main
+          # updates so they cannot block the final push.
+          git pull --rebase --autostash origin main
           git push origin HEAD:main
