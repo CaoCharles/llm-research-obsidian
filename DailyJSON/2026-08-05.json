@@ -1,0 +1,558 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.03979",
+      "title": "Video-DeepResearch: Towards the Next-Generation Multimodal Deepresearch Agent",
+      "abstract": "We introduce Video-DeepResearch (Video-DR), extending multimodal agents from static images to continuous video streams, a setting that demands dense spatiotemporal grounding coupled with open-web exploration. Preliminary evaluations reveal two critical bottlenecks in current models: (1) modality bias, where agents bypass visual tools in favor of textual search, and (2) parametric knowledge leakage, where models rely on internal memory rather than genuine tool-augmented execution. To address these challenges, we propose Video-DR, featuring a decoupled perception-exploration pipeline with stage-wise tool unlocking that compels exhaustive cross-frame visual grounding prior to web retrieval. Our framework adopts a two-stage training recipe: supervised fine-tuning followed by Group Relative Policy Optimization (GRPO), enabling autonomous exploration that breaks the imitation-learning ceiling. Furthermore, we curate Video-DR-Bench, a human-AI collaborative benchmark comprising 200 complex, multi-hop VQA instances. Empirical results demonstrate that our Video-DeepResearch-35B-A3B establishes a new state-of-the-art of 64.0% average accuracy, surpassing proprietary Claude-4.5-Sonnet (59.0%) by 5.0 points and significantly outperforming GPT-5 (52.5%) and Gemini 2.5 Pro (57.5%). The 30B-A3B variant achieves 59.3%, competitive with Claude-4.5-Sonnet and demonstrating the effectiveness of our training paradigm even at compact scale. Code: https://github.com/Osilly/Vision-DeepResearch.",
+      "authors": [
+        "Zhen Fang",
+        "Yu Zeng",
+        "Wenxuan Huang",
+        "Yiming Zhao",
+        "Shiting Huang",
+        "Tianfei Ren",
+        "Qi Lu",
+        "Qingnan Ren",
+        "Qisheng Su",
+        "Lionel Z. Wang",
+        "Qingyu Yin",
+        "Shuang Chen",
+        "Zehui Chen",
+        "Lin Chen",
+        "Zhenfei Yin",
+        "Yao Hu",
+        "Shaohui Lin",
+        "Wanli Ouyang",
+        "Shaosheng Cao",
+        "Feng Zhao"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-04T17:45:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.03979v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.03979",
+      "score": 21
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 Video-DeepResearch（Video-DR），將 multimodal deep-research agent 從靜態影像延伸至連續影片串流，要求模型同時進行密集的時空 grounding 與開放網路探索。作者發現現有模型存在兩項瓶頸：偏好文字搜尋而忽略視覺工具的 modality bias，以及依賴參數記憶、未真正執行工具增強推理的 parametric knowledge leakage。為此，作者設計 decoupled perception-exploration pipeline，透過 stage-wise tool unlocking，先強制跨影格視覺 grounding，再開放網路檢索。訓練採用 supervised fine-tuning（SFT）接續 Group Relative Policy Optimization（GRPO），並建立含複雜 multi-hop VQA 的 Video-DR-Bench。Video-DeepResearch-35B-A3B 達 64.0% 平均準確率，30B-A3B 達 59.3%。",
+      "problem_statement": "現有 deep-research agent 多從文字或靜態影像出發，難以處理連續影片中的跨影格、跨實體時空 grounding 及後續開放網路查證。作者的初步實驗顯示模型偏好文字搜尋、幾乎不使用視覺工具；部分模型即使幾乎不呼叫工具仍能答對，反映既有基準容易受到 parametric knowledge leakage 影響，無法可靠衡量真正的工具增強影片研究能力。",
+      "proposed_solution": "作者提出 Video-DeepResearch，將感知與探索解耦。agent 先使用 Select_Keyframe 選取關鍵時刻，再以 Crop_Search 對人物、物件、標誌或文字等實體進行局部視覺搜尋；只有完成視覺 grounding 後，才解鎖 Search 與 Visit 進行外部知識檢索和答案整合。資料方面以多階段篩選、視覺搜尋驗證、tool-free leakage 過濾及 reject sampling 建構高品質軌跡；訓練方面結合 SFT 與 GRPO，使模型先模仿正確流程，再透過成功 rollout 學習自主探索。",
+      "core_contributions": [
+        "提出 Video-DeepResearch 框架，以 Select_Keyframe 與 Crop_Search 執行跨影格、跨實體的視覺 grounding，並在後續階段進行文字網路探索。",
+        "建立資料生成與軌跡建構流程，產生 30K video-grounded VQA pairs 與 7K 經驗證的正確執行軌跡，並以 SFT 加 GRPO 訓練 agent。",
+        "提出 Video-DR-Bench，由人類與 AI 協作建立 multi-hop VQA 評測集，用工具依賴過濾降低 parametric knowledge leakage。"
+      ],
+      "methodology": "任務被形式化為序列決策問題：agent 根據問題、影片或預取 keyframes、歷史動作與觀察結果產生工具動作。資料處理分三階段。第一階段以影片長度規則與 agent-based filter 篩選多領域影片。第二階段先以 CLIP 產生候選 keyframes，再由 Qwen3.5-397B-A17B 選取影格並預測 bounding boxes；對實體 crop 執行 visual search，由 Qwen3.5-35B-A3B 驗證搜尋結果與影像語義是否一致，形成含影格、框選實體與搜尋摘要的 metadata。接著以 single-entity 或 multi-entity 模式生成 VQA，並進行四次 tool-free rollout；若任一次可答對，便刪除該題，以降低參數記憶洩漏。第三階段建構軌跡：感知階段只開放 Select_Keyframe 與 Crop_Search，強制跨影格、跨實體視覺探索；達到充分感知或上限後，才解鎖 Search 與 Visit。僅保留成功軌跡，得到 7K trajectories。訓練先用 7K video trajectories 加 7K text-only QA 進行 SFT，再以 2K 中等難度資料進行 GRPO；每題四次 rollout，保留 Pass@4 介於 0 與 1 的樣本，正確答案獲得二元 reward，並對格式錯誤或重複迴圈的負梯度以 20% 機率採用。評測在 agentic setting 下進行，模型可使用完整視覺與文字工具；最後答案由 Qwen3-VL-30B-A3B-Instruct 依官方 judge prompt 判定，指標主要為 accuracy，並另報告六類別分數與平均工具呼叫次數。",
+      "key_results": "主要結果如下；論文表格將 VideoDR 與 VideoDR-Bench 分開報告，且正文稱 VideoDR-Bench 為 200 instances，但實驗設定段落稱評估集為 100 VQA pairs，存在規模表述不一致。\n\n| 模型 | Video-DR Acc. | VideoDR-Bench Overall | Avg. |\n|---|---:|---:|---:|\n| GPT-5 | 57.0% | 48.0% | 52.5% |\n| Gemini 2.5 Pro | 62.0% | 53.0% | 57.5% |\n| Claude-4.5-Sonnet | 63.0% | 55.0% | 59.0% |\n| Qwen3-VL-30B-A3B-Instruct | 38.0% | 43.0% | 40.5% |\n| Video-DeepResearch-30B-A3B | 62.0% | 56.5% | 59.3% |\n| Qwen3.5-35B-A3B | 42.0% | 43.5% | 42.8% |\n| Video-DeepResearch-35B-A3B | 68.0% | 60.0% | 64.0% |\n\n30B 相對其 base model 的平均提升為 18.8 個百分點，35B 提升 21.2 個百分點。消融實驗中，30B 的 Base、4K-SFT、7K-SFT、加入 7K text-only SFT，以及再加入 2K-RL 的平均分數分別為 40.5%、46.0%、53.0%、56.8% 與 59.3%。工具使用方面，Video-DR 上 30B-A3B 平均呼叫視覺工具 2.33 次、文字工具 4.24 次；論文未報告工具使用與正確率的因果分析。",
+      "insights": [
+        "對 multimodal agent 評測而言，僅看最終答案不足以確認真實的視覺理解；應同時記錄視覺工具、文字搜尋、資料來源與執行順序。",
+        "stage-wise tool unlocking 可作為訓練與評測設計模式，先要求模型取得可驗證的視覺證據，再允許外部知識檢索，以降低文字捷徑與記憶猜答。",
+        "消融結果顯示視覺軌跡 SFT、文字研究資料與 RL 各自提供增益；實務上可採 curriculum training，逐步培養 grounding、檢索及自主探索能力。"
+      ],
+      "limitations": "框架需要大量 GPU 與動態網路搜尋，資料生成、模型部署及訓練成本高。基準建立仍依賴人工標註，限制快速擴展。論文也存在資料集規模表述不一致，且主要正確性由 Qwen3-VL-30B-A3B judge 評估，未充分報告多評審一致性、工具軌跡品質與外部模型偏差。未來將探索更高效的 pipeline、輕量架構及自動化 LLM 評測。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Video question answering",
+        "Multimodal deep research agents",
+        "Tool-augmented reasoning",
+        "Spatiotemporal grounding",
+        "Reinforcement learning for agents"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.04003",
+      "title": "PAST-Bench: Benchmarking the Foundations of Recursive Self-Improvement in Personal Agents",
+      "abstract": "Recursive self-improvement requires agents to turn accumulated experience into better future behavior. Personal AI agents offer a concrete setting for studying this capability because they retain preferences, task histories, tool routines, and learned skills across sessions. Yet whether retained experience actually improves them over time has not been systematically tested. We introduce PAST-Bench, a benchmark designed to isolate this question. Each agent runs through ordered sequences of fresh-session tasks under matched conditions that turn retained experience on and off. It spans 26 scenarios and 204 episodes across memory, procedural reuse, information gathering, and update. We report both later-task gains and whether those gains follow the intended save, retrieve, and update pathway. Across seven base models and four agent frameworks, improvement is real but uneven across capabilities. Agents with the same headline gain can differ markedly in whether that gain is supported by evidence of the intended pathway. Guided by these findings, we develop Hermes+, which extends Hermes with five targeted interventions across stages of the agent loop. Hermes+ raises the average gain from retained experience and provides clearer pathway evidence, with its strongest improvement on tasks requiring outdated state to be replaced, although the effect remains capability- and model-dependent. Together, PAST-Bench and Hermes+ provide an evaluation and diagnostic foundation for studying how persistent agents can progress from retaining experience to systematically improving through it. Code: https://github.com/Gen-Verse/PAST-Bench",
+      "authors": [
+        "Shuhan Xue",
+        "Zixin Ding",
+        "Yichen Shen",
+        "Yinjie Wang",
+        "Zhenfei Yin",
+        "Yingcheng Wu",
+        "Yuxin Chen",
+        "Mengdi Wang",
+        "Ling Yang"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:58:05+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.04003v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.04003",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Recursive self-improvement 要求 agent 將累積經驗轉化為未來更好的行為。Personal AI agents 會跨 session 保留偏好、任務歷史、tool routines 與 learned skills，因此提供研究此能力的具體環境；然而，保留的經驗是否真正改善後續表現，尚未被系統性測試。本文提出 PAST-Bench，透過在 matched conditions 下切換 retained experience，評估 agent 在 ordered fresh-session tasks 中的進步及其是否遵循 save、retrieve、update pathway。Benchmark 涵蓋 26 個 scenarios、204 個 episodes，以及 memory、procedural reuse、information gathering、update 四種能力。跨七個 base models 與四個 agent frameworks 的結果顯示，改善確實存在但依能力而異；相同 task-score gain 的 agent，其 pathway evidence 可能顯著不同。作者進一步提出 Hermes+，在 agent loop 五個階段加入 targeted interventions，提高 retained-experience gain 與 pathway evidence，並在過時狀態更新任務上改善最明顯，但效果仍取決於能力與模型。",
+      "problem_statement": "現有 agent benchmark 多以 fresh session 的單次任務分數為主，無法判斷後續進步是否由 retained experience 造成；memory、skill 與 architecture 評測也常只檢驗單一元件，缺少 matched persistence controls 與跨 session attribution。論文因此要回答：agent 是否能保存、找回、正確應用並更新先前經驗，使同一 user 的未來任務表現改善。",
+      "proposed_solution": "作者提出 PAST-Bench，以四類能力與 ordered fresh-session task families 測試 online self-evolution。早期 episode 提供保存經驗的機會，後續 episode 在移除 trigger wording 的情況下測試 reuse，並以 persistence-on/off、distractor、stale、wrong-mechanism 等 controls 分離 retained-state effect。除 task-score gap 外，benchmark 還檢查 artifacts 與 telemetry 的 pathway evidence。作者再依診斷結果提出 Hermes+：以 E1–E5 分別介入 planning、memory rendering、skill routing、retrieval gate 與 episode closeout，作為可 ablate 的診斷型 framework baseline。",
+      "core_contributions": [
+        "提出 PAST-Bench，以 task-family trajectory 為評估單位，透過 fresh-session sequence 與 matched persistence-on/off controls，測量 retained experience 是否造成後續任務改善。",
+        "建立 task score 與 mechanism-evidence score 的雙軸評估，結合 persistent artifacts、runtime telemetry 與 attribution analysis，診斷 save、retrieve、apply、update 各階段是否實際運作。",
+        "根據診斷結果提出 Hermes+，在 Plan、Render、Route、Gate、Close 五個 agent-loop stages 加入介入機制，並透過單機制 ablation、互動診斷與跨模型測試分析其效果。"
+      ],
+      "methodology": "PAST-Bench 將評估單位從單一任務改為 task family trajectory。每個 family 由 ordered fresh-session episodes 組成，episode 間清除 volatile context，只允許透過 framework 的 persistent substrate 傳遞 memory records、skills、profile state、session-history indices、saved artifacts 或 home-state fixtures。Benchmark 涵蓋 26 個 scenarios、204 個 episodes：Memory 5/41、Procedural Reuse 8/64、Information Gathering 6/48、Update 7/51。流程包含 cold、learn/update、evaluation 與 control episodes；control 包括 no-retention、distractor、stale 與 wrong-mechanism。每個 matched pair 固定 model、task、prompt、grader、tool stack、seed、context window、output limits、agent limits 與 compaction policy，只切換 retained state access。主要指標為 family-balanced persistence gap Δ = S(w/ evolve) − S(w/o evolve)，其中 per-episode task score 位於 [0,1]，capability 結果對 families 做 macro-average；控制 episode 的上界用於檢查 shortcut 與錯誤歸因。第二指標 Mechanism-evidence score 根據 memory write/read、skill creation/patching/use、session search、retrieval timing、artifact diffs 與 update-correctness signals，衡量表現是否沿預期 pathway 產生。實驗固定 Hermes 比較七個 base models，並固定 MiniMax-M2.7 比較四個 frameworks。Hermes+ 在 Plan 加入 consultation check（E1）、Render 使用 typed memory bindings（E2）、Route 建立 ranked/patchable skills（E3）、Gate 強制 retrieval-before-answer（E4）、Close 執行 authoritative overwrite 與 synchronous flush（E5），再以單機制 ablation、full combination、focused interaction 與跨模型測試分析。Task score 使用 LLM judge；論文另報告三次 runs 的均值與標準差。",
+      "key_results": "| 比較設定 | Memory Δ | Procedural Δ | Information Δ | Update Δ | Overall Δ | Mech. |\n|---|---:|---:|---:|---:|---:|---:|\n| Hermes + GLM-5.1 | +0.23 | +0.09 | +0.11 | +0.36 | +0.20 | 0.70 |\n| Hermes + Kimi K2.6 | +0.33 | +0.03 | +0.05 | +0.27 | +0.17 | 0.72 |\n| Hermes + GPT-5.4 | +0.37 | +0.19 | +0.07 | +0.34 | +0.24 | 0.80 |\n| Hermes + Claude Sonnet 4.6 | +0.32 | +0.10 | +0.10 | +0.29 | +0.20 | 0.76 |\n| Hermes（MiniMax-M2.7） | +0.26 | +0.05 | +0.09 | +0.12 | +0.13 | 0.64 |\n| Hermes+（MiniMax-M2.7） | +0.27 | −0.02 | +0.12 | +0.24 | +0.15 | 0.73 |\n\n作者報告：七個 base models 在 Hermes 上的 Overall Δ 為 +0.13 至 +0.24；固定 MiniMax-M2.7 比較 frameworks 時，nanobot、ZeroClaw、Agent-Zero、Hermes、Hermes+ 的 Overall Δ 分別為 +0.13、+0.12、−0.08、+0.13、+0.15，Mechanism evidence 分別為 0.57、0.55、0.39、0.64、0.73。Hermes+ 相較 Hermes 的 Overall Δ 平均值為 +0.15 對 +0.13，但三次 run 的差異小於 run-to-run variation（Hermes +0.13±0.04；Hermes+ +0.15±0.06），作者不將其解讀為穩定的整體提升。Update gap 則由 +0.12 提升至 +0.24。Hermes+ 每 episode 約使用 31,859 tokens，Hermes 為 12,615；wall-clock time 分別為 77.4 秒與 70.5 秒。",
+      "insights": [
+        "實務部署 persistent agent 時，不應只比較跨 session 的任務成功率；應同時記錄 memory write/read、skill reuse、session search、artifact diff 與 update events，以確認收益是否來自預期的 persistence pathway。",
+        "評估應採用 matched persistence-on/off 設計，並加入 no-retention、distractor、stale 與 wrong-mechanism controls，降低 prompt shortcut、錯誤來源與過時記憶造成的誤歸因。",
+        "整體平均 gain 可能掩蓋能力間的回歸，因此應分別檢視 memory、procedural reuse、information gathering、update；Hermes+ 的結果也顯示，結構化狀態與 closeout/update 流程對過時資訊替換特別重要。"
+      ],
+      "limitations": "論文將 PAST-Bench 定位為 initial foundation，task suite 的 ecological validity 與 temporal scope 仍有限，未來需擴大場景與長期評估。Hermes+ 的整體 +0.02 差異小於 run-to-run variation，且 Procedural 在部分設定下降、跨模型轉移不一致。Mechanism evidence 需要可觀測 telemetry；黑箱 agent 只能計算 task score 與 Δ。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "persistent memory",
+        "online self-evolution",
+        "trajectory-level evaluation",
+        "mechanism attribution"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.04009",
+      "title": "SocietyBench: Forecasting Counterfactual Social-World Evolution",
+      "abstract": "Large language models (LLMs), and the agents built on top of them, are now benchmarked heavily on whether they can finish a task -- fix a bug, drive a browser, operate a GUI. A complementary social ability, namely how well a model understands and forecasts the way real social events unfold, has barely been measured. We introduce SocietyBench, an end-to-end benchmark that takes a one-line event topic, collects Web news and social-media posts across five platforms, distills them into a date-indexed timeline that keeps factual events and a public-opinion layer separate, and then turns every cutoff date on that timeline into an audited bank of forecasting questions. Questions are scored on two orthogonal 100-point axes: probability calibration and temporal accuracy. Before any model sees a timeline, a three-phase procedure replaces every named entity and shifts every date by a per-event constant, turning a real arc into a counterfactual social world -- structurally identical to what happened, but stripped of the surface labels a model could match against pre-training memory. On five heterogeneous events and 125 prediction points in Chinese and English editions, the strongest of six frontier LLMs reaches only 75.0 out of 100, against a trivial anchor of 50. The two axes come apart: a model can be calibration-strong but time-weak, or the reverse. Three agent frameworks built on a shared base model fail to improve on that base, and two model-free heuristics trail every LLM. Per-event gaps reach 21.4 points on a single axis, which is our main argument for evaluating on several events rather than one. All anonymized timelines, question banks, ground truth, and scoring code are released.",
+      "authors": [
+        "Zhenran Wang",
+        "Zhonghan Bian",
+        "Jinsong Li",
+        "Zhangyang Qi"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:59:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.04009v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.04009",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）及其代理系統目前多以完成任務的能力進行評測，例如修復程式錯誤、操作瀏覽器或使用圖形介面；然而，理解並預測真實社會事件如何演變的社會能力，幾乎尚未被量化。本文提出 SocietyBench：輸入一行事件主題，蒐集五個平台的網路新聞與社群媒體貼文，將其整理為按日期索引、區分事實事件與公共輿論的時間線，再把每個截點轉換為經人工審核的預測問題庫。問題分別以機率校準與時間準確度兩個互相獨立的 100 分軸評分。為避免模型依靠預訓練記憶，作者替換所有具名實體，並以每個事件獨立的常數平移日期，建立與真實事件結構相同、但表面標籤不同的反事實社會世界。在五個異質事件、125 個預測點及中英文版本上，六個前沿 LLM 中最強者得分為 75.0，僅高於 50 分的簡單基準。實驗顯示校準與時間能力可能分離，代理框架未改善基礎模型，且單一事件的結果差異可達 21.4 分。作者釋出匿名時間線、問題庫、真值與評分程式。",
+      "problem_statement": "現有 LLM benchmark 主要測試任務完成，較少衡量模型能否理解真實社會事件並預測其後續演變。既有 forecasting benchmark 多集中於二元的是非問題，或依賴尚未結束的即時事件；歷史事件又可能被模型從預訓練資料記憶。相關社會模擬工作則評估生成社會的逼真度，而非對真實事件逐點預測。此外，既有方法通常忽略公共輿論，也缺乏同時評估機率不確定性與事件時間的框架。",
+      "proposed_solution": "作者提出 SocietyBench，將已完成的真實社會事件轉換為可回溯評測的反事實世界。系統先從新聞與五個社群平台蒐集資料，建立按日期排列且分離事實與輿論的時間線；接著以實體替換及一致日期平移去除事件名稱與絕對時間線索，再將每個截點自動生成並經稽核的校準題與時間題。評分採兩個互相獨立的 100 分軸：校準軸衡量機率與二元真值的偏差，時間軸衡量預測日期與真實日期的距離。這個設計可在不等待新事件發生的情況下使用完整歷史事件，同時降低事件記憶造成的分數膨脹。",
+      "core_contributions": [
+        "提出 SocietyBench 端到端社會事件預測 benchmark，涵蓋五個異質領域，結合網路新聞與五個社群媒體平台，並提供中英文一對一版本。",
+        "設計三階段實體與日期匿名化，將已完成的真實事件轉為反事實社會世界，以降低依靠預訓練記憶進行事件召回的可能性。",
+        "建立分離的機率校準與時間準確度評估軸，並比較六個 LLM、三種代理框架及兩個非 LLM 基準，公開資料與評分程式。"
+      ],
+      "methodology": "任務以每個匿名事件的截點 dP 為單位：模型只能看到此前的時間線內容 CP，並預測其後的真值節點 GP。資料涵蓋公共爭議、地緣政治、科技政策、金融市場與貿易政策五類事件；每事件建立 39 至 168 個節點、25 個預測點，並從網路新聞及五個社群平台整理事實層與公共輿論層。匿名化包含三階段：先以最長匹配替換具名實體，再對所有日期套用每事件獨立、均勻取樣且範圍為 ±180 天的常數偏移，最後由三個對抗式 LLM 稽核者嘗試辨識原事件與時段，必要時增補替換表或重新取樣；另執行段落、事件與敘事層級的一致性檢查。校準問題要求模型輸出事件在指定日期視窗內發生的機率，使用時間衰減因子與視窗因子加權 MAE，並轉換為 0–100 分：S_cal=100×max(0,1−wMAE)。時間問題要求預測未來事件日期，以真實日期誤差計算三個 30 天區間內的正規化 miss，再以時間因子加權轉為 S_time。兩軸各自對每事件計算，最後取五事件平均；實驗以 temperature 0、固定推理預算，在中英文版本評估六個 API LLM、三個代理框架與兩個非 LLM 啟發式基準。",
+      "key_results": "| 系統 | 校準平均 | 時間平均 | Overall |\n|---|---:|---:|---:|\n| GPT-5.5 | 75.3 | 74.6 | 75.0 |\n| Gemini-3.5-Flash | 73.9 | 67.3 | 70.6 |\n| Claude-Opus-4.8 | 62.5 | 70.0 | 66.3 |\n| DeepSeek-V4-Pro | 62.5 | 64.9 | 63.7 |\n| Kimi-K2.5 | 63.3 | 63.6 | 63.4 |\n| Doubao-Seed-2.0-Pro | 64.3 | 62.6 | 63.4 |\n\n論文報告的整體結果：五個事件、125 個預測點、兩種語言版本中，最佳 LLM 的 Overall 為 75.0；校準與時間兩軸的簡單基準均約為 50。三個以 Doubao 為基礎的代理框架中，LangGraph、AutoGen、MiroFish 的 Overall 分別為 62.1、60.5、63.1，而基礎 Doubao 為 63.4。兩個非 LLM 校準基準的分數為 53.8 與 54.2，時間軸均記為 50。最大單事件單軸差距出現在 Trump Tariff 的 GPT-5.5 與 Kimi-K2.5 時間分數：85.4 對 64.0，差 21.4 分。消融結果顯示，移除 A 型時間梯度問題使六模型平均校準分數上升 7.2 分；較晚截點的平均校準分數由 66.7 上升至 68.7。",
+      "insights": [
+        "若要評估社會世界預測能力，應同時測量事件是否發生的機率校準與發生時間，不能以單一準確率或單一總分替代；這是根據論文觀察到兩軸能力明顯分離所得的實務啟發。",
+        "評測資料可採用實體替換與一致日期平移，降低模型直接匹配歷史事件與絕對日期的機會；但仍應搭配多事件與匿名化稽核。",
+        "代理編排不必然改善預測：在本文設定中，LangGraph、AutoGen 與 MiroFish 均未超越 Doubao 基礎模型，因此部署代理系統前應以同一基礎模型做嚴格對照。"
+      ],
+      "limitations": "論文僅使用五個事件與 125 個預測點，事件池仍有限，單一事件可能造成顯著波動；作者也指出需更強匿名化、更廣事件範圍、更細緻區分近似模型，並鼓勵社群貢獻事件與系統。論文未報告模型內部架構，且釋出資料不包含逐題模型回答。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM 預測評測",
+        "社會事件與公共輿論建模",
+        "多代理系統評測"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.03918",
+      "title": "When and Where to Look: Adaptive Visual Evidence Scheduling for Efficient Long Video Understanding",
+      "abstract": "Efficient long-video understanding requires vision--language models (VLMs) to reason over a small number of frames selected as sparse visual evidence. Existing relevance-based methods rely on static one-shot selection with fixed frame budgets and candidate pools, while agent-based schedulers achieve adaptivity through costly multi-round reasoning and interactive search. We propose EcoFrame, a training-free framework for low-overhead query-adaptive visual evidence scheduling. EcoFrame leverages the VLM's inference feedback to determine when to increase the frame budget and where to search for additional candidate evidence. Specifically, entropy-gated budget scheduling uses output uncertainty to stop early when the current evidence is sufficient or progressively expand the frame budget otherwise. Meanwhile, attention-guided candidate proposal converts frame-level attention into a temporal prior, enabling dense local search in informative regions while preserving global coverage when attention is diffuse. Experiments on Video-MME, LongVideoBench, and MLVU demonstrate that EcoFrame achieves a better accuracy--efficiency trade-off across multiple VLM backbones. On Qwen2.5-VL, EcoFrame achieves an average accuracy of 64.4, surpassing BOLT at 63.5, while providing a $1.85\\times$ speedup over AKS and BOLT. Compared with the agent-based A.I.R., EcoFrame maintains comparable accuracy with up to a $13.5\\times$ inference speedup. Code will be available at https://github.com/AK-DREAM/EcoFrame.",
+      "authors": [
+        "Ke Li",
+        "Jiayu Chen",
+        "Maoliang Li",
+        "Zihao Zheng",
+        "Hailong Zou",
+        "Hengyi Zhang",
+        "Xuanzhe Liu",
+        "Xiang Chen"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-04T16:49:53+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.03918v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.03918",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "高效率的長影片理解需要 Vision-Language Models（VLMs）在稀疏視覺證據中挑選少量影格進行推理。既有 relevance-based 方法通常採用靜態的一次性選擇、固定影格預算與候選池；agent-based scheduler 雖具適應性，卻需多輪推理與互動式搜尋，成本高昂。本文提出免訓練的 EcoFrame，用低額外成本進行 query-adaptive visual evidence scheduling。其 entropy-gated budget scheduling 根據輸出不確定性決定是否增加影格預算；attention-guided candidate proposal 則將 frame-level attention 轉為時間先驗，在資訊集中區域進行密集局部搜尋，注意力分散時維持全域覆蓋。在 Video-MME、LongVideoBench 與 MLVU 上，EcoFrame 於多個 VLM backbone 展現更佳的準確率—效率折衷。Qwen2.5-VL 上平均準確率為 64.4，高於 BOLT 的 63.5，且相較 AKS 與 BOLT 提供 1.85 倍加速；相較 agent-based A.I.R.，準確率相近而推理速度最高提升 13.5 倍。",
+      "problem_statement": "長影片包含遠超 VLM context window 的影格，必須在有限預算下選取足夠的視覺證據。Uniform sampling 忽略問題需求；靜態 relevance-based 方法固定候選池與影格數，可能漏掉局部事件或浪費計算；agent-based 方法雖能迭代搜尋，卻依賴多輪 VLM 推理與驗證，延遲和成本高。核心問題是如何在不採用昂貴 agent 推理下，適應每個 query 所需的證據量與時間位置。",
+      "proposed_solution": "作者提出 EcoFrame，一個免訓練、低額外成本的 query-adaptive visual evidence scheduling 框架。它把 VLM 一次低預算回答所產生的兩種內部訊號轉為排程決策：以 output entropy 判斷目前證據是否足夠，低於輪次 threshold 即提前停止，否則逐步增加 frame budget；以 frame-level attention 推斷值得搜尋的時間區域，注意力集中時進行局部加密，分散時維持全域探索。新候選再透過 query-frame relevance 與 temporal diversity 重新選取，使證據搜尋逐輪由粗到細，兼顧準確率、覆蓋率與延遲。",
+      "core_contributions": [
+        "提出免訓練的 EcoFrame，利用目標 VLM 推理期間產生的 output entropy 與 frame-level attention，取代昂貴的額外 agent 推理。",
+        "提出 entropy-gated budget scheduling，以逐輪放寬的 entropy threshold 決定提前停止或以幾何序列增加影格預算。",
+        "提出 attention-guided candidate proposal 與 marginal-utility frame reselection，結合注意力先驗、query-frame relevance 與時間多樣性，實現由粗到細的候選搜尋。"
+      ],
+      "methodology": "EcoFrame 以目標 VLM 作為回答模型，另使用 CLIP-ViT-L/14 計算 query-frame relevance；論文未提出新的 VLM backbone 或訓練階段。給定影片與問題，先以均勻取樣建立初始候選池 P1，設定影格預算 B1=4，並依 relevance 與時間覆蓋選出輸入集合 S1。每一輪將 St 輸入 VLM，取得答案、平均 token output entropy et，以及選定深層 attention layer 與 head 的 visual-token attention，再將 attention 平均到 frame level。若 et 小於輪次 threshold τt，立即輸出答案；否則令下一輪預算為 min(ceil(αBt), Bmax)，實驗採 α=2、Bmax=32。候選擴張時，以相鄰輸入影格中點形成 temporal cells，將 frame attention 傳播為時間先驗；候選分數同時考慮注意力先驗與距離既有候選池的多樣性，逐次加入最高分位置，再計算新影格的 CLIP relevance。重新選擇輸入影格時，以 normalized relevance 的 λrel 次方乘上與目前集合的距離，反覆選取至達到新預算。實驗使用 Video-MME、LongVideoBench、MLVU，並補充 ActivityNet-QA；評估平均 accuracy、端到端 GPU latency 與最終平均影格數，模型包括 LLaVA-OneVision-7B、Qwen2.5-VL-7B、InternVL-3-8B。",
+      "key_results": "主要結果如下（準確率為百分比；延遲為秒；Speedup 以表中靜態 relevance baseline 為基準）：\n\n| VLM | 方法 | 平均影格數 | 平均準確率 | 平均延遲 | Speedup |\n|---|---|---:|---:|---:|---:|\n| LLaVA-OneVision-7B | BOLT | 32 | 62.2 | 3.88 | 1.00× |\n| LLaVA-OneVision-7B | EcoFrame | 19.1 | 63.5 | 2.17 | 1.79× |\n| Qwen2.5-VL-7B | BOLT | 32 | 63.5 | 3.22 | 1.00× |\n| Qwen2.5-VL-7B | EcoFrame | 21.3 | 64.4 | 1.74 | 1.85× |\n| InternVL-3-8B | BOLT | 32 | 66.9 | 3.88 | 1.00× |\n| InternVL-3-8B | EcoFrame | 17.4 | 67.8 | 2.05 | 1.89× |\n\n在與 A.I.R. 比較時，論文指出 EcoFrame 維持相近準確率，推理速度最高提升 13.5 倍；各模型的 A.I.R. 平均延遲分別為 29.20、22.10 與 27.12 秒。消融結果顯示，LLaVA-OneVision-7B 上 Video-MME／LongVideoBench 的完整 EcoFrame 準確率為 61.0／59.9；移除 attention-guided proposal 後為 60.7／59.2，relevance-only reselection 後為 60.6／58.7。",
+      "insights": [
+        "若部署情境重視延遲，可從低影格預算開始，使用模型輸出 entropy 作為是否追加視覺證據的門控訊號；論文結果顯示此作法能在固定最大預算下減少平均計算。",
+        "候選搜尋不必在整部影片建立密集候選池：可依目前影格注意力在局部區域加密搜尋，同時以距離項維持全域覆蓋，降低漏掉不同時間事件的風險。",
+        "實務部署應依模型、影片領域與成本需求校準 entropy threshold 與最大預算；論文也顯示更嚴格 threshold 通常提高準確率但增加延遲，沒有單一普適設定。"
+      ],
+      "limitations": "作者指出 entropy threshold 與最大影格預算仍是全域設定，可能不適合所有模型、影片領域與部署成本，未來可進行輕量校準或 cost-aware scheduling。對極短的 needle-in-a-haystack 事件，即使保留全域覆蓋，有限候選影格仍可能遺漏；未來可加入事件邊界或 motion saliency。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長影片理解",
+        "視覺證據選擇",
+        "自適應推理與計算配置"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.03910",
+      "title": "Socially Grounded Agentic AI: Coordinating Plural Perspectives through Social Theory",
+      "abstract": "As AI systems are deployed across increasingly diverse social contexts, alignment can no longer be framed as the optimization of a single, unified set of values. Instead, systems must be able to recognize, represent, and respond to multiple legitimate perspectives. This has led to growing interest in pluralistic alignment, which seeks to move beyond one-size-fits-all models of appropriate behaviour. However, current approaches often lack a clear account of how values are socially organized, contested, and coordinated in practice. In this paper, we argue that social theory provides essential conceptual and design resources for addressing these challenges. Drawing on established traditions in sociology, we show how perspectives can be understood as structured by roles, shaped through interaction, and distributed across fields of power and expertise. We translate these insights into concrete implications for AI system design, including role-based representations, structured coordination among perspectives, and context-sensitive evaluation. For agentic systems, this requires aligning not only final outputs, but also the role activations, deliberative traces, aggregation rules, and feedback loops through which those outputs are produced. Our contribution is to reposition pluralistic alignment as a problem of socially grounded coordination rather than output diversification. We outline a design space for systems that engage multiple perspectives in structured and accountable ways, and we identify directions for future work to implement and empirically evaluate these approaches in real-world settings.",
+      "authors": [
+        "Matt Ratto",
+        "Abhishek Moturu",
+        "Daniel Silver"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-08-04T16:37:09+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.03910v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.03910",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "隨著 AI 系統部署於日益多元的社會情境，alignment 已不能再被理解為最佳化單一、統一的價值集合。系統必須辨識、表徵並回應多個合理的 perspectives，因此 pluralistic alignment 逐漸受到重視。然而，現有方法通常缺乏對價值如何在實務中被社會性組織、爭議與協調的清晰說明。本文主張 social theory 能提供重要的概念與設計資源。作者借鑑 sociology 傳統，說明 perspectives 如何由 roles 結構化、透過 interaction 形塑，並分布於權力與專業構成的 fields 中。文章進一步提出 role-based representations、structured coordination 與 context-sensitive evaluation 等 AI 設計方向。對 agentic systems 而言，alignment 不只涉及最終輸出，也須涵蓋 role activations、deliberative traces、aggregation rules 與 feedback loops。本文將 pluralistic alignment 重新定位為 socially grounded coordination，而非單純增加輸出多樣性，並提出可問責地協調多元 perspectives 的設計空間與未來實證方向。",
+      "problem_statement": "論文處理的是多元社會情境中的 pluralistic alignment：不同文化、政治立場、專業角色、制度位置與生活經驗可能產生彼此合理但衝突的價值。現有 Overton、steerable 與 distributional pluralism 多半分別強調列舉、控制或反映觀點分布，卻未充分說明觀點如何由角色、互動、權力與專業結構形成，也缺乏 agentic system 中對角色啟動、協商過程、聚合規則與回饋軌跡的問責機制。",
+      "proposed_solution": "作者提出 socially grounded pluralistic alignment，將 alignment 從輸出多樣化改寫為社會協調問題。框架以 Mead、Habermas 與 Bourdieu 分別支撐角色表徵、審議互動與 field-aware 聚合，並延伸至 role-indexed representation、structured multi-agent deliberation、provenance-sensitive aggregation 與 trajectory-level audit。系統不只產生多個答案，而是讓具體社會角色在明確義務與權限下互相提出、支持、挑戰及修正主張，再依可說明的協調或升級規則產出結果；同時揭露哪些群體與專業被納入、如何加權，以及哪些主張因安全、權利或領域規則而被排除。",
+      "core_contributions": [
+        "將 Overton pluralism 重新詮釋為以 Mead 的 generalized other 為基礎、建模角色結構化期待與社會位置的問題，而非列舉多個匿名觀點。",
+        "將 steerable pluralism 轉化為以 Habermas 為理論基礎的 deliberative design，主張透過角色分化、互動協議、結構化論證與明確的 synthesis、arbitration 或 escalation 來協調價值衝突。",
+        "將 distributional pluralism 重新定位為 Bourdieu 式的 field representation，納入權力、專業、資本、邊緣化與 provenance，並提出 trajectory-level audit 與角色忠實度、觀點涵蓋度、審議品質等評估方向。"
+      ],
+      "methodology": "本文不是提出已完成訓練與測試的單一模型，而是把 social theory 映射至 agentic AI 的設計流程。第一步是 role-indexed representation：以 Mead 的 generalized other 將觀點表示為具備制度位置、義務、限制、證據來源、角色關係及 defer、challenge、escalate 條件的角色，並以 role-based prompting、role-indexed RAG 或多代理人實例化。第二步是 structured multi-agent deliberation：依 Habermasian deliberation 配置角色分化代理人、互動協議與 claim-evidence-justification 等格式，要求代理人提出主張、證據、批判及修正，最後透過 synthesis、arbitration、voting 或 escalation 形成可行結論。第三步是 provenance-sensitive、field-aware aggregation：依 Bourdieu 的 field 理論，將 population 表示為具有不同權威、專業與邊緣化位置的結構，而非平面意見分布；可使用 population-aware routing、position-weighted aggregation、provenance 呈現、corrective weighting 或 counterfactual simulation。第四步是 trajectory-level audit：記錄角色啟動、互動歷史、工具使用、主張修訂、權重與回饋，並以 role fidelity、perspective coverage、deliberative quality、provenance transparency、field sensitivity、escalation appropriateness 等維度評估。文中的 clinical triage 案例僅為設計示例，未提供實驗驗證。",
+      "key_results": "論文屬於概念性與設計導向工作，未呈現模型實作、資料集、baseline、受控實驗或量化評估結果。因此沒有可供比較的實驗數據。\n\n| 評估項目 | 論文報告 |\n|---|---|\n| 模型效能或準確率 | 論文未報告 |\n| 與 baseline 的比較 | 論文未報告 |\n| 資料規模與訓練結果 | 論文未報告 |\n| trajectory-level 指標數值 | 論文未報告 |\n| 實際部署成效 | 論文未報告 |\n\n作者提出的評估維度包括 role fidelity、perspective coverage、deliberative quality、provenance transparency、field sensitivity 與 escalation appropriateness，但本文未提供這些指標的操作化數值或實驗結果。",
+      "insights": [
+        "在高風險 agentic system 中，應把角色定義為具備義務、證據來源、權限範圍、關係與升級條件的制度位置，而非僅使用 persona prompting。",
+        "多元觀點的協調應採用可檢查的 claim-evidence-justification、批判與回應流程，並記錄角色啟動原因、權重、衝突與最終決策規則。",
+        "評估不應只看最終答案；可在系統層建立 interaction trace，檢查角色是否適切啟動、觀點是否被壓平、權力與排除是否可見，以及何時適當交由人類處理。"
+      ],
+      "limitations": "本文主要是理論整合與設計框架，尚未實作或實證驗證所提出的 agentic pipeline，也未提供資料規模、模型細節、baseline 或量化結果。角色權重、field 建模、聚合規則與審議品質的具體測量仍待發展。作者指出未來應納入 feminist theory、postcolonial theory、pragmatism 與 STS，並在 healthcare、public services 等場域評估。",
+      "tags": [
+        "alignment",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "pluralistic alignment",
+        "multi-agent deliberation",
+        "social choice and AI governance",
+        "trajectory-level agent evaluation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.04008",
+      "title": "WorldCup Arena: Prospective, Leakage-Free Evaluation of Frontier LLMs on a Live Tournament",
+      "abstract": "Benchmarks that measure the forecasting ability of large language models are almost always retrospective: the event has happened, the answer is somewhere on the Web, and the evaluation must defend itself against memorisation. We report the opposite design. Over the 39 days of the 2026 FIFA World Cup, six frontier LLMs -- all with extended thinking and native server-side web search -- were asked before every kickoff, one match at a time, to fill in a seven-market prediction card for all 104 matches, plus 12 group winners and a pre-tournament outright pool; no answer existed when the question was asked, so the evaluation is leakage-free by construction rather than by filtering, and the frozen archive holds 4,494 scored predictions. What the tournament establishes is a set of behaviours the six systems share. On match outcome they average 63.9%, level with backing the bookmaker's favourite -- which is in fact what they usually do. They agree with one another far more often than they are right, so a majority vote adds nothing. They under-commit to draws and to goals, and crowd their scoreline picks onto a single prototypical result. Accuracy tracks how lopsided a fixture is rather than how much is known about it: it collapses in the closest ties, where the dossiers are richest, while questions about the tournament as a whole are answered well. On this task the current generation of frontier systems is not sharply differentiated: the standings hold up at the top and the bottom across the run and churn in the middle, and the margins stay narrow throughout. The briefing dossiers, fixtures and official results are released as a benchmark, together with the scoring code.",
+      "authors": [
+        "Zhenran Wang",
+        "Zhonghan Bian",
+        "Jinsong Li",
+        "Zhangyang Qi"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:59:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.04008v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.04008",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "現有衡量大型語言模型 forecasting 能力的 benchmark 幾乎都是 retrospective：事件已經發生，答案已存在於 Web 上，因此評估必須防範模型記憶或資料污染。本研究採用相反設計：在 2026 FIFA World Cup 的 39 天期間，六個具 extended thinking 與原生 server-side web search 的 frontier LLM，在每場比賽 kickoff 前逐場完成七市場 prediction card，涵蓋 104 場比賽、12 個分組冠軍及賽前 outright pool；提問當下答案尚不存在，因此天生具備 leakage-free 特性。凍結資料庫共包含 4,494 個 scored predictions。結果顯示，模型平均 match outcome 準確率為 63.9%，與直接支持 bookmaker favourite 的 64.4% 相當；模型彼此高度一致但未因此更準確，且共同低估 draws 與 goals、集中預測單一典型比分。模型表現主要隨比賽強弱差距變化，而非隨可取得資訊量變化；整體賽事層級問題表現優於單場預測。六個系統的排名差距狹窄，作者並釋出 briefing dossiers、fixtures、官方結果與 scoring code 作為 benchmark。",
+      "problem_statement": "既有 LLM forecasting benchmark 多為 retrospective：事件已結束且答案可能存在於 Web，難以排除模型記憶、訓練資料污染與事後檢索。匿名化或 filtering 只能間接控制 leakage，亦通常缺乏連續、密集且具有客觀結果的比較。本文要解決的是如何在真實未來事件中，於答案尚不存在時，公平評估具搜尋與 extended thinking 能力的 frontier LLM forecasting 表現。",
+      "proposed_solution": "作者提出 WorldCup Arena，一個以完整 2026 FIFA World Cup 為測試場域的 prospective、leakage-free evaluation framework。系統每日建立並凍結球隊 dossiers、賽程、場地與 bookmaker handicap，於每場 kickoff 前讓六個模型在相同 prompt 與資料條件下逐場預測；比賽結果僅在賽後回寫。框架以三項時間與內容鎖定機制確保答案不可提前取得，並以七個固定市場、預先指定權重、官方 90 分鐘比分及 deterministic scoring 統一評分。核心創新是以日曆上的未來性直接保證 leakage-free，同時保留 live web search 與完整賽事密度，以分析模型間一致性、時序表現與 leaderboard 不確定性。",
+      "core_contributions": [
+        "提出一套完整 prospective、leakage-free 的 LLM forecasting 評估流程，在事件結果尚未存在時進行提問，避免 retrospective benchmark 的記憶污染問題。",
+        "在 2026 FIFA World Cup 全部 104 場比賽上建立公開 benchmark，釋出 48 個球隊 dossiers、46 個 timestamped snapshots、fixture metadata、官方結果及 scoring code。",
+        "以 bootstrap intervals 與五種 scoring designs 檢驗 leaderboard 不確定性，並系統性揭示六個 frontier LLM 的共同行為：追隨 bookmaker、低估平局與進球、模型 herd、比分模式坍縮，以及單場與賽事層級預測能力的落差。"
+      ],
+      "methodology": "研究將 benchmark 設計為一個 rolling、prospective evaluation：在 2026 年 6 月 10 日至 7 月 19 日的 39 天內，六個模型依實際賽程、每場 kickoff 前逐一回答 104 場比賽。模型包括 Claude、GPT、Gemini、Kimi、GLM 與 Seed；均使用各 API 可提供的最高 extended-thinking 設定及供應商原生 server-side web search。論文未提供這些模型的內部架構，而是比較其公開 API configuration。每場輸入包含賽事階段、日期、場地、天氣、裁判、教練、固定 bookmaker handicap line，以及雙方球隊的完整 pre-match dossier。dossier 涵蓋 FIFA ranking、Elo、球員表、歷史、近四年戰績與最新消息，並以 46 個 timestamped snapshots 滾動更新。輸出必須是與比分一致的 JSON，包含 handicap、half-time/full-time、1X2、over/under 2.5、both teams to score、correct score、odd/even total goals 七個市場。各市場權重分別為 4、3、2、2、2、2、1，單場最高 16 分；另評估 12 個 group winners 與 pre-tournament outright pool。三項 leakage locks 包括 snapshot lock、kickoff lock 與 template lock；結果在賽後才寫回 dossier。評估使用 deterministic scoring script、match points、各市場 accuracy、bookmaker favourite baseline、uniform/modal guess，以及以 10,000 次 bootstrap 重抽比賽所得的 95% confidence intervals。作者另以五種 scoring designs 檢查 leaderboard 對計分方式的敏感度。",
+      "key_results": "| 指標 | 結果 |\n|---|---:|\n| 評估模型數量 | 6 |\n| 比賽數量 | 104 場、39 天 |\n| Scored predictions | 4,494 |\n| Match outcome 平均準確率 | 63.9% |\n| Bookmaker favourite baseline（1X2） | 64.4% |\n| Majority vote（1X2） | 65.4% |\n| 模型對 match outcome 的平均一致率 | 76.0% |\n| 實際平局數 | 27 場；各模型預測 8–14 場 |\n| Scoreline 預測集中度 | 28.0% 預測為 2–1 |\n| 最終總分最高／最低 | Claude 897；GLM 813 |\n| Match component 最高／最低 | Claude 786；Gemini 717 |\n| 最高模型排名 bootstrap 機率 | Claude 53.6% |\n| Claude 相對 GPT 的 match 分數差 | +22；95% CI 為 [−49,+94] |\n| Claude 相對 Gemini 的 match 分數差 | +69；95% CI 為 [−6,+148] |\n| Tournament-level questions | 模型表現比 single-match 預測高 20–44 個百分點 |\n\n論文指出，六個系統在各市場的差距狹窄；五種 scoring designs 下由不同模型取得第一名，唯一跨五種設計一致的排序結論是 Gemini 從未高於第三名。",
+      "insights": [
+        "若要評估模型的真實 forecasting 能力，應優先採用 prospective、時間鎖定且答案尚未產生的任務，而非只依賴事後去污染或匿名化。",
+        "模型間的高度一致不代表集體智慧；本文中模型在 76.0% 比賽上對 match outcome 達成一致，但 majority vote 的準確率僅 65.4%，未顯示穩定優勢。",
+        "實務部署預測系統時，應與 bookmaker favourite 等強 baseline 比較，並分離賽事層級與單事件表現；僅超越 uniform guessing 不足以證明模型具備有用的預測能力。"
+      ],
+      "limitations": "研究只涵蓋單一足球賽事，因此 breadth 有限，結果不能直接推廣至其他運動、領域或事件類型。每個市場要求 single choice，未評估完整機率分布與 calibration。六個模型是特定時間點的 purposive snapshot，且不同供應商的 thinking 與 search 控制介面不完全相同。論文未報告更廣泛跨賽事重複實驗。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM forecasting",
+        "data contamination and leakage-free evaluation",
+        "sports outcome prediction"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.04010",
+      "title": "ParVL: Parallel Scaling and Expandable Compute Allocation for Multimodal LLMs",
+      "abstract": "Existing scaling strategies for Multimodal Large Language Models (MLLMs) typically expand either model parameters or sequential inference computation, incurring substantial memory or latency overhead. More importantly, most existing methods fail to alter the rigid, fixed computation allocation between the Vision Transformer and the Large Language Model components, limiting task-specific optimization. To address this, we introduce the Parallel Vision-Language (ParVL) scaling framework for MLLMs, which scales parallel computation by reusing the existing ViT and LLM backbone parameters across multiple vision and language branches. This framework raises a central question: given a fixed backbone parameter budget, how should additional shared-backbone computation be allocated between the vision and language modalities? We instantiate each parallel computational stream with branch-specific prefix parameters over a shared backbone, and train the entire model end-to-end via full-parameter supervised fine-tuning on roughly 13B tokens. We systematically study the computation-allocation trade-off between the ViT encoder and LLM decoder. ParVL improves overall multimodal performance over same-recipe single-branch baselines, and the best evaluated vision--language allocation varies across tasks. Code is available at https://github.com/YangYangGirl/ParVL.",
+      "authors": [
+        "Yang Yang",
+        "Qinyu Zhao",
+        "Mouxiang Chen",
+        "Xiaohui Li",
+        "Lixin Gu",
+        "Wenhai Wang",
+        "Hongjie Zhang",
+        "Wenwei Zhang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:59:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.04010v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.04010",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "現有 Multimodal Large Language Models（MLLMs）的 scaling strategies 通常擴增模型參數，或增加 sequential inference computation，因此分別帶來顯著的記憶體或延遲成本。更重要的是，多數方法無法改變 Vision Transformer（ViT）與 Large Language Model（LLM）元件之間僵化且固定的計算分配，限制了 task-specific optimization。為此，本文提出 Parallel Vision-Language（ParVL）scaling framework，透過在多個 vision 與 language branches 之間重用既有 ViT 和 LLM backbone 參數，擴增 parallel computation。在固定 backbone 參數預算下，作者研究額外共享-backbone computation 應如何分配至 vision 與 language modalities。每個 parallel stream 以 branch-specific prefix parameters 建立於共享 backbone 之上，並以約 13B tokens 進行 end-to-end full-parameter supervised fine-tuning。實驗系統分析 ViT encoder 與 LLM decoder 的計算分配取捨，顯示 ParVL 整體表現優於相同訓練配方的 single-branch baselines，且最佳 vision-language allocation 會隨任務而變化。",
+      "problem_statement": "現有 MLLM scaling 多透過增加參數或延長 sequential inference，分別造成儲存/記憶體或延遲成本；而且 ViT 與 LLM 的計算比例通常在設計時固定，無法依任務調整。高解析文件理解可能需要更多 visual computation，長程推理則可能需要更多 language computation，因此本文要解決固定參數預算下，如何以 parameter reuse 擴增計算並彈性分配兩種 modality 的資源。",
+      "proposed_solution": "作者提出 ParVL，將 MLLM parallel scaling 形式化為二維的 vision-language compute-allocation problem。它在共享 ViT 與 LLM backbone 上建立可平行執行的 branches，以 branch-specific KV prefixes 產生差異化表徵，再以 vision-side 與 language-side token-wise MLP aggregators 融合分支結果。Pv 與 Pl 可獨立設定，因而能比較 vision-heavy、language-heavy、balanced 等配置；整體以 full-parameter SFT 聯合最佳化。此設計在維持共享參數的同時增加有效計算，並進一步支援 sparse routing 與 Shared KV 的效率探索。",
+      "core_contributions": [
+        "提出 ParVL parallel scaling framework，以 branch-specific KV prefixes、共享 ViT/LLM backbone 與 modality-specific token-wise aggregation，分別控制 vision 與 language branch 數量。",
+        "在 1B、2B、8B 規模及九個 benchmark 上，系統比較九種 vision-language branch-count configurations，證明最佳計算分配依任務而異。",
+        "提供 accuracy、latency 與 memory 的受控分析，並探索 top-1 sparse router 與 Shared KV cache 等推論效率機制。"
+      ],
+      "methodology": "ParVL 以 Pv 個共享參數的 ViT branches 與 Pl 個共享參數的 LLM branches 進行 parallel computation。各 branch 在每個 prefix-conditioned attention layer 使用 branch-specific learnable key/value prefixes，保留共享的 attention projection 與 backbone；prefix 只加入 key/value，query 維持原序列。ViT branches 的 token 對齊 hidden states先經 modality-specific two-layer SiLU MLP，逐 token 預測 branch 權重，再以 softmax 加可選 uniform smoothing 完成 aggregation；移除 class token、進行 pixel shuffle，並經 InternVL connector 投影至 LLM embedding space。相同視覺表示與文字 embedding 複製給所有 LLM branches，語言 states 再以另一個 token-wise MLP aggregation 融合，最後通過共享 language-modeling head。所有 backbone、prefix、aggregator 與 connector 以 full-parameter SFT 聯合訓練，使用約 13B tokens、4.6M instances、單一 epoch，資料為 InternVL3.5 SFT collection 的 1/20 subsample；loss 對有效 response tokens 加權，樣本權重為 1/√n。實驗設定 Pv、Pl ∈ {1,2,4}，涵蓋 MMMUdev-val、四個數學/邏輯 benchmark 與四個 OCR/文件 benchmark，報告 General、Math、OCR 及九項等權 Average。另比較 prefix 與 LoRA、mean 與 MLP aggregation、dense 與 top-1 routing，以及不同 batch size 下的 latency 與 peak GPU memory。",
+      "key_results": "主要結果如下；公共模型使用不同 training recipes，僅作參考，受控比較為同一模型規模內的 single-branch baseline 與 ParVL。\n\n| 模型/配置 | General | Math | OCR | All |\n|---|---:|---:|---:|---:|\n| 1B Baseline 1:1 | 40.3 | 26.0 | 75.6 | 49.6 |\n| 1B ParVL 1:4 | 39.8 | 27.6 | 75.7 | 50.3 |\n| 1B ParVL 4:4 | 39.0 | 28.0 | 75.9 | 50.5 |\n| 2B Baseline 1:1 | 46.4 | 30.3 | 80.6 | 54.4 |\n| 2B ParVL 2:2 | 46.1 | 30.6 | 81.1 | 54.7 |\n| 8B Baseline 1:1 | 56.9 | 41.2 | 85.3 | 62.5 |\n| 8B ParVL 2:2 | 57.8 | 42.0 | 85.4 | 63.0 |\n\n在 1B branch allocation heatmap 中，General 最佳為 2:2（41.1）、Math 最佳為 4:4（28.0）、OCR 最佳為 2:4（76.3）。4:4 checkpoint 的 top-1 learned router 將 All 從 random pair 的 49.5 提升至 50.2，dense aggregation 為 50.5。batch size 8 時，標準 4:4 相對 1:1 的 latency 為 1.22 倍、memory 為 2.12 倍；Shared KV 則為 1.62 倍 latency、1.47 倍 memory。",
+      "insights": [
+        "若部署任務偏重文件、OCR 或視覺證據整合，可實驗增加 ViT branches；若偏重語言側數學或推理，也應單獨評估增加 LLM branches，而不宜假設 4:4 永遠最佳。",
+        "評估多分支模型時，應同時報告 accuracy、FLOPs、latency 與 peak memory；論文顯示 1:4 在 1B 的 overall 為 50.3，低於 4:4 的 50.5，但成本較低。",
+        "若硬體支援平行執行，branch reuse 可在參數僅增加最多 4% 的情況下擴增計算；但 batch 增大時記憶體成長明顯，sparse routing 或 Shared KV 可作為成本—效能折衷。"
+      ],
+      "limitations": "研究只使用 InternVL3.5 backbone 的 1B、2B、8B 規模，且採 supervised fine-tuning；訓練資料為 InternVL3.5 SFT collection 的 1/20 子集與單一 data mixture。尚未驗證更廣泛 backbone、更大規模、pretraining、不同 data scaling 或真實部署 workload。效率數據也僅來自單張 NVIDIA H200、指定輸入與生成長度。",
+      "tags": [
+        "benchmark",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Multimodal Large Language Models",
+        "Parameter reuse and parallel scaling",
+        "Vision-language computation allocation",
+        "Mixture-of-Experts and sparse routing"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.04001",
+      "title": "Test-Time Scaling in Reasoning LLMs: Inference Regimes, Evaluation, and Reproducibility",
+      "abstract": "Large language models can solve substantially harder reasoning problems with more inference-time compute. The term \"test-time scaling,\" however, now covers diverse inference algorithms that extend deliberation along a single trajectory, sample completed candidates and aggregate them through voting or verification, or search over unfinished partial states. These algorithms differ in their statistical structure, compute accounting, and failure modes. Treating these procedures as interchangeable under a single scalar \"budget,\" or reporting accuracy without the inference protocol that produced it, makes results difficult to compare across studies. We develop a systematic account of test-time scaling along three axes. First, we formalize test-time scaling as budgeted inference over the implicit prefix tree of an autoregressive model and distinguish three structural regimes: single-trajectory sequential scaling, leaf-level scaling with terminal reduction, and prefix-level scaling. Second, we treat the evaluated object as the entire inference system and develop evaluation principles that separate end-to-end system performance from candidate-bank diagnostics. We introduce an evaluation profile whose coordinates and simple functionals recover or bound common repeated-sampling metrics, and prescribe protocol-matched reporting of compute and uncertainty. Third, we specify reproducibility requirements for inference protocols, distinguishing exact replay from distributional reproducibility and identifying the artifacts needed to support each. We also organize the open-weight reasoning ecosystem by model-side and interface mechanisms, apply these principles to broad-knowledge, symbolic-reasoning, and competition-mathematics benchmarks, and assemble over 2 billion full reasoning traces for release with progressively richer verifier and token-level signals.",
+      "authors": [
+        "Mohsen Hariri",
+        "Weicong Chen",
+        "Nahal Shahini",
+        "Vikash Singh",
+        "Kai Ye",
+        "Amirhossein Samandar",
+        "Debargha Ganguly",
+        "Sreehari Sankar",
+        "Yanyan Zhang",
+        "Shouren Wang",
+        "Jerry Peng",
+        "Biyao Zhang",
+        "Michael Hinczewski",
+        "Vipin Chaudhary"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-04T17:57:20+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.04001v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.04001",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型在推論時獲得更多計算量後，能解決更困難的推理問題。然而，test-time scaling 涵蓋多種不同的 inference algorithm：沿單一路徑延長 deliberation、取樣完整候選並以 voting 或 verification 聚合，或在未完成的 partial states 上進行 search。這些方法的統計結構、計算成本與失敗模式不同，不能以單一 budget 視為等價。本文以自回歸模型的 implicit prefix tree 為基礎，提出三種 inference regime：single-trajectory sequential scaling、leaf-level scaling with terminal reduction，以及 prefix-level scaling。作者進一步將完整 inference system 作為評估對象，區分 end-to-end performance 與 candidate-bank diagnostics，提出 evaluation profile、protocol-matched compute reporting 與 uncertainty reporting，並區分 exact replay 和 distributional reproducibility。研究也整理 open-weight reasoning ecosystem，於多類 benchmark 上實例化方法，並釋出大規模 reasoning traces 與 verifier、token-level signals。",
+      "problem_statement": "現有研究把單一路徑延長、完成候選取樣後聚合，以及 partial-state search 都稱為 test-time scaling，卻常以單一 budget 和最終 accuracy 比較。這忽略不同方法的 proposal distribution、計算成本、候選相依性與失敗模式，也未充分揭露 prompt、decoder、reducer、verifier、stopping rule 和不確定性，因此跨研究結果難以公平解讀與重現。",
+      "proposed_solution": "作者提出以 implicit prefix tree 為核心的統一框架，按計算發生在單一路徑、完成 leaves 或 unfinished prefixes，區分三種 inference regime，並允許 hybrid systems。評估不只測 checkpoint，而是測完整 inference system；同時分離 candidate-bank 的發現與穩定性診斷、固定 bank 的 aggregation，以及含 stopping 的 causal end-to-end 效能。作者另提出 evaluation profile 與 protocol-matched compute/uncertainty reporting，並以 exact replay、distributional reproducibility 和可釋出的 traces、signals、manifests 規範重現性。",
+      "core_contributions": [
+        "將 test-time scaling 統一形式化為在 autoregressive model implicit prefix tree 上、受預算約束的 inference，並區分 single-trajectory、leaf-level 與 prefix-level 三種結構性 regime。",
+        "提出 system-level evaluation principles：將 checkpoint、prompt、decoder、controller/reducer、verifier/judge、budget 與 stopping rule 視為完整評估對象，並分離 end-to-end 結果與 candidate-bank 診斷。",
+        "建立 reproducibility 要求，區分 exact replay 與 distributional reproducibility，說明所需的 prompt、解碼設定、seed、模型快照、執行環境與資料產物。"
+      ],
+      "methodology": "作者以固定的 autoregressive model pθ 與輸入 x 為起點，將可生成的 finite prefixes 表示為 implicit rooted prefix tree T(x)，並把 inference algorithm A_B 定義為在累積成本不超過 B 下執行 token generation、prefix expansion、verifier/judge call、reduction 等操作。單一路徑 regime 只維持一個 unfinished prefix，由 controller 決定繼續、修改、控制或停止；leaf-level regime 從宣告的 decoding proposal qπ 產生完成候選 bank，再使用 self-consistency、verifier-constrained selection、Best-of-N 或 MBR reducer；prefix-level regime 維護 frontier 與 completed-leaf bank，依 likelihood、outcome value、PRM 或 rollout-based continuation value 進行選擇、擴展、pruning 與 backup，亦涵蓋 beam、best-first 與 MCTS-style search。評估上，作者將 prompt、decoder、sampling gates、temperature、top-k/top-p、seed、stop rule、evidence map、reducer、verifier/judge 與 budget 視為完整 protocol。指標包括 end-to-end accuracy、Acc.@1、Pass@k、all-correct@k、plurality、Best-of-N、ROC AUC，以及候選 bank 的 discovery/stability profile；不確定性使用與實際 protocol 相符的 bootstrap 或其他 interval。實驗涵蓋 broad-knowledge、symbolic reasoning、competition mathematics 與 field-balanced SuperGPQA，並保留完整 response、parsed answer、rule outcome、token alternatives、verifier records、環境與 manifest，以支援 exact replay 或 distributional reproducibility。",
+      "key_results": "論文提供的主要實驗數據如下；數值為作者報告的 descriptive results，且不同表格的成本未必包含 prompt tokens 或 verifier computation。\n\n| Bank／模型設定 | Acc.@1 | Pass@8 | Pass@80 | String-Plur.@80 | Pointwise-BoN@80 |\n|---|---:|---:|---:|---:|---:|\n| Qwen3.6 | 83.12% | 91.70% | 94.62% | 89.25% | 86.56% |\n| gpt-oss low | 32.90% | 56.14% | 72.58% | 45.70% | 58.06% |\n| gpt-oss medium | 62.80% | 85.99% | 91.94% | 80.11% | 75.81% |\n| gpt-oss high | 73.03% | 88.12% | 93.55% | 85.48% | 81.72% |\n\n| Verifier signal | Trace-level ROC AUC |\n|---|---:|\n| Compass direct A | 0.983 |\n| Compass contextual A | 0.977 |\n| Reference-free pointwise Qwen | 0.871 |\n\n在 3,600 題、72 個等量 field 的 SuperGPQA extension 中，gpt-oss high 的 mean accuracy 為 45.03%，Exact Pass@80 為 81.94%，而 all-correct@80 為 9.47%；650 題在 80 次回答中從未答對，341 題每次皆答對。論文亦報告四個 canonical bank 的 Pass@80 95% prompt-bootstrap intervals，但未提供所有 inference regime 的統一 end-to-end 數字。資料規模在文中有不一致表述：摘要寫「over 2 billion」full reasoning traces，貢獻段落與後文多處寫「over 2 million」；依提供內容無法消除此差異。",
+      "insights": [
+        "比較不同 test-time scaling 方法時，應同時報告生成 token、候選數、verifier/judge calls、搜尋節點與 wall-clock 或其他實際成本，不能只報一個 scalar budget。",
+        "若使用 Best-of-N、reranking 或 LLM judge，應把 verifier 的提示、模型、分數語義、tie-breaking、fallback 與 calibration 一併固定，因為候選數增加可能造成 proxy overoptimization，甚至使效能非單調。",
+        "應分開報告 Pass@k 等候選發現能力與最終 reducer 的 end-to-end accuracy，並提供 protocol-matched uncertainty；對非 i.i.d. 的 prefix-search bank，不應直接套用 i.i.d. repeated-sampling 的統計解釋。"
+      ],
+      "limitations": "論文主要建立分類、評估與重現性框架，並非提出單一最佳 scaling algorithm；不同實驗的成本口徑、資料區段與 evaluator 設定並不完全一致。部分 verifier 是 ordinal 或 reference-assisted，未必 calibrated；prefix search 的統一比較與更廣泛 benchmark 結果仍有限。文中對 trace corpus 規模亦有 over 2 billion 與 over 2 million 的不一致表述。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "test-time inference scaling",
+        "reasoning model evaluation",
+        "self-consistency and Best-of-N",
+        "verifier-guided search",
+        "reproducibility"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.03966",
+      "title": "HalluTruthQA-4K: A Fine-Grained Corpus and Annotation Process for Arabic Hallucination Detection and Truth Verification",
+      "abstract": "Large language models can generate fluent Arabic answers while introducing factual errors that are difficult to identify and verify. Existing Arabic hallucination resources often assign a binary label to an entire response, indicating whether it is hallucinated or non-hallucinated, but provide limited information about the exact erroneous content, the reason for the error, or the correct factual answer. We present HalluTruthQA-4K, an expanded version of the HalluTruthQA resource containing 4,000 expert-curated Arabic question-answering instances across four knowledge-intensive domains: Islamic knowledge, history, science, and geography. Serving as the official dataset for Track 2 of the HalluScoring 2026 shared task, HalluTruthQA-4K extends our original corpus to 4,000 instances. Each instance pairs an Arabic question with a model-generated response, a verified reference answer, and five plausible distractors. Hallucinated responses are additionally annotated with character-level erroneous spans, human-written explanations, and hierarchical hallucination types. The corpus contains 1,643 hallucinated and 2,357 non-hallucinated responses, with 1,843 annotated erroneous spans. We describe the resource construction and annotation methodology, including question selection, controlled answer generation, candidate construction, expert annotation, independent verification, adjudication, and quality control. We also document the annotation guidelines, taxonomy, data format, inter-annotator agreement, and corpus statistics. HalluTruthQA-4K provides a reusable resource for hallucination detection, span-level error localization, explanation generation, factual verification, and the broader evaluation of factual reliability in Arabic language models.",
+      "authors": [
+        "Salah Eddine Bekhouche",
+        "Abdessalam Bouchekif",
+        "Hichem Telli",
+        "Mohammed-En-Nadhir Zighem",
+        "Abdenour Hadid"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-04T17:33:38+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.03966v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.03966",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型能生成流暢的阿拉伯語回答，卻可能產生難以辨識與驗證的事實錯誤。現有阿拉伯語 hallucination 資源多半只對完整回答標註二元 hallucination／非 hallucination，缺乏錯誤位置、錯誤原因與正確事實等細節。本文提出 HalluTruthQA-4K，為擴充自 HalluTruthQA 的 4,000 筆專家整理語料庫，涵蓋伊斯蘭知識、歷史、科學與地理四個知識密集領域。每筆資料包含阿拉伯語問題、模型生成回答、驗證過的參考答案，以及一個正確答案和五個合理干擾項。Hallucinated 回答另附 character-level 錯誤 span、人工說明與階層式 hallucination 類型。資料集含 1,643 筆 hallucinated 與 2,357 筆非 hallucinated 回答，以及 1,843 個錯誤 span，支援回答層級偵測、錯誤定位、解釋生成、答案選擇與 factual verification。",
+      "problem_statement": "現有阿拉伯語 hallucination 資源多以整體回答的二元標籤為主，無法指出錯誤位於何處、屬於何種錯誤、為何不正確，也難以同時驗證正確答案。這使模型偵測能力與 span 定位、解釋生成、證據忠實度及事實修正能力無法被分開評估，尤其不足以處理伊斯蘭知識中的引文、來源與證據錯誤，以及歷史、科學、地理中的細粒度事實差異。",
+      "proposed_solution": "作者提出 HalluTruthQA-4K，將同一筆阿拉伯語知識密集 QA 實例中的問題、模型自由回答、verified reference answer、hallucination label、六個候選答案、character-level 錯誤 span、人工 explanation 與階層式錯誤 taxonomy 統一對齊。核心創新在於把 response-level detection、span-level localization、錯誤類型分類、錯誤解釋與 candidate-based factual verification 放入同一資料結構，並透過專家製題、控制式回答生成、獨立複核與裁決提高標註可靠性。",
+      "core_contributions": [
+        "提出 4,000 筆、涵蓋四個阿拉伯語知識密集領域的 HalluTruthQA-4K，並作為 HalluScoring 2026 Track 2 的官方資料集。",
+        "將 response-level 二元標籤與 character-level 錯誤 span、人工錯誤說明、五類 macro-type 及 22 類 micro-type 對齊於同一 QA 實例。",
+        "建立包含專家出題與答案驗證、Fanar-1-9B-Instruct 控制式生成、干擾項建構、獨立複核、裁決與品質控制的完整資料建構流程。"
+      ],
+      "methodology": "資料集固定涵蓋 Islamic knowledge、history、science 與 geography，每域 1,000 筆，按域切分為 train 400、development 200、test 400。問題由各領域專家人工撰寫，並以對應可靠來源驗證 reference answer；含糊、資訊不足或存在多個合理答案的問題會修訂或移除。回答使用單一模型 Fanar-1-9B-Instruct 生成，設定為 maximum 1,024 new tokens、temperature 0.0、top-p 1.0、batch size 4、bfloat16，於 48 GB GPU 執行。每題建立一個 verified answer 與五個語意相關、事實錯誤且風格相近的 distractors，形成六選一選項。若完整回答含任何錯誤、捏造、無支持、誤導或脈絡不一致主張，即標為 hallucination；專家依 minimal-but-complete 原則以 zero-based、end-exclusive character offsets 標註每個獨立錯誤 span，並撰寫錯誤原因與 correction。每個 span 再標註五個 macro-types 與 22 個 micro-types。四位領域專家先完成標註，兩位研究助理獨立複核問題、答案、標籤、span、說明、類型與選項，爭議交由專家裁決。評估標註品質使用 binary、macro、micro 類別的 Cohen’s κ，選項使用 exact agreement，span 使用 character-level F1 與 IoU。",
+      "key_results": "| 指標 | 論文報告結果 |\n|---|---:|\n| 總實例數 | 4,000 |\n| Islamic knowledge／history／science／geography | 各 1,000 |\n| Train／development／test | 1,600／800／1,600 |\n| Hallucinated／non-hallucinated | 1,643（41.1%）／2,357（58.9%） |\n| 錯誤 span | 1,843；平均每個含 span 回答 1.13 個 |\n| 含至少一個 localized error 的 hallucinated 回答 | 1,626／1,643（99.0%） |\n| 含多個獨立錯誤的回答 | 169（10.4%） |\n| Binary label Cohen’s κ | 0.92 |\n| Macro-type Cohen’s κ | 0.86 |\n| Micro-type Cohen’s κ | 0.80 |\n| Span character-level F1／IoU | 0.88／0.83 |\n| Multiple-choice answer-key exact agreement | 0.976 |\n| 各領域 hallucination rate | Islamic 49.4%、science 42.7%、geography 38.2%、history 34.0% |\n| 領域與標籤關聯 | χ²(3)=53.8，p<10⁻¹⁰，Cramér’s V=0.116 |\n| 原有 2,400 筆 train/dev 子集的 macro 分布 | Factual Contradiction 47.8%、Context Inconsistency 35.3%、Logical Inconsistency 12.7%、Factual Fabrication 3.6%、Nonsensical/Irrelevant 0.6% |\n\n上述是資料集統計與標註一致性結果；論文未報告下游模型在偵測、定位、分類、解釋生成或答案選擇任務上的 baseline／比較實驗數字。",
+      "insights": [
+        "若評估目標是 factual reliability，不應只採用整體 hallucination accuracy；應同時衡量錯誤 span 定位、類型辨識、說明品質與正確答案恢復。",
+        "對涉及引文、經文、hadith、來源或證據的領域，回答主結論正確仍可能不具 faithfulness，因此標註與測試應檢查支撐證據。",
+        "實務上可將 character offsets、錯誤類型與人工 correction 用於訓練可解釋的 factuality checker；但候選答案評估應與開放式校正分開解讀。"
+      ],
+      "limitations": "資料只使用單一 Arabic-centric 生成模型 Fanar-1-9B-Instruct，且僅涵蓋四個領域，未代表完整的阿拉伯語方言、使用情境與知識來源。候選答案選擇也不等同於開放式事實校正。作者未來將加入更多模型、領域與 Arabic varieties，並研究跨模型及跨領域泛化。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Arabic NLP",
+        "factual verification",
+        "span-level hallucination detection"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.03952",
+      "title": "TACT: Taxonomy-Aligned Post-Training for Pedagogically Adaptive English Tutoring",
+      "abstract": "Large language models (LLMs) are increasingly used to provide conversational practice for English-as-a-second-language (ESL) learners. Effective ESL tutoring, however, requires more than fluent response generation: a tutor must select an appropriate pedagogical action based on learner behavior and dialogue context. Human-tutoring research offers principles for adaptive support, but they are often task-specific and remain insufficiently integrated into LLM-based ESL tutor training and evaluation. We present TACT (Taxonomy-Aligned Conversational Tutor), a human-grounded framework for post-training and evaluating pedagogically adaptive ESL tutors. Drawing on established literature, we develop two complementary taxonomies: the Tutor-Strategy Taxonomy with 13 tutor response strategies and the Student-Move Taxonomy characterizing learner behavior by move type and status. Using these taxonomies, we construct TACTCorpus, which enriches 260 authentic teacher-student conversations with 32,379 annotations and quality-controlled augmented training data. We then post-train Qwen3.5-4B through supervised fine-tuning followed by taxonomy-aligned Group Relative Policy Optimization, producing TACTutor and optimizing it for scaffolding quality rather than reference imitation alone. On TACTBench, a strategy-balanced diagnostic benchmark comprising 78 authentic tutoring contexts, TACTutor improves over its backbone by 20.30% and outperforms all evaluated proprietary baselines under the same protocol, while maintaining backbone performance on established external educational benchmarks; in a blinded study with 50 learners, it also receives the highest overall mean rating among the evaluated tutors. We release the data, benchmark, and model weights, providing an open foundation for developing pedagogically adaptive ESL tutors.",
+      "authors": [
+        "Dongjie Yang",
+        "Siyan Lin",
+        "Leixian Shen",
+        "Rui Sheng",
+        "Huamin Qu",
+        "Zixin Chen"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-04T17:16:14+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.03952v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.03952",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）日益被用於提供英語作為第二語言（ESL）的對話練習，但有效的 ESL 教學不只需要流暢生成回應，還必須依據學習者行為與對話脈絡選擇適切的教學行動。本文提出 TACT（Taxonomy-Aligned Conversational Tutor），一個以人類教學研究為基礎、用於後訓練與評估教學適應性的框架。作者建立互補的兩套 taxonomy：包含 13 種教師回應策略的 Tutor-Strategy Taxonomy，以及依 move type 與 move status 描述學習者行為的 Student-Move Taxonomy。基於 260 段真實師生對話，作者建立含 32,379 筆標註的 TACTCorpus，並以 supervised fine-tuning 和 taxonomy-aligned GRPO 後訓練 Qwen3.5-4B，產生 TACTutor。TACTutor 在含 78 個真實教學情境的 TACTBench 上相較 backbone 提升 20.30 個百分點，並在 50 名學習者的盲測中獲得最高整體平均評分。作者釋出資料、benchmark 與模型權重。",
+      "problem_statement": "現有 LLM ESL tutor 多依賴 prompt、產品政策或獨立 tutor-act planner，在推論時控制教學行為，未必將教學決策內化至 compact open model。既有資料與評估也常只關注流暢度、正確性或單一 corrective feedback，缺乏同時表示學習者對話功能、答案是否需修正，以及後續教師策略的統一框架。因此模型可能過度糾正、過早洩露答案，或在學習者仍能自我修正時剝奪其 agency。",
+      "proposed_solution": "作者提出 TACT，將「判斷學習者目前做了什麼、是否需要 repair」與「選擇下一個教學策略」連結為可訓練、可審計的決策空間。TACTCorpus 以真實 ESL 對話及人工審核的 taxonomy 標註提供資料；TACTutor 先透過 SFT 學習真實教師回應的格式、語氣與脈絡化表達，再以 taxonomy-aligned GRPO 使用 pedagogical judge reward 優化策略適切性、學習者自主性、支援程度與避免 over-helping。TACTBench 則在不提供人工 student-state labels、gold tutor labels 或參考回應給 policy 的條件下，評估模型能否從部署可得脈絡推斷適切行動並生成自然回應。核心創新是把 taxonomy 同時用於資料建構、後訓練 reward 與 diagnostic evaluation，而非只作為輸出標籤或 prompt 控制。",
+      "core_contributions": [
+        "提出整合學習者狀態與教師教學行動的雙層 taxonomy：13 種 Tutor-Strategy，以及由 move type 與 move status 組成的 Student-Move Taxonomy。",
+        "從 TSCC v2 的 260 段真實 ESL 對話建立 TACTCorpus，包含 32,379 筆 taxonomy 標註與經品質控制的增強訓練資料，並建立含 78 個策略平衡情境的 TACTBench。",
+        "以 Qwen3.5-4B 為 backbone，結合 LoRA supervised fine-tuning 與 taxonomy-guided GRPO，使模型從單純模仿參考回應轉向最佳化教學策略、學習者自主性與支援程度。"
+      ],
+      "methodology": "TACT 先將 ESL 教學決策形式化。Student-Move Taxonomy 以 move type 區分 Question、Answer/Attempt、Statement、Feedback/Acknowledgment 與 Other/Social/Off-task，再以 move status 區分 Answer/Attempt 是否 Adequate 或 Problematic；其他類型標為 Non-evaluable/Open。Tutor-Strategy Taxonomy 則包含 13 類策略，例如 Verification、Correct Response、Topic Contingent、Bugs、Error Flagging、Hint、Guided Revision/Cue、Try Again、Clarification Check、Prompt、Backchannel 與 Affective/Social Feedback，允許多標籤。資料來自 TSCC v2 的 260 段、2 位教師與 13 位 B1–C2 學習者之真實文字課程；處理後形成 next-teacher-turn 生成實例，訓練 split 有 2,702 筆，TACTBench 有 78 個人工驗證情境。標註方案先以 50 個情境迭代建立，再對 20 個 held-out contexts 進行雙重標註；Tutor strategy 的 Cohen’s kappa 為 0.708，student move type 為 0.722，status 為 1.000。模型以 Qwen3.5-4B 為 backbone，先用 LoRA 進行 SFT，部分樣本加入 student-move hint；再以 GRPO 對每個情境生成多個候選，由 frozen pedagogical judge 根據五項 1–5 分指標與 accept、leak/over-help、off-task 三項旗標計算 reward，並加入 grounding、format、strategy reward、懲罰項及 KL constraint。測試時 policy 只看部署可得的對話、學習者成就與任務層級，不看 gold labels 或參考回應；TACTBench 使用 DeepSeek-based judge 評估 Move、Agency、ESL Content、Tone、Conciseness。另以 50 名學習者進行四位匿名 tutor 的 within-participant 盲測，並檢查數個外部教育 benchmark。",
+      "key_results": "主要結果如下；TACTBench 分數為 78 個情境上五項 rubric 維度的平均正規化分數，Overall 為五項平均。\n\n| 模型 | Move | Agency | ESL | Tone | Conc. | Overall |\n|---|---:|---:|---:|---:|---:|---:|\n| TACTutor | 0.692 | 0.801 | 0.917 | 0.872 | 0.878 | 0.832 |\n| Qwen3.5-4B backbone | 0.516 | 0.516 | 0.798 | 0.756 | 0.561 | 0.629 |\n| qwen3.7-max | 0.744 | 0.750 | 0.962 | 0.926 | 0.766 | 0.829 |\n| GLM-5.2 | 0.756 | 0.708 | 0.949 | 0.939 | 0.734 | 0.817 |\n| GPT-5.5 | 0.724 | 0.619 | 0.974 | 0.843 | 0.712 | 0.774 |\n\nTACTutor 相較 backbone 的 Overall 提升為 0.203（論文摘要稱 20.30%／20.30 個百分點）；Accept rate 由 0.603 升至 0.872，Leak-or-overhelp 由 0.346 降至 0.026，Off-task 由 0.064 降至 0.026。50 名學習者盲測的整體平均評分為 TACTutor 5.54/7、DeepSeek-V4-Pro 5.47、GLM-5.2 5.45、Qwen3.5-4B backbone 5.15。外部教育 benchmark 的轉移結果亦未見相對應 Qwen baseline 的退化：MRBench 0.743→0.880、TutorBench 0.497→0.519、LongTutor 3.712→3.834、DeepTutor 3.565→3.627。",
+      "insights": [
+        "評估教學型 LLM 不應只衡量語言流暢度或參考答案相似度，應拆分教學行動、學習者自主性、內容正確性、互動語氣與認知負荷。",
+        "將學習者最新 utterance 的功能與是否需要修正分開建模，有助於避免把所有語言問題都當成錯誤答案，並支持更細緻的介入決策。",
+        "若要部署於真實學習場景，可採用「先示範風格、再以策略性 reward 優化」的兩階段流程；但應進一步以後續 learner turn、自我修正與長期學習成效驗證模型。"
+      ],
+      "limitations": "作者指出，單一 next-turn 的回應品質不等於長期學習成效；模型的局部 scaffolding 效果仍受動機、先備知識、重複互動與課堂脈絡影響。緊湊 taxonomy 也可能無法完整表達教師混合教學、情感、節奏與 rapport 的行為。此外，TACTBench 與 reward judge 均圍繞 TACT construct，存在評估耦合；未來應測量 learner uptake、自我修正與下游學習成果。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "教育型大型語言模型",
+        "第二語言習得與 corrective feedback",
+        "taxonomy-aligned post-training",
+        "LLM-as-judge 評估",
+        "學習者自主性與 scaffolding"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]
