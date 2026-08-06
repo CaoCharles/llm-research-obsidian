@@ -1,0 +1,557 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.05138",
+      "title": "Teaching Nemotron Greek: Mining a Corpus, Adapting Retrieval, and Grounding Generation for Modern Greek across Specialist Domains",
+      "abstract": "Modern Greek is absent from NVIDIA's Nemotron retrieval models and from major multilingual retrieval benchmarks, despite being important for retrieval-augmented generation (RAG) in legal, energy, financial, and medical applications. We present an end-to-end adaptation of the Nemotron retrieval stack for Modern Greek, including corpus mining, synthetic supervision, retrieval model training, reranker adaptation, reader fine-tuning, and a new benchmark called HERA. Our study shows that a parameter-free BM25 baseline outperforms several off-the-shelf multilingual dense retrieval models on specialist Greek corpora. After fine-tuning on 65,773 Greek retrieval pairs, a Nemotron 1B embedder improves nDCG@10 from 0.362 to 0.835 and substantially outperforms its unadapted counterpart. The learned language competence transfers to general-domain Greek, although the advantage over BM25 remains domain-dependent. We further adapt a cross-encoder reranker and demonstrate consistent improvements across specialist domains. Finally, we LoRA-tune a Nemotron 30B-A3B mixture-of-experts reader for grounded generation, increasing judged answer correctness from 29.4% to 66.9% while significantly improving faithfulness and citation quality. We also introduce HERA, the first large-scale Greek benchmark for retrieval-augmented generation, and release our adapted models and benchmark to support future research on Greek-language RAG systems.",
+      "authors": [
+        "Ayoub Kirouane",
+        "Christos Petrocheilos"
+      ],
+      "categories": [
+        "eess.AS",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-05T17:56:40+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05138v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05138",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "現代希臘語未被 NVIDIA Nemotron retrieval models 支援，也未出現在主要 multilingual retrieval benchmarks 中，但希臘語法律、能源、金融與臨床文件正是 RAG 應用需要處理的長篇、術語密集文本。本研究端到端適配 Nemotron Greek stack，涵蓋 corpus mining、synthetic supervision、retrieval model training、reranker adaptation、reader fine-tuning，並建立 HERA benchmark。結果顯示，在五個專業領域中，無參數的 BM25 baseline 優於多個現成 multilingual dense retrievers。以 65,773 組希臘語 retrieval pairs fine-tune Nemotron 1B embedder 後，nDCG@10 由 0.362 提升至 0.835，且能力可轉移至一般希臘語資料。adapted cross-encoder reranker 在各領域穩定改善結果；LoRA-tuned Nemotron 30B-A3B reader 則使 judged answer correctness 由 29.4% 提升至 66.9%，並改善 faithfulness 與 citation quality。作者同時釋出 HERA、adapted models 與相關資料。",
+      "problem_statement": "Modern Greek 同時缺乏 Nemotron retrieval models 的語言支援與主流 benchmark 的測量，導致法律、能源、金融、醫療等長篇專業文本上的 RAG 品質未知。現成 multilingual dense retrievers 未必能處理 Greek morphology、術語與長 chunks；此外，缺少原生 Greek retrieval pairs、multi-passage grounded-reading benchmark、citation 與 abstention 評估，使模型能力、幻覺與 retrieval failure 難以區分。",
+      "proposed_solution": "作者提出一套端到端 Greek RAG adaptation framework：先從專業文件 mining corpus，利用受 production query 風格約束的 synthetic queries 與 dense hard-negative mining 建立 supervision；接著以 4,096-token context fine-tune Nemotron 1B embedder，並適配 cross-encoder reranker。系統同時保留 BM25，透過 RRF 融合 lexical 與 dense ranking。生成端以 gold passage 加 shuffled distractors 合成含 citation、abstention 與隨機位置的 reader supervision，再對 Nemotron 30B-A3B 進行 LoRA tuning。最後以新建 HERA benchmark 分別評估 retrieval、gold-context reading、citation、faithfulness、abstention、positional robustness 與 end-to-end 行為。",
+      "core_contributions": [
+        "建立涵蓋 corpus mining、synthetic retrieval supervision、embedder、cross-encoder reranker 與 grounded reader 的 Modern Greek Nemotron adaptation pipeline。",
+        "提出 HERA（Hellenic Retrieval-Augmented）benchmark，包含 multi-passage context、citation targets、multi-hop、difficulty ladder 與 25% unanswerable items，用於分離 retrieval、reading 與 end-to-end RAG 錯誤。",
+        "以完整消融式實驗揭示：Greek exposure 比模型規模更關鍵；fine-tuned Nemotron 1B 大幅提升專業領域 retrieval，且 BM25 與 dense retrieval 的 RRF fusion 在不同分布下均優於單一元件。"
+      ],
+      "methodology": "研究先從五個領域的 407,053 組 raw query-document-label-domain pairs 清理為 65,773 筆 per-query records，進行正例去重、positive-wins 清除、query-level split、evaluation-query decontamination 與 Greek/Latin ratio 標記。query 由 Nemotron-3-Ultra-550B 與 GLM-5.2 合成，約每個 chunk 三題，透過 production-query few-shot prompting、grounding audit 與 L1–L5 difficulty 控制風格與難度。負例以 Qwen3-Embedding-8B 在相同 domain 內做 asymmetric dense kNN mining，避開過近排名與 similarity cap，每題約保留六個 hard negatives。由於 87% training pairs 在 max_len 512 會被截斷，embedder 與其他模型使用 4,096 tokens；Nemotron-3-Embed-1B 以 InfoNCE、in-batch positives 與每題七個 hard negatives fine-tune，logical batch 256 並使用 GradCache。reranker 是 cross-encoder，以 394,579 labelled pairs 和 binary cross-entropy 訓練，並以 no-rerank floor 衡量實際增益。reader 部分從 retrieval train split 合成 40,000 筆 cite-and-abstain examples，將 gold passage 與 2–5 個 shuffled hard negatives 組成編號 context，隨機化 gold position，約 20% 為 abstention；再以 LoRA fine-tune Nemotron-3-Nano-30B-A3B，並混合 206,909 筆 Greek instruction rows 與 English replay。評估使用 nDCG@10、Recall@10、MRR、citation precision/recall/F1、exact citation match、answer correctness、faithfulness、abstention recall 與 false-abstention rate；retrieval 差異採 paired bootstrap，reader correctness 與 faithfulness 使用 served LLM judge。",
+      "key_results": "| 評估項目 | 系統 | nDCG@10 / 結果 |\n|---|---|---:|\n| 專業與 foundation held-out retrieval，5,830 queries | Nemotron-3-Embed-1B base | 0.3617（macro over sets） |\n| 同上 | BM25 | 0.7571 |\n| 同上 | Qwen3-Embedding-8B | 0.6801 |\n| 同上 | adapted Nemotron 1B | 0.8352；相對 base +0.4735 |\n| Medical，650 queries | BM25 | 0.6602 |\n| Medical | adapted Nemotron 1B | 0.6867；相對 BM25 +0.027，95% CI [−0.0005,+0.054] |\n| HERA retrieval track，4,946 queries | BM25 | 0.6442 |\n| HERA retrieval track | adapted Nemotron 1B | 0.5637；低於 BM25 |\n| HERA retrieval track | BM25 + adapted Nemotron 1B，RRF | 0.6715；相對 BM25 +0.027 |\n| Reranker，2,580 queries | no-rerank floor | 0.8248 |\n| 同上 | off-the-shelf Nemotron reranker | 0.8567；相對 floor +0.032 |\n| 同上 | adapted Nemotron 1B reranker | 0.8861；相對 floor +0.061 |\n| End-to-end retrieval chain | off-the-shelf stack | nDCG@10 0.559；Recall@10 0.624 |\n| End-to-end retrieval chain | adapted stack | nDCG@10 0.848；Recall@10 0.955 |\n| HERA gold-context reader | base reader | correctness 29.4%；faithfulness 25.2% |\n| 同上 | LoRA-adapted reader | correctness 66.9%；faithfulness 84.5% |\n\nReader correctness 為 LLM-judged 結果；HERA judge 與題目生成器同屬 Qwen3.5 family，存在 family preference confound。",
+      "insights": [
+        "在低資源語言部署 RAG 時，不能預設 multilingual dense retriever 優於 lexical search；應將 Greek-aware BM25 作為必要 baseline，並評估 dense、lexical 與 hybrid fusion。",
+        "資料合成品質直接影響泛化：應以真實 production queries 進行 few-shot style matching、控制 query difficulty，並避免只用短而關鍵字化的 synthetic queries。",
+        "RAG pipeline 應分別量測 retrieval coverage、reader correctness、faithfulness、citation quality 與 abstention；沒有 gold passage 的 reader 無法真正解決 retrieval failure，且 reader 評估不應只看 correctness。"
+      ],
+      "limitations": "資料主要由 synthetic queries 與 machine-translated instruction data 組成，production query 的比較缺少 query count 與標註 protocol。HERA 僅以兩個強模型交叉驗證並做未記錄規模的人工 spot-check，reader judge 又與題目生成器同家族。end-to-end reader 尚未在實際 retrieved context 上完整評估；未提供 zero-replay ablation，也未與 Greek-adapted reader 或 Multilingual E5 比較。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "低資源語言資訊檢索",
+        "Hybrid lexical-dense retrieval",
+        "Grounded generation與citation evaluation",
+        "LLM-as-a-judge可靠性",
+        "RAG benchmark設計"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05139",
+      "title": "Toward Skill-Native LLMs: Skill Entropy for Benchmarking and Training Long-Horizon Reasoning",
+      "abstract": "Long-horizon reasoning in recent LLMs demands that the model switch between distinct skills inside a reasoning chain, such as first doing a math derivation, then using the result to plan a schedule. We call such problems cross-skill long-horizon tasks: multi-step tasks whose steps require different reasoning skills and depend on earlier outputs. Existing benchmarks often evaluate individual skills, lacking a principled way to measure how well a model switches between skills. We address this gap from both the evaluation and training sides. We introduce Skill Entropy, a measure of the difficulty of switching from one skill to another. We then propose Skill^2-Bench, a benchmark of cross-skill long-horizon tasks built over 558 skills across 9 verifiable and open-ended domains. Each task is assigned a task-level skill-entropy score and grouped into three difficulty levels. Evaluating 8 frontier and 4 open-source models on Skill^2-Bench reveals a skill-switching gap: accuracy decreases on higher-entropy tasks. We then turn skill entropy from a benchmark scale into a training signal. We propose Skill-Entropy RL, an RL framework where the model predicts not only the answer at each step but also the skill used to produce it. The reward combines step-level correctness with a skill-entropy reward that measures the alignment between the model-predicted skill sequence and the gold skill sequence. On Qwen3-4B-Instruct and Qwen3-1.7B, Skill-Entropy RL improves the Skill^2-Bench score from 34.4% to 68.4% and from 14.6% to 40.1%, respectively, outperforming competitive baselines. The same pipeline can be applied to off-the-shelf training data such as OpenR1-Math, indicating that skill entropy is a reusable training signal. Code available at: https://github.com/Gen-Verse/Skill-Entropy-RL",
+      "authors": [
+        "Yinghui He",
+        "Ling Yang",
+        "Jiarui Liu",
+        "Yongjin Yang",
+        "Lechen Zhang",
+        "Yingcheng Wu",
+        "Zhenfei Yin",
+        "Mengdi Wang",
+        "Sanjeev Arora"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-05T17:57:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05139v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05139",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "近期 LLM 的長程推理要求模型在同一條推理鏈中切換不同技能，例如先進行數學推導，再利用結果規劃日程。作者將此類問題稱為 cross-skill long-horizon tasks：其步驟需要不同推理技能，且依賴先前輸出。現有 benchmark 多評估單一技能，缺乏衡量技能切換能力的原則性方法。本文提出 Skill Entropy，量化技能間切換的困難度；並建立 Skill²-Bench，涵蓋 9 個可驗證與開放式領域、558 項技能。對 8 個 frontier 與 4 個 open-source models 的評估顯示，任務 entropy 越高，準確率越低。作者進一步提出 Skill-Entropy RL，使模型同時預測答案與每步使用的技能，結合步驟正確性和技能序列對齊獎勵。在 Qwen3-4B-Instruct 與 Qwen3-1.7B 上，分數分別由 34.4% 提升至 68.4%，以及由 14.6% 提升至 40.1%。",
+      "problem_statement": "現有 LLM benchmark 多在單一題目或單一領域中測試技能，無法分辨模型是缺乏某項技能，還是無法在長程推理鏈中正確切換技能。即使各個子技能單獨表現良好，跨領域、依賴前一步輸出的任務仍可能失敗。既有長程或 compositional 評估也缺少一個固定、可比較且能控制任務切換難度的 task-level measure，因此難以診斷 skill-switching gap，或將該能力直接轉化為訓練訊號。",
+      "proposed_solution": "作者提出兩部分方案。第一，Skill Entropy 是有方向的 pairwise skill-switch difficulty，透過 reference model 比較單技能與跨技能準確率，並沿任務技能序列平均，形成可控制難度的 task-level score；據此建立涵蓋 558 技能與 9 領域的 Skill²-Bench。第二，Skill-Entropy RL 要求模型在每個答案前明確輸出 domain-skill label，使用 GRPO 同時優化逐步答案正確性與技能序列 entropy-rank 對齊。核心創新是把同一個技能切換量度同時用於 benchmark 校準、失敗診斷與 reward shaping，並可套用到已有 reasoning traces。",
+      "core_contributions": [
+        "提出有方向性的 pairwise Skill Entropy，並沿任務技能序列聚合為 task-level skill entropy，以量化 cross-skill long-horizon reasoning 的切換難度。",
+        "發布 Skill²-Bench，涵蓋 math、science、coding、logic、planning、information extraction、creative writing、context retrieval 與 instruction following 等 9 個領域、558 項技能，並將任務分為 low、medium、high entropy。",
+        "提出 Skill-Entropy RL，將模型預測的技能序列與 gold skill sequence 的 entropy-rank 對齊納入 GRPO reward，除改善 benchmark 表現外，也能套用至 OpenR1-Math 等既有訓練資料。"
+      ],
+      "methodology": "方法分為 benchmark 建構與 RL 訓練。首先從 9 個領域的 seed datasets 建立 skill bank：可驗證領域以 LLM 為題目標註 3–5 個細粒度技能，再經 embedding clustering 與人工審查；creative writing、context retrieval、instruction following 則直接生成技能清單，共 558 項。作者固定 Claude-opus-4.7 為 reference model，分別測量單技能準確率 Accuracy(s) 與兩步跨技能準確率 Accuracy(sa,sb)，以 Laplace smoothing α=0.1 計算有方向的 Skill Entropy：半數單技能準確率加 α，再除以跨技能準確率加 α。任務 entropy 是技能序列相鄰轉移 entropy 的平均，並依經驗分布切為 low、medium、high。任務長度為 2–10；LLM proposer 將 seed questions 改寫成共享 scenario、讓後續步驟依賴前一步，verifier 再過濾。評估使用 300 個 held-out tasks、四次 temperature 0.7 sampling；可驗證題目用 symbolic equivalence、sandbox unit test 等 domain-specific scorer，開放式題目由 Claude-opus-4.7 依 rubric 評分，總分為平均 per-step accuracy。訓練時，模型輸出 reasoning trace、每步 skill tag 與 answer tag。先用 3K teacher-annotated traces SFT，再以 6K tasks 執行 GRPO；總 reward 為 0.7 answer reward 與 0.3 entropy reward。後者將預測技能透過 Qwen3-Embedding-0.6B 映射至 skill bank，再比較預測與 gold task entropy 的 empirical-CDF rank。",
+      "key_results": "| 實驗設定 | Base/對照 | Skill-Entropy RL | 改善 |\n|---|---:|---:|---:|\n| Qwen3-4B-Instruct，Skill²-Bench | 34.4% | 68.4% | +34.0 個百分點 |\n| Qwen3-1.7B，Skill²-Bench | 14.6% | 40.1% | +25.5 個百分點 |\n| Qwen3-4B-Instruct，相對 GRPO | 58.8% | 68.4% | +9.6 個百分點 |\n| Qwen3-1.7B，相對 GRPO | 32.2% | 40.1% | +7.9 個百分點 |\n| Qwen3-4B-Instruct，相對最佳 skill-aware baseline STAT | 61.4% | 68.4% | +7.0 個百分點 |\n| Qwen3-1.7B，相對 STAT | 33.0% | 40.1% | +7.1 個百分點 |\n| OpenR1-Math 外部訓練，平均六項數學 benchmark | 51.4%（GRPO） | 53.3% | +1.9 個百分點 |\n\n模型評估方面，8 個 frontier models 與 4 個 open-source models 大致呈現 low→medium→high entropy 的準確率下降；domain accuracy 在 cross-skill setting 相對 single-skill setting 的下降範圍為約 4%–10%（摘要與正文另報告整體落差約 4%–13%）。",
+      "insights": [
+        "評估長程推理時，應將單一技能能力與技能切換能力分開報告；論文中同一技能置於 cross-skill task 後，準確率下降約 4%–13%。",
+        "訓練訊號不必只監督最終答案，也可監督每一步的技能選擇與切換結構；實驗顯示 answer reward 主導、entropy reward 作為結構塑形（0.7/0.3）效果最佳。",
+        "實務上可先對既有 reasoning traces 進行步驟切分與技能標註，再以技能轉移難度建立 curriculum 或 RL reward；但應同步檢查標註與評測 judge 的可靠性。"
+      ],
+      "limitations": "Skill Entropy 以 Claude-opus-4.7 作為固定 reference model，且技能標註、任務改寫與部分開放式評分依賴 LLM，可能引入模型與標註偏差。測試集僅 300 個 synthesized tasks，訓練主要使用 6 個可驗證領域；論文未提供更廣泛人類評測、不同 reference model 的完整穩健性分析，亦未報告真實 agent 環境中的工具使用結果。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-horizon reasoning",
+        "skill composition",
+        "reinforcement learning for LLMs",
+        "compositional generalization",
+        "LLM benchmark design"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05095",
+      "title": "Hierarchical Graph Memory for LLM Agents with Path-level Localization and Rewrite",
+      "abstract": "Agents for long term reasoning require a memory that can be efficiently and effectively updated over time, as new facts and external feedback continue to arrive. Recently, graph memory has been adopted to offer structural organization for multi-hop retrieval and reasoning. However, existing methods store all memories in a flat graph, and accumulated historical memories can introduce irrelevant contexts and increase the cost of evidence selection during retrieval. Moreover, they typically update memory units independently, requiring repeated unit-wise rewrite to cover related changes. To address these issues, we propose HiGram, an evolving hierarchical graph memory framework with path-level localization and rewriting. Specifically, we first propose a hierarchical graph memory, which organizes the memory into coarse-to-fine architecture composed of upper-level nodes and MemoryUnits, thereby reducing the amount of irrelevant information during retrieval. We further propose MicroGraph-based path-level localization, which leverages query and update conditioned MicroGraphs to identify support subgraph and evidence path before rewrite. Finally, we propose a coordinated rewriting method that jointly revises intra-unit memory and inter-unit dependencies, enable valid dependency structures updating in the localized evidence path. Experiments on benchmarks for long-term conversational question answering and conflict-aware memory evaluation demonstrate that our method demonstrate substantial improvements over baselines in answer quality and token efficiency. Besides, our method improves answer accuracy and query-valid evidence selection under dynamic, static, and conditional conflicts.",
+      "authors": [
+        "Xiawei Yue",
+        "Boran Wang",
+        "Xiaoqing Zhang",
+        "Shuxin Zheng",
+        "Ziwei Zhang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-05T17:32:43+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05095v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05095",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "長期推理的 Agent 需要能隨著新事實與外部回饋持續到來而高效、有效更新的記憶。近期方法採用 graph memory，以結構化方式支援 multi-hop retrieval 與 reasoning；然而，現有方法通常將所有記憶存放於 flat graph 中，累積的歷史記憶會引入不相關 context，並提高 evidence selection 的 retrieval 成本。此外，這些方法多半獨立更新各個 memory unit，若相關變化涉及多個單元，便需要反覆進行 unit-wise rewrite。為此，本文提出 HiGram，一個具備 path-level localization 與 rewriting 的 evolving hierarchical graph memory framework。HiGram 以由上層節點與 MemoryUnits 組成的 coarse-to-fine 架構組織記憶，以減少 retrieval 時的不相關資訊；再透過 query-與 update-conditioned MicroGraph 定位 support subgraph 與 evidence path；最後，在局部證據路徑內協調更新 intra-unit memory 與 inter-unit dependencies。LoCoMo 與 MemConflict 實驗顯示，HiGram 在 answer quality、token efficiency，以及 dynamic、static、conditional conflicts 下的 answer accuracy 與 query-valid evidence selection 均優於基線。",
+      "problem_statement": "長期記憶持續累積新事實、修正與回饋，但現有 graph memory 多採 flat graph，搜尋整體歷史記憶會帶入不相關 context，增加 evidence selection 與 token 成本。另一方面，現有更新通常逐一修改 MemoryUnit，無法一次處理沿證據路徑傳播的依賴變化，可能留下過時依賴，因而需要重複 rewrite。",
+      "proposed_solution": "作者提出 HiGram，將記憶組織成由 subject、object category、context 等 upper-level nodes 及細粒度 MemoryUnits 組成的 hierarchical graph memory。其核心是 MicroGraph-based path-level localization：由 query 與 update 建立 temporary MemoryUnits，抽取 anchors，選取相關 MicroGraphs 與 support subgraph，再從中定位受影響的 evidence path。之後採用 coordinated rewriting，在同一局部路徑內同步更新 MemoryUnit 內部狀態與 inter-unit dependencies，保留歷史狀態並移除不再被有效證據支持的依賴。",
+      "core_contributions": [
+        "提出 HiGram hierarchical graph memory，以 subject、object category 與 context 上層節點組織細粒度 MemoryUnits，形成 coarse-to-fine 的記憶存取結構。",
+        "提出 MicroGraph-based path-level localization，根據 query 與 update 建立 temporary MemoryUnits、抽取 anchors，先選擇相關 MicroGraphs 與 support subgraph，再定位受影響的 evidence path。",
+        "提出 coordinated rewriting，在局部 evidence path 內同步修訂 MemoryUnit 的內部狀態與 MemoryUnit 間的 dependency structures，以維持有效的證據依賴。"
+      ],
+      "methodology": "HiGram 維護階層式 graph memory G_t=(V_t,E_t)。節點包含 subject nodes、object-category nodes、context nodes 與 MemoryUnits；邊包含三類上層組織連結及 MemoryUnit 之間的 directed dependency edges。每個 MemoryUnit 保存 subject、relation、object、object category、transaction time、context、confidence、current status 等資訊；status 可為 active、superseded、outdated 或 pending，非 active 單元保留歷史但不參與 localization。給定 query q_t 與 update u_t，系統先建立不直接寫入圖中的 temporary MemoryUnits，抽取 subject/object-category anchors，依 anchor matching 與 object-category compatibility 選取 top-K_g MicroGraphs，組成 support subgraph。接著在其中枚舉最多 K_p 條由 dependency 或有效結構關係連接的 MemoryUnit paths，依 attribute matching、dependency consistency、temporal validity 與 contextual compatibility 評分，選出同時受 query 與 update 影響的 evidence path。Rewrite 階段先進行 intra-unit rewriting，匹配並更新既有單元狀態與 valid-time，或提交新 MemoryUnit；再進行 inter-unit rewriting，檢查下游依賴是否仍獲有效證據支持，必要時標記為 outdated，兩者在同一局部區域內共同更新。實驗使用 LoCoMo 的 Single Hop、Multi-Hop、Open Domain、Temporal、Adversarial 類別，以 token-level F1、BLEU-1、LLM-J 與 Token Length 評估；MemConflict 則使用 Dynamic、Static、Conditional conflicts，指標包括 AA、UOCS、CRS、Macro-AA、SEH@3 與 SRS。預設 h=3、K_g=12、K_p=24。",
+      "key_results": "| 實驗 | 方法 | 主要結果 |\n|---|---|---|\n| LoCoMo，GPT-5.4 | HiGram | 平均 F1 50.62、BLEU 46.16、LLM-J 78.83；Token Length 2,031.5 |\n| LoCoMo，GPT-5.4 | 全對話 LoCoMo baseline | 平均 F1 47.97、BLEU 43.57、LLM-J 74.96；Token Length 28,345.6 |\n| LoCoMo，GPT-4o | HiGram | 平均 F1 52.51、BLEU 49.83、LLM-J 83.65；Token Length 2,328.9 |\n| LoCoMo，GPT-4o | ReadAgent | 平均 F1 47.59、BLEU 43.71、LLM-J 79.58；Token Length 14,723.1 |\n| MemConflict | HiGram | Dynamic AA/UOCS 44.78/49.14；Static AA/CRS 68.75/68.06；Conditional AA 90.00；SEH@3/SRS 81.06/77.31 |\n| MemConflict | 最佳基線（各指標可能不同） | Dynamic AA 49.66；Dynamic UOCS 38.18；Static AA 43.75；Static CRS 25.01；Conditional AA 84.49；SEH@3 67.10；SRS 58.79 |\n| 消融：移除 MicroGraph | 相對完整模型 | Token use 增加 68.6%，且三類 LoCoMo 問題的 LLM-J 均下降 |\n| 消融：移除 Support Subgraph | 相對完整模型 | Single-Hop、Multi-Hop 與 Temporal 表現下降；論文未報告此消融的完整數值表 |\n| 更新策略 | HiGram vs Append-only / Relation-level | Dynamic AA：44.78 vs 42.72/31.25；Static AA：68.75 vs 43.06/50.26；Average：56.77 vs 42.89/40.76 |",
+      "insights": [
+        "實務上可將長期記憶的 retrieval 與 update 都限制在 query/update 共同定位的局部證據區域，以降低歷史記憶累積造成的 context 與 token 成本。",
+        "對會產生推論依賴的記憶，不宜只更新單一事實；應同步檢查下游依賴是否仍由有效證據支持，並將失效單元排除於 active evidence view。",
+        "若系統需要處理時間、條件或衝突資訊，可保留 superseded、pending 與 outdated 狀態，而非直接覆寫歷史記錄；但應以明確的 validity scope 與 dependency revision 控制當前可用證據。"
+      ],
+      "limitations": "論文僅在 LoCoMo 與 MemConflict 上評估，且主要使用 GPT 系列模型；對 MicroGraph、path scoring 與 rewriting 的實作細節及完整消融數據揭露有限。作者指出，HiGram 尚未整合 external knowledge 與 multimodal memory，並將其列為未來工作。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-term memory for LLM agents",
+        "graph-based retrieval",
+        "continual memory update",
+        "temporal and conflict-aware reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05086",
+      "title": "Item Response Theory for AI Safety",
+      "abstract": "Language models differ in how safely they behave and these differences are measured by safety benchmarks. But aggregated benchmark scores are hard to trust and interpret, because benchmarks duplicate one another, correlate heavily, and models may sandbag when they detect evaluation. To address these issues, we draw on Item Response Theory (IRT), a statistical toolkit for measuring these latents from performance on items with inferred psychometric properties. We fit IRT models to eight safety benchmarks across 192 language models, the largest psychometric analysis of LLM safety evaluations to date, and contribute three results. First, we find that three interpretable factors of refusal strictness, truthfulness, and contextual harm explain most of the variance between models across benchmarks. Second, psychometrically selected items recover full benchmark scores with lower error than random subsets of the same size, and roughly ten adaptively chosen items suffice for several individual benchmarks, cutting evaluation cost by 97-99%. Third, IRT supports audits of individual models, showing that it can be used to detect naive sandbagging and changes of model behind APIs. Overall, we show IRT is a ready-made toolkit for reading, reducing, and auditing safety benchmarks, which we recommend frontier labs and evaluators adopt.",
+      "authors": [
+        "Joshua Fonseca Rivera",
+        "Neil Shah",
+        "David Demitri Africa",
+        "Konstantinos Voudouris"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-05T17:25:27+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05086v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05086",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "語言模型在安全行為上存在差異，而這些差異通常由 safety benchmarks 衡量。然而，彙總後的 benchmark 分數難以信任與解讀，因為不同 benchmark 可能重複、彼此高度相關，且模型在察覺評測時可能 sandbagging。為了解決這些問題，本文引入 Item Response Theory（IRT）：根據模型在各個 item 上的表現，推估 item 的 psychometric properties 與模型的潛在能力。作者在 192 個語言模型與八個安全 benchmark 上擬合 IRT 模型，完成截至本文所述最大規模的 LLM safety psychometric analysis。研究發現，拒答嚴格度、truthfulness 與 contextual harm 三個可解釋因素能說明模型間 77% 的變異；經 psychometric selection 的 item 比同規模隨機子集更準確地恢復完整 benchmark 分數，若採用 adaptive testing，部分 benchmark 約十個 item 即可將成本降低 97–99%；此外，IRT 也能透過 person-fit、ability shift 與 response fingerprint 審計模型，偵測 naive sandbagging 及 API 背後模型的變更。作者建議 frontier labs 與評測者採用 IRT 來理解、縮減與審計安全 benchmark。",
+      "problem_statement": "現有安全 benchmark 多以彙總分數呈現，但不同測試與 item 可能重複、相關性高，且分數方向可能互相衝突，導致單一平均分難以解釋模型真正具備的安全行為。完整測試成本高，許多 item 幾乎由所有模型通過或失敗，區辨力有限；此外，模型可能察覺評測而改變行為，API 也可能在相同識別名稱下更換模型或推理後端，使原始分數的可信度與可持續性受到質疑。",
+      "proposed_solution": "作者提出以 Item Response Theory 作為安全評測的統一 measurement framework。IRT 從模型對 item 的 response 聯合估計模型 latent ability、item difficulty 與 discrimination，使不同 item 對能力估計的資訊量可被量化。研究先以 regularized 2PL 校準八個 benchmark，再以 factor analysis 與 MIRT 探索跨 benchmark 的 latent structure；接著依 Fisher information 設計 static tests 與 computerized adaptive testing，從少量高資訊 item 恢復完整分數與排名。最後將 IRT 的期望 response pattern 延伸至 person-fit、歷史 ability shift 和 response fingerprint，形成可檢查選擇性 sandbagging、整體行為漂移及 API model substitution 的 audit ladder。",
+      "core_contributions": [
+        "以八個安全 benchmark、5,067 個經前處理 item 與最多 192 個語言模型建立 regularized 2PL IRT calibration，並分析模型能力、item difficulty 與 discrimination。",
+        "透過 per-benchmark ability 的 factor analysis，提出拒答嚴格度、truthfulness 與 contextual harm 三個因素可解釋 77% 的模型間變異，並指出安全 benchmark 不能被單一 safety ability 充分概括。",
+        "以 psychometric item selection 與 computerized adaptive testing（CAT）縮減評測；三個各含 25 個 item 的固定測試可估計三項 latent abilities，部分單一 benchmark 約十個 adaptive item 即能維持分數與排名恢復效果。"
+      ],
+      "methodology": "作者將模型視為 test-taker、prompt/item 視為測驗題，將 benchmark 判定為正確的 response 記為 1。資料來自 OpenRouter API，在 zero temperature、maximum generation length 1,024 tokens 下，每個 model–item pair 收集一次回答；八個 benchmark 原有 5,255 items，移除無效 judge score、未回答與跨模型無變異 item 後保留 5,067 items。作者先對各 benchmark 分別擬合 regularized 2PL IRT：P(x_mj=1|θ_m,a_j,b_j)=σ(a_j(θ_m−b_j))，其中 θ 是模型 latent ability，b 是 item difficulty，a 是 discrimination；使用 marginal maximum likelihood，並對 discrimination 與 item intercept 加入 priors，以降低約 170 個模型下的估計不穩定。取得每個模型在八個 benchmark 的 ability 後，以 minimum-residual factor analysis、oblimin rotation、RMSEA、CFI 與 Horn parallel analysis 選擇因素數，另以 unconstrained MIRT 作 robustness check。縮減評測部分，依 Fisher information 選高資訊固定 item，或使用 CAT 根據目前 θ 選擇最 informative item、觀察 response 後更新 θ；以 20 次 75% calibration/25% held-out model splits 評估，透過 RMSE 衡量 full-benchmark score recovery，並以 Spearman ρ 衡量 ranking recovery，和相同預算的 random subsets 比較。審計部分使用 person-fit l_z、historical ability shift 與 response fingerprint，並以 prompted sandbagging、model-pair discrimination 及 16 個 endpoint 的重複收集驗證。",
+      "key_results": "| 分析 | 論文結果 |\n|---|---|\n| 潛在因素 | 三因素模型解釋 77% 變異；一因素 47%、二因素 69%；一因素 RMSEA=0.32，二因素 CFI=0.88，三因素 CFI=0.97。 |\n| 固定短測試 | 三個各 25-item 測試的 RMSE：refusal strictness 0.047（random 0.062）、truthfulness 0.041（0.048）、contextual harm 0.065（0.067）；排名 Spearman ρ 分別為 0.94、0.83、0.89。 |\n| CAT 單一 benchmark | 約十個 adaptive item 對 HarmBench、SORRY-Bench、OR-Bench-Hard 的分數誤差比隨機十題低 18–34%，排名恢復 ρ=0.92–0.94，評測成本降低 97–99%。 |\n| 全 suite composite | CAT 在 25 items 時的 score error 比 random subset 低 22%；排名 ρ=0.92，而 random sampling 約需 75–100 items 才達相近程度。 |\n| Person-fit | 在設定 10% false-positive rate 下，targeted 與 triggered prompted sandbagging 的 pooled detection rate 分別為 90% 與 97%；uniform sandbagging 為 35%。 |\n| Ability shift | 40-item historical ability check 偵測 84% uniform sandbagging；與 person-fit 結合後，各 scope 的 sandbagging detection 為 94–97%。 |\n| API identity audit | 40-item ability test 可區分 8,911 個 model pairs 中的 99.5%；response fingerprint 在 16 個 endpoint 中辨識 13/14 個 distinct model identities。 |\n| TruthfulQA 壓縮 | TruthfulQA 單獨在 50 items 時的排名恢復為 ρ=0.71；論文未報告可將其穩定壓縮至約十題的同等效果。 |",
+      "insights": [
+        "實務上不宜直接平均高度相關或方向相反的安全 benchmark；應先檢查 latent structure、相關性與分數方向，並分別報告拒答嚴格度、truthfulness 與 contextual harm。",
+        "若已完成校準並在新模型 cohort 上驗證，評測流程可優先使用高 discrimination 的固定測試或 CAT，以降低推理成本；但縮減測試只能重現原 benchmark，不能證明其具備部署安全性的 predictive validity。",
+        "API 審計可採分層方式：用 person-fit 偵測選擇性 sandbagging、用歷史 ability 偵測整體行為漂移，再用 response fingerprint 辨識 ability 相近但 item-level 行為不同的 endpoint；各方法都需要相應的校準與參考資料。"
+      ],
+      "limitations": "跨 benchmark latent-structure 分析最多只有 134 個完整模型，仍小於傳統 human psychometric datasets；三因素名稱主要依據 loading pattern，尚未完成 construct validity 與 predictive validity 驗證。sandbagging 實驗使用 prompted model organisms，而非 fine-tuned 或更具對抗性的模型；作者也未證明方法能抵抗專門規避審計的模型。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "psychometric evaluation",
+        "computerized adaptive testing",
+        "AI safety benchmarking"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05076",
+      "title": "MultiPathFormer: Towards a Foundation Model for Multipath Wireless Propagation",
+      "abstract": "Recent advances in machine learning have enabled training of wireless foundation models, which aim to support tasks such as channel estimation, beam prediction, and localization based on wireless signals. Existing wireless foundation models typically pretrain on channel tensors using masked reconstruction over subcarriers, antennas, or time but ignore the physical characteristics of wireless propagation. In this work, we propose to instead use multipath propagation as the fundamental pretraining object. We present MultiPathFormer, an autoregressive foundation model that represents each transmitter-receiver link as an ordered sequence of continuous-valued path tokens and pretrains with next-path prediction. We introduce an Environmental RAG (retrieval-augmented generation) mechanism and a first-path codebook on top of the transformer backbone, leveraging environment knowledge to improve path statistics estimation like delay and power by up to 59%. MultiPathFormer pretrained on 27 environments transfers to unseen users and, after scenario-specific fine-tuning, outperforms training the corresponding models from scratch in new environments. Across downstream tasks, it outperforms SOTA channel-based foundation models, achieving 5.57 m mean localization error, 0.914 top-3 beam accuracy, 0.994 line-of-sight classification accuracy, and 0.561 channel estimation NMSE. These results show that path-level pretraining can learn reusable representations of wireless propagation.",
+      "authors": [
+        "Blessed Guda",
+        "Kayley Sze",
+        "Carlee Joe-Wong"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "eess.SP"
+      ],
+      "published": "2026-08-05T17:20:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05076v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05076",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "近年 machine learning 的進展促成 wireless foundation models 的訓練，用於根據 wireless signals 執行 channel estimation、beam prediction 與 localization 等任務。現有模型通常在 channel tensors 上，以跨 subcarriers、antennas 或 time 的 masked reconstruction 進行預訓練，卻忽略 wireless propagation 的物理特性。本研究改以 multipath propagation 作為基本預訓練對象，提出 MultiPathFormer：將每個 transmitter–receiver link 表示為由連續值 path tokens 組成的有序序列，並以 next-path prediction 進行 autoregressive 預訓練。作者在 transformer backbone 上加入 Environmental RAG 與 first-path codebook，利用環境知識改善 delay、power 等 path statistics estimation，最高提升 59%。模型在 27 個環境上預訓練後，可轉移至未見使用者；在新環境進行 scenario-specific fine-tuning 後，也優於從頭訓練。於多項 downstream tasks 中，模型取得 5.57 m 平均定位誤差、0.914 top-3 beam accuracy、0.994 LoS classification accuracy 與 0.561 channel estimation NMSE。",
+      "problem_statement": "現有 wireless foundation models 多以 channel tensor 做 masked channel modelling，對 subcarrier、antenna 或 time 位置進行重建。依論文主張，channel 是多條 propagation paths 的疊加，並與 array responses、subcarrier sampling 及 system configuration 交織，因此會掩蓋 path 的數量、dominant-path structure、delay、power、角度與 interaction type 等物理結構，降低可解釋性與跨任務重用能力。論文要解決的是如何直接對可變長度、連續值且沒有天然順序的 multipath 進行 foundation pretraining。",
+      "proposed_solution": "MultiPathFormer 將每個 transmitter–receiver link 表示成依 power 排序的 path-token sequence，採 autoregressive next-path prediction 學習 propagation process。它以 encoder–decoder transformer 將 tx、rx 與環境資訊編碼，decoder 根據既有 paths 逐步預測下一條 path，另以 path-length head 預測序列長度。核心創新包括兩個物理導向模組：Environmental RAG 依 link 擷取端點附近、傳播 corridor 與多尺度場景摘要；first-path KMeans codebook 則提供 dominant path 的 power/delay 粗先驗，模型只學習第一條 path 的 residual。作者進一步將生成出的 path representations 用於 beam prediction、localization、LoS classification 與 channel estimation。",
+      "core_contributions": [
+        "提出以 multipath sequence 而非 channel tensor 作為 wireless foundation model 預訓練對象，將 propagation 建模為連續值、可變長度 path tokens 的 autoregressive next-path prediction。",
+        "提出 Environmental RAG，針對 transmitter–receiver link 擷取 local、corridor 與 multiscale scene geometry；在 31 個 DeepMIMO scenarios 中，相較 direct baseline 將 delay MAE 降低 38.7%、power MAE 降低 59.2%。",
+        "提出以每一 transmitter 為單位、在 first-path power 與 delay 上進行 KMeans 的 dominant-path codebook，並結合 residual prediction，以穩定最強路徑生成；模型可轉移至未見使用者與新環境，並支援 beam prediction、localization、LoS classification 與 channel estimation。"
+      ],
+      "methodology": "資料來自 DeepMIMO，涵蓋 31 個 environment scenarios；模型在其中 27 個 scenarios 的 80% users 上預訓練，並以同一批環境的 20% held-out users 與 4 個 unseen scenarios 測試。每個 tx–rx link 被轉換成依 path power 遞減排序的可變長度序列；每個 path token 包含 power、delay、phase、AoA/AoD 的方位角與仰角，以及 Reflection、Diffraction、Scattering、LoS 四種 interaction type 的 multi-hot 標籤。模型採 encoder–decoder transformer：encoder 輸入 environment、tx 與 rx 資訊，並輔助預測 path length；decoder 以 start token 和已生成 paths autoregressively 預測下一個 path。輸出分為連續參數 regression 與 interaction classification，總 loss 為 path L2、path-length squared loss 與 interaction cross-entropy 的加權和；訓練期間對 20% path tokens 加噪，以增強模型對生成誤差的恢復能力。Environmental RAG 擷取 tx/rx 附近及 tx–rx corridor 的 top-K objects，並加入多尺度物件數量、最大高度與 corridor bins 摘要。First-path codebook 則對每個 transmitter 的 first-path power/delay 做 KMeans，以鄰近訓練 receiver 指派 cluster prior，再預測 residual。評估涵蓋 delay、power、角度 MAE、interaction accuracy/F1、beam top-1/top-3 accuracy、localization mean/median/P90 error、LoS accuracy/F1 與 channel estimation NMSE；後者以預測 path 的 delay/angles 建立 channel basis，再用已觀測 subcarriers 做 ridge regression。",
+      "key_results": "主要結果如下；數值均依論文報告，誤差為論文表格中的跨 scenarios 統計形式。\n\n| 評估項目 | 方法/設定 | 結果 |\n|---|---|---:|\n| Path generation：Delay MAE | Direct | 0.111 ± 0.062 μs |\n| Path generation：Delay MAE | +Codebook | 0.095 ± 0.054 μs |\n| Path generation：Delay MAE | +RAG | 0.068 ± 0.038 μs |\n| Path generation：Power MAE | Direct | 7.544 ± 2.475 dB |\n| Path generation：Power MAE | +Codebook | 4.582 ± 1.851 dB |\n| Path generation：Power MAE | +RAG | 3.081 ± 1.383 dB |\n| Interaction accuracy / F1 | Direct | 0.870 / 0.786 |\n| Interaction accuracy / F1 | +RAG | 0.925 / 0.890 |\n| Zero-shot path transfer | 27 個預訓練環境的 held-out users | Delay MAE 0.071 μs；Power MAE 4.160 dB；Interaction F1 0.898 |\n| Zero-shot path transfer | 4 個未見 scenarios | Delay MAE 0.326 μs；Power MAE 14.153 dB；Interaction F1 0.557 |\n| Scenario adaptation | Foundation + finetune | Delay MAE 0.065 μs；Power MAE 2.888 dB；Interaction F1 0.900 |\n| Beam prediction | MultiPathFormer | Top-1 0.671；Top-3 0.914 |\n| User localization | MultiPathFormer | Mean 5.57 m；Median 4.15 m；P90 10.13 m |\n| LoS classification | MultiPathFormer adapter fine-tuning | Accuracy 0.994；F1 0.990 |\n| Channel estimation | MultiPathFormer | NMSE 0.561；NMSE(dB) −13.27 ± 4.40 |\n| Inference cost | +RAG | 35.512M parameters；3.45 ms |\n\n相較表 III 中的 channel-based foundation models，MultiPathFormer 的 beam、localization、LoS 與非 finetuned channel estimation 結果均較佳；但 scenario-trained LSTM 的 channel-estimation NMSE 0.049 ± 0.019 仍低於 MultiPathFormer。",
+      "insights": [
+        "將資料表示對齊領域的物理生成過程，可能比直接對混合後的高維 tensor 做 masked reconstruction 更有利於學習可重用表徵；實務上可優先尋找具物理意義且跨硬體設定較穩定的預訓練單位。",
+        "對具有顯著 dominant component 的序列生成任務，可將粗粒度先驗與模型 residual correction 分離；本文的 first-path codebook 顯示，這種設計能減少 autoregressive 誤差逐步累積。",
+        "Environmental RAG 不只是加入全域環境描述，而是依 link 擷取端點附近、傳播 corridor 及多尺度摘要；若部署時已有地圖或 3D scene knowledge，應設計 query-specific retrieval，而非直接輸入完整場景。"
+      ],
+      "limitations": "論文主要使用 DeepMIMO 的 ray-tracing simulation，作者明確指出下一步需驗證從 ray-tracing data 到真實量測場景是否仍能維持增益。未見對真實無線資料、不同硬體配置或更廣泛 domain shift 的實驗；此外，未見完整的資料生成成本、與更多 path-level 方法的比較，以及各 retrieval 超參數的系統性敏感度分析。",
+      "tags": [
+        "benchmark",
+        "rag-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "wireless foundation models",
+        "multipath propagation modelling",
+        "autoregressive continuous sequence prediction",
+        "environment-aware retrieval",
+        "ray-tracing simulation",
+        "channel estimation",
+        "beam prediction",
+        "wireless localization"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05108",
+      "title": "Agent Against Agent: An Agentic System for Automatic Prompt Injection Red Teaming",
+      "abstract": "Prompt injection poses significant security risks to LLM agents. Efficient and effective red-teaming is therefore critical, both for evaluating these risks and for collecting training data to improve defenses. Existing state-of-the-art prompt injection red-teaming methods primarily rely on reinforcement learning (RL), producing attacker models that often generalize poorly to new target LLMs. In this work, we develop PIMiner, an agentic system for prompt injection red-teaming. During training, PIMiner is trained on a sequence of (dataset, target model) pairs and builds a strategy library from scratch. At test time, the learned strategy library can be directly transferred to a previously unseen target LLM without additional training. PIMiner requires only a small number of queries to a target agent (e.g., 10) per test sample. Experimental results demonstrate that PIMiner achieves strong performance. On IPIArena, it attains a 76.2% ASR against Gemini-2.5-Pro, 61.9% ASR against GPT-5.1, and 42.9% ASR against Claude-Sonnet-4.5. On AgentDojo, it achieves an 86.7% ASR against Gemini-2.5-Pro, 53.3% ASR against GPT-5.1, and 40.0% ASR against Claude-Sonnet-4.5.",
+      "authors": [
+        "Yanting Wang",
+        "Chenlong Yin",
+        "Runpeng Geng",
+        "Jinyuan Jia"
+      ],
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-08-05T17:44:09+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05108v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05108",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "Prompt injection 對 LLM agents 構成重大的安全風險，因此高效且有效的 red-teaming 對於評估風險及蒐集防禦訓練資料都十分關鍵。現有最先進的 prompt injection red-teaming 方法主要依賴 reinforcement learning（RL），但訓練出的 attacker models 往往難以泛化至新的 target LLM。本文提出 PIMiner，一個用於 prompt injection red-teaming 的 agentic system。訓練期間，PIMiner 依序處理多組（dataset、target model）配對，從零建立 strategy library；測試時，學得的策略庫可直接轉移至未見過的 target LLM，無須額外訓練。每個測試樣本僅需對 target agent 發出少量查詢，例如 10 次。實驗顯示，PIMiner 在 IPIArena 對 Gemini-2.5-Pro、GPT-5.1 和 Claude-Sonnet-4.5 的 ASR 分別為 76.2%、61.9% 和 42.9%；在 AgentDojo 則分別為 86.7%、53.3% 和 40.0%。",
+      "problem_statement": "論文聚焦於如何以低查詢成本、自動化方式對 LLM agents 進行 prompt injection red-teaming。RL-based 方法通常需約數萬次 target-agent 訓練互動，且 attacker policy 對新 target LLM 的 transferability 有限；search-based 方法雖不需訓練，卻常對每個樣本重新搜尋，無法累積與重用成功攻擊知識，因而效能通常低於 RL 方法。",
+      "proposed_solution": "作者提出 PIMiner，將 agentic iterative search 與可持續更新的 hierarchical memory 結合。系統以 strategy library 保存跨 dataset、task 與 target model 的可解釋攻擊策略，由 strategy router 為每個樣本挑選相關策略，再透過 iterative attack module 根據當前回饋反覆修正 prompt。系統同時維護跨資料集、資料集內及樣本內三層記憶；完成一組 dataset–model pair 後，experience digester 將成功與失敗軌跡轉化為新策略、範圍更新及失敗條件。核心創新是無須重新訓練 attacker，即可把累積策略直接轉移至未見 target LLM，並以 router 控制上下文與推理成本。",
+      "core_contributions": [
+        "提出 PIMiner，將 search-based attack 與可累積、可重用的攻擊知識結合，縮小其與 RL-based red-teaming 的效能差距。",
+        "設計包含 strategy library、strategy router、iterative attack module 與 experience digester 的 hierarchical memory mechanism，能跨 dataset、task 與 target model 累積可解釋策略。",
+        "在 IPIArena、AgentDojo 與 InjecAgent 上進行評估，顯示策略庫可轉移至未見過的 target LLM，且也能改善不同 attacker LLM 驅動的 PAIR。"
+      ],
+      "methodology": "PIMiner 將 prompt injection red-teaming 定義為：樣本由 target instruction、untrusted context 與 injected task 組成；訓練時依序處理多個（dataset、target LLM）配對，利用 target agent 回饋更新長期記憶，測試時將累積策略轉移至新 target。其架構包含四部分。第一，strategy library 初始只有模板檔；每個策略以 Markdown 記錄適用 target LLM、user/injected task 範圍、injection template、案例、失敗條件及 metadata。第二，strategy router 讀取策略的 routing summary，針對每個樣本選取 Top-K 策略；預設 K=3，無適用策略時使用 cold-start template。第三，iterative attack module 在最多 Nmax=10 次迭代內產生並修正 injection prompt。attacker 同時使用三層記憶：跨資料集的 routed strategy library、同一 dataset–model pair 中先前樣本的 curated intra-dataset memory，以及目前樣本的 intra-sample history；後者包含歷次 prompt、可觀察 target output、成功或失敗判斷與分析。成功即停止，否則持續迭代。第四，experience digester 在整個 dataset–model pair 結束後分析軌跡：成功案例可補充既有策略、擴大適用範圍或建立新策略；失敗案例則加入 miss patterns 與限制條件。實驗使用 IPIArena（20 train、21 test）、AgentDojo（20 train、30 test），另以 InjecAgent 30 個測試樣本比較；訓練包含兩個資料集與四個 target models 的八組配對。主要指標為 ASR@1、ASR@5、ASR@10。測試亦檢驗未見 target LLM、記憶元件消融、router 的上下文縮減，以及將策略庫整合至不同 attacker LLM 的 PAIR。",
+      "key_results": "主要指標為 ASR@N：在最多 N 次攻擊迭代中，至少一次成功即視為成功。\n\n| Benchmark / Target LLM | ASR@1 | ASR@5 | ASR@10 |\n|---|---:|---:|---:|\n| IPIArena / Gemini-2.5-Pro | 57.1% (12/21) | 76.2% (16/21) | 76.2% (16/21) |\n| IPIArena / GPT-5.1 | 9.5% (2/21) | 47.6% (10/21) | 61.9% (13/21) |\n| IPIArena / Claude-Sonnet-4.5 | 28.6% (6/21) | 38.1% (8/21) | 42.9% (9/21) |\n| AgentDojo / Gemini-2.5-Pro | 60.0% (18/30) | 83.3% (25/30) | 86.7% (26/30) |\n| AgentDojo / GPT-5.1 | 26.7% (8/30) | 46.7% (14/30) | 53.3% (16/30) |\n| AgentDojo / Claude-Sonnet-4.5 | 13.3% (4/30) | 30.0% (9/30) | 40.0% (12/30) |\n\n在 InjecAgent 上，PIMiner 對 GPT-4o-mini、GPT-4.1-nano、GPT-5-nano 的 ASR 均為 1.00；在 AgentDojo 上分別為 0.73、0.63、0.53。相較 PISmith 的 0.78、0.81、0.38，PIMiner 僅在 GPT-5-nano 更高。IPIArena 消融實驗中，完整 PIMiner 相較 vanilla iterative attacker 的平均 ASR 提升，Claude-Haiku-4.5 為 19.8%，Claude-Sonnet-4.6 為 17.8%。訓練階段成本估計方面，論文報告在使用 Claude Code subscription 的前提下，target-model API 的額外支出約為 20 美元。",
+      "insights": [
+        "實務上可將策略庫作為可檢視、可修訂的 red-team 知識庫，保存成功案例、失敗條件與適用範圍，支援安全稽核及防禦資料建置。",
+        "對高查詢成本的 frontier agents，先以少量測試查詢配合跨任務記憶，可能比針對每一個 target model 重新進行 RL attacker training 更具成本效率；但應以論文所示設定實際驗證。",
+        "router 的選擇性載入可降低 attacker context 長度；論文報告在兩種 attacker backbone 上分別降低 43% 與 61% 的平均輸入長度，顯示記憶檢索與上下文成本控制應一併設計。"
+      ],
+      "limitations": "論文主要使用 Claude Code models 作為 PIMiner backbone，以降低推理成本，因此不同 orchestration backbone 的完整比較仍有限。部分 RL baseline 直接採用 PISmith 已發表結果，可能限制完全一致的重現性。訓練與測試依賴公開 benchmark、受控環境及特定存取假設；論文未報告真實部署中的效果。系統亦具有雙重用途風險，需搭配嚴格的授權與隔離措施。",
+      "tags": [
+        "red-teaming",
+        "prompt-injection",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "自動化 prompt injection red-teaming",
+        "LLM agent 安全評估",
+        "hierarchical memory 與 agentic search"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05144",
+      "title": "Argus: A General-Purpose Agentic Runtime for Long-Horizon Reasoning",
+      "abstract": "Long-horizon reasoning requires an agentic runtime that can persist when evidence supports its current approach and pivot when measurements reveal failure, hidden constraints, or a misspecified objective. We present Argus, a persistent, self-evolving runtime in which Manager, Planner, Engineer, and Reviewer execute bounded missions over durable project state. Argus separates stable user intent from operational objectives, constraints, and verification criteria, and admits memories, skills, procedures, verifiers, routing decisions, and rejected routes only after role-owned review and, when available, task-native verification. Model weights remain fixed; self-evolution occurs through persistent runtime state and control policy, with autonomous execution between operator-owned escalation points. Across seven GPT-5.5 benchmark arenas, Argus achieves about 78% on SWE-Bench Pro versus 59% for Direct Copilot while using 1.41 times the aggregate tokens. After verification-gated self-evolution, mature SWE-Bench waves use 21% fewer solve-input tokens and 15% less active workflow time per task than startup waves, while recording 34 verifier recoveries and 22 strict review-loop rescues. Argus also reaches 76.8% on AARRI-Bench and a 28.0-point gap on mathematical data synthesis, with competitive GPU-kernel and language-model-training results. Beyond benchmarks, an optimized RWKV6 kernel was merged upstream; a multi-day mathematics campaign retained falsified routes and proof-backed frontier updates; and six paper pipelines completed 254 missions with 16 stage rollbacks. These results show that a fixed-weight, self-evolving harness can revise, recover, and accumulate verified approaches while producing structured trajectories for future supervised and reinforcement learning.",
+      "authors": [
+        "Boxiu Li",
+        "Zimo Wen",
+        "Yijia Fan",
+        "Junxiang Lei",
+        "Sufeng Guo",
+        "Jiaao Wu",
+        "Ruize Tang",
+        "Mukai Li",
+        "Yifei Shen",
+        "Xiaoyu Chen",
+        "Wanbo Zhang",
+        "Runjing Gu",
+        "Yifei Gao",
+        "Yuheng Wu",
+        "Xuyao Huang",
+        "Zelong Zhao",
+        "Jiachen Zhang",
+        "Shibo Hu",
+        "Hangxi Guo",
+        "Yilin Chen",
+        "Yuzhe Zhang",
+        "Fan Yang",
+        "Chuan Wen",
+        "Xian Zhang",
+        "Xuanhe Zhou",
+        "Zhijie Deng"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-05T17:58:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05144v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05144",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "長程推理並非沿著固定路線不斷前進；當證據支持目前方法時，代理應持續執行，而當量測揭示失敗、隱藏限制或目標設定錯誤時，則應能轉向。我們提出 Argus，一個持久且可自我演化的 agentic runtime，由 Manager、Planner、Engineer 與 Reviewer 在可持久化的 project state 上執行有界 missions。Argus 將穩定的 user intent 與可由證據修正的 operational objectives、constraints 和 verification criteria 分離。候選 memories、skills、procedures、verifiers、routing decisions 及 rejected routes，只有經角色負責的審查及可用時的 task-native verification 後，才能納入持久狀態。模型權重保持固定，自我演化透過 runtime state 與 control policy 實現。Argus 在七個 GPT-5.5 benchmark arenas 中，SWE-Bench Pro 約達 78%，高於 Direct Copilot 的 59%，但使用 1.41 倍 aggregate tokens。經 verification-gated self-evolution 後，成熟 SWE-Bench waves 的 solve-input tokens 減少 21%，active workflow time 減少 15%。結果顯示，固定權重的 self-evolving harness 能修正、恢復並累積經驗。",
+      "problem_statement": "長程研究常遇到目標逐步釐清、路線失敗、隱藏限制與規格錯誤。傳統 ReAct、SWE-agent、OpenHands 及 autonomous research systems 多假設 objective 已給定，session 受限的代理又會因 context 壓縮或重置而遺失證據。若允許代理任意改變目標，最終結果便難以區分 evidence-backed pivot 與失敗後合理化，造成 goal drift；只固定目標則無法處理真實任務中的 objective refinement。",
+      "proposed_solution": "作者提出 Argus，一個在 durable project state 上運行的 persistent、self-evolving agentic runtime。其核心是 bounded missions 與四角色權責分離：Manager 管理 intent、contract 和 Stage，Planner 分解任務，Engineer 執行，Reviewer 驗證。系統將 standing user intent 與 operational objective、constraints、verification criteria 分離；任何 material pivot 或 runtime-state 更新，都必須由適當角色審查，並在可用時透過 task-native verifier 證明。候選 memories、skills、procedures、verifiers、routing decisions 與 rejected routes 只有通過 admission gate 才能累積。模型權重不變，但 persistent state 與 control policy 會改變後續搜尋路徑；Stage rollback、blocked verdict 與完整 provenance 則使失敗成為可重用的決策資料。",
+      "core_contributions": [
+        "提出以 Kt=(ι,ot,ct,vt) 表示的長程任務 working contract，區分 standing user intent、operational objective、constraints 與 verification criteria，並以 ManagerAdmit 概念描述證據、權限與 provenance 約束下的 contract refinement。",
+        "建立由 Manager、Planner、Engineer、Reviewer 組成的 persistent agentic runtime，以 bounded missions、durable project state、Stage advance/rollback、角色所有權及獨立審查支援 verified pivoting。",
+        "提出 verification-gated fixed-model runtime self-evolution：模型參數固定，但經審查的 memories、skills、verifiers、routing decisions 與 rejected routes 可持久化，並以 SWE-Bench Pro 長期軌跡及多個研究垂直案例評估其累積效果。"
+      ],
+      "methodology": "Argus 以固定模型權重搭配持久 runtime state 運作。系統包含三個平面：control plane 負責 campaign、排程與 Stage；execution plane 執行 bounded mission；record plane 保存不可變 event record，但不負責判定科學完成。四個 model-driven roles 分工：Manager 維持 standing intent、objective、route 與 Stage；Planner 根據 backlog、runtime state 與 contract 分解任務；Engineer 修改 artifacts、呼叫 tools、執行實驗並回報 measurements；Reviewer 在要求時獨立檢查 artifacts 與 execution records，輸出 done、continue 或 blocked。每輪流程為 M→P→E⇄R→M：Planner 領取一項 bounded task，Engineer 執行，依任務政策進行 Engineer self-review 或 Reviewer review；若 continue 則修正後重做，若 done/blocked/paused 則回到 Manager。系統以 CHECKPOINT.md、artifacts、event log、backlog、memory、skills、tools、verifiers 與 routing 保存跨 session 狀態，並支援 Stage advance、hold、rollback 及 rejected branch。作者以 Kt=(ι,ot,ct,vt) 表示 working contract；若量測與 verdict 支持 material refinement，須經 ManagerAdmit、所需 authority 與 provenance 才更新 contract。評估涵蓋七個 benchmark arenas，包括 SWE-Bench Pro、GPU kernel、language-model training、training speed、research-assistant tasks 與 mathematical data synthesis；另分析 731 個 SWE-Bench Pro tasks 的 tokens、active workflow time、Reviewer intervention、verifier recoveries，以及數學 campaign、paper pipelines 與 upstream kernel adoption。論文也提出 density、research value、process-data dominance 與 discounted reuse value 等理論量，但並非所有量皆以跨任務 controlled experiment 驗證。",
+      "key_results": "| 評估或案例 | Argus 結果 | 對照或補充 |\n|---|---:|---|\n| SWE-Bench Pro | 約 78% | Direct Copilot 59%；Argus 使用 1.41 倍 aggregate tokens |\n| SWE-Bench Pro 成熟 waves | solve-input tokens 少 21%；active workflow time 少 15% | 相較 startup waves；論文將此列為 observational trajectory，而非 controlled ablation |\n| SWE-Bench Pro Reviewer/Verifier | 466/731 任務使用 independent Reviewer；265/731 使用 Engineer self-review | Reviewer 在 43 個任務拒絕 completion；其中 34 個後續通過 official verifier，22 個完成 strict review loop，另有 35 個被標記為 blocked |\n| AARRI-Bench | 76.8% | 論文稱高於其 reported reference，但未在提供內容中列出該 reference 的具體數字 |\n| Mathematical data synthesis | 28.0-point gap | 論文未在提供內容中明確說明該 gap 的完整比較數字 |\n| Paper-production pipelines | 6 個 pipelines、254 missions、16 Stage rollbacks | 全部達到 submission completion；包含 640 campaign-hours |\n| RWKV6 kernel | forward 0.199→0.168 ms；forward+backward 0.900→0.747 ms | 13 correctness-gate passes、14 repository tests，後經外部 maintainer 修正數值穩定性問題後 upstream merge |\n| Mathematical campaign | 6 次 proof-backed theorem-frontier updates | 另保留 1 條 falsified route；其餘廣度與泛化結果的完整數字論文未報告 |",
+      "insights": [
+        "長程代理不應只保存最終答案；應保存帶有量測、審查結果、失敗路線與 provenance 的結構化狀態，讓後續任務能避免重複探索。",
+        "目標修改需要明確區分 user intent 與 operational contract，並由證據、角色權限及可追溯紀錄共同約束，以降低 goal drift 風險。",
+        "實務部署可採 bounded mission 與明確 escalation point：低風險任務允許 Engineer self-review，高風險或 stage-closing 任務要求獨立 Reviewer，並保留 rollback 與 blocked 狀態而非強迫宣稱成功。"
+      ],
+      "limitations": "論文將 runtime self-evolution 的縱向結果明確定位為 observational，而非 controlled ablation，因此無法單獨識別 persistence、Reviewer 或 routing 各元件的因果貢獻。部分案例是內部或質性證據，且未提供 measured zero-touch rate。某些 benchmark reference、完整比較設定與數據規模在提供內容中未報告；未來需進行更嚴格的消融、成本與跨任務 reuse 評估。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長程代理與 persistent memory",
+        "verification-guided planning 與 process supervision",
+        "autonomous research systems",
+        "SWE-Bench 與 research-agent benchmarking"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05141",
+      "title": "OctoLong: Mid-Training On Cross-Repository Code Contexts Enhances Long-Context Modeling",
+      "abstract": "Context lengths of language models (LMs) have dramatically increased, driven by the demands for in-context learning, self-improvement, and long-horizon agentic workflows. Existing long-context corpora, however, are dominated by books, academic articles, and code repositories, which are finite resources and often scarce in long-distance dependencies. In this work, we introduce OctoLong, a context engineering pipeline that instruments an AST parser, a language server backend, and a package manager to facilitate the recursive retrieval of code references, enabling the curation of dependency-rich code contexts of millions of tokens in length. We then train OctoLong-Instruct, a suite of capable long-context open LMs, derived from base models ranging in size from 600M to 14B parameters, via context-extension mid-training on a ~50B-token mixture containing ~6.2B tokens of OctoLong code contexts, followed by ~10B tokens of instruction tuning. Our training ablations and experimental evaluations against 18 state-of-the-art open-weight long-context LMs show that supplanting just 12% of traditional context-extension corpora with OctoLong data yields substantial gains in long-range retrieval, long-term state tracking, repository-level code understanding, and downstream agentic tasks, while also enhancing API usage in short-context coding scenarios.",
+      "authors": [
+        "Indraneil Paul",
+        "Falko Helm",
+        "Goran Glavaš",
+        "Iryna Gurevych"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-08-05T17:58:15+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05141v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05141",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "語言模型（LM）的 context length 持續增加，以支援 in-context learning、自我改進與長期 agentic workflow。然而，現有 long-context corpora 多由書籍、學術文章及 code repository 組成，資源有限，且長距離依賴通常稀疏。本文提出 OctoLong，一個結合 AST parser、language server backend 與 package manager 的 context engineering pipeline，可遞迴擷取 code references，建立長達數百萬 tokens、富含跨 repository dependencies 的 code contexts。作者以約 6.2B tokens 的 OctoLong code data，混合成約 50B tokens 的 context-extension mid-training corpus，並加入約 10B tokens 的 instruction tuning，訓練出由 600M 至 14B parameters 基礎模型衍生的 OctoLong-Instruct。與 18 個 open-weight long-context LMs 比較及透過 ablation 顯示，僅以 OctoLong 取代約 12% 傳統 context-extension corpus，即可改善 long-range retrieval、long-term state tracking、repository-level code understanding、agentic tasks，以及短 context coding 中的 API usage。",
+      "problem_statement": "現有 long-context training data 主要來自書籍、論文與單一 code repositories，雖可提供長序列，卻常缺乏跨距離、跨檔案與多跳 dependency，且部分資料來源有限、關聯鬆散或含矛盾資訊。因此模型即使支援更長 context，仍可能在 dispersed retrieval、repository-level reasoning、state tracking 與長期 agentic interaction 上表現不佳。論文要解決的是如何大規模產生高密度、可追溯且跨 repository 的長 code contexts，並驗證其對多類 long-context 能力的影響。",
+      "proposed_solution": "作者提出 OctoLong context engineering pipeline，將 AST parser、language server backend 與 package manager 放入 dependency-provisioned container。對每個品質合格的 seed code，pipeline 以 tree-sitter 找出呼叫點，再透過 LSP/JEDI 執行 go-to-definition，擷取被引用的 class 或 function implementation，並以 BFS 跨 repository 遞迴展開，形成最多 128K tokens 的 dependency-rich context。作者再將約 6.2B tokens OctoLong data 以 12.05% 比例混入約 50B-token LCFT corpus，搭配約 10B-token SFT，並以 ABF RoPE 進行 32K 至 128K context extension。核心創新在於以語意與版本感知的工具鏈，將原本分散於不同 repositories 的實作依賴組合成可供 mid-training 的長序列。",
+      "core_contributions": [
+        "提出 OctoLong pipeline，整合 AST parser、LSP backend 與 package manager，在 containerized、版本正確的 dependency environment 中遞迴擷取跨 repository 的 class 與 function implementations。",
+        "收集約 6.2B tokens 的跨 repository code contexts，並建立約 50B-token 的 OctoLong-LCFT corpus 與約 10B-token 的 OctoLong-SFT mix，據此訓練 600M 至 14B 參數、支援 128K context 的模型套件。",
+        "透過與 18 個 open-weight long-context LMs 的比較及三項 ablation，展示跨 repository data 對 long-context coding、general-domain long-context、agentic tool use 與 API usage 的效益。"
+      ],
+      "methodology": "資料管線從 SEART Hub 選取至少 15 GitHub stars、超過 5 位 contributors、可安裝且宣告 dependencies 的 Python repositories；12K 個 repository 產生候選檔案，經 OpenCoder code-quality filter 後保留約 92K seeds。每個 seed 在含有正確版本 dependencies 的 containerized environment 中執行，使用 tree-sitter 索引 function calls、method calls 與 class instantiations，再透過 JEDI language server 的 GoToDeclaration 定位實作，擷取 class 或 function 邊界並以 breadth-first search 遞迴追蹤，深度上限 10，或達到 128K tokens 即停止；重複項、少於 5 層或 hop success rate 低於 60% 的 contexts 被丟棄，最終取得約 6.2B tokens。作者以 LongAttn 的 dependency attention mass 與 sink concentration 評估依賴密度及 lost-middle 現象，並以 LongPPL 的 context-sensitive key-token 比例評估資訊顯著性。模型以 Qwen3 dense base models（600M–14B）為基礎，透過 ABF RoPE 將 context 從 32K 擴至 128K，先在約 50B-token LCFT mix 上訓練，再以約 10B-token SFT mix instruction-tune；LCFT 中 OctoLong data 佔 12.05%。作者另以 1:9 比例合併 pre-LCFT 與 post-LCFT checkpoint。評估涵蓋 LooGLE V2、LongCodeQA、RepoQA、LongBench V2、OpenAI MRCR、AA-LCR、BFCL V3、τ²-Bench、LiveCodeBench V6 與 BigCodeBench Instruct Hard，並比較移除跨 repository data、移除 model merging、移除 context extension 三項 ablation。",
+      "key_results": "主要結果如下；表中數值為論文報告的 benchmark-level averages，除特別註明外不是單一任務的統一指標。\n\n| 模型 | 參數 | LooGLE | LongCodeQA | RepoQA | LongBench V2 | MRCR | AA-LCR | BFCL V3 | τ²-Bench | LiveCodeBench | BigCodeBench |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| OctoLong-4B-Instruct | 4B | 29.77 | 64.05 | 58.00 | 28.20 | 36.93 | 10.00 | 58.37 | 25.15 | 17.44 | 16.31 |\n| OctoLong-8B-Instruct | 8B | 29.76 | 65.01 | 64.63 | 39.17 | 40.91 | 13.00 | 61.65 | 27.35 | 20.82 | 19.44 |\n| OctoLong-14B-Instruct | 14B | 39.88 | 77.98 | 76.01 | 41.36 | 44.79 | 21.00 | 67.31 | 34.42 | 22.43 | 21.52 |\n| OctoLong-8B-Instruct（移除 Cross-Repo Code） | 8B | 26.38 | 62.17 | 61.58 | 37.03 | 36.88 | 11.00 | 57.74 | 22.38 | 19.67 | 17.56 |\n| OctoLong-8B-Instruct（移除 Model Merging） | 8B | 28.13 | 64.25 | 63.73 | 38.61 | 39.20 | 12.00 | 61.35 | 26.91 | 17.75 | 18.04 |\n\n相較於移除 Cross-Repo Code 的 8B ablation，完整模型在上述欄位分別提升 3.38、2.84、3.05、2.14、4.03、2.00、3.91、4.97、1.15 與 1.88 個百分點。Table 1 顯示，OctoLong depth limit 10 的 context 長度中位數為 201,477 tokens、99th percentile 為 1,582,313 tokens，Dep. Mean 為 0.6113、Sink Prop. 為 2.0e-5、LongPPL Key Tokens 為 5.99；In-Repo Code 的相應數值為 4,879、207,681、0.5261、3.8e-4 與 1.55。",
+      "insights": [
+        "若目標是提升 repository-level coding 或長期 tool-use，訓練資料不應只串接獨立文件；可優先建立具明確多跳 dependency、不同距離分布與低重複率的 context。",
+        "實務上可採用 AST、LSP 與 package manager 的聯合資料管線，而非僅依靠字串搜尋或 repository 內序列化，以取得 type- and scope-aware 的實作關聯。",
+        "若 context extension 可能造成 short-context regression，可參考論文的 1:9 pre-LCFT/post-LCFT model merge；但論文結果顯示此做法是其訓練 recipe 的一部分，仍需在目標模型與任務上驗證。"
+      ],
+      "limitations": "作者指出，訓練省略低資源語言資料，模型規模限制在 14B parameters，context length 限制為 128K tokens；跨 repository 遞迴擷取目前主要支援同一語言，難以處理透過 ABI 或 FFI 互動的 polyglot dependencies。未來需研究多語言 static analysis 與 control-flow tracking。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-context language modeling",
+        "cross-repository code understanding",
+        "context extension mid-training",
+        "tool-use and long-horizon agents"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05115",
+      "title": "Robust and Efficient Motion Reasoning for Privacy-Aware Classroom Incident Recognition",
+      "abstract": "Can computer vision help make classrooms safer? In this pilot study, we investigate privacy-aware and computationally efficient classroom incident recognition from CCTV-style observations. This setting remains underexplored, with limited benchmarks and few methods designed for the privacy, efficiency, and generalization demands of real-world deployment. We introduce a novel hybrid benchmark combining generative CCTV-style videos with real-world classroom pose data, and propose a lightweight, but robust motion-reasoning framework motivated by the observation that many incidents differ more in motion direction, speed, acceleration, and intensity than in pose alone. To that end, our method first constructs hierarchical kinematic representations of human actions. Our method then distills hierarchical, multi-order kinematic reasoning from a large teacher into a much smaller single-order student, enabling efficient per-person inference while preserving expressive motion understanding. Experiments show that our model outperforms substantially larger baselines at less than one-tenth of their computational cost, while also demonstrating stronger out-of-domain motion reasoning and zero-shot synthetic-to-real generalization. We will publicly release the benchmark, codebase, and supporting tools to facilitate further research in privacy-aware classroom safety.",
+      "authors": [
+        "Paritosh Parmar",
+        "Landy Lan",
+        "Hong Yang",
+        "Chen Yi",
+        "Chiat Pin Tay"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.ET",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-08-05T17:46:28+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05115v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05115",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "電腦視覺能否協助提升教室安全？本 pilot study 探討從 CCTV-style 觀察中進行具隱私意識且計算高效的教室事件辨識。此場景仍缺乏研究，現有 benchmark 與方法較少考慮真實部署所需的隱私、效率與泛化能力。作者提出結合生成式 CCTV-style 影片與真實教室 pose 資料的 hybrid benchmark，並提出輕量而穩健的 motion-reasoning framework。該方法基於許多事件在 pose 之外，更主要由運動方向、速度、加速度與強度區分的觀察，先建立階層式 kinematic representations，再將大型 teacher 的階層式 multi-order kinematic reasoning distill 至小型 single-order student，使其能以低成本進行 per-person inference，同時保留具表達力的運動理解。實驗顯示，模型以不到較大 baseline 十分之一的計算成本取得更佳表現，並展現較強的 out-of-domain motion reasoning 與 zero-shot synthetic-to-real generalization。作者將公開 benchmark、程式碼與支援工具。",
+      "problem_statement": "論文聚焦於 preschool 教室 CCTV 中 fall、punch、kick、throw、run 等安全事件的自動辨識。現有 classroom vision 研究主要處理 engagement、attendance、活動或一般行為，通用 action-recognition benchmark 也缺乏教室特有的高風險事件。真實場景還有高視角、小尺度、遮擋、姿態噪聲、成人與幼兒共存，以及兒童影像隱私問題；既有方法多未同時處理隱私、計算效率與 synthetic-to-real 泛化。",
+      "proposed_solution": "作者提出以 skeleton pose trajectories 為唯一辨識輸入的 privacy-aware framework，避免模型直接依賴可識別的 RGB 外觀。核心是 hierarchical kinematic representation：從平滑後的 joint positions 計算 velocities 與 accelerations，分別建模位置、方向速度及運動強度變化，再融合為 multi-order teacher。為了適合 edge 或資源受限部署，作者將 teacher 的 softened predictions 及 ground-truth supervision 蒸餾至較小的 single-order student；student 僅使用 zeroth-order joint positions，卻能在訓練期間吸收 multi-order motion reasoning。框架同時搭配生成式 CCTV-style synthetic benchmark 與 real-world anonymized pose evaluation。",
+      "core_contributions": [
+        "建立以 CCTV 視角為目標的教室事件辨識 hybrid benchmark，包含 1296 筆 synthetic samples 與 574 筆 real-world pose samples，涵蓋 fall、punch、jump、kick、throw、run、sit 及 background 八類。",
+        "提出以 skeleton pose 為輸入的隱私導向辨識 framework，從 joint positions 建立 velocities 與 accelerations，並以 order-specific backbones 融合 multi-order kinematic representations。",
+        "提出 multi-objective knowledge distillation，將 multi-order、較大型 teacher 的 motion reasoning 壓縮至僅使用 zeroth-order joint positions 的小型 student，以降低部署成本並改善 synthetic-to-real 泛化。"
+      ],
+      "methodology": "資料方面，作者以 Kling 與 Seedance 生成符合教室 CCTV 特性的影片，透過 scenario prompt、校服 asset library、三位作者一致審查，以及 preschool teachers 的標註與品質驗證，形成 1296 筆 synthetic samples；另收集 574 筆 real-world samples，僅保留 anonymized video 所抽取的 pose keypoints 與事件標籤。辨識模型不直接存取 RGB，只接收 per-person pose trajectories。首先以 linear interpolation 補齊遺失 joint coordinates，再以 Savitzky–Golay filter 平滑軌跡；由 joint position j 建立 velocity v=(j_t-j_{t-δ})/δ，並建立 acceleration a=(v_t-v_{t-δ})/δ。position、velocity、acceleration 各自輸入獨立的 STGCN++ order-specific backbone；其 latent features 投影至共同維度後，依人工權重加權平均形成 multi-order teacher representation。teacher 使用 64 base channels，student 使用僅 32 channels 的 STGCN++，且 inference 只處理 zeroth-order position。student 同時最小化 temperature=4 的 teacher-student KL distillation loss 與 ground-truth classification loss，權重為 λKD=0.3、λCls=1.0。所有模型先以 NTURGBD 預訓練；synthetic 資料按 80%/20% 分為 train/test。評估指標主要為 accuracy，消融另報告 macro-F1；實驗包括 synthetic-domain comparison、zero-shot synthetic-to-real transfer，以及 kinematic fusion、distillation weight 與 student compression 的消融。",
+      "key_results": "主要結果如下：\n\n| 評估設定 | 方法 | Accuracy (%) |\n|---|---|---:|\n| Synthetic test | AAGCN | 66.39 |\n| Synthetic test | STGCN++ | 68.05 |\n| Synthetic test | CTRGCN | 65.56 |\n| Synthetic test | MSG3D | 68.88 |\n| Synthetic test | PoseC3D | 70.54 |\n| Synthetic test | Ours | **71.78** |\n| Zero-shot synthetic-to-real | AAGCN | 54.70 |\n| Zero-shot synthetic-to-real | STGCN++ | 57.32 |\n| Zero-shot synthetic-to-real | CTRGCN | 53.83 |\n| Zero-shot synthetic-to-real | MSG3D | 59.23 |\n| Zero-shot synthetic-to-real | PoseC3D | 54.36 |\n| Zero-shot synthetic-to-real | Ours | **63.41** |\n\n作者指出，Ours 在 synthetic test 比最佳 baseline PoseC3D 高 1.24 個百分點，在 zero-shot real-world test 比最佳 baseline MSG3D 高 4.18 個百分點。Figure 2 顯示 Ours 使用約為 PoseC3D 十分之一的 parameters；論文文字另指出 student 為 teacher 的六分之一，但未完整報告各模型的 FLOPs、參數量與推論延遲數值。消融實驗顯示最佳 fusion weights 為 {w0,w1,w2}={1.0,0.8,0.2}，最佳 distillation loss weight λKD=0.3、λCls=1.0；作者另報告相較 STGCN++，accuracy 提升 4.1 個百分點、macro-F1 提升 5.2 個百分點。",
+      "insights": [
+        "若部署場景對原始影像敏感，可將辨識模型限制在 anonymized pose trajectories；但論文的部署設定仍假設 pose 可由資料持有機構先從 CCTV 提取。",
+        "對快速或具力量的事件，除靜態 pose 外，velocity 與 acceleration 等時間動態特徵值得納入；論文也顯示先以 temporal interpolation 與 Savitzky–Golay smoothing 降噪，有助於降低高階導數的噪聲放大。",
+        "評估教室安全模型時，不應只看 synthetic-domain accuracy；zero-shot synthetic-to-real 測試揭示 domain gap，且論文報告 synthetic 71.78% 降至 real-world 63.41%。"
+      ],
+      "limitations": "論文將研究定位為 pilot study，整體 accuracy 仍有限，且 synthetic-to-real 仍有由 71.78% 降至 63.41% 的 domain gap。資料聚焦新加坡 preschool 場景與八類別，跨地區、跨年齡及更廣泛事件的泛化未被驗證。融合權重採人工設定；論文也未報告完整的 latency、各類別數量、信賴區間或部署端 pose extraction 成本。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "skeleton-based action recognition",
+        "knowledge distillation",
+        "privacy-preserving computer vision"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.05131",
+      "title": "OPD-V: Visual On-Policy Self-Distillation with Modality Balance",
+      "abstract": "On-Policy Self-Distillation (OPSD) has become a standard post-training approach for improving visual reasoning in multimodal large language models (MLLMs). Existing methods draw privileged information from diverse input sources to guide self-distillation. Yet these designs overlook Modality Imbalance, a challenge inherent to MLLM reasoning. When textual information dominates generation, the model cannot fully integrate its multimodal input. Consequently, carefully designed privileged information remains underused, limiting the effectiveness of OPSD. To examine this limitation, we construct a Positive Teacher with the Zoom-In Image and a Negative Teacher with the Mask Image, which exhibit different degrees of Modality Imbalance. Changes in their reasoning correctness and token logits reveal that Modality Balance can itself serve as privileged information. Motivated by this finding, we introduce OPD-V, a visual OPSD paradigm that instantiates such information through the Positive Teacher and Negative Teacher. Positive Modality-Balance Logits Margins define a Modality-Balance Trust Region that selects the on-policy tokens used for self-distillation. Experiments across 6 benchmarks, 4 MLLM backbones, and 5 post-training methods show that OPD-V consistently improves reasoning performance while reducing training cost.",
+      "authors": [
+        "Aniri",
+        "Jinhe Bi",
+        "Peng Liao",
+        "Zengjie Jin",
+        "Volker Tresp",
+        "Fei Shen",
+        "Yunpu Ma",
+        "Tat-Seng Chua"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-05T17:53:06+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.05131v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.05131",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "On-Policy Self-Distillation（OPSD）已成為提升 Multimodal Large Language Models（MLLMs）視覺推理能力的標準 post-training 方法。既有方法從多種輸入來源取得 privileged information，以引導 self-distillation，卻忽略 MLLM 推理中的 Modality Imbalance：當文字資訊主導生成時，模型無法充分整合視覺與文字輸入，使精心設計的 privileged information 未被充分利用。作者以 Zoom-In Image 建立 Positive Teacher、以 Mask Image 建立 Negative Teacher，發現兩者在推理正確性與 token logits 上的差異顯示 Modality Balance 本身可作為 privileged information。據此提出 OPD-V，透過 Positive Modality-Balance Logits Margin 定義 Modality-Balance Trust Region，選取用於 self-distillation 的 on-policy tokens。跨 6 個 benchmarks、4 個 MLLM backbones 與 5 種 post-training 方法的實驗顯示，OPD-V 能穩定提升推理表現並降低訓練成本。",
+      "problem_statement": "現有 OPSD 讓 student 在自身生成的 on-policy prefixes 上接受 privileged teacher 的 token-level distillation，但既有 privileged information 多為 verified text、crop 或其他視覺變換，沒有衡量 teacher 是否真正使用視覺證據。由於文字 query、語言先驗與 autoregressive context 可能壓過影像，teacher supervision 可能主要反映 textual information，造成 Modality Imbalance，使額外視覺資訊未被充分利用，限制 OPSD 的推理增益。",
+      "proposed_solution": "作者提出 OPD-V，將 Modality Balance 轉化為可操作的 privileged information。Student 使用 Original Image；Positive Teacher 使用能放大 task-relevant region 的 Zoom-In Image；Negative Teacher 使用對該 crop 隨機遮罩的 Mask Image。兩個 teacher 對同一 on-policy prefix 與 student token 給出分布，透過 Positive 與 Negative Teacher 對該 token 的 log-probability 差計算 Modality-Balance Logits Margin。只有 margin 為正的 token 進入 Modality-Balance Trust Region，且以 margin 加權 Positive Teacher 與 student 的 Jensen–Shannon distillation，從而將蒸餾集中於更受視覺證據支持的位置。",
+      "core_contributions": [
+        "指出 Modality Imbalance 會限制 MLLM 中 privileged information 對 OPSD 的有效性，並將 Modality Balance 定義為可利用的訓練訊號。",
+        "提出 OPD-V 視覺 OPSD 框架：以 Zoom-In Image 建立 Positive Teacher、以 Mask Image 建立 Negative Teacher，並透過 token-level Modality-Balance Logits Margin 選擇信任區域。",
+        "在 6 個 benchmarks、4 個 MLLM backbones 與多種 post-training 方法上驗證效果；Qwen3.5-4B 平均準確率達 80.01%，且相較 OPSD 降低每步訓練延遲。"
+      ],
+      "methodology": "OPD-V 使用四個 MLLM backbone：Qwen3.5-4B/9B 與 Qwen3-VL-4B/8B；teacher 為 student 參數的 detached EMA copy，EMA 係數 τ=0.05。訓練資料含 6241 個視覺推理樣本，每個樣本提供 Original Image、文字 query、verified target 與 evidence-centered crop。Student 僅接收 Original Image 與 query，先依目前 policy 產生 on-policy response；Positive Teacher 接收由 task-relevant crop 放大而成的 Zoom-In Image，Negative Teacher 接收再經隨機矩形黑色遮罩的 Mask Image。三者使用相同 query、student-generated prefix 與 teacher 參數，逐 token 評分。對 student 生成 token yt，計算 δMBt=log q+t(yt)-log q−t(yt)；δMBt>0 的位置構成 Modality-Balance Trust Region，並以 δMBt 加權，在該區域對 student 分布與 Positive Teacher 分布施加 Jensen–Shannon divergence。每個 prompt 使用 8 個 rollouts，最大 response length 為 1024，訓練 1 epoch；為降低記憶體，採 top-K=100 並加入 tail-probability bucket。評估涵蓋 V* Bench、ZoomBench、HR-Bench 4K/8K、MME-RealWorld 英文與中文子集，共 6 項；指標主要為 accuracy，平均值為六項 benchmark accuracy 的未加權平均，未解析答案則依規則交由 Yes/No judge。",
+      "key_results": "| 設定／方法 | 平均準確率 | 與 base 差異 |\n|---|---:|---:|\n| Qwen3.5-4B base | 64.30% | — |\n| Qwen3.5-4B + OPSD | 69.26% | +4.96 個百分點 |\n| Qwen3.5-4B + Vision-OPD | 77.10% | +12.80 個百分點 |\n| Qwen3.5-4B + OPD-V | 80.01% | +15.71 個百分點 |\n\nOPD-V 在 Qwen3.5-4B 的 6 項 benchmark 分數依序為 V* Bench 94.76%、ZoomBench 65.92%、HR-Bench 4K 85.75%、HR-Bench 8K 83.25%、MME-RealWorld EN 76.31%、CN 74.06%。跨 backbone 的平均準確率則為：Qwen3-VL-4B 由 68.00% 提升至 74.14%，Qwen3-VL-8B 由 68.93% 提升至 73.03%，Qwen3.5-9B 由 69.75% 提升至 77.63%。Qwen3.5-4B 最後十個記錄步驟的平均 response length 為 OPD-V 140.9 tokens、OPSD 553.8 tokens，減少 74.5%。平均 step latency：4B 由 352 秒降至 240 秒（-31.8%），9B 由 451 秒降至 340 秒（-24.7%）。消融實驗中，Positive 與 Negative Teacher 結合為 80.01%，僅 Positive Teacher 為 74.62%，僅 Negative Teacher 為 71.98%。",
+      "insights": [
+        "在視覺推理蒸餾中，不宜只依賴 teacher confidence；可用保留或削弱視覺證據的成對輸入，判斷某個 token 是否真正獲得視覺資訊支持。",
+        "Positive Teacher 與 Negative Teacher 應分工：前者提供蒸餾分布，後者負責篩選 token；這種選擇性蒸餾可避免將所有 on-policy token 等量更新。",
+        "評估 post-training 效率時，應同時考慮 teacher forward 次數、輸入建構成本與 rollout 長度；論文中額外的 Negative Teacher pass 仍被較短回應與較低 preprocessing 成本抵銷。"
+      ],
+      "limitations": "論文僅以 4 個指定 Qwen backbones、6241 個來自 Vision-OPD 的視覺推理樣本及 1 epoch 訓練驗證，未報告更廣泛模型、資料分布或多 epoch 結果。Zoom-In 依賴 evidence-centered bounding box，實務上可能需要額外標註或資料欄位。論文也未提供不同 mask 隨機種子、超參數敏感度、統計顯著性與完整成本分析。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "On-Policy Self-Distillation",
+        "MLLM 視覺推理",
+        "Modality Imbalance",
+        "選擇性 token-level knowledge distillation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  }
+]
