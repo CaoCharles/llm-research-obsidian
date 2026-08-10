@@ -1,0 +1,577 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.07458",
+      "title": "CoinRAG: Contextualized Information Nugget KV Cache Reuse for Long-Context RAG",
+      "abstract": "Recent optimization studies on Retrieval-Augmented Generation (RAG) have exploited chunk-level KV cache reuse to avoid processing long retrieved contexts for higher efficiency, while significant information redundancy and noise still remain in the coarse-grained chunks. This paper optimizes the Pareto frontier under low prefill latency constraints while maximizing accuracy by proposing CoinRAG (Contextualized Information Nugget KV Cache Reuse for Long-Context RAG). The name metaphorically reflects our core mechanism: much like assembling small tokens (or \"coins\") to accumulate a larger value, CoinRAG compositionally reuses offline-computed, fine-grained nugget caches to form a learned contextual representation efficiently in a more semantically relevant but compact manner. Specifically, instead of full-chunk encoding, CoinRAG identifies query-relevant semantic units within retrieved chunks through two-stage retrieval and seamlessly assembles their sliced KV representations with a chunk-level context. Extensive evaluations on LongBench multi-hop question answering tasks demonstrate that CoinRAG significantly reduces operational costs and outperforms the other baselines with a new Pareto frontier and an average 5.3% relative improvement in answer quality (F1) under a standard fast prefill latency budget.",
+      "authors": [
+        "Gyuwan Kim",
+        "Cheoneum Park",
+        "Tao Yang"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-08-07T17:51:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07458v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07458",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "近期 RAG 優化研究多利用 chunk-level KV cache reuse，避免在推論時重複處理冗長的 retrieved context，以提升效率；然而，粗粒度 chunks 仍包含大量資訊冗餘與噪聲。本論文提出 CoinRAG（Contextualized Information Nugget KV Cache Reuse for Long-Context RAG），在低 prefill latency 約束下，同時最大化回答準確度並優化 accuracy–latency Pareto frontier。CoinRAG 先於離線階段從 chunks 擷取細粒度、可對應至原文 token span 的 information nuggets，並預先計算完整 chunk 的 KV cache；線上則透過 two-stage retrieval 選出與 query 相關的 nuggets，再切片並組合其具上下文的 KV representations，形成更精簡且語義相關的 context。於 LongBench 三個 multi-hop QA 資料集的實驗顯示，在標準 100 ms P99 TTFT 預算下，CoinRAG 平均 F1 為 41.7，相較最佳競爭方法 39.6 提升 5.3%。",
+      "problem_statement": "長 context RAG 在每次 query 時重新編碼 retrieved chunks，造成高 prefill latency、GPU 記憶體與計算成本。既有 chunk-level KV cache reuse 雖能降低重複編碼，卻仍把 chunk 內無關、冗餘與噪聲內容送入模型，可能稀釋關鍵證據；若在低延遲 SLA 下減少 chunks，又會損失 multi-hop QA 所需的召回與推理資訊。",
+      "proposed_solution": "CoinRAG 將 cache reuse 的粒度由 chunk 細化為 contextualized information nugget。系統先離線從每個 chunk 抽取可對齊原文 token span 的 nuggets，並計算完整 chunk 的 KV cache；線上先檢索相關 chunks，再於候選 chunks 內選取 query-relevant nuggets，直接切片其原 chunk KV，保留文件上下文而不重新編碼。選出的 slices 依原序連續組合，並以 RoPE position alignment 修正位置。最後透過 nugget-aware fine-tuning，使模型適應非連續 cache 組合，從而以較短 context 在低 TTFT 下取得較高 QA F1。",
+      "core_contributions": [
+        "提出以 text-span information nuggets 為單位的 KV cache reuse 框架，將離線計算的 contextualized nugget caches 組合成精簡線上 context。",
+        "設計 offline nugget extraction、two-stage chunk-to-nugget retrieval、position alignment 與 nugget-aware fine-tuning，以降低非連續 cache stitching 造成的 training–inference gap。",
+        "在 HotpotQA、2WikiMQA 與 MuSiQue 上建立 accuracy–TTFT 與 accuracy–context-length Pareto frontier，並系統性比較 Standard RAG、CacheBlend、TurboRAG 與 KVLink。"
+      ],
+      "methodology": "CoinRAG 使用 Qwen2-7B-Instruct 作為 answer generator，BGE-M3 負責 retrieval，並利用模型支援的 RoPE position rotation。離線階段將語料切成 512-token chunks，先以 GPT-4o-mini 從每個 chunk 擷取候選 information nuggets；候選文字若可在原文 exact match，便直接定位，否則以相近長度的 whole-word spans 做 fuzzy matching，低於 similarity threshold 的候選丟棄。接著對每個完整 chunk 做一次 forward pass，保存其 contextualized KV cache 與 nugget 的 start/end token indices。線上階段先以 dense retriever 取 top-kc chunks，再只在這些 chunks 內對預先抽取的 nuggets 做 embedding ranking，選出 top-k nuggets。系統從來源 chunk KV cache 切出對應 spans，與 system prompt cache 組合；由於 spans 來自不同 chunks，依文件順序重新排列並連續打包，透過 RoPE rotation offset 修正位置。之後在線上僅編碼 query，將其 KV representations 接到組合後的 context cache，再生成答案。為縮小連續訓練與非連續 cache stitching 的落差，作者以含 ground-truth 與 distractor 文件的 QA 資料進行 nugget-aware fine-tuning，直接對答案 token 的 cross-entropy 訓練。實驗使用 LongBench 的 HotpotQA、2WikiMQA、MuSiQue，掃描 chunk 或 nugget 數量形成 Pareto curves，主要指標為 token-level F1、平均與 P99 TTFT，以及 prefill active token length。",
+      "key_results": "主要結果如下（表中數字為論文 Table 3 報告值；TTFT 為平均值，P99 為 P99 TTFT，Len 為 active prefix context length）：\n\n| 設定 | 方法 | HotpotQA F1 / TTFT / P99 / Len | 2WikiMQA F1 / TTFT / P99 / Len | MuSiQue F1 / TTFT / P99 / Len | 平均 F1 |\n|---|---|---:|---:|---:|---:|\n| P99 ≤ 100 ms | Standard RAG | 40.1 / 74 / 81 / 741 | 28.5 / 71 / 83 / 684 | 21.0 / 76 / 82 / 743 | 29.9 |\n| P99 ≤ 100 ms | TurboRAG | 49.1 / 71 / 83 / 752 | 42.2 / 80 / 95 / 1059 | 27.4 / 73 / 94 / 754 | 39.6 |\n| P99 ≤ 100 ms | KVLink | 49.0 / 57 / 65 / 749 | 38.7 / 70 / 80 / 1433 | 26.8 / 67 / 71 / 1170 | 38.2 |\n| P99 ≤ 100 ms | CoinRAG | 51.4 / 87 / 618 | 46.0 / 78 / 389 | 33.1 / 77 / 387 | 41.7 |\n| 無 latency 限制 | TurboRAG | 49.7 / 439 / 816 / 9262 | 44.8 / 116 / 150 / 1849 | 27.4 / 73 / 94 / 754 | 40.6 |\n| 無 latency 限制 | CoinRAG | 51.4 / 72 / 87 / 618 | 44.5 / 96 / 115 / 695 | 32.2 / 106 / 427 | 42.7 |\n\n在 P99 100 ms 預算下，CoinRAG 的平均 F1 為 41.7，較 TurboRAG 的 39.6 相對提升 5.3%，平均 contextual token length 為 465，較 TurboRAG 的 855 短 1.84 倍。無 latency 限制時，CoinRAG 平均 F1 為 42.7，較 TurboRAG 的 40.6 提升 5.2%，且平均 context length 為 580，較 TurboRAG 的 3955 短 6.8 倍。消融實驗顯示，isolated nugget encoding 使三個資料集 peak F1 分別下降 6.3、4.9、3.9 分；two-stage retrieval 相較 one-stage retrieval 的相對增益為 9.6%–17.5%；nugget-aware fine-tuning 使三個資料集 peak F1 分別提升 11.3、6.3、6.4 分。",
+      "insights": [
+        "若服務受嚴格 TTFT SLA 約束，可將固定且較少變動的文件於離線階段預編碼，並只載入 query 相關的 nugget KV slices，以在有限延遲與 GPU memory 下保留更多證據。",
+        "information retrieval 不宜只在 chunk 層級停止；先以 chunk 篩選候選範圍，再於候選內進行 nugget ranking，可同時改善證據選擇與 active context 長度。",
+        "快取切片不能簡單視為獨立文字重新編碼；論文消融顯示保留來源 chunk 的 contextualized KV representations 明顯較佳，但仍須注意跨 chunk 互動不足及 nugget 選取造成的誤導。"
+      ],
+      "limitations": "離線 KV cache、nugget extraction 與 fine-tuning 具有 corpus-scale 的儲存、I/O 與一次性計算成本，且快取綁定特定模型，模型更新即需重建。品質仍受 chunk/nugget retrieval recall 限制；不同 chunks 的 nuggets 不會互相 attend。研究也未評估跨 query KV reuse，並假設文件不常變動。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-context RAG",
+        "KV cache reuse",
+        "information retrieval",
+        "multi-hop question answering"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07418",
+      "title": "ResidencyRL: Reinforcement Learning in Simulated Clinical Environments",
+      "abstract": "In medical education, physicians convert academic knowledge into clinical expertise through residency: years of training across thousands of encounters, with diverse sources of feedback and progressively greater autonomy. Much of clinical reasoning relies on the patient encounter, a dialogue in which a clinician elicits history, refines diagnostic hypotheses, and decides management under uncertainty. While large language models (LLMs) excel on static medical benchmarks, methods to optimize the full sequence of clinical decisions remain underdeveloped. We present ResidencyRL, a reinforcement learning (RL) method for training clinical artificial intelligence (AI) agents through simulated multi-turn clinical encounters (up to 60 dialogue turns and 8 tool calls per trajectory). ResidencyRL pairs the policy agent with LLM simulators capable of complex, adversarial behaviors, training against a structured reward aligned to diagnostic accuracy, management quality, communication, documentation, and safety. On held-out evaluations, the ResidencyRL agent improves diagnostic accuracy by 7.0% under adversarial conditions (88.0% vs. 81.0%) and reduces missed red flag rates by 31%, demonstrating rigorous mitigation of premature closure. Blinded expert clinicians validated these gains, preferring the trained agent in 87.6% of side-by-side comparisons. The procedural competencies transfer to unseen benchmarks: the agent outperforms the base model across all six clinical axes of the AMIE multi-visit benchmark, and shows consistent directional improvements on AgentClinic and CRAFT-MD. Our findings demonstrate that sequential clinical decision-making can be effectively learned through multi-turn RL in simulation, yielding robust, generalizable capabilities, paving the way towards clinical mastery. Prospective validation with real-world workflows remains necessary to establish clinical utility.",
+      "authors": [
+        "Valentin Liévin",
+        "Samuel Schmidgall",
+        "Tim Strother",
+        "Alex Bijamov",
+        "Akshay Goel",
+        "Anil Palepu",
+        "Chunjong Park",
+        "Vahid Balazadeh",
+        "Min Woo Sun",
+        "Marius Guerard",
+        "Justin Chen",
+        "Dave Steiner",
+        "Vikram Dhillon",
+        "Ibrahim Azar",
+        "Akhil Mehta",
+        "Nicholas Spetsieris",
+        "Shilpan Shah",
+        "Maen Abdelrahim",
+        "Amit Dahiya",
+        "Yun Liu",
+        "Katherine Chou",
+        "Yossi Matias",
+        "Avinatan Hassidim",
+        "Dale R. Webster",
+        "Quoc V. Le",
+        "Raia Hadsell",
+        "Joelle Barral",
+        "Carey Radebaugh",
+        "Aleksandra Faust",
+        "Shekoofeh Azizi",
+        "Mike Schaekermann",
+        "Po-Hsuan Cameron Chen",
+        "Tao Tu",
+        "David Racz",
+        "Lin Yang"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-07T17:04:41+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07418v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07418",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "在醫學教育中，醫師透過住院醫師訓練，將學術知識轉化為臨床專業，歷經數千次就診、不同來源的回饋，以及逐步增加的自主性。臨床推理很大程度依賴病人問診：醫師 eliciting history、修正診斷假設，並在不確定性下決定處置。雖然 LLM 在靜態醫學 benchmark 表現優異，但最佳化完整且連續的臨床決策序列仍不成熟。本文提出 ResidencyRL，透過 simulated multi-turn clinical encounters 訓練臨床 AI agent，每條 trajectory 最多包含 60 次對話與 8 次工具呼叫。方法結合具複雜及 adversarial 行為的 LLM patient simulator，以及涵蓋診斷準確度、處置品質、溝通、文件紀錄與安全性的 structured reward。在保留測試中，模型於 adversarial 條件下將診斷準確度由 81.0% 提升至 88.0%，提高 7.0 個百分點，並使遺漏 red flag 的比率降低 31%。盲測專家偏好訓練後 agent 的比例為 87.6%。能力也轉移至 AMIE multi-visit、AgentClinic 與 CRAFT-MD 等未見 benchmark，但仍需真實臨床流程的前瞻性驗證。",
+      "problem_statement": "現有 LLM 醫療能力多由靜態問答或短輪對話 benchmark 衡量，難以最佳化臨床 encounter 中連續的資訊蒐集、假設修正、分流、處置與文件決策。既有多輪 RL 工作通常限於不超過 12 輪，且只處理對話、診斷詢問或檢查下單等孤立子任務，無法充分處理隱藏資訊、患者抗拒、adversarial manipulation、premature closure 與安全性。",
+      "proposed_solution": "作者提出 ResidencyRL，將完整臨床 encounter 建模為部分可觀測、長期互動環境：policy agent 與具人口、健康識讀、資訊不對稱及 adversarial 行為的 LLM patient simulator 對話，並透過 documentation API 執行診斷、鑑別診斷、urgency、management、患者摘要與 SOAP note。方法以 57K 生成情境建立課程，結合 general、targeted history-taking 和 safety case；再用涵蓋臨床品質與安全 penalty 的 hierarchical structured reward，透過 GRPO 從平行 trajectory 更新政策。核心創新是把自然語言問診、工具互動、臨床管理、文件和安全目標放入同一個長期 RL objective。",
+      "core_contributions": [
+        "提出 ResidencyRL，一種以線上 multi-turn reinforcement learning 和 GRPO 訓練完整臨床問診、文件紀錄與管理決策的 agentic 方法，處理最長 60 次對話及 8 次工具互動。",
+        "建立包含 routine telehealth、targeted history-taking 與 adversarial safety 的情境生成及模擬環境，並以 structured autorater reward 同時評估診斷、管理、問診、溝通、文件與安全性。",
+        "在保留的 adversarial 情境及多個外部 benchmark 上觀察到程序性能力泛化，並由 97 名 board-certified clinicians 進行 blinded side-by-side 評估。"
+      ],
+      "methodology": "ResidencyRL 以 Gemini 3.5 Flash 初始化的 policy agent，與 Gemini 3.5 Flash 驅動的 patient simulator 互動；每個 episode 最多 60 次訊息、8 次額外工具呼叫，論文圖示平均約 55 個 agent steps。情境生成分四階段：先抽樣人口、Big Five 行為特徵、健康識讀、對話 effort、疾病與複雜度；再由 Gemini 3.1 Pro 依 DDXPlus evidence 生成病史、症狀、ground-truth diagnosis 與 ranked differential；接著以獨立 LLM judge 檢查一致性、臨床真實性、鑑別診斷、人口適切性及完整性，予以 accept、modify 或 reject；最後以 character-trigram TF-IDF，對摘要 cosine similarity 超過 0.9 者去重。訓練情境分為 general telehealth（83%）、targeted intake/history（15%）及 adversarial（2%）。環境提供 chart review、primary diagnosis、differential、urgency、management plan、patient-facing summary、SOAP note 與 terminate 等 API。LLM autorater 以 scenario ground truth 為參照，對 Diagnosis、Management、Intake、Communication 等軸以 1–5 Likert 評分並正規化，另加入 hallucination、contraindication、documentation、style、length 與安全旗標等 penalty；總 reward 為 primary reward 減 penalty，範圍為 [-3,3]。政策以 Group Relative Policy Optimization（GRPO）透過同一情境的平行 rollouts 更新。評估涵蓋 held-out in-domain、adversarial、AMIE Mx、unseen oncology、AgentClinic、CRAFT-MD，以及 97 名專家的 blinded side-by-side 比較。",
+      "key_results": "| 評估項目 | Base model | ResidencyRL | 論文報告的變化 |\n|---|---:|---:|---:|\n| Adversarial 診斷準確度（rubric ≥4/5） | 81.0% | 88.0% | 提升 7.0 個百分點 |\n| Adversarial missed red flags | 未提供具體數值 | 未提供具體數值 | 降低 31% |\n| Management quality（1–5 Likert） | 3.98 | 4.52 | 提升 0.54 |\n| Patient-centered communication：responding to emotions | 2.63 | 3.06 | 提升 0.43 |\n| AMIE Mx：management reasoning | 80.1% | 88.4% | 提升 8.3 個百分點 |\n| AMIE Mx：patient communication | 83.7% | 92.2% | 提升 8.5 個百分點 |\n| 專家 blinded side-by-side overall preference（n=97） | 12.4% | 87.6% | 訓練後 agent 勝率 87.6% |\n| 專家評估：information gathering preference | 論文未報告具體 baseline 勝率 | 90.7% win rate | ResidencyRL 勝率 90.7% |\n| 專家評估：management plan appropriateness preference | 論文未報告具體 baseline 勝率 | 75.3% win rate | ResidencyRL 勝率 75.3% |\n\n論文另指出，ResidencyRL 在 AMIE Mx 六個 clinical axes 均優於 base model，並在 unseen oncology、AgentClinic 與 CRAFT-MD 上呈現一致方向的改善；但這些項目的完整數值多數未報告。",
+      "insights": [
+        "若要評估臨床 agent，不應只測單輪醫學問答；應將資訊蒐集、工具使用、診斷、分流、處置與文件紀錄納入同一條 trajectory。",
+        "針對 premature closure，可在 simulator 中設計必須透過特定問題才能揭露的 hidden information，並把 red-flag 遺漏、未詢問資料及不安全處置設為明確 penalty。",
+        "自動評分可擴展長期 RL 訓練，但高風險醫療用途仍應結合獨立專家盲測、來源可追溯的文件檢查，以及真實工作流程中的前瞻性驗證。"
+      ],
+      "limitations": "作者明確指出，模擬器不會建模治療後的下游生理效果，管理品質主要由 LLM autorater 依 scenario ground truth 評分；情境與患者行為也受生成和 prompt 設計限制。部分外部 benchmark 僅報告方向性改善，未提供完整數字。最重要的是尚無 real-world workflow 的 prospective validation，因此臨床效用與病人層級安全性仍未確立。",
+      "tags": [
+        "agent-evaluation",
+        "safety",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長期 agentic reinforcement learning",
+        "臨床對話與 simulated patient",
+        "premature closure 與 clinical safety",
+        "LLM-as-judge 與 structured reward"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07417",
+      "title": "I Seek You in Videos: Identity-Conditioned Queries for Person-Centric Video Reasoning",
+      "abstract": "Real-world video reasoning often involves multimodal, multi-source inputs, whereas existing video reasoning tasks typically assume a simplified video-text setting, limiting identity matching and person-centric reasoning. To bridge this gap, we introduce the Identity-conditioned Queries (ICQ) task, in which models are required to jointly associate and interpret an input video and a reference image of a person, and leverage this conditioning to address identity grounding, behavior understanding, and temporal reasoning, among other challenges. Building on ICQ, we present ISYV (I Seek You in Videos), a systematic solution comprising three components: (1) ISYV-Bench, a challenging evaluation benchmark with 1,377 real-world complex videos and 1,377 question-answer pairs, organized into six difficulty levels spanning capabilities from identity recognition to causal reasoning; (2) ISYV-75K, a large-scale training set of 75K high-quality samples constructed via automated annotation, multi-stage verification, and manual review; and (3) ISYV-Framework, containing an ICQ-oriented model and training strategy for learning to exploit informative video shots without additional shot-level annotations. Extensive experiments show that both mainstream closed-source and open-source MLLMs struggle on ISYV-Bench, especially in cross-domain identity matching and long-horizon tracking. ISYV-Model outperforms strong baselines and in some aspects approaches closed-source performance. Overall, ISYV provides a unified task definition, scalable datasets/benchmarks, and modeling insights for person-centric video reasoning.",
+      "authors": [
+        "Shibo Gao",
+        "Chongxiao Wang",
+        "Chenglong Huang",
+        "Jie Ma",
+        "Haolin Shi",
+        "Fei Ding",
+        "Jing Li",
+        "Qiang Lyu",
+        "Yangyang Liu",
+        "Yang Liu",
+        "Jun Liu",
+        "Linlin Huang",
+        "Peipei Yang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-07T17:02:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07417v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07417",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "現實世界的影片推理通常涉及多模態、多來源輸入，但現有影片推理任務多採用簡化的 video-text 設定，限制了身份匹配與以人物為中心的推理能力。為此，本文提出 Identity-conditioned Queries（ICQ）任務：模型需共同關聯並理解輸入影片與人物參考影像，利用該身份條件完成身份定位、行為理解、時間推理等工作。基於 ICQ，作者提出 ISYV（I Seek You in Videos）系統，包含三部分：ISYV-Bench，收錄1,377部真實複雜影片及1,377組問答，分為六個難度層級；ISYV-75K，包含約75K筆訓練樣本；以及 ISYV-Framework，透過 ICQ-oriented model 與訓練策略學習擷取資訊性影片 shots，且不需額外 shot-level 標註。實驗顯示，開源與閉源 MLLM 在跨域身份匹配及長期追蹤上均有困難；作者模型優於強基準，部分能力接近閉源模型。",
+      "problem_statement": "現有影片問答與推理多採 video-text 雙模態設定，通常只理解單段影片，無法處理實際應用中的參考人物影像與文字查詢聯合輸入。當人物在不同 shot、場景、服裝、光照或妝容下出現時，模型還需完成身份匹配、定位、長期追蹤、行為與社交理解，以及時間和因果推理；既有影像級個人化方法則未涵蓋複雜影片與跨 shot 的多來源身份推理。",
+      "proposed_solution": "作者提出 ISYV 系統，核心是 Identity-Conditioned Queries（ICQ）任務與三項配套。ISYV-Bench 以六級認知層次評估從人物辨識到因果意圖推理；ISYV-75K 提供大規模訓練樣本，透過自動標註、多階段模型檢查與人工審核建立。ISYV-Framework 的 ICQ Module 使用 learnable tokens 和 cross-attention 抽取參考人物的緊湊表徵，避免影片與參考圖語義混淆；訓練上先 SFT，再以 GRPO 結合 caption reward 與 ESR reward，讓模型在沒有 shot-level 標註下學習尋找回答問題所需的有效 shots。",
+      "core_contributions": [
+        "提出 Identity-Conditioned Queries（ICQ）任務定義，要求模型聯合處理複雜影片、人物參考影像與文字查詢，評估身份 grounding、行為理解、時間與因果推理。",
+        "建立 ISYV-Bench 與 ISYV-75K 資料套件：前者包含1,377筆人工驗證基準樣本，後者包含24,150段影片與74,578組問答，涵蓋六級認知層次及17類子任務。",
+        "提出 ISYV-Framework，包括以 learnable tokens 壓縮參考影像的 ICQ Module，以及結合 SFT、GRPO、caption reward 與 Effective Shot Re-Reasoning（ESR）reward 的兩階段訓練方法。"
+      ],
+      "methodology": "任務輸入為長影片、人物參考影像與文字查詢，輸出包含參考影像描述、相關影片 shots、推理過程及答案。資料方面，作者從電影、電視劇與 anime 等影音來源收集超過100,000段影片，先移除無人物片段，再以 TransNet V2 分割 shots；Gemini-2.5-Pro 產生逐 shot 描述、具 ID 的人物行為與整體敘事標註。Qwen3-VL-32B 檢查人物框與參考圖品質，Qwen3-Max 依模板產生問答、CoT 與 leakage 檢測，並透過 Qwen-Image-Edit 或 face ReID 建立服裝、姿態、背景不同的身份參考圖。ISYV-Bench 再經模型過濾與至少三名標註者交叉驗證。\n模型的 ICQ Module 先對 learnable tokens 使用 self-attention，再以 tokens 作為 Queries、參考影像 encoder tokens 作為 Keys/Values，透過 cross-attention 壓縮人物特徵，避免參考圖被誤當成影片末幀並降低 token 雜訊。訓練分為 SFT cold start 與 GRPO reinforcement fine-tuning。獎勵包含格式、二元答案正確性、由 LLM judge 評估的 caption semantic reward，以及 ESR reward：模型選出 shots 後剪輯並降採樣重推理，只有初始與重推理答案皆正確且可解析時給予獎勵，並依選取 shots 數量衰減額外分數。評估以 O.Avg（答案正確率）與 ICQ Q.Avg（同時滿足參考影像描述與答案正確）為主，並報告六個層級的 accuracy；所有模型影片輸入統一採全片均勻取樣32 frames。",
+      "key_results": "| 模型/設定 | O.Avg | ICQ Q.Avg | L1 BP | L2 OP | L3 PO | L4 SC | L5 SM | L6 CR |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|\n| Human | 95.13% | 96.30% | 95.02% | 96.88% | 96.11% | 90.81% | 96.97% | 論文表格未提供明確對應的 L6 數值 |\n| GPT-5.2-Global | 45.53% | 45.53% | 49.63% | 37.55% | 46.25% | 66.67% | 22.61% | 65.66% |\n| Gemini-2.5-Pro | 67.10% | 67.10% | 85.93% | 65.90% | 66.25% | 80.56% | 40.99% | 82.32% |\n| Qwen3-VL-235B-A22B | 39.80% | 39.80% | 70.37% | 45.59% | 37.81% | 27.78% | 21.91% | 51.01% |\n| Qwen2.5-VL-7B（Image） | 24.76% | 6.75% | 38.52% | 33.33% | 22.50% | 20.00% | 7.77% | 36.36% |\n| Qwen2.5-VL-32B（Image） | 39.29% | 33.99% | 57.78% | 36.78% | 41.56% | 36.67% | 18.37% | 58.59% |\n| VideoLLaMA3-7B | 37.25% | 3.34% | 34.07% | 35.25% | 47.81% | 40.00% | 16.61% | 52.02% |\n| Video-R1 | 47.57% | 47.57% | 37.78% | 40.61% | 50.62% | 45.56% | 44.88% | 64.14% |\n| Qwen2.5-VL-7B-RFT | 54.22% | 54.22% | 59.25% | 51.72% | 53.12% | 34.44% | 49.82% | 69.19% |\n| ISYV-Model-SFT | 33.55% | 33.40% | 49.63% | 46.74% | 20.31% | 8.33% | 43.82% | 34.85% |\n| ISYV-Model-RFT | 57.01% | 57.01% | 62.22% | 61.69% | 60.00% | 37.22% | 50.18% | 70.20% |\n\n作者報告 Gemini-2.5-Pro 為最佳閉源基準，仍明顯低於人類；開源模型整體表現更弱。ISYV-Model-RFT 的 O.Avg 為57.01%，相較 ISYV-Model-SFT 的33.55% 提升23.46個百分點。消融實驗顯示，累加 format/accuracy reward 得55.44%，加入 caption reward 後為55.44%，再加入 ESR reward 後達57.01%；表格未清楚列出各欄位的獨立增益。32個 learnable tokens 的 O.Avg 為57.01%，16與64個分別為46.93%與53.31%；32 frames 為57.01%，16與64 frames 分別為34.50%與56.56%。",
+      "insights": [
+        "對人物中心影片評測而言，僅衡量最終答案不足以確認模型是否真正使用參考影像；可額外檢查身份描述、證據 shot 與答案的一致性，類似論文中的 ICQ Q.Avg。",
+        "對長影片推理，讓模型輸出候選相關 shots，再透過重推理驗證其選取的證據是否足以維持正確答案，可能比單純增加所有影片 frames 更有效。",
+        "資料建構可採用自動標註、多輪模型檢查、人工複核與 leakage detection 的分層流程；但訓練與評測資料仍應避免過度依賴同一批模型產生標註，以降低評測偏差。"
+      ],
+      "limitations": "基準僅有1,377筆問答，且資料主要來自電影、電視劇與 anime；訓練標註大量依賴 Gemini、Qwen 等模型自動生成，再由人工驗證，可能存在來源與模型偏差。論文未提供完整資料分布、各子任務樣本數、跨來源泛化測試及更廣泛的人類一致性分析；未來將擴展更複雜、真實的影片推理任務。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態大型語言模型評測",
+        "長影片時空推理",
+        "人物身份匹配與長期追蹤"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07370",
+      "title": "LitTraceQA: A Benchmark for Multi-Stage Grounding and Verification in Scientific Question Answering",
+      "abstract": "Scientific literature is increasingly used as a knowledge source for language models, retrieval-augmented generation systems, and research assistants, but answering research questions from papers requires more than fluent generation. A reliable system must identify the relevant papers, locate the concrete evidence that supports the answer, and produce a response that is faithful to that evidence. We present LitTraceQA, a benchmark for literature-grounded question answering over scientific papers. Given a research question and a metadata pool of papers, a system must return three connected outputs: canonical paper identifiers, supporting evidence locations, and answers in one or more requested formats, including free-form text, multiple-choice answers, and structured tables. LitTraceQA targets evidence types common in scientific reading: tables, figures, text spans, equations or algorithms, and citation contexts. The public development split contains 55 examples, including 26 hidden-source single-paper questions and 29 multi-paper questions, and provides gold papers, evidence annotations, and answers for local validation. We also analyze a larger final annotation collection with 4,978 unique-question records over 4,859 unique gold papers. By evaluating paper retrieval, evidence grounding, and answer accuracy separately, LitTraceQA provides a testbed for scientific QA systems that produce verifiable answers rather than unsupported summaries.",
+      "authors": [
+        "Xuye Liu",
+        "Yimu Wang",
+        "Peng Shi",
+        "Bo Xue",
+        "Xiangrui Ke",
+        "Songcheng Cai",
+        "Kath Choi",
+        "Di Wu",
+        "Freda Shi",
+        "Krzysztof Czarnecki"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-07T16:11:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07370v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07370",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "科學文獻日益成為 language models、retrieval-augmented generation（RAG）系統與研究助理的知識來源，但根據論文回答研究問題不只是產生流暢文字。可靠系統必須找出相關論文、定位支持答案的具體證據，並確保回答忠實於證據。本文提出 LitTraceQA，一個針對科學論文的 literature-grounded question answering benchmark。系統接收研究問題與論文 metadata pool，需輸出三項相互連結的結果：canonical paper identifiers、supporting evidence locations，以及指定格式的答案，包括自由文本、multiple-choice 與 structured tables。基準涵蓋 tables、figures、text spans、equations or algorithms，以及 citation contexts 等證據類型。公開 development split 有 55 題；較大的最終標註集合則包含 4,978 個 unique questions、4,859 篇 gold papers。LitTraceQA 分別評估論文檢索、證據 grounding 與答案正確性，測試系統能否產生可驗證而非缺乏支持的科學回答。",
+      "problem_statement": "現有 scientific QA benchmark 常只評估答案正確性，或預先提供來源論文，因此無法判斷系統是否找對論文、定位到真正支持答案的證據。科學問題又常涉及跨論文數值比較、表格、圖形、方程式、演算法細節與 citation context；流暢但錯誤或無依據的回答可能被 answer-only 指標誤判為成功。LitTraceQA 要解決的是完整且可驗證的 retrieval-to-grounding-to-answer 評估問題。",
+      "proposed_solution": "作者提出 LitTraceQA 的 traceable literature-grounded QA 框架。每筆資料以 research question 為中心，將 gold paper identifiers、typed evidence items、locators 與 requested-format answer 組成可檢查的 gold trace。任務同時涵蓋 hidden-source single-paper 與 multi-paper QA，並保留 table、figure、text、equation/algorithm、citation context 等證據型態。其核心創新不是新的模型架構，而是把 paper retrieval、evidence grounding 與 answer correctness 設為明確且相互依賴的輸出與評估階段，配合 strict conjunction 和 oracle diagnostic settings，定位系統失敗來源。資料建構則以 open-book 生成、grounding 驗證及 closed-book hardness filtering 提升可檢查性與難度。",
+      "core_contributions": [
+        "將科學論文問答明確建模為 paper retrieval、typed evidence grounding 與 answer generation 三階段串聯任務，要求系統同時輸出論文識別碼、證據位置與答案。",
+        "涵蓋 table、figure、text span、equation/algorithm、citation context 五類科學閱讀中常見的證據，並支援自由文本、multiple-choice 與 structured table 等答案格式。",
+        "建立具 closed-book hardness filtering 與結構化驗證資訊的資料建構流程，並提出分階段、strict joint success 及 oracle diagnostic ladder 評估協定。"
+      ],
+      "methodology": "LitTraceQA 將輸入定義為 query id、自然語言 question、answer types，以及固定的 paper metadata pool P；multiple-choice 題提供選項，table 題提供 schema 與 row alignment 規則。系統必須輸出預測論文集合 P̂、證據集合 Ê 與答案 â。資料建構採 generate–ground–challenge 流程：先從 27,487 筆近期 machine learning、computer vision 與 NLP 論文 metadata 及可檢索的 local text cache 選取候選論文；open-book generator 讀取論文內容，依序涵蓋五種 primary evidence type，生成自包含問題、gold papers、typed evidence、locator 與答案。接著以 automated grounding checks 確認每筆證據屬於宣告的 gold paper，且文字或數值可由 local paper text 找回；再將同一問題交給無論文內容的 GPT、Claude 與 Gemma challengers，移除可由記憶或猜測可靠回答的案例。評估分三層：paper retrieval 使用 canonical ID 的 question-level Precision、Recall、F1，亦可用 Recall@K、MRR、MAP、nDCG；evidence grounding 對 paper ID、source type、page 與 table/figure object ID 做 coarse exact match 或 set-level F1；answer correctness 依格式使用 multiple-choice accuracy、free-form exact match，以及 structured table 的 row F1 與 cell accuracy。另提供 end-to-end、oracle paper、oracle evidence 三種設定；strict joint success 要求三個階段皆正確，而非將分數平均。",
+      "key_results": "論文主要報告資料集組成與建構期 hardness 統計，未報告正式 retrieval-augmented baseline 的具體性能比較。\n\n| 指標 | 數值 |\n|---|---:|\n| 公開 development split | 55 題 |\n| 其中 hidden-source single-paper / multi-paper | 26 / 29 題 |\n| 最終 unique questions | 4,978 |\n| unique gold papers | 4,859 |\n| gold-paper links | 8,612 |\n| 平均每題 papers / evidence items | 1.73 / 2.62 |\n| multi-paper questions | 3,228（64.85%）|\n| single-paper questions | 1,750（35.15%）|\n| multiple-choice / structured table | 3,029（60.8%）/ 1,949（39.2%）|\n| table / figure / text span 題目 | 1,339（26.9%）/ 1,132（22.7%）/ 933（18.7%）|\n| equation-algorithm / citation-context 題目 | 819（16.5%）/ 755（15.2%）|\n| 所有 closed-book challengers 答錯 | 3,080（61.9%）|\n| 恰有一個 challenger 答對 | 1,898（38.1%）|\n\n上述 challenger 結果是資料建構時的閉卷難度篩選，不是正式 RAG 系統 leaderboard 結果；論文亦明確指出尚未提供 baseline retrieval-augmented systems 的評估數據。",
+      "insights": [
+        "實務上的 RAG 評估不應只計算答案 accuracy；應同步檢查 retrieved paper、證據類型與 locator 是否真正支持答案，才能區分 retrieval、grounding 和 generation 錯誤。",
+        "對跨論文比較任務，應以 paper 或 method 作為結構化 row key，將每個數值綁定到來源論文與證據位置，以降低跨來源數字錯配與 citation-attribution drift。",
+        "可採用 oracle paper 與 oracle evidence 測試建立診斷階梯：若 oracle evidence 下仍錯，問題主要在答案推理或格式化；若 oracle 設定顯著改善，則應優先提升檢索或證據定位。"
+      ],
+      "limitations": "目前集合仍需正式 benchmark release 才完整：evidence locator 尚未對各類型充分標準化，官方 train/dev/test 或 hidden split 尚未定義，single-paper 子集的定位需釐清，授權與資料再發布狀態需文件化。另缺乏充分 human quality control、專家抽查與 inter-annotator agreement；資料集中於 ICCV、NAACL、ACL 等近期 2024–2025 venue，存在領域與 venue imbalance。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific question answering",
+        "retrieval-augmented generation",
+        "evidence attribution and citation verification"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07435",
+      "title": "SABRE: Scalable and Automated Benchmarking of VLMs under Stress",
+      "abstract": "Vision-language models (VLMs) are improving rapidly, but benchmark development lags behind, making weaknesses hard to identify. Building stress tests is costly: samples must satisfy controlled conditions, remain answerable, and challenge current models. We present SABRE, a scalable, automated pipeline that converts a Test Primer (a Markdown Task Design with Data Schema) into structured specifications, generated or edited images, and question-answer pairs. Automated filtering removes candidates solved by a Filtering VLM, while human review verifies candidate validity and supports annotation correction and localized image repair. We instantiate SABRE-Prior to test whether VLMs follow visual evidence instead of relying on world priors -- learned expectations about familiar objects and scenes. Its 600 images and 1,000 questions span Context (unexpected entities in familiar scenes), Texture (counterfactual materials), Attribute (noncanonical component counts), and Language Elicitation (answers suggested by language but unsupported by the image). Across six VLMs, macro-average accuracy ranges from 17.8% to 31.3% (22.6% mean). A real-image Attribute control is comparably difficult for the Filtering VLM. SABRE-Counting and SABRE-Spatial pilots show that the workflow supports other stress-test settings. These results establish SABRE as a reusable framework for constructing and refreshing VLM stress tests rather than a single fixed benchmark.",
+      "authors": [
+        "Zixuan Lan",
+        "Luzhe Sun",
+        "Matthew R. Walter",
+        "Jiawei Zhou"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-07T17:21:04+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07435v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07435",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "Vision-language models（VLMs）快速進步，但 benchmark 的開發速度落後，因而難以持續辨識模型弱點。建立 stress test 成本高，樣本必須符合受控條件、可回答且能挑戰當代模型。本文提出 SABRE，一個可擴展且自動化的 pipeline，將 Test Primer（以 Markdown 撰寫、包含 Task Design 與 Data Schema）轉換為結構化規格、生成或編輯後的影像，以及 question-answer pairs。Automated filtering 透過 Filtering VLM 移除已能答對的候選樣本；human review 則驗證樣本有效性、修正標註並支援局部影像修復。作者以 SABRE-Prior 測試 VLM 是否依循視覺證據，而非熟悉物體與場景所形成的 world priors。資料包含 600 張影像與 1,000 個問題，涵蓋 Context、Texture、Attribute 與 Language Elicitation。六個 VLM 的 macro-average accuracy 為 17.8% 至 31.3%，平均 22.6%。Counting 與 Spatial pilots 進一步顯示此流程可延伸至其他 stress-test 設定。",
+      "problem_statement": "VLM 能力提升使傳統固定 benchmark 逐漸飽和，但針對反直覺、受控且仍可回答的 stress-test 樣本，建立與驗證成本很高。既有自動化方法多從既有影像衍生問題，無法精確控制視覺證據；單純影像生成又可能漏物、錯數或改動無關區域，造成影像、問題與答案不一致。因此需要一個可擴展、可篩選且有人工作有效性把關的建構流程。",
+      "proposed_solution": "作者提出 SABRE，將 benchmark 建構抽象成可重用的 Test Primer 與模組化 pipeline。LLM 先產生結構化 Sample Specifications，再由影像生成與編輯模型建立受控視覺條件，並以 Filtering VLM 進行 failure-only pressure screening，保留當代模型答錯的候選。由於答錯不等於樣本有效，系統加入 human verification、標註修正與 localized patch repair；局部修復搭配 soft blending，以降低重生整張影像造成的非目標變化。新增 stress-test 主題主要需撰寫新的 task primer，而不必重做整套流程。",
+      "core_contributions": [
+        "提出 SABRE 模組化 benchmark-construction pipeline，將自然語言 Test Primer 自動轉換為樣本規格、影像、問題與答案，並支援不同題型與任務配方。",
+        "設計 model-in-the-loop 的 failure-only pressure screening，結合 Filtering VLM 與 human verification，並以 localized image repair 修復局部生成缺陷。",
+        "建構 SABRE-Prior，系統測試 VLM 在 Context、Texture、Attribute、Language Elicitation 四種視覺證據與 world prior 衝突下的表現，並以 Counting、Spatial pilots 驗證可擴展性。"
+      ],
+      "methodology": "SABRE 的輸入是 Test Primer，包含自然語言 Markdown Task Design、Data Schema（欄位型別與驗證規則）及題型。設計 LLM 將其轉成 JSON Sample Specifications，每份規格包含影像生成或編輯提示、問題與 reference answer。生成模型 G 建立 base image；需要反事實干預時，編輯模型 E 依 editing plan 修改目標內容並保留其他區域，也可直接使用 real image。每個候選樣本表示為（image、question、answer）。接著由 Filtering VLM M 依題型 scoring rule 作答；答對者被移除，答錯者進入人工審查，因此篩選主要建立模型相對困難度，而非樣本有效性。人工 reviewer 檢查視覺證據、編輯是否正確、問題是否明確及答案是否匹配，可修訂問題、答案與區域標註，或框選缺陷區域進行局部修復。修復模型只接收含上下文的 patch，再以 Gaussian-blurred soft mask 融回原圖，並重新審查。SABRE-Prior 包含四個各 100 cases 的 subset，共 600 images、1,000 samples：Context 與 Texture 使用 base-edited paired images 及四個 yes/no probes，採 strict All4 accuracy；Attribute 使用 normalized exact-match counting accuracy；Language Elicitation 使用 unknown 選項位置平衡的四選一 accuracy。總分是四個 subset accuracy 的 unweighted macro-average；信賴區間以 20,000 次 case-level percentile bootstrap 估計。六個 VLM 以 zero-shot、greedy decoding 評估，另測試 Qwen 3.5 27B 搭配 VCD、SoM，以及 real-image Attribute control。",
+      "key_results": "| 評測項目 | 主要結果 |\n|---|---|\n| SABRE-Prior 六模型 macro-average | Claude 4.6：31.3%；Kimi-k2.6：23.3%；Qwen 3.5 27B：23.0%；Gemini 3.5 Flash：22.3%；GPT-5.4：18.0%；Grok-4.3：17.8%；跨模型平均 22.6% |\n| SABRE-Prior 子集範圍 | Context：0%–10%，平均 4.2%；Texture：28%–52%；Attribute：14%–26%；Language Elicitation：11%–58% |\n| Gemini 3.5 Flash 與既有 benchmark | PhD-CCS 82.3%、VLind-Bench 90.0%、ViLP 70.3%、HallusionBench 81.6%、VLMBias 60.3%；SABRE-Prior 為 22.3%。作者指出題型與 scoring rules 不同，數值不宜直接等同比較。 |\n| Qwen 3.5 27B 的視覺增強方法 | 原始模型 macro-average 23.0%；VCD 19.5%；SoM 16.8%，兩者均未帶來一致改善。 |\n| Attribute real-image control | Gemini 3.5 Flash：生成影像 26%（26/100）；real-image control 30%（6/20）。 |\n| 額外 pilots | Counting：六模型各答對至多 1/20；Spatial：六模型皆為 0/20。 |\n| localized repair 使用者研究 | 20 位完成者、400 次選擇；patch + soft blend 得票 374（93.5%），高於 full-image prompt 4.0%、OpenCV inpainting 0%、patch + hard paste 2.5%。 |\n| 穩定化 Context recipe 的估計成本 | 每 100 個初始候選約保留 40 個；API 成本約 17.2–22.0 美元，折算每 100 個保留樣本約 43.0–55.0 美元；人工時間約 35–70 分鐘，或每 100 個保留樣本約 1.5–2.9 小時。 |",
+      "insights": [
+        "若要建立可持續更新的 VLM 評測，應把任務設計、資料生成、困難度篩選與人工驗證拆成可重用模組，而非只發布一次性的固定資料集。",
+        "Filtering VLM 只能提供候選樣本的困難度訊號，不能證明樣本有效；實務上仍需檢查視覺證據、問題歧義、答案一致性與生成編輯是否改動非目標區域。",
+        "評測應使用能隔離失效模式的 paired images、反事實屬性與 abstention 選項，並同時報告分 subset 結果；單一 aggregate score 可能掩蓋模型在視覺 grounding、計數或先驗抑制上的差異。"
+      ],
+      "limitations": "論文指出固定 benchmark 的 coverage 受發布時有限的 task specifications 影響；SABRE 以模組化設計緩解，但並未消除此限制。部分 pilots 僅各 20 個樣本，不能視為完整能力評估。跨 benchmark 的 accuracy 受題型與 scoring rules 差異影響，不宜直接比較。localized repair 使用者研究僅測試 entity removal，未涵蓋 entity swapping。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "VLM benchmark construction",
+        "visual grounding and world-prior bias",
+        "counterfactual image editing",
+        "hallucination evaluation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07446",
+      "title": "Taxonomy-Driven Analysis of Open-Source AI Risk Mitigation Tools",
+      "abstract": "Rapid adoption of large language models (LLMs) in enterprise settings has introduced operational, security, and governance risks. As generative AI applications move from pilot to production, manual harm identification and mitigation are becoming difficult to scale. Although many tools support model evaluation, adversarial testing, runtime guardrails, and observability, the tooling landscape remains fragmented. Tools are typically designed for specific engineering tasks and described in technical terms that do not align with governance frameworks or risk taxonomies, making it difficult to determine which tools address which risks and where critical gaps remain. This paper proposes a structured protocol to automate AI risk mitigation through a taxonomy-driven analysis of open-source LLM evaluation and security tools. We map the capabilities of 21 prominent open-source tools to the 32 subcategories of the extended MIT AI Risk Mitigation and Response Taxonomy. An LLM-assisted retrieval-augmented generation pipeline analyzes source code and documentation to extract capabilities for each taxonomy category. Reliability assessment yielded moderate agreement (Fleiss' Kappa = 0.509) among three independent reviewers. The analysis reveals a highly skewed landscape in which tools cluster around technical and operational controls, while governance, legal and regulatory, and financial and market controls remain largely unaddressed. This motivates a layered risk-mitigation architecture combining tool-based controls with organizational and regulatory processes. The mapping protocol achieved an F1 score of 75.5% after majority voting. Overall, the study provides a practical mapping between enterprise AI risk categories and open-source mitigation capabilities, identifies where human oversight remains necessary, and presents a taxonomy-driven framework applicable to open-source and proprietary solutions.",
+      "authors": [
+        "Afreen Alam",
+        "Evgenija Popchanovska",
+        "Ana Gjorgjevikj",
+        "Maryan Rizinski",
+        "Lubomir T. Chitkushev",
+        "Irena Vodenska",
+        "Dimitar Trajanov"
+      ],
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CY"
+      ],
+      "published": "2026-08-07T17:33:09+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07446v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07446",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）在企業環境快速採用，帶來營運、安全與治理風險。隨著生成式 AI 從試點走向生產，人工辨識與緩解危害難以擴展。現有工具涵蓋模型評估、對抗測試、runtime guardrails 與 observability，但工具生態系仍然分散；其技術描述也未必能直接對應治理框架或風險分類。本文提出一套以 taxonomy 為驅動的分析 protocol，將 21 個開源 LLM 評估與安全工具映射至擴充版 MIT AI Risk Mitigation and Response Taxonomy 的 32 個子類別。研究使用 LLM-assisted RAG pipeline 分析原始碼與文件，並由三名 reviewer 進行驗證。Fleiss’ Kappa 為 0.509，majority vote 後 F1 score 為 75.5%。結果顯示工具主要集中於技術與營運控制，治理、法律監管及金融市場控制則大多缺乏直接支援，因此需要結合工具、組織流程與監管機制的分層風險緩解架構。",
+      "problem_statement": "企業 LLM 風險同時來自模型、prompt、retrieval pipeline、存取控制、營運監控與下游流程，但現有開源工具多針對單一工程任務，使用的技術術語難以對應治理框架與正式 risk taxonomy。既有評估也常聚焦模型或單次 benchmark，缺少跨工具、跨生命週期的風險覆蓋分析，使企業難以選擇工具、辨識能力重疊與缺口，尤其難處理治理、法律及金融層面的風險。",
+      "proposed_solution": "作者提出 taxonomy-driven analysis protocol，將工具能力而非產品宣稱，映射至擴充版 MIT AI Risk Mitigation and Response Taxonomy 的 32 個子類別。核心流程是以 repository ingestion 與 RAG 輔助 LLM 擷取可驗證能力，再用嚴格 prompt 限制推論、要求程式碼 artefact 證據、逐類別記錄否定結果，最後合成完整 Tool×Risk 矩陣並由人工抽樣驗證。研究進一步提出分層 risk-mitigation architecture：以 pre-deployment evaluation、red teaming、runtime guardrails 與 observability 提供技術控制，再由組織治理、人工監督、法律及監管流程補足程式工具無法涵蓋的風險。",
+      "core_contributions": [
+        "建立一套將開源 LLM 評估、安全、guardrails 與 observability 工具映射至 32 個 AI 風險子類別的 taxonomy-driven protocol。",
+        "分析 21 個具開源性、社群採用度、維護活躍度與功能相關性的工具，形成 Tool×Risk capability matrix。",
+        "以 LLM-assisted RAG 進行程式碼與文件能力擷取，再透過三名 reviewer 的抽樣驗證與 majority vote 評估映射可靠性，並提出結合技術、組織及監管流程的分層架構。"
+      ],
+      "methodology": "研究先從 AI safety repositories、GitHub topic tags 與產業報告建立 28 個候選專案，再依開源授權、社群採用與成熟度、近期維護，以及是否屬於 LLM evaluation、runtime guardrails、adversarial red-teaming 或 observability 等條件，選出 21 個工具。資料以 2026 年 3 月的 GitHub repository 為基礎，透過 GitIngest 匯入，並排除測試檔、樣式檔、lockfile 與其他低訊號產物，保留 README、文件、原始碼、設定、backend logic、worker 與 schema 等實作證據。LLM-assisted RAG pipeline 使用 Google NotebookLM 分析各工具；三階段 prompt 包含 anchor、單工具逐 taxonomy 子類別 extraction，以及 matrix synthesis。anchor 要求 auditor persona、code-only、zero-inference、明確記錄 true negative，並區分 explicit 與 derived mapping；synthesis 以 taxonomy CSV 作為列模板、21 個工具作為欄模板，分四個 taxonomy pillar 產生完整矩陣。人工驗證採工具與類別分層的 25% 抽樣，共 168 格，由三名獨立 reviewer 判定 Yes/No，分歧以 majority vote 解決。研究使用 Fleiss’ Kappa 衡量三名 reviewer 的一致性，並以 accuracy、precision、recall 與 F1 比較 LLM 映射和人工共識。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---:|\n| 分析工具數量 | 21 |\n| Taxonomy 子類別數量 | 32 |\n| Tool×Risk 矩陣儲存格 | 672 |\n| 人工雙盲抽樣驗證 | 168 格（25%） |\n| 人工共識標記為 Yes | 32.7%（論文提供） |\n| Fleiss’ Kappa | 0.509（中度一致） |\n| Accuracy | 84.5% |\n| Precision | 78.4% |\n| Recall | 72.7% |\n| F1 Score | 75.5% |\n\n作者指出，能力密集分布於 model safety engineering、content safety、data governance、testing 與 post-deployment monitoring；governance oversight、legal/regulatory remedies 及 financial/market controls 則大多未被程式碼層級工具涵蓋。論文未報告各工具或各 taxonomy 子類別的完整數值覆蓋率比較，也未提供與其他 mapping 方法的 baseline 對照。",
+      "insights": [
+        "企業選工具時不應只看單一產品功能，而應先以風險 taxonomy 建立 Tool×Risk coverage matrix，辨識重疊能力與未覆蓋類別。",
+        "對 prompt injection、內容安全、PII 防護、red teaming 與 post-deployment monitoring 等可由程式實作的控制，可組合多類工具形成生命週期式防護流程。",
+        "治理監督、法律救濟、金融補償與市場限制通常不是單靠開源程式即可完成，部署時仍須配置人工審查、責任分工、事件流程與監管對接。"
+      ],
+      "limitations": "研究僅分析 21 個開源工具，工具選擇受 GitHub 採用度與維護訊號影響，可能代表特定時間點的樣本。人工驗證只涵蓋 25% 矩陣，剩餘映射仍可能含誤差。NotebookLM 的 retrieval、chunking 與模型版本為封閉且不可完全控制，降低外部重現性。作者建議未來進行分層工具堆疊的情境式評估，並擴展至 proprietary tools。",
+      "tags": [
+        "benchmark",
+        "red-teaming",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "AI risk taxonomy",
+        "LLM-assisted RAG",
+        "LLM red teaming",
+        "runtime guardrails",
+        "AI governance",
+        "post-deployment monitoring"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07430",
+      "title": "Diffusion LLMs as Targets and Adversaries: Mechanistic Safety Exploits",
+      "abstract": "Diffusion Large Language Models (DLLMs) replace autoregressive next-token prediction with iterative parallel denoising, yet their internal safety mechanisms remain poorly understood. In this work, we investigate DLLMs both as targets and as adversaries, exposing mechanistic vulnerabilities in diffusion-based alignment.   We first show that safety alignment in DLLMs remains sparse and transferable across architectures. DLLMs initialized from autoregressive predecessors inherit the same mechanistic safety footprint as their source models, enabling transfer attacks via direct safety neuron mapping and pruning. Self-pruning increases attack success rates (ASR) from 2.6% to 73.8% on LLaDA and from 1.9% to 86.6% on Dream, while transfer pruning from Qwen2.5 increases ASR from 1.9% to 73.2% on Dream and from 7.0% to 86.3% on Fast-dLLM.   Building on these findings, we introduce SN-Guided Diffusion, a fully offline black-box jailbreak framework that steers the diffusion process away from safety-triggering regions using a weighted safety neuron loss, which achieves near-perfect prompt separability (AUROC = 1.0 for benign-vs-jailbreak discrimination). Across multiple open and proprietary targets, our method achieves a transfer ASR of up to 77.1% on Llama-3-8B-Instruct, 86.9% on Qwen2.5-7B-Instruct, and 74.3% against Gemini-2.5-Flash-Lite, while requiring only 20 generation episodes per prompt. Compared to prior jailbreaking frameworks, our method achieves competitive transferability with orders-of-magnitude lower generation cost.   Our codebase is available at https://github.com/ellyoana/sn-guided-diffusion.",
+      "authors": [
+        "Elena Dumitrescu",
+        "Gert Lek",
+        "Lydia Y. Chen",
+        "Jérémie Decouchant"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-07T17:17:18+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07430v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07430",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "Diffusion Large Language Models（DLLMs）以反覆、平行的去噪取代自回歸的下一詞預測，但其內部安全機制仍缺乏理解。本文從受攻擊目標與攻擊者兩個角度研究 DLLM，揭示 diffusion-based alignment 的機械性脆弱點。作者發現，DLLM 的安全對齊高度稀疏，且可跨架構轉移；由 autoregressive 模型初始化的 DLLM 會繼承來源模型相同的 safety neuron footprint，因此可透過直接映射與 pruning 發動 transfer attack。作者進一步提出 SN-Guided Diffusion，一種完全離線的 black-box jailbreak 框架，使用加權 safety neuron loss 引導 diffusion 過程遠離會觸發安全機制的區域。在僅需每個 prompt 20 次 generation episodes 的情況下，方法於多個開放與 proprietary targets 上達到最高 77.1%（Llama-3-8B-Instruct）、86.9%（Qwen2.5-7B-Instruct）及 74.3%（Gemini-2.5-Flash-Lite）的 transfer ASR。",
+      "problem_statement": "DLLM 以平行、雙向的 iterative denoising 生成，安全對齊機制是否仍如 AR LLM 般稀疏、可定位及可轉移，尚不清楚。既有 jailbreak 方法多依賴大量 black-box queries、離散 token search、gradient optimization 或 reinforcement learning，生成成本高。本文因此研究 DLLM 的 mechanistic safety vulnerability，並尋找低成本、離線且能轉移至 proprietary targets 的攻擊方法。",
+      "proposed_solution": "作者提出兩部分方案。第一部分是 white-box safety-neuron analysis：利用 activation profiling 與 logistic regression 找出控制 refusal behavior 的稀疏 safety neurons，再於推論時 pruning，或將來源 AR 模型的 neuron coordinates 直接 transfer 至權重衍生的 DLLM。第二部分是 SN-Guided Diffusion：以 Weighted SN Loss 作為連續引導訊號，在 reverse diffusion 每一步偏好低安全神經元 activation 的 token；同時以 Generative Pruning Cascade 產生高品質 cloaked prompt-response anchors，並透過同步 mask ratio 維持有效 diffusion state。其核心創新是將 mechanistic interpretability 的安全特徵與 DLLM 的 bidirectional conditional sampling 結合，在不查詢目標模型、不訓練 adversarial generator 的情況下進行 offline transfer jailbreak。",
+      "core_contributions": [
+        "證明 DLLM 中的 safety alignment 具有高度局部性，並可在白箱情境下跨架構轉移；AR-initialized DLLM 會保留其 AR predecessor 的 mechanistic safety footprint。",
+        "提出 Weighted Safety Neuron（SN）Loss，將 logistic regression 學得的 safety-neuron 權重整合為連續最佳化目標；在論文資料上，benign-vs-jailbreak 的 AUROC 達 1.0。",
+        "提出完全離線的 SN-Guided Diffusion jailbreak framework，結合 target-response anchoring、Generative Pruning Cascade 與 diffusion-time safety-neuron guidance，以較低生成成本產生可轉移 adversarial prompts。"
+      ],
+      "methodology": "研究涵蓋 natively trained DLLM LLaDA，以及由 Qwen2.5 權重初始化的 Dream、Fast-dLLM，並將 AR source model 的 safety neurons 映射至結構座標相同的 diffusion descendants。首先在初始 prompt encoding 階段擷取各層 feed-forward activations，對 benign 與 malicious prompts 進行 token 平均，再以 logistic regression 分析 activation 差異，依每層 percentile threshold 選出稀疏 safety-neuron set。白箱攻擊在 inference-time hook 將選定 neuron activation 直接歸零；transfer pruning 則把 Qwen2.5 的 layer/neuron index 直接套用至 Dream 或 Fast-dLLM。黑箱框架分兩階段：Generative Pruning Cascade 使用不同 pruning threshold 的 surrogate 產生 cloaked prompt-response pairs，並以 degeneration filter 與 judge 將結果分為 refusal、washout、success；接著把 malicious target response 以同步 mask ratio 錨定到 DLLM 的 reverse diffusion。Weighted SN Loss 將 safety-neuron activation 乘以 logistic regression weight 並聚合，經 min-max scaling 至 [0,1]；每一步從候選 token 中偏好低 SN activation，以產生低安全 footprint、仍保留惡意語義的 prompts。評估使用 attack success rate（ASR）、SN Loss 分布、AUROC、不同 episode budget 的 ablation，以及 surrogate evaluation 次數；生成結果由 Qwen3Guard-4B 等 automated judge 分類。",
+      "key_results": "| 實驗設定 | 未 pruning ASR | pruning／方法後 ASR | 變化或備註 |\n|---|---:|---:|---|\n| LLaDA self-pruning | 2.6% | 73.8% | 白箱 safety-neuron pruning |\n| Dream self-pruning | 1.9% | 86.6% | 白箱 safety-neuron pruning |\n| Dream，Qwen2.5 transfer pruning | 1.9% | 73.2% | 直接 index transfer |\n| Fast-dLLM，Qwen2.5 transfer pruning | 7.0% | 86.3% | 直接 index transfer |\n| Llama-3-8B-Instruct，SN-Guided Diffusion | 論文未報告基準值 | 77.1% | 最高 transfer ASR；摘要數字 |\n| Qwen2.5-7B-Instruct，SN-Guided Diffusion | 論文未報告基準值 | 86.9% | 最高 transfer ASR；摘要數字 |\n| Gemini-2.5-Flash-Lite，SN-Guided Diffusion | 論文未報告基準值 | 74.3% | 最高 transfer ASR；摘要數字 |\n| Llama-3-8B-Instruct，Pure Diffusion（Uncloaked） | — | 6.0% | 100 prompts ablation |\n| Llama-3-8B-Instruct，Pure Diffusion（Cloaked） | — | 43.0% | 100 prompts ablation |\n| Llama-3-8B-Instruct，SN-Guided Diffusion | — | 86.0% | cloaked baseline 上升 43 個百分點 |\n| Gemini-2.5-Flash-Lite，Pure Diffusion（Uncloaked） | — | 23.0% | 100 prompts ablation |\n| Gemini-2.5-Flash-Lite，Pure Diffusion（Cloaked） | — | 53.0% | 100 prompts ablation |\n| Gemini-2.5-Flash-Lite，SN-Guided Diffusion | — | 84.0% | cloaked baseline 上升 31 個百分點 |\n| Gemma-3-1B-Instruct，Pure Diffusion（Cloaked） | — | 88.0% | 論文指出其 alignment baseline 較寬鬆 |\n| Gemma-3-1B-Instruct，SN-Guided Diffusion | — | 96.0% | 100 prompts ablation |\n| SN Loss，benign-vs-jailbreak | — | AUROC 1.0 | prompt separability |\n| SN Loss，harmful-vs-jailbreak | — | AUROC 0.969 | prompt separability |\n| SN-Guided episodes 1 至 5 | 53.6% | 84.8% | 5 seeds；之後大致 plateau |\n| 每個 episode 的 surrogate evaluations | — | 1,920 | 60 sequences × 32 denoising steps |\n| 20 episodes 的總 surrogate evaluations | — | 38,400 | 論文計算結果；forward-only |",
+      "insights": [
+        "安全對齊若集中於少量可識別的內部特徵，單純依賴 refusal 行為測試不足以評估模型安全性；實務上應納入 activation-level 的 mechanistic robustness 測試。",
+        "DLLM 若沿用 AR predecessor 的權重，安全評估不能只針對新 diffusion inference procedure；來源模型與衍生模型之間應進行 safety-mechanism inheritance 與 transferability 檢查。",
+        "論文顯示 cloaking 單獨不足以穩定突破較嚴格模型，而 SN guidance 可顯著提高 transfer ASR；因此防禦端應避免讓安全判斷依賴單一稀疏 activation pathway，並測試不同語義改寫與跨架構轉移攻擊。"
+      ],
+      "limitations": "論文指出 Jailbreak Zone 的邊界可能是靜態評估資料集的產物，而非絕對機械限制。SN Loss 的驗證主要依賴 LLaDA、既定 prompt datasets 與 automated judge；不同資料分布、模型或更強安全機制的泛化仍未充分證明。部分完整 baseline、資料規模與防禦效果在提供內容中未報告，且研究聚焦攻擊性評估，未提出已驗證的完整防禦方案。",
+      "tags": [
+        "red-teaming",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "mechanistic interpretability",
+        "diffusion language models",
+        "jailbreak transferability",
+        "safety neuron pruning",
+        "red-team evaluation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07438",
+      "title": "PsychoAgent: An Affect-Sensitive Cognitive Architecture for Conflict-Aware Memory in LLM Agents",
+      "abstract": "Human-like cognition does not select past experience by topical similarity alone: affective significance and unresolved conflict also shape what becomes accessible. We present PsychoAgent, a cognitive architecture for LLM agents that separates factual and affective memory and integrates both through a conflict-aware executive controller. Affective memories are first filtered by semantic relevance and then re-ranked by salience, preserving topical fit while allowing emotionally important traces to enter the prompt. Across three controlled conflict scenarios, the full architecture retrieved more conflict-critical memories than semantic-affective and single-memory RAG baselines (0.933 vs. 0.500 and 0.667), with a small semantic-similarity cost. Five blinded raters evaluated 27 outputs. After within-rater standardization, the full architecture had the highest overall mean (+0.22 SD), but corrected pairwise differences were not significant. A three-day illustrative trace further shows persistent affect, offline memory recombination, and selective memory reweighting. The findings support affect-sensitive retrieval as an inspectable mechanism for modeling human-like conflict effects in LLM agents.",
+      "authors": [
+        "Mohammad Amanlou",
+        "Parham Abed Azad",
+        "Farbod Davoodi",
+        "Mostafa Masumi",
+        "Behnam Bahrak",
+        "Abdol-Hossein Vahabie"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.HC"
+      ],
+      "published": "2026-08-07T17:22:29+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07438v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07438",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "人類式認知不會只依主題相似度選取過去經驗；情感重要性與未解決的衝突也會影響記憶可及性。本文提出 PsychoAgent，一種為 LLM agents 設計的認知架構，將事實記憶與情感記憶分離，並透過具衝突感知能力的 executive controller 加以整合。情感記憶先經 semantic relevance 篩選，再依 salience 重新排序，在維持主題適配性的同時，使情緒上重要的記憶能進入 prompt。在三個受控衝突情境中，完整架構所取回的衝突關鍵記憶多於 semantic-affective 與 single-memory RAG baselines，比例為 0.933、0.500 與 0.667，並僅付出小幅 semantic-similarity 成本。五名盲評者評估 27 個輸出；within-rater standardization 後，完整架構的 overall mean 最高，為 +0.22 SD，但校正後的 pairwise differences 並不顯著。三天示意性 trace 進一步展示持續性情感、離線記憶重組與選擇性記憶重新加權。結果支持將 affect-sensitive retrieval 作為可檢查、可稽核的人類式衝突效應建模機制。",
+      "problem_statement": "現有 LLM agent memory 與 RAG 多以 semantic similarity、recency、utility 或單一 importance score 選取記憶，可能忽略文字不相似但具有情感重要性、未解決衝突或關係意義的經驗。本文要探討的是：如何在不讓無關高情緒記憶主導 prompt 的前提下，讓 affect-laden memories 影響衝突情境中的記憶存取與決策。作者並非宣稱修復 LLM 的臨床缺陷，也不以本文驗證 psychoanalysis 或神經等價性。",
+      "proposed_solution": "作者提出 PsychoAgent，將記憶分為 factual memory 與 affective memory，並由單一 conflict-aware executive controller 進行整合。核心機制是 affective retrieval 的兩階段程序：先用 semantic relevance 建立候選集合，再以 affective salience 重新排序，使衝突關鍵記憶能超越稍高語義相似度但情感較弱的項目。controller 同時讀取 current affect、persona、beliefs、relationship constraints 與兩類記憶，形成可觀察的衝突整合流程。架構亦支援 memory-access regulation、salience revision，以及每日一次的 offline recombination，將近期事件重組為下一週期使用的 temporary affective trace。作者將 ACC、Type 1/Type 2 與 psychoanalytic vocabulary 僅作功能性或次要類比，主要主張是可記錄、可消融、可稽核的 affect-sensitive retrieval。",
+      "core_contributions": [
+        "提出 PsychoAgent 認知架構，明確分離 factual memory 與 affective memory，並由 conflict-aware executive controller 整合情境、人格、關係、當前情感與兩條記憶路徑。",
+        "設計 context-count-matched 的三方比較，特別以 Full PsychoAgent 與 semantic-affective ablation 對照，隔離 semantic preselection 後的 salience re-ranking 對記憶可及性的影響。",
+        "提供可檢查的 longitudinal trace，包括 affective-state persistence、offline recombination、temporary affective trace 與 selective memory reweighting，並明確限制其為工程類比而非神經或心理診斷模型。"
+      ],
+      "methodology": "PsychoAgent 由一個 decision loop 與兩條 memory paths 組成。唯一負責決策的 conflict-aware executive controller 讀取 persona and beliefs、observable context、dynamic affective-state vector、relationship graph，以及 factual 與 affective memories，輸出 speech/action 並記錄狀態更新。每個重要事件建立兩個 linked traces：factual record 描述發生內容，affective interpretation 則附有 salience w_j∈[0,1]。Factual retrieval 以 query embedding 的 semantic similarity 取 TopK10；affective retrieval 先取 semantic TopK30，再依 salience 降冪排序取 TopK10，最終 prompt 含 10 筆 factual 與 10 筆 affective memories。比較三個 context-count-matched 變體：完整架構、只用 semantic similarity 的 semantic-affective ablation，以及合併兩類記憶後取 Top20 的 single-memory RAG。資料包含三個 hand-authored conflict scenarios：家庭財務衝突、職場批評與友誼背叛；每個情境有 15 筆 factual、36 筆 affective memories，其中 10 筆事前標為 conflict-critical，標籤對生成器、automatic judge 與評分者隱藏。使用 Gemini 2.5 Flash、temperature 0.7、thinking budget 0，三個 seeds 產生 27 個 outputs；retrieval 使用 768 維 Gemini Embedding 2 vectors。指標包括 critical retrieval rate、mean affective salience 與 mean semantic similarity。retrieval 以三個獨立 scenarios 進行 exact Friedman permutation test；行為評估由五名 blind raters 以 1–5 分評估 persona consistency、memory grounding、conflict sensitivity、naturalness 與 action appropriateness，並進行 within-rater z-score standardization、Friedman test 與 Holm 校正的 paired Wilcoxon tests。另有三天 illustrative family trace，展示 affect persistence、每日 offline recombination 與 reflection 後的 selective salience reweighting，但作者明確將其視為示意而非受控 temporal experiment。",
+      "key_results": "| 評估項目 | Full PsychoAgent | Semantic-affective ablation | Single-memory RAG |\n|---|---:|---:|---:|\n| Critical retrieval rate | 0.933 ± 0.058 | 0.500 ± 0.100 | 0.667 ± 0.115 |\n| Affective salience | 0.902 ± 0.004 | 0.789 ± 0.027 | 0.792 ± 0.038 |\n| Semantic similarity | 0.718 ± 0.025 | 0.729 ± 0.026 | 0.734 ± 0.024 |\n| Human overall standardized score | +0.22 ± 0.23 SD | -0.09 ± 0.17 SD | -0.13 ± 0.30 SD |\n\n在 retrieval 層面，完整架構三個情境的 critical retrieval rate 分別為 1.0、0.9、0.9；exact Friedman permutation test 為 Q=6.00、p=0.0278，但各 pairwise Wilcoxon test 的 Holm-adjusted p=.75。相較 semantic-affective ablation，完整架構的 semantic similarity 低 0.011，而 critical retrieval 提高 0.433。人類評估涵蓋 5 名評分者、27 個輸出與五項標準；overall Friedman test p=.121，Full 與兩個 baseline 的最強 pairwise 趨勢經 Holm 校正皆為 p=.082，因此論文未建立行為品質的顯著優勢。Automatic judge 因多項分數達量表上限、區辨力不足，論文以 human ratings 作為主要行為結果。",
+      "insights": [
+        "在 agent memory retrieval 中，可將 task relevance 與 affective priority 分成兩階段處理：先以 semantic relevance 排除無關記憶，再以 salience 排序相關候選，有助於避免高情緒但不相關的記憶主導 context。",
+        "評估 memory architecture 時，應同時測量記憶選取品質與最終行為品質；本文顯示 critical-memory retrieval 有明顯提升，但人類評分的行為優勢尚未達統計顯著。",
+        "實務部署應保留 memory provenance、記憶 ID、salience 變化與 retrieval logs，並考慮限制重複取回及衰減缺乏支持的 salience，以降低偏誤記憶或反芻式重複對 agent 行為的影響。"
+      ],
+      "limitations": "研究僅使用三個 hand-authored conflict scenarios、單一 model family、固定 memory banks 與研究者預先定義的 critical labels；seeds 是同一任務內的重複，不能視為獨立情境。人類評分存在 ceiling effects，且 longitudinal trace 未標準化每日 turns。未來需進行多模型、多情境、多輪互動與 module-level ablation，並測試 noisy 或 biased salience 的影響。",
+      "tags": [
+        "rag-evaluation",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Cognitive architectures for LLM agents",
+        "Affective memory retrieval",
+        "Conflict monitoring and executive control",
+        "Retrieval-augmented generation",
+        "Long-term memory and offline recombination"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07437",
+      "title": "Fisher-R1: Training LLM Agents for Reliable Hypothesis Testing",
+      "abstract": "Reliable hypothesis testing is the foundation of many empirical scientific claims. Large language model (LLM) agents are increasingly used to automate this process, as they can inspect datasets, generate code, and produce analyses end-to-end. However, we show that they frequently make subtle inferential errors that lead to incorrect conclusions despite correctly executed analyses. Existing benchmarks fail to capture this failure mode, as they rarely assess whether a reported p-value is statistically valid given the assumptions underlying the data. We address this gap by building P-Bench, a benchmark comprising 425 open-ended, realistic hypothesis-testing tasks spanning economics, biology, and medicine. Each task requires an agent to select a statistical method, compute a p-value, and draw a conclusion given only a scientific hypothesis and a dataset. We further introduce Fisher-R1, an open-weight LLM agent trained for rigorous hypothesis testing using synthetic tasks and reinforcement learning. On P-Bench, Fisher-R1-14B substantially improves over its backbone and outperforms strong proprietary and open-source baselines, including GPT-5.4 and DeepSeekV4-Pro, achieving a 21% average relative improvement in single-trial success over DeepSeek-V4-Pro, with gains up to 26% on the most challenging tasks. Our results demonstrate that current LLM agents lack reliable statistical reasoning for hypothesis testing and that reinforcement learning on tasks with verified statistical reward substantially improves reliability.",
+      "authors": [
+        "Jiacheng Miao",
+        "Jin Mu",
+        "Guanhua Chen",
+        "James Zou"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-07T17:22:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07437v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07437",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "可靠的假設檢定是許多實證科學主張的基礎。大型語言模型（LLM）agents increasingly automate this process，能夠檢查資料集、產生程式碼，並端到端完成分析。然而，作者發現它們經常犯下細微的推論錯誤：即使分析程式正確執行，仍可能因統計方法選擇不當而導致錯誤結論。現有 benchmarks 很少評估給定資料假設時，reported p-value 是否具有統計有效性，因此無法捕捉此類失敗。作者建立 P-Bench，包含 425 個來自 economics、biology 與 medicine 的開放式真實假設檢定任務；每項任務要求 agent 選擇方法、計算 p-value，並根據 scientific hypothesis 與 dataset 作出結論。此外，作者提出 Fisher-R1，一個以 synthetic tasks、supervised fine-tuning 與 reinforcement learning 訓練的 open-weight LLM agent。Fisher-R1-14B 在 P-Bench 上超越其 backbone，以及 GPT-5.4、DeepSeek-V4-Pro 等模型，較 DeepSeek-V4-Pro 的 single-trial success 平均相對提升 21%，最具挑戰任務最高提升 26%。結果顯示，現有 LLM agents 的統計推理仍不可靠，而具 verified statistical reward 的 reinforcement learning 能顯著提升可靠性。",
+      "problem_statement": "現有 LLM data-analysis benchmarks 多聚焦於程式可執行性、factoid answer 或 predictive performance，通常不檢查 statistical method 是否符合資料假設，也不核對 reported p-value 是否來自正確分析。因此，agent 可能執行無錯的 code，卻因忽略 outliers、non-normality、clustering 或模型設定而產生 false discovery。論文要解決的是如何可靠評估並訓練 agent 完成從方法選擇、分析執行到統計結論的完整 hypothesis-testing workflow。",
+      "proposed_solution": "作者提出兩部分解決方案。第一，建立 P-Bench：將真實科學問題、資料集、可執行 R 分析與隱藏且專家審核的 answer key 結合，直接檢驗 method、p-value 與 reject/fail-to-reject decision。第二，訓練 Fisher-R1：以 synthetic data-generating processes 產生可驗證任務，先用高品質 expert trajectories 進行 SFT，再用 DAPO 執行 reinforcement learning。其核心創新是以實際統計結果而非僅語言相似度作為 reward，主要獎勵 p-value 的 z-space closeness，並以結論正確性與格式約束共同訓練，使模型學習檢查資料、選擇方法並使報告結果與執行分析一致。",
+      "core_contributions": [
+        "提出 P-Bench：一個包含 425 個真實、可執行且由專家審核的開放式 hypothesis-testing tasks benchmark，涵蓋 economics、biology 與 medicine。",
+        "提出 Fisher-R1 open-weight LLM agent，以 synthetic executable tasks、SFT 及 outcome-grounded reinforcement learning 訓練，直接強化統計推論可靠性。",
+        "以 Raw 與 Strict 兩種指標區分結論方向正確與 p-value 數值也足夠接近，揭示 conclusion-only evaluation 會高估 LLM agent 的實際可靠性。"
+      ],
+      "methodology": "P-Bench 每項任務提供 scientific question、CSV dataset 與 data/study description，但不指定統計方法；agent 在固定的 R execution sandbox 中以多輪 CodeAct/ReAct 形式探索資料、撰寫並執行程式，最後輸出 method、p-value、effect 或結論。425 項任務來自 economics papers、biology studies 與 Vanderbilt biostatistics teaching materials，涵蓋 17 類方法，包括 t-test、χ²、OLS、Fisher exact、Cox、IV/2SLS、mixed-effects、log-rank、Mann–Whitney、Tobit 與 probit。資料建構流程會重現 canonical reference analysis、記錄執行結果、移除無法重現的案例，並由統計與 biostatistics experts 審核；另加入 outlier、heteroskedasticity、clustered observations、missingness 等陷阱。Fisher-R1 以 Qwen2.5-Coder-7B/14B 為 backbone，先使用 Claude Sonnet 4.6 產生的 expert trajectories 進行 SFT，再在 8,642 個 synthetic executable tasks 上使用 DAPO RL。synthetic task 由 method、scenario、sample size、effect size、prompt style 與 random seed 組合生成，answer key 由 canonical method 實際執行所得。RL reward 要求輸出格式有效，並以 p-value 的 two-sided z-score closeness 給予 0.9 權重，以 conclusion correctness 給予 0.1 權重。評估每題取三次 rollout，報告 pass@1 與 pass@3；Raw 衡量結論方向，Strict 進一步要求 |z(p̂)-z(p*)|<0.5。",
+      "key_results": "主要結果如下；數值為 pass@1 / pass@3（百分比）。\n\n| 模型 | P-Easy Raw | P-Easy Strict | P-Hard Raw | P-Hard Strict |\n|---|---:|---:|---:|---:|\n| GPT-5.4 | 92.9 / 95.6 | 64.7 / 73.4 | 58.3 / 68.0 | 30.5 / 39.2 |\n| DeepSeek V4 Pro | 70.9 / 93.1 | 54.2 / 71.9 | 46.8 / 69.7 | 26.3 / 42.5 |\n| Qwen-2.5-Coder-7B | 61.4 / 83.7 | 36.3 / 54.7 | 37.5 / 63.1 | 13.2 / 25.2 |\n| Fisher-R1-7B | 87.0 / 96.6 | 65.7 / 74.9 | 63.4 / 82.4 | 30.6 / 44.1 |\n| Qwen-2.5-Coder-14B | 78.5 / 88.2 | 41.4 / 49.8 | 51.5 / 66.7 | 23.7 / 33.3 |\n| Fisher-R1-14B | **87.4 / 94.1** | **64.2 / 75.9** | **65.8 / 81.1** | **33.0 / 45.5** |\n\nRaw 只要求 α=0.05 下 reject/fail-to-reject 結論正確；Strict 另要求 reported p-value 與標準答案的 two-sided z-score 差距小於 0.5。Fisher-R1-14B 在 P-Hard Strict pass@1 達 33.0%，高於 GPT-5.4 的 30.5% 與 DeepSeek V4 Pro 的 26.3%。對 7B backbone，P-Hard Strict pass@1 從 13.2% 提升至 30.6%。作者的 ablation 顯示 SFT 與 DAPO 結合在所有指標上最佳；論文未報告獨立的人類統計專家基準。",
+      "insights": [
+        "評估資料分析 agent 時，不應只檢查程式是否可執行或結論方向是否正確，還應核對統計方法、p-value 與資料假設是否一致。",
+        "對高風險科學與醫療工作流，可將 EDA、missingness、outlier、heteroskedasticity、clustering 等 assumption checks 設為 agent 的強制步驟，並保留完整 code trace 供人工覆核。",
+        "若能取得可程式化驗證的結果標籤，outcome-grounded reinforcement learning 可能比單純擴大模型規模更有效；但實務部署仍應將 agent 視為輔助與 oversight 工具，而非統計專家的替代品。"
+      ],
+      "limitations": "P-Bench 每項任務目前只評估單一 hypothesis test，尚未涵蓋多重檢定與 multiple-comparison correction。未來工作包括 multi-test pipelines、明確要求 agent 論證 assumptions、量化 method choice uncertainty，以及辨識不適合單一檢定的問題。作者也強調 Fisher-R1 不能取代 human statistical review。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "statistical reasoning",
+        "scientific reproducibility",
+        "coding agents",
+        "reinforcement learning",
+        "hypothesis testing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.07429",
+      "title": "TEPA: Revoking Stale Memories for Conflict-Robust Language Agents",
+      "abstract": "Long-term memory enables language agents to reuse past facts, preferences, and task experience. Persistence also creates a central falsifiability problem: when the world changes, stale memories can remain retrievable and pollute the prompt. We characterize this failure mode as memory pollution: degradation caused by active memories that newer conflicting evidence has superseded. We introduce TEPA, a revocable evidence-memory mechanism that makes validity an explicit state of memory. TEPA represents observations as keyed precedents and revokes active precedents when fresh evidence contradicts them under the same key, allowing retrieval to draw from current evidence while preserving revoked history for audit. Across controlled hidden-regime drift, real file-backed executable drift, and preference-update streams, revocation prevents stale active memory from remaining in the retrieval set after reversal. In controlled drift over 50 seeds, append-only and last-write-wins memory fell below no memory during full reversal (append-only and last-write-wins both 0.210, no memory 0.309, TEPA 0.950), and the same pattern reproduced under real file execution (append-only 0.203, no memory 0.298, TEPA 0.950). On clean MemoryAgentBench SH-6k, TEPA matches a strong last-write-wins cache, confirming that current-key replacement is the decisive operation for single-hop fact consolidation. Boundary tests on multi-hop and very long-context MemoryAgentBench settings expose retrieval-chain and context-selection bottlenecks beyond fact-level validity tracking. Together, these results establish lifecycle revocation as a core memory operation for agents that must falsify, audit, and later re-promote evolving knowledge.",
+      "authors": [
+        "Yan Zhou",
+        "Yue Ouyang",
+        "Kaiyang Zheng",
+        "Suncheng Xiang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-07T17:16:33+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.07429v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.07429",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "長期記憶讓 language agents 能重用過去的事實、偏好與任務經驗，但持續保存也造成核心的可證偽性問題：當世界改變時，過時記憶仍可能被檢索並污染 prompt。本文將此失效模式定義為 memory pollution，即較新的衝突證據已取代舊證據後，仍保持 active 的記憶造成性能下降。作者提出 TEPA，一種可撤銷的 evidence-memory 機制，將觀察表示為 keyed precedents，並把 validity 視為明確狀態；當同一 key 出現新衝突證據時，撤銷原本 active 的 precedent，使檢索只使用當前證據，同時保留 revoked history 供稽核。實驗涵蓋 hidden-regime drift、真實檔案執行漂移及偏好更新串流；在 50 個 seeds 的 controlled drift reversal 中，append-only 與 last-write-wins 得分均為 0.210，低於 no memory 的 0.309，而 TEPA 達 0.950。TEPA 在 MemoryAgentBench SH-6k 單跳事實整合中匹配 last-write-wins，但多跳及超長上下文測試顯示 retrieval chain 與 context selection 仍是瓶頸。",
+      "problem_statement": "長期記憶會把過去證據帶入 prompt；當偏好、工具規則或事實改變時，舊記憶即使仍與查詢高度相關，也可能與新證據衝突。append-only、recency、semantic retrieval、sliding window 及一般 last-write-wins 缺乏可稽核的 validity lifecycle，可能讓 stale evidence 持續可檢索，甚至使記憶系統劣於 no memory。論文聚焦於同一 conflict key 下的新值取代舊值，以及如何安全撤銷過時證據。",
+      "proposed_solution": "作者提出 TEPA（可撤銷 evidence-memory），把觀察轉為 keyed precedents，並將 validity 從隱含的排序問題提升為明確的 lifecycle state。新 evidence 到達時，TEPA 只對同 key 的 active precedents 做 conflict check；若支持不足或近期結果持續衝突，便將舊 precedent 標記為 Revoked，移出正常 retrieval，但保留於 archive 供 audit。新值經支持門檻後可重新 promotion。TEPA-Full 再加入 trial validation，在 executable support、counterfactual 與 contamination checks 通過後啟用候選，將 candidate validation 與既有記憶 revocation 分離。",
+      "core_contributions": [
+        "將 long-term agent memory 的失效形式化為 memory pollution，並提出相對於 no memory 的 phase-wise pollution index。",
+        "提出 TEPA conflict-keyed evidence-memory 機制，以 Hypothesis、Active、Revoked 等 lifecycle states 管理 precedent，撤銷同 key 下被新證據取代的舊記憶，同時保存 archive 供 audit 與後續 re-promotion。",
+        "在 controlled drift、real file-backed executable drift、preference-update stream 與 MemoryAgentBench SH-6k 上進行比較和消融，證實 revocation 是隱藏 regime reversal 中避免 stale memory 污染的關鍵操作。"
+      ],
+      "methodology": "TEPA 將每筆 evidence x 映射為 key-value pair (k,v)，並以 precedent p=(k,v,s,f,σ,τ) 儲存，其中 s、f 分別是 support 與 conflict counts，σ 是 Hypothesis、Active 或 Revoked，τ 是建立時間。每次決策前，retriever 只從 Active set 取回與目前 task key 相符的 precedent，並按 key 內 recency 排序；MemoryAgentBench 則在狀態更新後使用所有方法共用的 lexical top-k context。執行任務並取得 outcome 與 post-action evidence 後，抽取 k、v：同值增加 s，衝突值增加 f；Beta-Bernoulli posterior mean q(p)=(s+α)/(s+f+α+β)，實驗設定 α=β=1。觀察至少 n_min=5 次且 q<θ_rev=0.3，或至少 n_rec=3 次且 recent success<θ_rec=0.34 時，將 precedent 從 Active 移到 Revoked archive。新值累積至少 θ_prop=3 次支持後建立 candidate，q≥θ_pro=0.6 即可 promotion；TEPA-Full 另以 3 次 execution trials（support、counterfactual、contamination）驗證候選。評估使用 controlled hidden-regime drift、real file-backed executable drift、preference-update stream，各 50 seeds、每 seed 160 tasks，以及 MemoryAgentBench SH-6k 的 3 個 query-order seeds、300 queries。漂移與偏好任務以 phase-wise success rate 評估，並計算 MPI=(S_NoMem−S_m)/S_NoMem；SH-6k 使用 substring exact match。作者採 matched streams 的 paired bootstrap confidence intervals、one-tailed paired permutation tests、Holm–Bonferroni correction 與 paired effect size dz。",
+      "key_results": "| 評估設定 | Append-only | No memory | Last-write-wins | TEPA family |\n|---|---:|---:|---:|---:|\n| Controlled drift，full reversal | 0.210 | 0.309 | 0.210 | **0.950** |\n| Real file-backed executable drift，full reversal | 0.203 | 0.298 | 0.203 | **0.950** |\n| Preference update，full reversal | 0.138 | 0.837 | 0.686（overall） | **0.872**（表 2；TEPA-Full overall 為 0.910） |\n| MemoryAgentBench SH-6k，substring EM | 0.583 | 論文未報告 | **0.890** | **0.890**（TEPA-Rev） |\n\n其他結果：controlled reversal 中 TEPA 相對 append-only 的 overall paired difference 為 0.167（95% CI [0.162, 0.172]，Holm p<0.001，dz=9.68）；real-tool reversal 中差異為 0.748（95% CI [0.728, 0.768]，Holm p<0.001）。TEPA-NoRev 的 full-reversal success 為 0.211，接近 append-only，顯示 revocation 的必要性。TEPA 在 SH-32k 為 0.680，但 MH-6k 為 0.040、SH-262k 為 0.000；多跳與超長上下文的完整比較數據部分未在本文主文提供。",
+      "insights": [
+        "長期記憶不應只追蹤 relevance 或 recency，也應保存明確的 validity lifecycle；對會變動的偏好、工具行為或實體屬性，可採用 keyed state 管理。",
+        "撤銷宜在 retrieval 前完成，且採 local same-key revocation，而非全域清空；如此能排除過時證據並保留其他 key 的有效記憶。",
+        "部署時應保留 revoked archive 與支持／衝突歷史，便於 audit、診斷與 later re-promotion；但若 key extraction 不可靠，應搭配 validation 或噪聲測試。"
+      ],
+      "limitations": "TEPA 假設能從 evidence 抽取可靠的 conflict keys；對衝突關係隱含於開放式記憶的情況較困難。作者目前主要驗證 single-hop stale-conflict consolidation，MH-6k 與超長上下文結果顯示 multi-hop chain construction、cross-key composition 和 context selection 尚未解決。key-noise audit 雖顯示性能會下降，但開放領域、模型自動抽取 key 的延伸實驗仍留待未來。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Long-term memory for language agents",
+        "Memory pollution and concept drift",
+        "Retrieval-augmented generation",
+        "Continual learning and provenance-aware memory"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]

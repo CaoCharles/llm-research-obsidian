@@ -1,6 +1,6 @@
-# Retrieval Augmented Generation
+# Long Term Memory And Offline Recombination
 
-> Retrieval Augmented Generation 相關研究的彙整頁面。
+> Long Term Memory And Offline Recombination 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 Retrieval-augmented generation 相關關鍵字
+- 標題或摘要含有 Long-term memory and offline recombination 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -21,11 +21,7 @@
 
 ## 相關論文
 
-- `[Agent Evaluation]` [[[2608.07429] TEPA - Revoking Stale Memories for Conflict-Robust Language Agents|TEPA: Revoking Stale Memories for Conflict-Robust ...]] (2026-08-07)
-
 - `[Agent Evaluation]` [[[2608.07438] PsychoAgent - An Affect-Sensitive Cognitive Architecture for Conflict-Aware Memo...|PsychoAgent: An Affect-Sensitive Cognitive Archite...]] (2026-08-07)
-
-- `[Hallucination & Faithfulness]` [[[2608.06292] NeSy-RAG - Neuro-Symbolic RAG for Explainable Question Answering|NeSy-RAG: Neuro-Symbolic RAG for Explainable Quest...]] (2026-08-06)
 
 ## 延伸閱讀
 

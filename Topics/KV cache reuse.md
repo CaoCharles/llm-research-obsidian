@@ -1,6 +1,6 @@
-# Multi Hop Question Answering
+# Kv Cache Reuse
 
-> Multi Hop Question Answering 相關研究的彙整頁面。
+> Kv Cache Reuse 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 multi-hop question answering 相關關鍵字
+- 標題或摘要含有 KV cache reuse 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[RAG Evaluation]` [[[2608.07458] CoinRAG - Contextualized Information Nugget KV Cache Reuse for Long-Context RAG|CoinRAG: Contextualized Information Nugget KV Cach...]] (2026-08-07)
-
-- `[Agent Evaluation]` [[[2607.29468] Self-Play Meets Skill Evolution - Self-Evolving Search Agents that Pose, Solve, ...|Self-Play Meets Skill Evolution: Self-Evolving Sea...]] (2026-07-31)
 
 ## 延伸閱讀
 

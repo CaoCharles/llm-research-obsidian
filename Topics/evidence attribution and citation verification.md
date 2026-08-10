@@ -1,6 +1,6 @@
-# Retrieval Augmented Generation
+# Evidence Attribution And Citation Verification
 
-> Retrieval Augmented Generation 相關研究的彙整頁面。
+> Evidence Attribution And Citation Verification 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 retrieval-augmented generation 相關關鍵字
+- 標題或摘要含有 evidence attribution and citation verification 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,10 +22,6 @@
 ## 相關論文
 
 - `[RAG Evaluation]` [[[2608.07370] LitTraceQA - A Benchmark for Multi-Stage Grounding and Verification in Scientifi...|LitTraceQA: A Benchmark for Multi-Stage Grounding ...]] (2026-08-07)
-
-- `[RAG Evaluation]` [[[2608.06305] Beyond Top-K - Replacing Black-Box Retrieval with Interpretable Agentic Operatio...|Beyond Top-K: Replacing Black-Box Retrieval with I...]] (2026-08-06)
-
-- `[Benchmark]` [[[2608.06377] Learning When to Trust via Selective Context Preference Optimization|Learning When to Trust via Selective Context Prefe...]] (2026-08-06)
 
 ## 延伸閱讀
 
