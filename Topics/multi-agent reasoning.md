@@ -1,6 +1,6 @@
-# Mechanistic Interpretability
+# Multi Agent Reasoning
 
-> Mechanistic Interpretability 相關研究的彙整頁面。
+> Multi Agent Reasoning 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 mechanistic interpretability 相關關鍵字
+- 標題或摘要含有 multi-agent reasoning 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Benchmark]` [[[2608.09638] Avalon-ToM-Bench - Evaluating Fine-Grained Theory of Mind via Asymmetric Game Me...|Avalon-ToM-Bench: Evaluating Fine-Grained Theory o...]] (2026-08-10)
-
-- `[Safety & Alignment]` [[[2608.07430] Diffusion LLMs as Targets and Adversaries - Mechanistic Safety Exploits|Diffusion LLMs as Targets and Adversaries: Mechani...]] (2026-08-07)
 
 ## 延伸閱讀
 

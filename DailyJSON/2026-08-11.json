@@ -1,0 +1,540 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.09666",
+      "title": "Open Evaluation Agent: Efficient and Promptable Evaluation of Visual Generative Models",
+      "abstract": "Recent advances in visual generative models have enabled high-quality image and video generation, but evaluating these models often demands sampling hundreds or thousands of images or videos, which is computationally expensive. Existing evaluation methods also rely on rigid pipelines that overlook specific user needs and provide numerical results without clear explanations. Mimicking how humans quickly form impressions of a model's capabilities from only a few samples, we propose the Evaluation Agent framework, which employs human-like strategies for efficient, dynamic, multi-round evaluations, offering detailed, user-tailored analyses. Given a natural-language evaluation request, the agent decomposes it into sub-aspects, generates targeted prompts, samples images or videos from the evaluated model, invokes suitable evaluation tools, and iteratively updates its plan from the observed evidence, covering both predefined benchmark dimensions and open-ended user concerns. The framework is thus efficient, promptable, explainable, and scalable across models and tools. Experiments show that Evaluation Agent reduces evaluation time to 10% of traditional methods while delivering comparable results. We further introduce Open Evaluation Agent (Open-EA) by constructing EA-CoT-10K, a corpus of history-conditioned step-level instruction-tuning records derived from multi-round evaluation rollouts, and training EA-3B from Qwen2.5-3B-Instruct as a local planning backbone that preserves the structured reasoning, tool invocation, and summary protocol of the API-based agent while reducing dependence on proprietary backbones. Experiments validate the API-based agent on established T2I/T2V benchmarks and open-ended queries, and evaluate Open-EA on four in-domain and three out-of-domain T2V generator families, showing partial cross-family transfer of the learned policy.",
+      "authors": [
+        "Shulin Tian",
+        "Ziqi Huang",
+        "Fan Zhang",
+        "Hongyuan Zhu",
+        "Yu Qiao",
+        "Ziwei Liu"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-10T14:42:10+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09666v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09666",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "近年視覺生成模型快速進步，已能生成高品質影像與影片，但評估這些模型通常需要取樣數百至數千個影像或影片，計算成本高昂。現有方法也多依賴僵化流程，忽略特定使用者需求，且只提供缺乏清楚解釋的數值結果。我們提出 Evaluation Agent framework，模擬人類僅從少量樣本快速形成模型能力印象的策略，進行高效率、動態、多輪評估，並提供詳細且符合使用者需求的分析。代理人接收自然語言評估要求後，將其分解為子面向、產生具針對性的提示詞、從受評模型取樣影像或影片、呼叫適合的評估工具，並根據觀察到的證據反覆更新計畫，同時涵蓋既定基準維度與開放式需求。作者進一步建立 Open Evaluation Agent，透過 EA-CoT-10K 訓練以 Qwen2.5-3B-Instruct 為基礎的 EA-3B，降低對專有模型的依賴。",
+      "problem_statement": "視覺生成模型的傳統評估通常需要取樣數百至數千個影像或影片，導致高昂的計算與時間成本。既有流程多為固定且僵化的 pipeline，難以回應使用者的特定評估需求，並常只輸出缺乏解釋的數值。論文因此要解決如何以少量、針對性的樣本，進行高效率、可調整且具解釋性的影像與影片生成模型評估。",
+      "proposed_solution": "作者提出 Evaluation Agent framework，模擬人類由少量樣本快速形成能力判斷的策略。系統接收自然語言需求後，將其拆成子面向，產生針對性 prompts，呼叫受評生成模型與評估工具，再依據觀察證據逐輪修正評估計畫。此設計兼顧 predefined benchmarks 與 open-ended concerns，並提供使用者導向的分析。作者進一步以多輪 rollout 建立 EA-CoT-10K，訓練本地模型 EA-3B，使其保留規劃、工具調用與摘要流程，降低對 proprietary backbone 的依賴。",
+      "core_contributions": [
+        "提出 Evaluation Agent framework，將自然語言評估需求轉換為子面向、目標提示詞、取樣與工具呼叫，支援動態多輪評估。",
+        "建立 EA-CoT-10K，收集源自多輪評估 rollout、具歷史條件的逐步指令微調紀錄。",
+        "訓練本地規劃模型 EA-3B，保留結構化推理、工具調用與摘要協定，並在多個 T2V 生成模型家族上檢驗部分跨家族遷移能力。"
+      ],
+      "methodology": "Evaluation Agent 以自然語言評估要求為輸入，先將需求分解為多個子面向，再針對各面向產生目標提示詞，向受評的影像或影片生成模型取樣，並呼叫合適的評估工具。代理人根據每一輪取得的樣本與工具結果更新後續計畫，形成多輪、動態的評估流程；最後輸出包含分析與摘要的使用者導向結果。此流程同時支援既定 benchmark 維度與 open-ended user concerns。作者另外從多輪評估 rollout 建立 EA-CoT-10K，資料形式為具歷史條件的 step-level instruction-tuning records，保留規劃、工具 invocation 與 summary protocol。接著以 Qwen2.5-3B-Instruct 為基礎訓練 EA-3B，作為本地規劃 backbone。實驗涵蓋 API-based agent 在 T2I/T2V benchmarks 與開放式查詢上的驗證，以及 Open-EA 在 4 個 in-domain 和 3 個 out-of-domain T2V generator families 上的測試。摘要明確提到評估時間與傳統方法比較，以及結果可比性和部分跨家族 transfer；但未提供具體評估指標名稱、分數、樣本數、baseline 配置或模型架構細節。",
+      "key_results": "論文摘要提供的主要結果如下；除明確數字外，其餘比較未提供具體數值。\n\n| 評估項目 | 結果 |\n|---|---|\n| Evaluation Agent 相對傳統方法的評估時間 | 約為傳統方法的 10% |\n| Evaluation Agent 與傳統方法的結果一致性 | 摘要稱結果可比，但論文摘要未報告具體數值 |\n| API-based agent 的驗證範圍 | 已建立的 T2I/T2V benchmarks 與 open-ended queries；未提供具體分數 |\n| Open-EA 的 in-domain 評估 | 4 個 T2V generator families；未提供具體分數 |\n| Open-EA 的 out-of-domain 評估 | 3 個 T2V generator families；摘要僅指出呈現部分 cross-family transfer，未提供具體數值 |\n| EA-3B 的基礎模型 | Qwen2.5-3B-Instruct；未提供其他架構或訓練細節數據 |",
+      "insights": [
+        "若評估資源有限，可採用根據觀察證據逐輪調整的取樣與評估策略，而非固定取樣大量樣本。",
+        "評估系統應同時輸出數值與證據導向的文字分析，並讓使用者以自然語言指定關注面向。",
+        "將多輪工具使用紀錄整理為具歷史條件的訓練資料，可用於建立較低成本的本地評估規劃模型；但跨模型家族的泛化仍需實際驗證。"
+      ],
+      "limitations": "根據所提供的摘要，論文未報告各 benchmark 的具體分數、基準方法配置、樣本數、評估工具細節或統計顯著性，因此無法進一步核驗「可比結果」與 10% 時間比例的實驗條件。Open-EA 僅呈現部分跨家族遷移，泛化能力仍有限；未來需補充更完整的成本、可靠性與跨分布分析。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "視覺生成模型評估",
+        "多輪工具使用代理人",
+        "T2I/T2V benchmark"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09779",
+      "title": "KGCaRe: Explainable Complex Conditional Question Answering using Automatic Knowledge Graph Construction and Context Retrieval with LLMs",
+      "abstract": "Answering complex conditional questions using Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG) remains a challenge, particularly in domain-specific contexts where general-purpose LLMs and RAG tend to underperform. We hypothesize that augmenting RAG with unstructured and structured knowledge, extracted from both documents and knowledge graphs (KGs), can improve reasoning and answer accuracy for such tasks.   To test this, we propose KGCaRe, a hybrid approach that combines neural retrieval with symbolic reasoning over LLM-generated KGs. KGCaRe constructs a KG from documents using a multi-prompt extraction strategy and stores it in a graph database. Simultaneously, the documents are embedded into a vector store to enable neural retrieval. KGCaRe performs innovative iterative graph traversal guided by the LLM to extract relevant triples, prune irrelevant information, and uses additional clue entities to traverse the graph again if the initial traversal does not provide satisfactory context to generate the answer. The relevant triples extracted from the KG in path form, along with semantically retrieved text passages, are then fed into custom KGCaRe prompts to generate answers to the complex conditional questions with explanations.   We evaluate KGCaRe on two complex conditional QA datasets. Our results on these datasets show that KGCaRe consistently outperforms existing baselines, including Vanilla LLM, Code Prompt, Text Prompt, Think-on-Graph, Vanilla RAG, and HybridContextQA, across multiple LLMs such as Mistral, Mixtral, GPT-3.5, and GPT-4o. We publicly release the software pipeline that we developed to implement the proposed KGCaRe approach.",
+      "authors": [
+        "Ghanshyam Verma",
+        "Simanta Sarkar",
+        "Devishree Pillai",
+        "Hotaka Shiokawa",
+        "Yourong Xu",
+        "Fiona Veazey",
+        "Peter Hubbert",
+        "Hui Su",
+        "Paul Buitelaar"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T16:05:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09779v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09779",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "使用大型語言模型（LLM）與檢索增強生成（RAG）回答複雜條件式問題仍具挑戰，尤其在專業領域，一般用途 LLM 與傳統 RAG 往往表現不佳。作者提出 KGCaRe，結合從文件與知識圖譜（KG）擷取的非結構化及結構化知識，以提升推理與答案準確性。KGCaRe 透過多提示策略從文件自動建構 LLM 生成的 KG，並將其儲存於圖資料庫；同時把文件嵌入向量資料庫以支援神經檢索。系統以 LLM 引導反覆圖遍歷、擷取相關三元組並剔除無關資訊；若初次遍歷不足，則利用額外線索實體再次遍歷。最後，系統將以路徑形式表示的相關三元組與語義檢索出的文字段落，交由自訂 KGCaRe prompts 生成附帶解釋的答案。作者在兩個複雜條件式 QA 資料集及多個 LLM 上進行評估，並公開軟體流程。",
+      "problem_statement": "論文聚焦於專業領域中的複雜條件式問答：問題通常需要從多個文件事實與實體關係中進行條件判斷。作者指出，一般用途 LLM 與傳統 RAG 在此情境下容易表現不佳；僅使用非結構化文字可能不足以支援關係推理，而僅依賴單一路徑的檢索也可能帶入無關上下文。因此，研究探討如何結合文件文字與結構化知識，以改善答案準確性與解釋性。",
+      "proposed_solution": "作者提出 KGCaRe，一個結合 neural retrieval 與 symbolic reasoning 的混合式框架。系統從文件以多提示策略自動建構 LLM-generated KG，並同步建立文件向量索引。回答問題時，LLM 引導圖譜進行迭代式 traversal，擷取並修剪相關 triples；若初始結果不足，便透過額外 clue entities 重新遍歷。最後，系統把圖譜 triples 的路徑表示與語義檢索文字共同交給自訂 prompts，以產生答案及解釋。其核心創新在於以動態、可補救的圖譜探索，補足單純文字 RAG 的關係推理能力。",
+      "core_contributions": [
+        "提出 KGCaRe 混合式框架，將文件向量檢索與 LLM 生成知識圖譜上的符號式推理結合，用於複雜條件式問答。",
+        "提出由 LLM 引導的迭代式圖遍歷機制，能擷取相關三元組、修剪無關資訊，並在必要時利用線索實體重新探索圖譜。",
+        "將圖譜路徑上下文與語義檢索文字共同輸入自訂 prompts，生成帶有解釋的答案；並公開實作該方法的軟體流程。"
+      ],
+      "methodology": "KGCaRe 採用混合式架構。首先，從文件出發，以多提示 extraction strategy 讓 LLM 產生結構化知識，建構知識圖譜，並將圖譜存入 graph database；同一批文件則被嵌入 vector store，以支援後續 neural retrieval。收到複雜條件式問題後，系統以 LLM 引導知識圖譜的迭代式 traversal，尋找與問題相關的實體與關係，擷取相關 triples，並修剪無關資訊。若初次 traversal 無法提供足夠的回答上下文，系統會使用額外 clue entities 再次遍歷圖譜。接著，系統把圖譜中的相關 triples 以 path form 組織，同時取得語義相關的文字 passages，將兩類上下文共同輸入自訂 KGCaRe prompts，由 LLM 生成答案與解釋。實驗在兩個 complex conditional QA datasets 上進行，使用 Mistral、Mixtral、GPT-3.5 與 GPT-4o，並與 Vanilla LLM、Code Prompt、Text Prompt、Think-on-Graph、Vanilla RAG 及 HybridContextQA 比較。所提供內容未說明具體評估指標、資料切分、資料規模、提示內容、圖遍歷停止條件或數值結果。",
+      "key_results": "論文指出 KGCaRe 在兩個複雜條件式 QA 資料集上，跨 Mistral、Mixtral、GPT-3.5 與 GPT-4o，皆優於 Vanilla LLM、Code Prompt、Text Prompt、Think-on-Graph、Vanilla RAG 與 HybridContextQA 等基線。摘要未提供各資料集、模型、基線或評估指標的具體分數，因此無法呈現數值比較。\n\n| 評估範圍 | KGCaRe 結果 | 具體數據 |\n|---|---|---|\n| 兩個複雜條件式 QA 資料集 | 優於所列基線 | 論文未報告 |\n| Mistral、Mixtral、GPT-3.5、GPT-4o | 均宣稱優於所列基線 | 論文未報告 |\n| 評估指標與各方法分數 | 摘要未說明 | 論文未報告 |",
+      "insights": [
+        "在需要多步條件判斷的專業問答中，可同時保留文字證據與結構化關係，避免只依賴單一檢索形式。",
+        "迭代式檢索可作為實務上的補救機制：當初始上下文不足時，利用問題中的線索實體擴大或修正圖遍歷範圍。",
+        "若系統需要可解釋答案，可將知識圖譜中的三元組組織成路徑，再與原始文字段落共同提供給生成模型；但部署時仍應另行驗證圖譜抽取與答案忠實度。"
+      ],
+      "limitations": "根據所提供的摘要，論文未交代兩個資料集的名稱、規模、領域、評估指標、各模型與基線的數值結果，也未提供消融實驗或錯誤分析。因此無法判斷知識圖譜抽取錯誤、圖遍歷成本、提示設計及不同資料條件對效能的個別影響；完整限制與未來工作需查閱全文。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "知識圖譜增強生成",
+        "混合式神經檢索與符號推理",
+        "複雜條件式問答",
+        "可解釋問答"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09772",
+      "title": "PragMatch: Separating Pragmatic Incongruity from Cross-Modal Mismatch in Large Vision-Language Models",
+      "abstract": "Large Vision-Language Models (LVLMs) have demonstrated strong performance on multimodal benchmarks, yet it remains unclear whether they genuinely reason about relationships between images and text or rely on superficial correlations, known as shortcut learning. This question is particularly important for multimodal sarcasm detection, where successful prediction depends on recognizing pragmatic incongruity rather than treating sarcasm as simple image-text mismatch. We introduce PragMatch, a controlled benchmark of 3,000 image-text pairs derived from MMSD2.0, including original sarcastic examples and constructed literal and hard-negative pairs. We identify influential shortcut cues through systematic masking and evaluate their impact through targeted injection experiments. Our results show that LVLM predictions are sensitive to lexical, OCR-derived and stylistic cues, with injected surface signals causing substantial changes in model predictions despite unchanged underlying image-text relationships. Our findings reveal limitations in current LVLMs while PragMatch provides a systematic testbed for evaluating multimodal pragmatic reasoning beyond surface-level image-text alignment.",
+      "authors": [
+        "Zhanna Mukhametsharip",
+        "Vera Demberg",
+        "Varsha Suresh"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-10T16:00:04+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09772v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09772",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "大型視覺語言模型（Large Vision-Language Models, LVLMs）在多模態基準上展現優異表現，但目前仍不清楚它們是否真正推理影像與文字之間的關係，或是依賴被稱為捷徑學習（shortcut learning）的表面相關性。這個問題對多模態諷刺偵測尤其重要，因為成功預測需要辨識語用不一致（pragmatic incongruity），而不能僅將諷刺視為簡單的影像—文字不匹配。我們提出 PragMatch，一個由 MMSD2.0 衍生、包含 3,000 組影像—文字配對的受控基準，其中包括原始諷刺樣本，以及建構的字面配對與困難負例（hard-negative pairs）。我們透過系統性遮罩辨識具影響力的捷徑線索，並以目標式注入實驗評估其影響。結果顯示，LVLM 的預測容易受到詞彙、OCR 衍生與風格線索影響；即使影像—文字的底層關係不變，注入表面訊號仍會大幅改變模型預測。研究揭示現有 LVLM 的限制，而 PragMatch 提供了一個系統化測試平台，用於評估超越表面影像—文字對齊的多模態語用推理能力。",
+      "problem_statement": "現有 LVLM 在多模態基準上的高表現，未必代表其真正理解影像與文字的關係，可能只是利用表面相關性。對諷刺偵測而言，單純辨認影像—文字不匹配不足以捕捉語用不一致。論文因此要解決如何以受控方式分離真正的語用推理與捷徑學習，並檢驗模型是否會受無關表面線索影響。",
+      "proposed_solution": "作者提出 PragMatch，一個由 MMSD2.0 衍生的受控多模態評測基準，將原始諷刺樣本與建構的字面配對、困難負例納入同一測試框架。其核心創新不是僅比較模型在諷刺分類上的分數，而是結合系統性遮罩與目標式線索注入：先定位詞彙、OCR 衍生及風格等可能的捷徑訊號，再在保持影像—文字底層關係不變時注入這些訊號，直接檢驗模型預測是否因表面線索而改變。",
+      "core_contributions": [
+        "提出 PragMatch 受控基準，包含由 MMSD2.0 衍生的 3,000 組影像—文字配對，並納入原始諷刺樣本、建構的字面配對與困難負例。",
+        "透過系統性遮罩分析辨識可能影響 LVLM 預測的詞彙、OCR 衍生及風格線索。",
+        "以目標式線索注入實驗檢驗捷徑訊號的因果影響，顯示表面訊號可在底層影像—文字關係不變時改變模型預測。"
+      ],
+      "methodology": "論文先從 MMSD2.0 建立 PragMatch，形成 3,000 組受控影像—文字配對，資料類型包括原始諷刺樣本、建構的字面配對，以及困難負例。其核心設計是將語用不一致與單純的跨模態不匹配區分開來，使評估不只測量影像與文字是否表面上衝突。接著，作者使用系統性遮罩方法，逐步移除或遮蔽可能具有預測作用的訊號，以辨識模型依賴的捷徑線索；摘要明確提及的線索包括詞彙、由 OCR 取得的文字，以及風格特徵。之後進行目標式注入實驗，在不改變影像—文字底層關係的前提下加入表面訊號，觀察 LVLM 預測是否改變。這一流程用於測試模型是否真正進行語用推理，而非依賴字面、OCR 或風格相關性。提供的摘要沒有說明 LVLM 的具體模型架構、提示格式、資料切分、訓練流程、baseline、評估指標或統計檢定；因此不能補充這些設定，也不能推導具體性能數字。",
+      "key_results": "論文摘要未提供具體的準確率、模型間比較、效應量或其他數值結果；僅報告定性發現。| 實驗項目 | 論文摘要提供的結果 |\n|---|---|\n| PragMatch 規模 | 3,000 組影像—文字配對 |\n| 系統性遮罩 | 用於辨識具影響力的捷徑線索；摘要未報告具體數值 |\n| 詞彙、OCR 衍生與風格線索 | LVLM 預測對此類線索敏感 |\n| 目標式表面訊號注入 | 在底層影像—文字關係不變時，會造成模型預測「大幅」改變；摘要未報告具體數值 |\n| 模型或基準間比較 | 論文摘要未報告具體數據，無法補充比較表格 |",
+      "insights": [
+        "評估多模態諷刺理解時，不應只使用整體準確率；應加入影像—文字關係保持不變的遮罩與注入測試，以檢查模型是否依賴表面線索。",
+        "資料集設計可明確區分真正的語用不一致、一般字面關係與困難負例，避免將跨模態不匹配錯當成諷刺理解。",
+        "實務部署前可針對詞彙、OCR 文字與風格訊號進行敏感度測試，檢查模型預測是否會被與語意無關的表面變化影響。"
+      ],
+      "limitations": "依據目前提供的摘要，論文未交代 LVLM 的具體架構、模型數量、完整資料切分、評估指標、baseline 或量化結果，因此無法判斷不同模型的相對表現與統計顯著性。未來分析需取得全文，以確認實驗設定、錯誤類型及更完整的泛化評估。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態諷刺偵測",
+        "捷徑學習與分佈外泛化"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09638",
+      "title": "Avalon-ToM-Bench: Evaluating Fine-Grained Theory of Mind via Asymmetric Game Mechanics",
+      "abstract": "Theory of Mind (ToM) is essential for agent interactions, yet existing evaluations either rely on static scenarios that oversimplify mental-state reasoning or interactive settings that provide limited diagnostic insight. We present Avalon-ToM-Bench, a fine-grained benchmark that operationalizes ToM through the asymmetric-information mechanics of The Resistance: Avalon. Rather than evaluating end-to-end gameplay, it decomposes ToM into a 2$\\times$2 taxonomy -- epistemic versus motivational reasoning crossed with inference versus action -- using human-crafted, perspective-constrained queries. Benchmarking 28 LLMs reveals three insights: 1) Reasoning, not knowledge. Models show strong game-rule comprehension but markedly weaker ToM abilities, isolating failures to social reasoning rather than missing domain knowledge. 2) Expression, not representation. Mechanistic analyses via linear probing and activation steering show that models frequently represent correct mental-state inferences in their hidden states but fail to express them during generation -- linear probes recover 77-82% accuracy versus 62-70% from the models' own chain-of-thought. 3) Policy, not deliberation. Dedicated reasoning training yields substantial improvements whereas test-time chain-of-thought provides only marginal gains (+11.0 versus +1.1 points on average), suggesting that robust ToM depends on a learned reasoning policy rather than increased inference-time deliberation.",
+      "authors": [
+        "Yen-Shan Chen",
+        "Yu Chian Duan",
+        "Chih-En Kuo",
+        "Jian-Bin Wu",
+        "Yun-Nung Chen"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.CY",
+        "cs.GT"
+      ],
+      "published": "2026-08-10T14:19:08+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09638v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09638",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Theory of Mind（ToM）對 agent interaction 至關重要，但既有評測不是依賴過度簡化 mental-state reasoning 的靜態情境，就是採用互動環境而缺乏診斷性分析。本文提出 Avalon-ToM-Bench，利用 The Resistance: Avalon 的 asymmetric-information mechanics，透過 human-crafted、perspective-constrained queries，將 ToM 拆解為 2×2 taxonomy：epistemic versus motivational reasoning，以及 inference versus action。對 28 個 LLM 的評測得到三項發現：模型具備良好的遊戲規則理解，卻有明顯較弱的 ToM；mechanistic analysis 顯示模型常在 hidden states 中表示正確的 mental-state inference，卻未能在生成時表達，linear probe 準確率為 77–82%，高於模型 chain-of-thought 的 62–70%；此外，dedicated reasoning training 平均提升 11.0 分，而 test-time chain-of-thought 僅提升 1.1 分，顯示穩健 ToM 更依賴學習到的 reasoning policy，而非增加推理時的 deliberation。",
+      "problem_statement": "既有 LLM ToM 評測常以靜態、簡化情境測試，忽略 asymmetric information、deception 與多方互動；以 hidden-role game 進行端到端評估則把 mental-state reasoning 與 planning、persuasion、memory 及策略能力混在一起。這使研究者難以知道模型究竟缺乏規則知識、視角推理、動機歸因，還是只是未能將內部推理表達出來。",
+      "proposed_solution": "作者提出 Avalon-ToM-Bench，將 The Resistance: Avalon 的隱藏角色、非對稱資訊、公開投票與任務結果轉化為 controlled diagnostic environment。核心做法是以 epistemic/motivational 與 inference/action 兩軸建立 2×2 ToM taxonomy，再由作者從真實遊戲逐 seat、逐 turn 撰寫 perspective-constrained 命題。每個命題均依規則、指定角色可見資訊及 public history 產生客觀 TRUE/FALSE gold label，並加入規則控制集，以分離 game-rule comprehension 與 social reasoning。框架亦結合 probing、injection、steering 和 CoT/training ablation，從行為與內部表徵兩層診斷 ToM 缺陷。",
+      "core_contributions": [
+        "提出 Avalon-ToM-Bench，將 Avalon 從端到端遊戲環境轉化為可診斷的 ToM 評測工具，涵蓋 Perspective-Taking、Strategic Signaling、Intention Attribution 與 Tacit Coordination 四種能力。",
+        "建立 epistemic/motivational × inference/action 的 2×2 taxonomy，並以 human-authored、role-specific、perspective-constrained 的 TRUE/FALSE 命題，隔離視角受限的 mental-state reasoning。",
+        "透過 28 個 LLM 的基準測試、linear probing、ground-truth injection、activation steering 與 chain-of-thought ablation，分析 ToM 失敗較接近 expression bottleneck，且 reasoning training 比 test-time deliberation 更有效。"
+      ],
+      "methodology": "Benchmark 將 Avalon 視為 measurement instrument，而非要求模型獲勝的 gameplay arena。作者先記錄真實 Avalon 遊戲，再於遊戲結束後逐一檢視每個 turn、seat、private role view 與 public history，將完整狀態 G 依指定玩家 i 的 visibility projection 轉換為可用資訊 I_i；模型雖看到 annotated full state，但必須只依規則 R、I_i 與公開歷史 H 推理。資料包含 97 個 scenarios、408 個約半數為 TRUE 的 binary statements，分布於四個 cell：Perspective-Taking（epistemic×inference）、Strategic Signaling（epistemic×action）、Intention Attribution（motivational×inference）與 Tacit Coordination（motivational×action）；另有 34 題 rule-recall control set。每題使用固定 zero-shot prompt，要求模型輸出 TRUE/FALSE，採 accuracy 與 macro-F1 評估。實驗涵蓋 28 個 proprietary/open-weight、reasoning/non-reasoning、不同規模模型。作者以 permutation test 分析 taxonomy 軸向與 item difficulty、CoT benefit 的關係；在 Qwen3 open-weight models 上，於各層 last-token hidden state 訓練 logistic linear probes，並使用五折交叉驗證；另進行 ground-truth injection 與在最佳 probe layer 沿 TRUE−FALSE direction 的 activation steering，以區分 representation 與 expression。最後比較同權重的 test-time CoT 開關，以及 Qwen3-4B 與 reasoning-trained variant，分析訓練政策和推理長度對 ToM 的影響。",
+      "key_results": "| 結果項目 | 主要數據 |\n|---|---:|\n| 規則考試平均準確率 | 約 84.77%（論文正文另概述平均約 83.3%） |\n| 全部 ToM 題平均準確率 | 71.98% |\n| 四項能力平均準確率 | Perspective-Taking 63.46%；Strategic Signaling 70.42%；Intention Attribution 78.21%；Tacit Coordination 75.83% |\n| 最佳模型 | Gemini-2.5-Pro：平均 89.67%；GPT-5：88.50% |\n| 最弱模型 | OLMo-2-7B：平均 55.41% |\n| Linear probe vs. 模型 CoT | Probe 約 77–82%；模型輸出約 62–70% |\n| Ground-truth injection | 全能力平均由 69.9% 提升至 82.5%，增加 12.6 個百分點 |\n| Test-time CoT | Qwen3 系列平均增加 1.1 個百分點，個別模型增減不一 |\n| Reasoning training | Qwen3-4B 變體平均增加 11.0 個百分點；Perspective-Taking 增加 20.6 個百分點 |\n| CoT 穩定性 | 約 27% 題目答案發生翻轉：約 16% 由錯轉對、12% 由對轉錯 |\n\n上述數據來自論文的 408 題 balanced set、34 題規則控制集，以及指定的 Qwen3 ablation；論文未報告跨其他遊戲或開放式互動任務的結果。",
+      "insights": [
+        "實務上評估 social reasoning agent 時，應將規則記憶控制題與 perspective-constrained ToM 題分開，避免把 domain knowledge 缺失誤判為心智推理能力不足。",
+        "模型評測不宜只看最終答案；可結合 hidden-state probing、答案注入或其他可解釋性分析，檢查模型是否已形成正確表徵但在生成階段覆寫或未表達。",
+        "若目標是提升 ToM，優先考慮在訓練階段學習穩健的 reasoning policy，而不是單純增加 test-time chain-of-thought 長度；論文結果顯示後者增益小且具高變異性。"
+      ],
+      "limitations": "研究只使用 The Resistance: Avalon，未證實結果能否轉移至談判、多方對話或其他 social-deduction games。資料由作者自行遊玩並以 sole annotators 建構，規模為 408 題、97 個 scenarios；binary TRUE/FALSE 也壓縮了開放式 ToM 行為。mechanistic evidence 主要來自可存取的 Qwen3 hidden states，probe 具相關性，steering 則是 per-item supervised 的 existence proof，尚未定位 reasoning policy 在訓練中的形成階段。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Theory of Mind evaluation",
+        "social deduction games",
+        "mechanistic interpretability",
+        "multi-agent reasoning"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09765",
+      "title": "REFRAMED: Towards Realistic Audio Description Generation for Movies",
+      "abstract": "Audio Description (AD) is a verbal narration of key visual content in videos, enabling access for visually impaired audiences. Unlike standard video captioning, AD is a structured editorial task: descriptions must be inserted into gaps in dialogue and must convey only what is needed to understand the narrative being told. However, existing approaches formulate AD generation in an artificial setting where both the content and timing of descriptions are pre-specified, reducing the task to clip-level captioning. They further rely on noisy transcription and alignment pipelines, and lack the rich parallel data required for modeling narrative context. We introduce a new formulation of AD generation in which models must jointly decide what to describe and when to do it. To support this, we present REFRAMED, a high-quality dataset of 2,023 videos that span 3,302 scenes from 206 movies, with professional AD transcripts (both American and British versions), professional subtitles and aligned screenplays. We also provide a manually curated challenge set that pairs full movies with multiple AD references, together with evaluation protocols that leverage dialogue gaps and multi-reference comparisons. Experiments with state-of-the-art AD systems and multimodal LLMs show that they outperform trivial baselines but fall far short of expert human performance. Our dataset and benchmark establish a new foundation for research on video understanding.",
+      "authors": [
+        "Igor Sterner",
+        "Mirella Lapata",
+        "Alex Lascarides",
+        "Frank Keller"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.CV"
+      ],
+      "published": "2026-08-10T15:55:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09765v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09765",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Audio Description（AD）是對影片中關鍵視覺內容進行口語敘述的旁白，旨在協助視覺障礙觀眾理解影片。不同於標準 video captioning，AD 是具結構性的編輯任務：描述必須插入對話間隙，且只傳達理解敘事情節所需的內容。然而，既有方法通常預先指定描述內容與時間，將任務簡化為 clip-level captioning；同時依賴含噪的轉錄與對齊流程，也缺乏建模敘事脈絡所需的豐富平行資料。本文提出新的 AD 生成 formulation，要求模型共同決定描述什麼以及何時描述。作者建立 REFRAMED 資料集，包含來自206部電影、涵蓋3,302個場景的2,023部影片，並提供美式與英式專業 AD transcript、專業 subtitles 及對齊 screenplays。此外，作者建立配對完整電影與多個 AD reference 的人工策展 challenge set，並提出利用對話間隙與多重參考比較的評估 protocols。實驗顯示，現有 AD 系統與 multimodal LLM 優於簡單基線，但與專業人類表現仍有很大差距。",
+      "problem_statement": "現有 Audio Description 方法把描述內容與時間預先指定，實際上只處理 clip-level captioning，無法反映 AD 必須在對話間隙中選擇描述內容與時機的編輯本質。此外，既有流程依賴含噪 transcription 與 alignment，且缺乏足以建模電影敘事脈絡的豐富平行資料，因而限制了模型對完整故事與上下文的理解。",
+      "proposed_solution": "作者提出 REFRAMED，將 AD generation formulation 改為由模型聯合決定 what to describe 與 when to describe，直接面向影片中的 dialogue gaps 和敘事脈絡。配套資料集整合專業 AD transcripts、subtitles 與 aligned screenplays，並同時納入 American 與 British AD versions。作者亦提供以完整電影和多個 AD references 組成的人工 challenge set，以及結合對話間隙和多重參考比較的 evaluation protocols，使評估不只衡量片段描述相似度，也能檢驗實際插入時機與多種合理敘述。",
+      "core_contributions": [
+        "提出要求模型聯合決定描述內容與插入時間的 AD generation 新 formulation，將任務從預先切分的 clip-level captioning 擴展為更接近實際編輯工作的設定。",
+        "建立 REFRAMED 高品質資料集，涵蓋來自206部電影的2,023部影片與3,302個場景，並整合美式及英式專業 AD transcripts、專業 subtitles 和對齊 screenplays。",
+        "提供人工策展的完整電影 challenge set，以及利用 dialogue gaps 和 multi-reference comparisons 的評估 protocols，為 AD 與影片理解研究建立基準。"
+      ],
+      "methodology": "研究將 AD 重新定義為同時進行內容選擇與時間安排的生成任務：模型不再接收預先指定的描述片段與插入時點，而需在影片敘事與對話脈絡中判斷應描述哪些關鍵視覺內容，以及應將描述放入哪些 dialogue gaps。資料方面，REFRAMED 收集來自206部電影、涵蓋3,302個場景的2,023部影片，配有專業 AD transcripts，且包含 American 與 British versions；同時提供專業 subtitles 和 aligned screenplays，以支援對話、劇本與視覺敘事之間的對照。作者另建立 manually curated challenge set，將完整電影與多個 AD references 配對，用於更接近實際長片情境的測試。評估 protocols 利用 dialogue gaps 檢視時間安排，並透過 multi-reference comparisons 處理同一內容可能存在多種合理描述的情況。實驗比較 state-of-the-art AD systems、multimodal LLMs 與 trivial baselines，並以 expert human performance 作為重要參照。摘要未提供上述系統的模型架構、具體演算法步驟、資料切分、評估指標名稱或數值結果，故不能補充這些細節。",
+      "key_results": "論文摘要僅提供定性結果，未報告各系統、基線或人類專家的具體評估分數，因此無法建立數值比較表。\n\n| 比較對象 | 論文報告結果 |\n|---|---|\n| state-of-the-art AD systems | 優於 trivial baselines，但遠低於 expert human performance |\n| multimodal LLMs | 優於 trivial baselines，但遠低於 expert human performance |\n| trivial baselines | 表現低於上述系統與模型 |\n| expert human performance | 明顯高於上述系統與模型 |\n\n具體評估指標、數值分數及各模型排名：論文未報告。",
+      "insights": [
+        "評估 AD 系統時，應同時檢查描述內容是否恰當，以及是否能在對話間隙中選擇合適時機，而不能只評估固定片段的 caption 品質。",
+        "對涉及敘事理解的多模態生成任務，具備專業編輯產出的多重 references 與 screenplay 等上下文資料，有助於更接近實務需求的評估。",
+        "即使 state-of-the-art AD systems 與 multimodal LLM 優於 trivial baselines，仍明顯落後專家人類；因此部署時不應將現有模型表現視為已達專業品質。"
+      ],
+      "limitations": "依據目前提供的摘要，論文未揭示具體模型架構、演算法細節、資料切分、評估指標定義與各項數值結果，因此無法進一步分析不同方法的細部優劣。摘要也未說明資料集的授權範圍、電影類型分布或跨語言泛化結果；這些可作為後續研究與實務採用時需確認的事項。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Audio Description generation",
+        "Video understanding"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09654",
+      "title": "Hallucination-Free GUI Grounding via Regression-Free Layout-Aware Matching",
+      "abstract": "GUI agents are shifting from metadata-dependent large language models to purely visual multimodal large language models (MLLMs) that operate directly on screenshots. The core task, GUI grounding, requires translating abstract user instructions into precise element coordinates. This task faces a persistent dual obstacle: conventional grounding models lack the semantic richness to interpret abstract instructions, while end-to-end MLLMs suffer from coordinate hallucinations caused by deficient fine-grained perception. We propose a regression-free framework where a frozen MLLM performs instruction parsing and a dedicated grounding model handles precise localization without learning any coordinate regression. A frozen MLLM first elaborates the abstract instruction into a structured visual description rich in layout cues. These descriptions are then fed to a novel Layout-Aware GUI Grounding Model, which performs regression-free localization by matching against layout-prior candidates, inherently suppressing hallucinations and avoiding expensive fine-tuning. The grounding model is trained with only Text/Icon binary labels, requiring no coordinate regression parameters. On ScreenSpot-Pro, our method achieves over 20% improvement in grounding accuracy over end-to-end systems; on Mind2Web, it raises success rate and element selection rate by more than 15%. These results demonstrate that decoupling instruction understanding from layout-aware localization effectively resolves the core challenges of GUI interaction.",
+      "authors": [
+        "Yuke Li",
+        "Xuehan Hou"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-10T14:29:07+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09654v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09654",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "GUI agents 正從依賴 metadata 的大型語言模型，轉向直接操作 screenshots 的純視覺 multimodal large language models（MLLMs）。GUI grounding 的核心是將抽象使用者指令轉換為精確的介面元素座標。現有 grounding models 缺乏理解抽象指令所需的語義能力，而端到端 MLLMs 又因細粒度感知不足而產生座標幻覺。本文提出 regression-free framework：使用 frozen MLLM 解析指令，並由專用 grounding model 進行精確定位，且不學習座標回歸。MLLM 先將抽象指令擴展為包含 layout 線索的結構化視覺描述，再交由 Layout-Aware GUI Grounding Model，透過 layout-prior candidates 進行 matching，以抑制幻覺並避免昂貴的 fine-tuning。模型僅使用 Text/Icon 二元標籤訓練。在 ScreenSpot-Pro 上，相較端到端系統 grounding accuracy 提升超過 20%；在 Mind2Web 上，success rate 與 element selection rate 提升超過 15%。",
+      "problem_statement": "論文聚焦於無 GUI metadata 情況下，從 screenshot 將抽象自然語言指令 grounding 到精確 UI 元素座標。端到端 MLLMs 雖具語義理解能力，卻因細粒度視覺感知與 GUI layout inductive bias 不足而產生座標幻覺；傳統 grounding models 則缺乏抽象指令與空間語義理解。座標回歸微調雖可改善部分問題，卻需要昂貴標註且泛化有限。",
+      "proposed_solution": "作者提出 decoupled intent-driven framework：先由 frozen MLLM 將抽象指令轉成富含視覺與 layout 線索的結構化描述，再由 Layout-Aware GUI Grounding Model 定位。模型以 GUI-domain-adapted DINO、Text/Icon 二元 layout prior 產生候選，並透過 frozen CLIP 的文字—影像相似度選擇候選，直接輸出其 bounding box，避免最終座標回歸。對空間限定指令，另以只有單層線性投影的 geometric fusion 調整視覺特徵。核心創新是將 MLLM 的語義推理與專用模型的細粒度 layout 感知分離。",
+      "core_contributions": [
+        "提出專用的 Layout-Aware GUI Grounding Model，以 frozen cross-modal matching 取代可學習的座標回歸，直接輸出候選區域座標。",
+        "提出僅依賴 Text/Icon 二元 layout 標籤的 layout-prior candidate generation，以及以單層線性投影注入幾何資訊的 lightweight geometric fusion。",
+        "建立 decoupled intent-driven framework，由 frozen MLLM 負責指令語義擴展，專用 grounding model 負責細粒度定位，避免完整 MLLM fine-tuning。"
+      ],
+      "methodology": "框架分為指令擴展與精確定位兩階段。第一階段將 screenshot I 與使用者指令 U 輸入 frozen、training-free MLLM；本文實驗使用 Qwen2.5-VL-72B，透過 prompt 與 in-context 設計產生結構化視覺描述 Q，例如包含文字、顏色、形狀及相對位置，但不輸出座標。第二階段先以 GUI-domain-adapted DINO 從 screenshot 產生候選區域；模型使用約 200k 張 GUI screenshots，僅標註 Text 與 Icon 二元類別。每個候選除了視覺 embedding，還計算六維 normalized geometry vector：[中心座標、寬、高、寬高比、面積]。接著以 frozen CLIP ViT-B/32 分別編碼候選 crop 與描述 Q，經 L2 normalization 後計算 cosine similarity，選取最高分候選並直接輸出其 bounding box，因此最終 matching 階段沒有可學習的座標回歸 head。為處理 upper-left、upper-right 等空間查詢，將六維幾何向量經唯一可學習的線性投影 Wg、bg 映射至 CLIP 特徵維度，並以加法融合；只訓練此投影，使用 spatial query-region positive pairs、batch negatives 與 InfoNCE loss。DINO 階段則使用標準 detection loss，包括 L1 regression、GIoU 與 focal classification loss。評估包含 ScreenSpot／ScreenSpot-Pro 的 click accuracy，以及 AITW 的 screen-wise action matching、Mind2Web 的 Element Accuracy、Operation F1 與 Step Success Rate。",
+      "key_results": "主要結果如下；數值為論文報告的 click accuracy 或下游任務指標，ScreenSpot-Pro 的平均值涵蓋六個專業領域。\n\n| Benchmark／設定 | Ours | 代表性 baseline | 論文報告的比較 |\n|---|---:|---:|---|\n| ScreenSpot Mobile／Desktop／Web 平均 click accuracy | 87.1 | UGround 73.3；SeeClick 53.4 | 高於 UGround 13.8 個百分點 |\n| ScreenSpot-Pro 六領域平均 | 41.3 | OS-Atlas-7B 18.9；UGround-7B 16.5 | 高於 OS-Atlas-7B 22.4 個百分點 |\n| AITW Overall | 67.6 | SeeClick 59.3；Qwen2.5VL-72B 43.4 | 相較 SeeClick 高 8.3 個百分點；作者另報告平均改善 7.9% |\n| Mind2Web Cross-Task Element Accuracy／Step SR | 44.9／41.2 | Qwen2.5VL-72B 27.7／24.3 | 分別高 17.2／16.9 個百分點 |\n| Mind2Web Cross-Website Element Accuracy／Step SR | 43.8／39.3 | Qwen2.5VL-72B 25.6／23.1 | 分別高 18.2／16.2 個百分點 |\n| Mind2Web Cross-Domain Element Accuracy／Step SR | 40.1／37.3 | Qwen2.5VL-72B 24.8／23.6 | 分別高 15.3／13.7 個百分點 |\n\n論文未提供完整 ablation 表格數字，只指出 layout-prior candidate generation 與 lightweight geometric fusion 均帶來實質貢獻。",
+      "insights": [
+        "對 GUI agent 而言，可將高層指令理解與像素級定位拆分，分別使用通用 MLLM 與專用視覺模型，以降低端到端座標預測的錯誤。",
+        "若介面元素語義類別繁多，先學習通用的 Text/Icon layout prior，可能比建立完整類別標註更具資料效率；但此洞察仍需在論文未涵蓋的設定中驗證。",
+        "空間資訊可透過輕量幾何特徵融合加入 matching，而不必為每種空間關係建立大量標註；實際部署時仍應檢查候選生成是否涵蓋目標元素。"
+      ],
+      "limitations": "論文未量化說明各模組的獨立增益、推論延遲、記憶體成本或錯誤案例分布；「hallucination-free」主要是架構層面的理論主張，並非證明所有錯誤均消失。方法仍依賴候選偵測、MLLM 描述品質與 CLIP matching，且空間訓練對的具體規模未報告。",
+      "tags": [
+        "hallucination",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "GUI agents",
+        "visual grounding",
+        "多模態模型評估",
+        "座標幻覺抑制"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09748",
+      "title": "Defining Decentralization: An Ontological Perspective",
+      "abstract": "Decentralization as a concept in computer science has existed for over half a century. Despite its fundamental role across domains such as security, distributed computing, artificial intelligence, cloud infrastructures, and Internet of Things (IoT) architectures, there remains no universally accepted definition of decentralization applicable across computer communication systems. This has become increasingly problematic with the emergence of decentralized AI and machine learning paradigms, including collaborative training, distributed inference, blockchain-based, and agentic AI, where decentralization is often treated as a core design objective. Meanwhile, existing approaches frequently conflate decentralization with related notions such as distribution of trust or specific implementation paradigms. Such ambiguity creates inconsistencies in system analysis, limits comparability between works, and weakens the rigor of formal reasoning surrounding communication architectures and protocol design. In this work, we define this research gap as the Decentralization Problem.   We analyze the formal-semantic, epistemological, and pragmatic foundations of decentralization and introduce a graph-based ontology defining it as both relational and subject-specific property of computer communication systems. The framework formally distinguishes decentralization from distribution and supports evaluation through two novel metrics: Void Tolerance and Imperviousness. We also provide a browser-based implementation that enables automated classification and metric computation of arbitrary systems. Instantiations to federated learning and blockchain architectures show consistent, comparable assessments where existing definitions produce incomplete or contradictory conclusions, providing a domain-independent foundation for analysing decentralization across heterogeneous systems.",
+      "authors": [
+        "Jakub Kacper Szeląg",
+        "Aydin Abadi",
+        "Mohammad Naseri"
+      ],
+      "categories": [
+        "cs.DC",
+        "cs.AI",
+        "cs.LG",
+        "cs.LO",
+        "eess.SY"
+      ],
+      "published": "2026-08-10T15:41:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09748v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09748",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "去中心化（Decentralization）在 computer science 中已存在逾半世紀，並廣泛應用於 security、distributed computing、artificial intelligence、cloud infrastructure 與 Internet of Things（IoT）架構。然而，目前仍缺乏適用於各類 computer communication systems 的普遍定義。隨著 collaborative training、distributed inference、blockchain-based AI 與 agentic AI 等 decentralized AI／machine learning 範式興起，此問題更加嚴重。既有研究常將去中心化與 trust distribution 或特定實作範式混為一談，造成系統分析不一致、研究結果難以比較，也削弱通信架構與協定設計的形式化推理。本文將此研究缺口定義為 Decentralization Problem，分析其形式語義、認識論與實務基礎，提出以圖為基礎的 ontology，將去中心化定義為 computer communication systems 的 relational 且 subject-specific property。本文進一步提出 Void Tolerance 與 Imperviousness 兩項指標，並提供 browser-based implementation，以自動分類任意系統並計算指標。對 federated learning 與 blockchain 的實例化顯示，該框架能產生一致且可比較的評估。",
+      "problem_statement": "本文要解決 computer communication systems 缺乏普遍且一致的 decentralization 定義之問題。現有研究常把 decentralization 與 distribution、trust distribution 或特定實作範式混為一談，導致系統分析不一致、不同研究難以比較，並削弱通信架構與協定設計中的形式化推理。這些問題在 decentralized AI、collaborative training、distributed inference、blockchain-based 與 agentic AI 興起後更加突出。",
+      "proposed_solution": "作者提出一套跨領域的 graph-based ontology，從 formal-semantic、epistemological 與 pragmatic 基礎重新界定 decentralization。該框架將去中心化視為 computer communication systems 的 relational 與 subject-specific property，因而能描述「對何種 subject、基於何種關係」的去中心化，而非將其簡化為節點分散或信任分散。框架也形式化區分 decentralization 與 distribution，並引入 Void Tolerance 與 Imperviousness 兩項指標；配合 browser-based implementation，可對任意系統自動分類與計算指標。",
+      "core_contributions": [
+        "將跨 computer communication systems 的去中心化定義問題明確化為 Decentralization Problem，並分析其 formal-semantic、epistemological 與 pragmatic foundations。",
+        "提出 graph-based ontology，將 decentralization 定義為具 relational 與 subject-specific 性質的系統屬性，並形式化區分 decentralization 與 distribution。",
+        "提出 Void Tolerance 與 Imperviousness 兩項評估指標，且提供 browser-based implementation，支援任意系統的自動分類與指標計算。"
+      ],
+      "methodology": "本文首先從 formal-semantic、epistemological 與 pragmatic 三個層面分析 decentralization 的基礎，並將現有研究把 decentralization 與 distribution、trust distribution 或特定 implementation paradigm 混用的問題界定為 Decentralization Problem。接著，作者建立 graph-based ontology，以通信系統中的關係與特定 subject 為分析單位，將 decentralization 表述為 relational 且 subject-specific property，並在形式上區分 decentralization 與 distribution。評估部分引入兩項新指標：Void Tolerance 與 Imperviousness；摘要指出它們可用於系統評估，但未提供完整數學公式、輸入表示、演算法步驟、閾值設定或複雜度資訊。實作方面，作者提供 browser-based implementation，支援對 arbitrary systems 進行 automated classification 與 metric computation。驗證則透過 federated learning 與 blockchain architectures 的 instantiation，檢查框架是否能產生一致且可比較的分析，並與既有 definitions 所導致的不完整或矛盾結論形成對照。摘要未說明資料集、實驗樣本數、baseline、統計檢定或具體數值。",
+      "key_results": "論文摘要指出，將框架實例化於 federated learning 與 blockchain 後，可得到一致且可比較的 assessments；相較之下，既有 definitions 會產生不完整或矛盾的 conclusions。摘要未提供具體數值、實驗規模、baseline 細節或逐項指標結果。\n\n| 評估對象 | 本文框架結果 | 既有定義結果 | 具體數據 |\n|---|---|---|---|\n| Federated learning | 摘要稱可產生一致且可比較的 assessment | 摘要稱可能產生不完整或矛盾結論 | 論文未報告 |\n| Blockchain architectures | 摘要稱可產生一致且可比較的 assessment | 摘要稱可能產生不完整或矛盾結論 | 論文未報告 |",
+      "insights": [
+        "在評估 federated learning、blockchain 或 agentic AI 系統時，不宜僅以節點數量、資料分散或 trust distribution 判定是否去中心化，應先明確指定評估關係與 subject。",
+        "若需比較不同通信架構，應採用一致的 ontology 與可計算指標，以減少因定義不一致造成的矛盾結論。",
+        "系統設計與協定分析可將 Void Tolerance、Imperviousness 作為補充性分析維度；不過，實際採用前仍需依論文完整定義確認其計算方式與適用範圍。"
+      ],
+      "limitations": "根據目前提供的摘要，論文未揭露 ontology 的完整圖結構、形式化定義、Void Tolerance 與 Imperviousness 的計算公式，也未提供實驗數據、比較基線、案例細節或瀏覽器工具的評估結果。因此無法僅依摘要判斷指標的穩健性、分類準確性、跨領域泛化能力與實際使用成本；上述內容需查閱完整論文。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "分散式系統與 computer communication systems",
+        "Federated learning 與 blockchain architecture",
+        "Decentralized AI 與 agentic AI"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09636",
+      "title": "NeuroRefiner: Morphology-Aware Multi-Agent Refinement for 3D Fluorescence Microscopy Neuron Segmentation",
+      "abstract": "Accurate 3D neuron segmentation in fluorescence microscopy is critical for neuroscience. However, the sparse and elongated morphology of neurons poses significant challenges to existing segmentation methods. These methods struggle to preserve both local details and global topology, leading to fragmented results. To address this, we propose NeuroRefiner, a multi-agent system that formalizes the human expert workflow involving iterative global observation and local editing. Specifically, NeuroRefiner comprises three collaborative agents dedicated to diagnosing topological errors, generating correction instructions, and validating refinement quality. To facilitate agent instruction-guided segmentation refinement, we propose TopoRefineNet, a dedicated 3D U-Net-based tool that leverages cross-modality feature fusion to generate refined masks. Through multi-round agent reasoning and voxel-level editing, NeuroRefiner produces topologically more accurate segmentations with enhanced interpretability. Experiments on the BigNeuron, CWMBS, and ZBFWB datasets demonstrate that NeuroRefiner outperforms state-of-the-art methods, notably achieving a 3.02% improvement in F1 score on the challenging ZBFWB dataset.",
+      "authors": [
+        "Haiyang Yan",
+        "Jinyue Guo",
+        "Yanchao Zhang",
+        "Bingqing Wang",
+        "Zhenchen Li",
+        "Jing Liu",
+        "Jiazheng Liu",
+        "Linlin Li",
+        "Hua Han"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T14:14:47+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09636v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09636",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "準確的 3D fluorescence microscopy 神經元 segmentation 對神經科學至關重要。然而，神經元具有稀疏且細長的 morphology，現有 segmentation 方法難以同時保留局部細節與全域 topology，因而產生 fragmented results。為此，作者提出 NeuroRefiner，一個將人類專家「反覆全域觀察與局部編輯」工作流程形式化的 multi-agent system。系統包含三個協作 agents，分別負責診斷 topology errors、產生 correction instructions，以及驗證 refinement quality。為執行 agent 指令引導的 segmentation refinement，作者提出專用的 3D U-Net 工具 TopoRefineNet，透過 cross-modality feature fusion 生成 refined masks。經由多輪 agent reasoning 與 voxel-level editing，NeuroRefiner 產生 topology 更準確且更具可解釋性的 segmentation。在 BigNeuron、CWMBS 與 ZBFWB 三個資料集上的實驗顯示，本方法優於現有方法，並在具挑戰性的 ZBFWB 資料集上達成 3.02% 的 F1 improvement。",
+      "problem_statement": "3D fluorescence microscopy 的神經元影像通常具有稀疏、細長、低對比與高雜訊特性。現有 sliding-window 或 single-pass segmentation 方法受限於局部 receptive field，難以建模長距離 connectivity，容易造成神經突觸或軸突斷裂、fragmentation 與 noise。既有 refinement 方法多聚焦邊界或局部 label correction，缺乏 topology-aware 的錯誤定位、反覆修正機制與可稽核的 reasoning workflow。",
+      "proposed_solution": "作者提出 NeuroRefiner，以模擬神經科學專家「先全域觀察、再局部編輯、最後驗證」的流程。Global Inspector 使用 MIP、sub-block mask 與 β0 指標找出 topology anomalies；Refinement Advisor 結合 XY/YZ 視圖產生具體的空間化文字修正指令；Change Validator 檢查指令遵循度與 topology 是否改善，決定接受或重試。TopoRefineNet 是連接 LLM reasoning 與 voxel editing 的專用 3D U-Net 工具，以 image-mask 視覺特徵和文字 embedding 做 cross-attention，執行 instruction-guided mask refinement。多輪閉環協作使系統能修補 FN 斷裂並移除 FP 雜訊。",
+      "core_contributions": [
+        "提出 NeuroRefiner，將 Global Inspector、Refinement Advisor 與 Change Validator 組成 topology-aware、可迭代的 LLM-based multi-agent neuron segmentation refinement framework。",
+        "提出 TopoRefineNet，一個以 3D U-Net 為基礎、透過視覺特徵與文字指令 cross-attention 融合來執行 voxel-level mask editing 的專用工具。",
+        "設計由 synthetic defects 到 real-world defects 的 two-stage training strategy，並在 BigNeuron、CWMBS 與 ZBFWB 上證明其 segmentation 與 topology refinement 效果。"
+      ],
+      "methodology": "NeuroRefiner 以 off-the-shelf segmentation model 產生初始 mask M(0)，再進行最多 Tmax=5 輪 refinement。Global Inspector 對 mask 與影像沿 z-axis 做 Maximum Intensity Projection（MIP），將全域平面切成 128×128 的 non-overlapping sub-blocks；同時計算各區域的 0-th Betti number β0，即 3D connected-component count，用以找出可能的 fragmentation 或 isolated noise，並標記 false-negative（FN）或 false-positive（FP）。Refinement Advisor 針對問題區塊，分析 XY 與 YZ 兩個 orthogonal projections 的原始影像及 mask，產生含空間位置與操作類型的自然語言指令，例如 connect、repair break 或 remove noise。TopoRefineNet 接收 3D image、imperfect mask 與文字 instruction；視覺 encoder 將 image-mask concatenation 編碼為 hierarchical feature pyramid，frozen Qwen3 Embedding 0.6B 編碼文字，並在最深層視覺特徵上以 cross-attention 融合，再由 decoder 與 skip connections 輸出 refined mask。其 two-stage training 第一階段以 erosion、copy-paste 與 Gaussian noise 合成 FN/FP defects，第二階段使用多個 segmentation networks 產生的真實錯誤 mask，共選取 5,310 個 128×128×64 volumes，並以 Qwen3-VL 產生 instructions；訓練採 cross-entropy 與 Dice loss。Change Validator 僅在 instruction adherence 與 topology improvement 皆成立時接受修改，否則重新產生指令。評估使用 precision、recall、F1、Spatial Distance（SD）、SSD 與 MES，並透過 APP2 reconstruction 衡量 voxel accuracy 與 morphology/topology fidelity。",
+      "key_results": "主要結果如下；表中數值為論文報告的百分比（SD、SSD 為越低越好，其餘指標越高越好）。\n\n| 資料集／設定 | 方法 | SD | SSD | Precision | Recall | F1 | MES |\n|---|---|---:|---:|---:|---:|---:|---:|\n| CWMBS／Weak Signal | GBP-Net | 11.85 | 19.27 | 95.06 | 83.50 | 88.91 | 67.09 |\n| CWMBS／Weak Signal | Ours | 9.17 | 15.21 | 95.72 | 85.05 | 90.07 | 70.32 |\n| CWMBS／Strong Noise | GBP-Net | 17.15 | 24.94 | 93.41 | 75.93 | 83.77 | 59.41 |\n| CWMBS／Strong Noise | Ours | 13.29 | 19.52 | 94.31 | 79.66 | 86.37 | 64.39 |\n| BigNeuron | 3D U-Net | 7.23 | 11.27 | 83.15 | 89.76 | 86.33 | 66.82 |\n| BigNeuron | Ours | 3.39 | 6.94 | 89.74 | 90.37 | 90.05 | 72.02 |\n| ZBFWB | 3D U-Net | 38.65 | 45.41 | 86.33 | 63.15 | 72.94 | 53.63 |\n| ZBFWB | GBP-Net | 20.35 | 28.44 | 91.13 | 76.39 | 83.11 | 71.41 |\n| ZBFWB | Ours | 16.31 | 23.66 | 92.77 | 80.38 | 86.13 | 74.25 |\n\n作者指出，在 ZBFWB 上，本方法相對 GBP-Net 的 F1 高 3.02 個百分點，相對 3D U-Net 提升 13.19 個百分點。CWMBS 的 agent ablation 中，完整系統達到 Weak Signal F1 90.07、Strong Noise F1 86.37（表 3 的 agent ablation 另報告 CWMBS F1 88.83，論文未進一步解釋兩者設定差異）。TopoRefineNet 的 single-stage real-defect training 相較 two-stage strategy，在 ZBFWB 與 CWMBS 的 F1 分別下降 1.17% 與 1.89%，且 Change Validator rejection rate 增加 23.57%。",
+      "insights": [
+        "對 agent-based vision system 而言，將錯誤診斷、修正規劃與結果驗證分工，較單一 agent 同時處理所有任務更有利於穩定 refinement；論文的 agent ablation 支持此設計。",
+        "自然語言 instruction 可作為高階 reasoning 與低階 voxel editing 之間的可稽核介面；實務部署時應保留每輪的錯誤類型、位置、指令與 validator 決策，以提升可解釋性。",
+        "全域視圖與局部視圖互補是處理稀疏長距離結構的關鍵；但 MIP 可能遺失深度資訊，因此在密集或遮蔽場景應加入 depth-aware representation，而不能只依賴 2D projection。"
+      ],
+      "limitations": "論文明確指出，Global Inspector 主要依賴 2D MIP；在神經元密集或彼此重疊的區域，MIP 會遺失 z-axis depth information，導致 3D 錯誤定位不精確。未來工作將加入 depth-aware encoding，例如以 pseudo-color 表示深度或使用 depth-weighted projections。論文未報告完整的推論成本、agent latency、人工升級比例及跨資料集外部泛化結果。",
+      "tags": [
+        "agent-evaluation",
+        "alignment",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態 agent 與 tool-use evaluation",
+        "3D biomedical image segmentation",
+        "拓撲感知 refinement 與可解釋性"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09766",
+      "title": "Cultivar: A Contrastive and Locale-Oriented Translation Benchmark for Investigating Contamination and Localisation Robustness",
+      "abstract": "Multilingual translation benchmarks are typically sourced in English and translated into other languages, treating language pairs as the unit of evaluation---a design that is prone to contamination over time and overlooks locale and cultural considerations. We therefore advocate for source-contrastive evaluation and instantiate it with Cultivar, a localised subset of FLORES, which enables locale-specific translation evaluation. When paired with unlocalised counterparts, performance discrepancy allows the probing of data contamination and localisation robustness. We benchmark 32 open-weight models and find that MT-specialised models are less robust, a few models potentially overfit FLORES, and models tend to translate US content better than that of other locales, regardless of language.",
+      "authors": [
+        "Pinzhen Chen",
+        "Koel Dutta Chowdhury",
+        "Xiaoya Xu",
+        "David Tan",
+        "Doreen Osmelak",
+        "Ona de Gibert",
+        "Ariun-Erdene Tumurchuluun",
+        "Ashok Urlana",
+        "Fedor Sizov",
+        "Hale Sirin",
+        "Jesujoba Alabi",
+        "Karrar Talib Abed",
+        "Mateusz Klimaszewski",
+        "Nikolay Bogoychev",
+        "Niyati Bafna",
+        "Patricia Schmidtova",
+        "Preksha Manjunath Shanbhag",
+        "Sherrie Shen",
+        "Vilem Zouhar",
+        "Vivek Iyer",
+        "Yasser Hamidullah",
+        "Yusser Al Ghussin",
+        "Zheng Zhao"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T15:56:43+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09766v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09766",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "多語翻譯 benchmark 通常以英文為來源，再翻譯成其他語言，並將 language pair 視為評估單位；這種設計容易隨時間產生資料污染，也忽略 locale 與文化因素。因此，作者倡議 source-contrastive evaluation，並提出 Cultivar：FLORES 的 localized subset，用於進行特定 locale 的翻譯評估。將 Cultivar 與其 unlocalised counterparts 配對後，可透過兩者的效能差異探測資料污染與 localisation robustness。作者評測 32 個 open-weight models，發現 MT-specialised models 的穩健性較低；少數模型可能對 FLORES 過度擬合；此外，不論目標語言為何，模型通常能更好地翻譯 US locale 的內容，而非其他 locale 的內容。",
+      "problem_statement": "現有多語翻譯 benchmark 多以英文為來源，再翻譯至其他語言，並把 language pair 當作主要評估單位。此設計可能因資料長期公開而容易受到 contamination 影響，也忽略 locale 與文化內容差異，因而難以分辨模型是真正具備翻譯能力，還是受資料記憶或對特定 locale 的偏向影響。",
+      "proposed_solution": "作者倡議 source-contrastive evaluation，並以 FLORES 為基礎提出 Cultivar，一個 localized subset。其核心做法是把 Cultivar 與相應的 unlocalised counterparts 配對，將不同來源 locale 下的翻譯效能差距作為診斷訊號，用以探測資料 contamination 與 localisation robustness。此框架也能檢查模型是否對某些 locale 的內容表現較佳，而不把語言對本身視為唯一評估單位。",
+      "core_contributions": [
+        "提出 source-contrastive evaluation 的評估觀點，指出僅以 language pair 為單位的多語翻譯 benchmark 可能無法充分揭示資料污染與 locale 差異。",
+        "建立 Cultivar，作為 FLORES 的 localized subset，使翻譯模型能接受特定 locale 與文化內容的評估。",
+        "以 32 個 open-weight models 進行實驗，探討模型的 FLORES 潛在過度擬合、localisation robustness，以及不同 locale 內容之間的翻譯表現差異。"
+      ],
+      "methodology": "作者的方法核心是 source-contrastive evaluation：不只按 language pair 評估翻譯，而是比較具有 locale 差異、且可相互對照的來源內容。具體資料基礎為 FLORES，作者從中建立 Cultivar，作為其 localized subset；再將 Cultivar 與 unlocalised counterparts 配對，透過兩者的效能 discrepancy 探測資料 contamination 與 localisation robustness。實驗對象為 32 個 open-weight models，並特別比較或觀察 MT-specialised models 與其他模型的穩健性，以及模型在 US locale 和其他 locale 內容上的翻譯表現。摘要未提供模型架構、推論流程、資料切分、locale 數量、語言數量、baseline、翻譯品質評估指標或具體計算公式，因此不能進一步補述。摘要所支持的分析量主要是 localized 與 unlocalised 對照下的效能差異，以及不同 locale 內容間的相對表現；具體分數與統計檢定結果，論文未報告。",
+      "key_results": "論文摘要未提供具體分數、模型名稱、資料規模或逐項比較數據，因此無法填入數值表格。可確認的結果如下：\n\n| 評估面向 | 論文報告的結果 |\n|---|---|\n| 評測模型 | 32 個 open-weight models |\n| MT-specialised models 的穩健性 | 較不 robust |\n| FLORES 過度擬合 | 少數模型可能 overfit FLORES |\n| Locale 翻譯表現 | 模型通常翻譯 US content 優於其他 locale content，且此現象不論語言為何 |\n| 具體效能數值 | 論文未報告 |",
+      "insights": [
+        "實務上進行翻譯模型評測時，可將 localized 與 unlocalised、但具可比性的來源內容配對，以觀察效能差距，而不只報告語言對分數。",
+        "若模型在特定 benchmark 上表現突出，應進一步檢查其在對應的 contrastive 或 localized 資料上的表現，以降低資料污染或過度擬合造成的誤判。",
+        "翻譯品質評估應納入 locale 與文化脈絡；根據論文結果，不能僅以語言作為內容難度或模型能力的代表。"
+      ],
+      "limitations": "目前提供的證據僅包含 arXiv 摘要，未包含 PDF 中的完整實驗設定、模型清單、資料規模、locale 建構細節、評估指標與數值結果，因此無法核實方法細節或比較幅度。摘要也未說明 Cultivar 的涵蓋範圍及未來擴充方向；相關限制與後續工作需參閱全文。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多語機器翻譯評測",
+        "資料污染與 benchmark contamination"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.09692",
+      "title": "Evaluating Generative Time-Series Models on Data with Point Masses",
+      "abstract": "Many of the series that generative time-series models are benchmarked on place a large probability mass on a single value --- it does not rain, no ride is requested, no part is ordered. We report what happens when such data is evaluated carefully. First, the standard rolling-origin protocol can score a model on a window whose atom structure bears no resemblance to the dataset: on one benchmark the dataset is $42\\%$ zeros and the evaluation windows are $13\\%$, on another $47\\%$ against $5\\%$. This is not a cosmetic problem --- it reversed one of our own conclusions, turning the strongest occurrence model in our study into what looked like a cautionary tale. Second, we give a control in which CRPS is invariant \\emph{by construction} while the temporal coupling is destroyed, which measures exactly how much that coupling contributes to a chosen statistic. Third, benchmarking seven models on a matched protocol over five seeds, an autoregressive hurdle beats a conditional flow on five of six datasets, by up to a factor of $153$, while the flow's own occurrence statistics vary by up to $62\\%$ across training seeds and every baseline is deterministic. Finally, the model ordering is not the same under five different occurrence statistics, and the two that do not share a construction agree with each other least.",
+      "authors": [
+        "Jian Xu"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-10T14:57:36+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.09692v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.09692",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "許多生成式時間序列模型所使用的基準資料，在單一數值上具有很大的機率質量，例如不下雨、沒有叫車需求或沒有零件訂單。本文仔細評估這類資料後發現：首先，標準 rolling-origin protocol 可能在原子結構與整個資料集毫不相似的視窗上評分；某一基準資料集整體有 42% 為零，但評估視窗僅為 13%，另一資料集則為 47% 對 5%。這並非表面問題，因為它曾反轉作者自身的結論，使研究中最強的 occurrence model 看似成為警示案例。其次，本文提出一種控制方法，藉由建構使 CRPS 保持不變，同時破壞 temporal coupling，以精確衡量該耦合對特定統計量的貢獻。最後，在五個 seeds 的匹配協定下比較七個模型，autoregressive hurdle 在六個資料集中的五個勝過 conditional flow，最多達 153 倍；flow 的 occurrence statistics 在訓練 seeds 間變動最多 62%，且所有 baseline 都是 deterministic。五種 occurrence statistics 下的模型排序也不一致。",
+      "problem_statement": "含有大量 point masses 的時間序列，若直接套用標準 rolling-origin protocol，評估視窗的 atom 結構可能與整體資料集不一致，導致 occurrence model 的比較失真，甚至反轉研究結論。僅依賴 CRPS 或單一 occurrence statistic 也無法分辨 temporal coupling 的貢獻，且不同統計量可能給出不同模型排序。",
+      "proposed_solution": "作者提出一套針對 point-mass 時間序列的審慎評估框架。核心包括：檢查資料集與評估視窗的 atom 結構是否匹配；使用一個讓 CRPS 保持不變、但破壞 temporal coupling 的控制，以隔離耦合效果；在 matched protocol 與多個 training seeds 下比較模型；並以五種 occurrence statistics 檢驗結論對評估統計量的敏感度。此框架的創新不在提出單一新模型，而在於校正評估設計並揭露模型排序與 seed 穩定性的問題。",
+      "core_contributions": [
+        "指出標準 rolling-origin 評估可能產生與整體資料集原子結構不匹配的評估視窗，並展示其足以反轉模型比較結論。",
+        "提出一種使 CRPS 按建構保持不變、但破壞 temporal coupling 的控制方法，用於衡量該耦合對選定統計量的貢獻。",
+        "在匹配協定與五個 seeds 下比較七個模型，分析 autoregressive hurdle、conditional flow 的表現、seed 變異，以及五種 occurrence statistics 對模型排序的影響。"
+      ],
+      "methodology": "論文聚焦於含有 point masses、尤其是在單一值上具有大量機率質量的生成式時間序列資料。首先檢視標準 rolling-origin protocol，將整體資料集的 atom 結構與實際評估視窗比較，並以零值比例展示兩者可能嚴重不匹配。其次設計一個 control：其 CRPS 依建構保持不變，但 temporal coupling 被破壞，藉此隔離並衡量 temporal coupling 對所選統計量的貢獻。接著在 matched protocol 下，以五個 training seeds 比較七個模型。摘要明確點名 autoregressive hurdle 與 conditional flow，但未提供其餘模型的名稱、架構或演算法步驟。評估不只使用單一指標，而是比較五種 occurrence statistics，並觀察模型排序的一致性；同時檢查 conditional flow 的 occurrence statistics 在不同 seeds 間的變異。摘要未提供資料切分細節、預測視窗長度、CRPS 的計算實作、各 occurrence statistics 的公式，亦未說明模型訓練與資料前處理的更多細節。",
+      "key_results": "| 實驗或比較 | 論文報告結果 |\n|---|---|\n| 資料集整體零值比例 vs. 評估視窗比例（基準一） | 42% vs. 13% |\n| 資料集整體零值比例 vs. 評估視窗比例（基準二） | 47% vs. 5% |\n| 比較模型數量與 seeds | 7 個模型、5 個 seeds |\n| autoregressive hurdle vs. conditional flow | 在 6 個資料集中的 5 個勝出 |\n| 勝出幅度 | 最多達 153 倍；摘要未明確說明該倍數對應的具體指標或資料集 |\n| conditional flow 的 occurrence statistics seed 變異 | 最多 62% |\n| baseline 的隨機性 | 所有 baseline 均為 deterministic |\n| occurrence statistics 下的排序 | 五種統計量所得模型排序不一致；其中兩種不共用相同 construction 的統計量彼此一致性最低 |\n| CRPS 控制 | CRPS 按建構保持不變，同時 temporal coupling 被破壞 |",
+      "insights": [
+        "評估含有 point masses 的時間序列時，應檢查每個評估視窗的 atom 結構，而不能只依賴整體資料集的比例。",
+        "模型比較應採用匹配的評估協定，並報告多個 training seeds；摘要顯示 occurrence statistics 可能有顯著 seed 變異。",
+        "不宜將單一 CRPS 或單一 occurrence statistic 的排序視為完整結論；摘要指出五種統計量所得的模型排序並不一致。"
+      ],
+      "limitations": "根據目前提供的摘要，論文未報告七個模型的完整名稱、資料集名稱與規模、模型架構細節、訓練流程、五種 occurrence statistics 的定義，也未提供各資料集的逐項數值結果。因此無法進一步判斷不同模型或統計量的細部差異。摘要亦未明確說明未來工作的具體方向。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "生成式時間序列模型評估",
+        "point masses 與零值序列",
+        "rolling-origin evaluation",
+        "CRPS 與 temporal coupling"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]
