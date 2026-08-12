@@ -1,6 +1,6 @@
-# Visual Grounding
+# Object Level Vision Language Alignment
 
-> Visual Grounding 相關研究的彙整頁面。
+> Object Level Vision Language Alignment 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 visual grounding 相關關鍵字
+- 標題或摘要含有 object-level vision-language alignment 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Multimodal Evaluation]` [[[2608.11167] MultiModal Code-Switching - Interleaving Visual Objects into Language for Explic...|MultiModal Code-Switching: Interleaving Visual Obj...]] (2026-08-11)
-
-- `[Multimodal Evaluation]` [[[2608.09654] Hallucination-Free GUI Grounding via Regression-Free Layout-Aware Matching|Hallucination-Free GUI Grounding via Regression-Fr...]] (2026-08-10)
 
 ## 延伸閱讀
 

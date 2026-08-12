@@ -1,0 +1,557 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.11030",
+      "title": "Self-Knowledge Retrieval Augmented Generation Framework for Patent Matching",
+      "abstract": "Patent retrieval and matching based on large language models (LLMs) play a vital role in intellectual property protection. However, due to the complex structure of patent documents, dense technical terminology, and multi-modal information, traditional methods struggle to accurately identify subtle differences between patents. Existing LLM-based patent matching approaches typically rely on domain-specific pretrained or instruction tuning, which often entail high manual labeling costs and catastrophic forgetting. While retrieval-augmented generation (RAG) methods introduce external knowledge they fail to fully leverage LLM's capability to automatically parse patents and mine deep semantic relationships. To address these limitations, this paper proposes a self-knowledge RAG framework that guides LLMs to autonomously extract key technical entities and construct hierarchical ontological structures from patent matching queries, thereby enabling query expansion and precise retrieval. The method integrates the FAISS retrieval with a generative matching mechanism, leveraging self-knowledge to enhance the model's understanding of patent innovations and significantly improve retrieval and matching accuracy. Experimental results demonstrate the outstanding performance of the proposed method on real-world patent datasets, validating its effectiveness and application potential.",
+      "authors": [
+        "Jian Zhang",
+        "Songlin Lei",
+        "Zhuohao Yang",
+        "Bangli Liu",
+        "Ziwei Wang",
+        "Xufeng Weng",
+        "Gehan Amaratunga",
+        "Yu Lin",
+        "Hongwei Wang"
+      ],
+      "categories": [
+        "cs.IR",
+        "cs.CL"
+      ],
+      "published": "2026-08-11T15:08:42+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11030v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11030",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "基於大型語言模型（LLM）的專利檢索與匹配對智慧財產權保護十分重要。然而，專利文件結構複雜、技術術語密集，且包含文字與圖像等多模態資訊，使傳統方法難以辨識專利間的細微差異。現有 LLM 專利匹配方法通常依賴領域預訓練或 instruction tuning，需付出高昂的人工標註成本，並可能造成 catastrophic forgetting。RAG 雖能引入外部知識，卻未充分發揮 LLM 自動解析專利及挖掘深層語義關係的能力。本文提出 Self-Knowledge RAG framework，從專利匹配查詢中自主擷取關鍵技術實體，建立階層式 ontology，據此進行 query expansion 與精確檢索。方法結合 FAISS retrieval 與 generative matching，利用 self-knowledge 增強模型對專利創新的理解，並在真實專利資料集上提升檢索與匹配準確率。",
+      "problem_statement": "專利文件具有複雜結構、密集技術術語及文字與圖像等多模態資訊，傳統關鍵詞或嵌入方法難以辨識細微的創新相似性。領域預訓練與 instruction tuning 需要大量人工資料，且有 catastrophic forgetting 風險；一般 RAG 雖引入外部專利知識，卻可能受檢索噪聲影響，未充分利用 LLM 自動解析專利、建立跨專利語義關係及改善查詢表示的能力。",
+      "proposed_solution": "作者提出 Self-Knowledge RAG framework，讓 LLM 先從查詢專利摘要自主挖掘技術實體與階層式 ontology，再將這些資訊用於 query expansion。擴展後的查詢透過 bge-large-v1.5 編碼，交由 FAISS 從專利庫檢索 top-K 相似文件；最後把原始摘要、自挖掘知識、ontology 與檢索內容整合成 context-aware prompt，由 LLM 執行 generative matching。核心創新在於把 LLM 從僅接收檢索結果的被動生成器，轉變為主動的專利資訊解析與檢索引導器，結合微觀實體、宏觀 ontology 與外部上下文以支援匹配。",
+      "core_contributions": [
+        "提出基於 LLM 的 patent self-knowledge mining strategy，從目標專利摘要中自動擷取關鍵技術實體並建立 entity-ontology 關係。",
+        "提出 self-knowledge guided RAG framework，以自動挖掘的實體資訊擴展查詢，改善 FAISS 向量檢索，並將原始專利、ontology 與檢索上下文交由 LLM 進行生成式匹配。",
+        "在包含中英文、8 個 IPC 類別及 1,000 個匹配實例的 PatentMatch 資料集上，與 vanilla LLM、CoT、一般 RAG 及領域專用模型比較，驗證方法的有效性。"
+      ],
+      "methodology": "任務設定是：給定查詢專利 p_q 與 N 個候選專利，模型輸出創新相似度最高的候選專利識別碼。框架採用「Preparation–Retrieval–Reasoning」三階段。第一階段以 LLM 和客製化 instruction 解析查詢及候選專利摘要，抽取具體技術實體，例如技術概念、元件模組與核心方法；接著根據抽取結果建立階層式 ontology。論文說明 ontology 主要借助 IPC 的階層概念，並以 technology、function、application 等層次組織資訊。第二階段將查詢專利的實體串接成 TIR，與原始摘要合併形成 expanded query；使用 bge-large-v1.5 將查詢及候選專利編碼，並以 FAISS 建立向量索引，透過 cosine similarity 進行 K-nearest-neighbor 檢索，取得 top-K 候選專利。第三階段把原始查詢摘要、自挖掘的實體與 ontology、FAISS 檢索結果及任務指令整合為 RAG prompt，要求同一 backbone LLM 以 patent examiner 角色，依據技術領域、功能、應用與元件結構判斷最相似候選。資料集為 PatentMatch 的 1,000 個真實專利匹配實例，包含 500 篇中文與 500 篇英文專利，涵蓋 8 個 IPC 類別；另使用 300,000 篇專利作為檢索庫。評估指標為 Accuracy，並比較 Qwen2-Instruct-7B、GLM-4-Chat-9B、Qwen2.5-Instruct-14B 的 vanilla、CoT、一般 RAG 與本文方法，以及 MoZi、PatentGPT 和 PatentGPT-Dense。",
+      "key_results": "論文以 Accuracy 為主要指標，報告結果如下：\n\n| 模型／方法 | English | Chinese | Overall |\n|---|---:|---:|---:|\n| MoZi-7B | 25.8 | 29.0 | 27.4 |\n| PatentGPT-1.5B | 26.2 | 論文未報告 | 論文未報告 |\n| PatentGPT-1.0-Dense-70B | 66.2 | 72.0 | 69.1 |\n| Qwen2-Instruct-7B Vanilla | 31.4 | 47.0 | 39.2 |\n| Qwen2-Instruct-7B CoT | 32.8 | 49.2 | 41.0 |\n| Qwen2-Instruct-7B RAG | 49.2 | 68.2 | 58.7 |\n| Qwen2-Instruct-7B Ours | 34.4 | 69.8 | 52.1 |\n| GLM-4-Chat-9B Vanilla | 66.4 | 65.0 | 65.7 |\n| GLM-4-Chat-9B CoT | 68.0 | 65.6 | 66.8 |\n| GLM-4-Chat-9B RAG | 75.8 | 69.4 | 72.6 |\n| GLM-4-Chat-9B Ours | 83.6 | 79.0 | 81.3 |\n| Qwen2.5-Instruct-14B Vanilla | 63.8 | 70.0 | 66.9 |\n| Qwen2.5-Instruct-14B CoT | 64.0 | 71.2 | 67.6 |\n| Qwen2.5-Instruct-14B RAG | 70.8 | 64.2 | 67.5 |\n| Qwen2.5-Instruct-14B Ours | 79.2 | 82.2 | 80.7 |\n\n作者指出，GLM-4-Chat-9B 搭配本文方法取得最高 Overall Accuracy 81.3；Qwen2.5-Instruct-14B 搭配本文方法達 80.7。與相同 backbone 的一般 RAG 相比，GLM-4-Chat-9B 由 72.6 提升至 81.3，Qwen2.5-Instruct-14B 由 67.5 提升至 80.7；Qwen2-Instruct-7B 的本文方法結果為 52.1，低於其一般 RAG 的 58.7。上述數據顯示方法在不同 backbone 上並非一致優於一般 RAG。",
+      "insights": [
+        "實務上可將 LLM 產生的技術實體作為向量檢索前的 query expansion，以補足專利摘要表述不完整或語義稀疏的問題。",
+        "可將細粒度實體與較高層級 ontology 同時放入生成提示，讓匹配判斷兼顧元件、功能、應用與技術領域，而非只依賴表面詞彙相似度。",
+        "部署此方法時應分別檢查自動抽取、FAISS top-K 檢索及最終 LLM 判斷的錯誤來源；論文報告整體 Accuracy，但未提供各階段的獨立評估。"
+      ],
+      "limitations": "資料集僅包含 1,000 個匹配實例，候選知識庫為 300,000 篇專利；實驗主要使用摘要與文字資訊，尚未整合專利圖像等 multimodal data。論文未報告 entity extraction、ontology construction、top-K retrieval 的獨立指標、消融實驗或統計顯著性，也未說明方法在更大規模及其他領域的泛化性。作者將 dynamic ontology generation 與多模態資料整合作為未來工作。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "專利資訊檢索與技術相似度匹配",
+        "Query expansion 與向量資料庫檢索",
+        "Ontology-guided RAG"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11200",
+      "title": "ConVAWG: A Retrieval-Grounded Framework for Controlled Synthetic Dialogue Generation in Violence Against Women and Girls",
+      "abstract": "Synthetic dialogue generation offers a way to study conversational dynamics in sensitive domains where real data are difficult to access, release, or annotate. The underlying abuse may occur online or offline: threats and coercion can appear directly in messages, while behaviours such as surveillance, isolation, stalking, and physical violence may be planned, disclosed, or referred to conversationally. Privacy and legal constraints make it difficult the release of large-scale real conversation datasets; existing work has mostly focused on sentence-level toxicity of online abuses, leaving a gap in modelling abuse as a relational and temporally unfolding phenomenon. In this work, we focus on modelling Violence Against Women and Girls (VAWG) scenarios as multi-turn dialogues. We introduce ConVAWG, a retrieval-grounded framework for generating CPS-aligned synthetic VAWG chat dialogues. ConVAWG builds scenarios from persona seeds, demographic patterns reported by the UK Office for National Statistics, official crime definitions, and retrieved Domestic Homicide Review cases; converts them into hierarchical event timelines; generates multi-scene role-play dialogues; and applies targeted activation-steered toxicity control to appropriate utterances. We release over 6,000 multi-turn dialogue events across 200 scenarios with rich scenario-, event-, and turn-level metadata. Extensive human evaluation, LLM-as-Judge assessment, ablations, and downstream tasks show strong dialogue quality and domain fidelity.",
+      "authors": [
+        "Chen Lyu",
+        "Xingwei Tan",
+        "Simon Cullen",
+        "Shelley Wilson",
+        "Lois Arthurs",
+        "Arshad Jhumka",
+        "Gabriele Pergola"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T17:57:34+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11200v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11200",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "合成對話生成可用於研究敏感領域的互動動態，因為真實資料往往受隱私、法律、發布及標註限制。暴力侵害婦女與女童（VAWG）可能在線上直接表現為威脅與脅迫，也可能透過訊息規劃、揭露或回述監控、孤立、跟蹤及身體暴力。既有研究多聚焦於句子層級的線上毒性，較少建模具關係性且隨時間展開的虐待。本文提出 ConVAWG，一個以 retrieval 為基礎、符合 CPS 定義的受控合成 VAWG 多輪對話框架。系統結合 persona seeds、UK Office for National Statistics（ONS）人口模式、官方犯罪定義及 Domestic Homicide Review（DHR）案例，建立階層式事件時間線，生成多場景 role-play 對話，並對適當話語施加 activation-steered toxicity control。作者發布 200 個情境、超過 6,000 個多輪對話事件及豐富的情境、事件與回合層級 metadata；人類評估、LLM-as-Judge、消融實驗與下游任務均顯示其具良好的對話品質與領域忠實度。",
+      "problem_statement": "真實 VAWG 對話受隱私、法律與受害者保護限制，難以建立大規模可公開資料。既有線上虐待研究多停留在句子或貼文層級，無法充分呈現親密關係中的角色互動、跨回合指涉、事件因果、時間演變與逐步升級。直接 prompting 或一般 persona role-play 也容易出現長對話不連貫、角色追蹤失誤、時間進展不合理及毒性強度失控等問題。",
+      "proposed_solution": "作者提出 ConVAWG，將 retrieval grounding、結構化情境規格、階層式事件圖、persona-conditioned role-play 與 targeted toxicity steering 串成四階段流程。DHR 提供真實案例中的虐待軌跡，ONS 與 CPS 分別約束人口模式與犯罪語義；事件圖把情境拆成具時間、因果及升級關係的 sub-events，再轉換成可由對話表達的 chat scripts。最後只改寫與加害者升級行為相關的 utterances，使用 CAA 依 escalation level 控制毒性，兼顧對話連貫性、領域忠實度與可分析 metadata。",
+      "core_contributions": [
+        "提出 ConVAWG end-to-end 框架，整合 DHR retrieval grounding、CPS-aligned 情境建構、persona-conditioned role-play、階層式事件規劃與 escalation-aware toxicity control。",
+        "建立包含 200 個情境與 6,171 個對話事件的合成 VAWG 資源，提供 persona、關係、犯罪類型、事件圖、時間戳、升級程度、red-flag 與 turn-level 標註。",
+        "以 human evaluation、四個 LLM judges、八個 baseline、消融實驗及下游預測與跨語料轉移，系統評估對話品質、領域真實性、可控性與實用性。"
+      ],
+      "methodology": "ConVAWG 使用 GPT-5.2 作為主要生成 backbone，分四階段運作。Stage 1 先從 PersonaHub victim persona seeds 建立 persona 與情境規格，再依 ONS 的受害者特徵與犯罪流行模式抽樣，結合 CPS 犯罪定義及從 410 份女性受害者 DHR 報告建立的向量 knowledge base。retrieval record 包含 actors、關係、虐待類型與事實摘要；模型據此產生受害者／加害者 profile、關係、犯罪類型、持續時間與 narrative outline，並做 persona consistency 與名稱多樣性檢查。Stage 2 將情境轉為 directed event graph：每個情境約有 5–8 個 high-level events，每個 event 記錄行動、參與者、時間、地點、犯罪線索與 supporting evidence span，邊表示 temporal、causal、evidential、contrastive 或 escalation 關係；各 event 再拆成 2–4 個 sub-events，配置時間戳與 0–4 escalation level。離線事件則改寫成規劃訊息、事後更新或回述，以保留 conversational trace。Stage 3 依 chat-script specifications 進行 persona role-play，使用跨事件 continuity context、global initiator distribution、adaptive sentence-embedding splitting，以及 persona、escalation、crime type 和 third-party actor 的 retrieval-conditioned style notes。Stage 4 對模型標出的、與 accusations、demands、threats、surveillance、gaslighting 或 manipulation 相關的 perpetrator utterances，選取部分訊息套用 Contrastive Activation Addition（CAA）；steering direction 來自 Civil Comments 的 toxic-clean contrastive pairs，並依 escalation level 控制低、中、高毒性。評估包含 coherence、humanlikeness、persona consistency、toxicity realism、crime fidelity、scenario realism 六項 1–5 分指標，結合人類標註、四個 LLM judges、Detoxify、八個 baseline、Wilcoxon 檢定、style/CAA/backbone 消融，以及毒性分類、關係預測、escalation forecasting、跨語料與真實資料 transfer。",
+      "key_results": "主要結果如下（分數為 1–5；LLM-as-Judge 為四位 judge 平均，baseline 比較使用 50 個 matched personas）：\n\n| 系統 | Avg-D | Crime Fidelity | Scenario Realism | Avg |\n|---|---:|---:|---:|---:|\n| GPT-5.2 direct | 4.57 | 5.00 | 4.83 | 4.68 |\n| DiaSynth | 4.64 | 4.89 | 4.32 | 4.63 |\n| DeepSeek-V4-Flash | 4.44 | 4.88 | 4.40 | 4.51 |\n| ConVAWG | **4.75** | **4.99** | 4.53 | **4.75** |\n\n- ConVAWG 在 Avg 與 Avg-D 均顯著高於所有 baseline；配對 Wilcoxon 檢定經 Holm 校正後皆為 p<10^-4。\n- LLM judges 與人類共識的平均 Gwet’s AC2 皆至少為 0.925；六位女性標註者在 10 個情境、379 個 dialogues 上的平均 inter-annotator AC2 為 0.926。\n- 全資料集的人類平均總分為 4.62；共享 10 情境子集上，ConVAWG 為 4.62，高於 DeepSeek-V4 的 4.33 與 GPT-5.2 direct 的 4.28。\n- ConVAWG 平均 Detoxify toxicity 為 0.17，高於比較系統的 0.07–0.15；移除 CAA steering 後由 0.144 降至 0.038，而三個 judges 的品質平均僅有小幅變化。\n- 移除 style notes 後，GPT-5.2 judge 的總平均下降 0.16，Persona Consistency 下降 0.65；DeepSeek judge 的總平均下降 0.13。\n- message-level toxic behaviour classification 的 fine-tuned encoder macro-F1 為 0.782；關係預測 weighted-F1 為 0.629。escalation jump forecasting 的 jump F1 為 0.548，跨 Conversations Gone Awry 的最佳 AUROC 為 0.643，MentalManip transfer 的 macro-F1 為 0.755。",
+      "insights": [
+        "對敏感領域的合成資料生成，應先建立可檢查的情境與事件結構，再讓 LLM 實現對話；這有助於控制角色、時間、因果與升級脈絡。",
+        "毒性不宜以整段對話的統一強度控制；本文只改寫與升級行為相關的 perpetrator utterances，並依事件 escalation level 調整強度，可作為安全資料生成的實務設計。",
+        "LLM-as-Judge 應搭配人類校準、跨 judge 一致性與 leave-one-judge-out 分析；本文的人類共識與四個 judges 具高 AC2，但全局評分仍可能偏好較緊湊、直接重述情境的生成結果。"
+      ],
+      "limitations": "資料主要依賴 UK 的 CPS、ONS 與 DHR，跨司法管轄區與文化的可轉移性有限。資料只涵蓋能留下 conversational trace 的行為；未透過對話呈現的制度流程與非溝通行為不在範圍內。合成資料仍可能放大來源案例與 LLM 的偏差，且毒性內容存在雙重用途風險。論文未提供真實大規模對話作為直接品質基準；部分 prompts 與 steering material 在預印本中 withheld。",
+      "tags": [
+        "llm-as-judge",
+        "benchmark",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "synthetic dialogue generation",
+        "retrieval-grounded generation",
+        "multi-turn abuse detection",
+        "temporal escalation modelling",
+        "toxicity control",
+        "LLM-as-Judge evaluation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11191",
+      "title": "Test-Time Self-Evolving GUI Visual Grounding via Reflection-Guided On-Policy Self-Distillation",
+      "abstract": "GUI Visual Grounding is a fundamental capability for GUI agents. Existing models typically freeze their parameters after deployment, limiting their ability to adapt to unseen interfaces. Although recent methods attempt to adapt models via test-time reinforcement learning, they cannot reflect upon failed exploration. To overcome this, we propose a Test-Time Self-Evolving framework that enables models to improve after deployment without human-annotated ground truth. It constructs a closed-loop of Exploration, Evaluation, Reflection, and Internalization. Specifically, the agent first explores unseen interfaces by predicting grounding coordinates for given instructions. To evaluate these explorations, we introduce an MLLM-based Reflector to assess the generated results and provide the corresponding reasoning reflections. To internalize reflection knowledge into the model weights, we propose Reflection-Guided On-Policy Self-Distillation, which translates high-level reasoning into dense token-level supervision via a conditioned self-teacher. Furthermore, we design a Contrastive Calibration method to prevent incorrect auto-regressive prefixes from corrupting the supervisory signals during failed explorations. Extensive experiments across six benchmarks demonstrate our framework's effectiveness, achieving an average accuracy improvement of 7.4% over the base model. To the best of our knowledge, this is the first work to successfully exploit on-policy self-distillation for test-time adaptation in GUI visual grounding. By filling the gap in post-deployment adaptation, our framework completes the self-evolving capability of GUI agents. The code will be released.",
+      "authors": [
+        "Shiyu Xuan",
+        "Zechao Li"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-11T17:50:25+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11191v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11191",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "GUI Visual Grounding 是 GUI agent 的基礎能力，但現有模型部署後通常凍結參數，難以適應未見過的介面。近期的 test-time reinforcement learning 雖能進行適應，卻無法反思失敗探索。本文提出 Test-Time Self-Evolving framework，在無人工標註 ground truth 的情況下，透過 Exploration、Evaluation、Reflection 與 Internalization 建立閉環。代理先根據指令預測 grounding 座標，再由基於 MLLM 的 Reflector 評估結果並產生 reasoning reflection。作者提出 Reflection-Guided On-Policy Self-Distillation（R-OPSD），利用 conditioned self-teacher 將高階推理轉換為密集的 token-level supervision，並以 Contrastive Calibration 避免失敗探索中的錯誤 autoregressive prefix 污染監督訊號。在六個 benchmark 上，方法相對 base model 平均提升 7.4% accuracy；相較 GUI-RCPO，平均最高提升 7.7%。作者稱這是首個將 on-policy self-distillation 用於 GUI visual grounding test-time adaptation 的工作。",
+      "problem_statement": "GUI visual grounding 模型部署後通常凍結參數，因此面對未見應用程式、平台或介面布局時，無法從互動經驗改善。既有 test-time reinforcement learning 多依賴成功/失敗的 sparse scalar reward，雖能指出結果，卻不能解釋座標為何錯誤，也難以在一組探索全部失敗時提供有效更新。本文要解決的是：在沒有人工 ground-truth 的部署環境中，如何評估探索、反思失敗原因，並將反思安全地內化到 grounding model。",
+      "proposed_solution": "作者提出 Test-Time Self-Evolving framework，將部署後適應組織成 Exploration、Evaluation、Reflection、Internalization 的閉環。Grounding model 先自行探索並產生座標；MLLM-based Reflector 再根據 screenshot、instruction 與預測座標判斷成功與否，並輸出診斷性文字 reflection。核心方法 R-OPSD 將 Reflector 的高階反思作為 privileged information，透過 conditioned self-teacher 對模型自身 rollout 產生 dense token-level supervision。針對失敗 rollout 的 autoregressive prefix 污染問題，作者加入 Contrastive Calibration，以 inverse-prompted student 壓制初始錯誤並使後續不可靠訊號衰減，另以 advantage clamping 與 query-level GRPO advantage 穩定整體更新。",
+      "core_contributions": [
+        "提出包含 Exploration、Evaluation、Reflection、Internalization 的 Test-Time Self-Evolving GUI grounding 閉環，使模型能在部署後、無人工 ground truth 下更新參數。",
+        "提出 Reflection-Guided On-Policy Self-Distillation，透過以評估結果與文字 reflection 為 privileged information 的 conditioned self-teacher，將高階診斷轉換為 coordinate token 的 dense supervision。",
+        "提出 Contrastive Calibration、direction-based advantage clamping，以及 query-level advantage 整合機制，以抑制錯誤 autoregressive prefix 造成的 corrupted supervision，並透過多 benchmark 實驗與 ablation 驗證各元件。"
+      ],
+      "methodology": "輸入為 screenshot I 與語言指令 L，grounding model πG 自己抽樣產生座標或 bounding box B，形成 on-policy exploration。由於沒有 ground truth，凍結的 MLLM-based Reflector πR 接收 I、L、B，輸出二元成功判定 S 與包含 intent analysis、coordinate grounding、verification、conclusion 的文字 reflection R。Reflector 先以 GroundCUA 約 10,160 個 prediction-label pairs 透過 GRPO 訓練，資料由每個樣本八個座標預測中保留同時含正負結果的群組，再各取一正一負；部署適應時則不使用目標資料的 ground-truth。內化階段採 R-OPSD：以 πG 在原始提示下的 token 機率，與加入 S、R 的 reflection-guided teacher 機率之 log-ratio 作為 token-level advantage。成功樣本使用成功提示；失敗樣本加入錯誤預測與 reflection。為處理錯誤 prefix，Contrastive Calibration 另以「先前正確預測」的 inverse-prompted student 作對比，使初始錯誤 token 受到負 advantage，而後續漂移 token 的 advantage 趨近零。Direction-based clamping 使成功樣本只保留非負更新、失敗樣本只保留非正更新，並可與 group-based GRPO query-level advantage 以 λ=0.2 整合。模型以共享 base model、切換 LoRA adapter 的方式扮演 πG 與 πR。評估採 Element Accuracy：預測點落在目標 UI 元素 bounding box 內即算正確；測試涵蓋 ScreenSpot、ScreenSpot-v2、ScreenSpot-Pro、MMBench-GUI、OSWorld-G 與 OSWorld-G-Refine。",
+      "key_results": "主要結果（Element Accuracy，百分比）：\n\n| Base model / 方法 | Adaptation | SSv2 | SSP | OSW-G | OSW-GR | MMG | Avg. |\n|---|---|---:|---:|---:|---:|---:|---:|\n| Qwen2.5-VL-3B | 無適應 | 78.3 | 80.4 | 20.3 | 27.1 | 37.7 | 50.2 |\n| Qwen2.5-VL-3B + GUI-RCPO | SSv2 | 82.3 | 85.4 | 24.8 | 29.3 | 38.4 | 53.4 |\n| Qwen2.5-VL-3B + Ours | SSv2 | 85.9 | 88.8 | 30.5 | 32.6 | 39.7 | 57.4 |\n| Qwen2.5-VL-3B + GUI-RCPO | MMG | 79.2 | 80.6 | 19.8 | 25.7 | 36.1 | 49.9 |\n| Qwen2.5-VL-3B + Ours | MMG | 84.6 | 87.5 | 30.1 | 33.7 | 41.7 | 57.6 |\n| Qwen3-VL-2B + Ours | SSv2 | 88.5 | 91.6 | 47.6 | 52.1 | 61.2 | 69.4 |\n| Qwen3-VL-2B + Ours | MMG | 88.2 | 91.5 | 49.3 | 52.2 | 63.2 | 70.3 |\n\n作者摘要所述的跨六個 benchmark 相對 base model 平均提升為 7.4%；相較 GUI-RCPO，平均性能最高提升 7.7%。在 Qwen2.5-VL-3B、MMG adaptation 的 ablation 中，完整方法達 68.2%，base model 為 57.5%。R-OPSD with CC 的訓練時間為 151 分鐘，標準 GRPO baseline 為 449 分鐘；加入 CC 與 query-level advantage 的完整框架為 778 分鐘。",
+      "insights": [
+        "若 test-time adaptation 只能取得成功或失敗的 sparse reward，加入描述錯誤原因的 reflection 可能提供更具方向性的更新訊號；實務部署時可將評估器輸出與模型更新流程分離。",
+        "對 autoregressive 座標生成而言，失敗軌跡不應直接對所有後續 token 施加同等更新；Contrastive Calibration 所採取的「強化初始錯誤修正、讓漂移後訊號衰減」是一種可參考的穩定化設計。",
+        "Reflector 的可靠性是整體閉環的關鍵。論文中的 trained Reflector 在測試集 accuracy 為 89.5%（Qwen2.5-VL-3B）與 91.7%（Qwen3-VL-2B），因此實際應用仍應監控自動評估錯誤及其可能造成的負遷移。"
+      ],
+      "limitations": "論文顯示框架高度依賴 MLLM-based Reflector；其在 held-out 測試集仍非完美，accuracy 為 89.5% 或 91.7%，錯誤評估可能導致錯誤內化。實驗主要使用 Qwen2.5-VL/Qwen3-VL 與所列 GUI benchmark，未報告更長期、多輪真實互動中的累積漂移、跨域失敗案例或不同 Reflector 的系統性比較。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "GUI agent evaluation",
+        "test-time adaptation",
+        "on-policy self-distillation",
+        "multimodal grounding"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11047",
+      "title": "V-FiLLM: Verified Financial LLM Reasoning Benchmark",
+      "abstract": "While existing benchmarks have made substantial progress in evaluating LLMs across STEM domains, financial reasoning over structured data remains comparatively less explored. We introduce V-FiLLM, a framework that generates financial reasoning benchmarks from executable computation trees grounded in real tables, yielding items whose answers are correct by construction. Trees are evaluated symbolically to obtain ground truth and rendered into natural-language questions, removing any model from the labeling loop, so items can be generated at arbitrary scale without annotation cost and without inheriting a generator's error rate. V-FiLLM exposes four independently controllable axes of difficulty including computation depth, expression breadth, financial concept complexity, and context size. By evaluating on open-source models, we find that accuracy falls up to 51% as reasoning depth increases, and up to 47% points under adversarial numerical perturbations, highlighting remaining challenges in robust financial reasoning over tables. We further show that lightweight LoRA fine-tuning on verified chain-of-thought traces improves accuracy from 81.1% to 85.6% on held-out problems and outperforms the base model by 5% points on FinQA (Chen et al., 2022a), s), suggesting that targeted, low-cost adaptation is a promising direction for compositional reasoning in financial QA.",
+      "authors": [
+        "Alicia Larsen",
+        "Victoire Laurent",
+        "Aulia Kharis Rakhamsari",
+        "Lara Turgut",
+        "Nino Antulov-Fantulin"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CE",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T15:18:47+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11047v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11047",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "現有 benchmark 已大幅推進 STEM 領域的 LLM 評測，但針對結構化資料的金融推理仍研究不足。本文提出 V-FiLLM，透過以真實格式的表格為基礎、可執行的 computation tree 生成金融推理 benchmark，使答案由建構程序保證正確。系統以 symbolic evaluation 取得 ground truth，再將運算樹轉寫為自然語言問題，因而不需要模型參與標註，可無 annotation cost 地大規模產生資料，也不會承襲生成模型的錯誤率。V-FiLLM 可獨立控制 computation depth、expression breadth、financial concept complexity 與 context size 四個難度軸。開源模型實驗顯示，reasoning depth 增加時，準確率最高下降 51%；在 adversarial numerical perturbations 下，準確率最高下降 47 個百分點。使用 verified chain-of-thought traces 進行輕量 LoRA fine-tuning，可使 held-out 問題準確率由 81.1% 提升至 85.6%，並在 FinQA 上較 base model 提高 5 個百分點。",
+      "problem_statement": "現有 FinQA、ConvFinQA、TAT-QA 與 FinanceBench 多依賴人工標註或啟發式抽取，難以低成本擴展，也無法系統控制推理深度。真實金融文件中的格式雜訊、缺值、footnote 與單位混雜，會把資料擷取失敗與真正的金融組合推理失敗混在一起。論文因此要解決可驗證、可擴展且能細緻操控難度的結構化金融推理評測問題。",
+      "proposed_solution": "作者提出 V-FiLLM，一套不讓生成模型參與標註的 deterministic benchmark framework。它先從 synthetic financial spreadsheets 建立帶有語意型別的 cell atoms，再抽樣具型別約束的 executable computation trees，將金融概念、算術運算、時間關係與多分支組合嵌入樹中。系統以 symbolic execution 直接取得 ground truth，並透過 bottom-up rendering 將樹轉成自然語言問題，因此答案 correct by construction。其核心創新是把金融知識與表格數值推理統一為可執行結構，同時獨立操控深度、廣度、概念複雜度與上下文，並可自然派生 multi-turn 與 adversarial 版本。",
+      "core_contributions": [
+        "提出 V-FiLLM 的 deterministic benchmark generation framework，以 typed、可執行的 computation trees 從 synthetic financial spreadsheets 生成答案由建構保證正確的金融推理題目。",
+        "建立可獨立控制 computation depth、expression breadth、financial concept complexity 與 context size 的評測軸，並提供 single-turn、multi-turn 及 adversarial robustness 延伸設定。",
+        "以六個開源模型進行系統評測，分析推理深度、表格格式與資料擾動對效能的影響，並展示以 verified chain-of-thought traces 進行 LoRA fine-tuning 的初步成效。"
+      ],
+      "methodology": "V-FiLLM 的流程從兩類 synthetic financial data 開始：一類模擬 10-Q filing，另一類為具有一致欄名、單位與時間結構的 regularized financial sheet。資料包含公司、年度及 revenue、costs、expenses、assets、liabilities、equity、cash、shares outstanding、stock price 等欄位；財務數值依公司範圍、年度成長率及相互關聯比例生成，以維持內部一致性。每個 spreadsheet cell 被轉為 typed financial atom，附帶 concept、company、fiscal year、unit 與 quantity type。接著以 type-aware sampler 建立 typed binary computation tree：葉節點為 atoms，內部節點可使用加、減、乘、ratio、growth rate、minimum、maximum 與 average；型別約束避免不相容運算。系統可控制 tree depth、balanced-tree breadth、derived financial concept 機率及 context size，並引入 gross profit、operating income、pretax income、net income 等具有隱藏公式的 named concepts。樹完成 binding 後，由 bottom-up semantic renderer 產生自然語言問題，並加入拼字、大小寫、標點及措辭變化。答案直接由 expression tree symbolic execution 計算，另保存 expression、深度、葉節點與模板等 metadata。評估主要使用 accuracy；另將樹轉為依賴順序的 multi-turn 對話，並以只修改問題無關 cells 的 missing values、garbage values、OCR look-alikes、cross-sheet contamination、distractor information 及 unit/scale shift 測試 robustness。LoRA 實驗在 Qwen3.5-4B 的 attention 與 feed-forward projections 上訓練，使用 608 筆 verified CoT traces，並以 90 題 held-out set 比較不同 rank、scaling 與 dropout 設定。",
+      "key_results": "主要結果如下（準確率為論文報告數值）：\n\n| 實驗設定 | 模型 | 結果 |\n|---|---|---:|\n| 10-Q、single-turn、250 題 | Gemma-31B | 98.4% |\n| 簡化財務表、single-turn、250 題 | Gemma-31B | 97.6% |\n| 簡化財務表、single-turn、250 題 | Qwen3.5-9B | 55.2% |\n| 簡化財務表、multi-turn | Qwen3.5-9B | 86.8% |\n| 簡化財務表、depth 8 | Gemma-31B | 55.0% |\n| 簡化財務表、depth 8 | DeepSeek-v4-Flash | 26.0% |\n| 10-Q、unit/scale shift | Gemma-31B | 3.0% |\n| 10-Q、combined perturbation | Gemma-31B | 26.0% |\n| 簡化表、combined perturbation | DeepSeek-v4-Flash | 43.0% |\n| Held-out benchmark、LoRA | Qwen3.5-4B | 85.6%（77/90） |\n| Held-out benchmark、無 LoRA | Qwen3.5-4B | 81.1%（73/90） |\n| FinQA、LoRA | Qwen3.5-4B | 32/100（32%） |\n| FinQA、無 LoRA | Qwen3.5-4B | 27/100（27%） |\n\n論文另報告：在 adversarial 測試中，Gemma-31B 相對 clean baseline 的平均下降為 27.3 個百分點（10-Q）及 35.7 個百分點（簡化表）；DeepSeek-v4-Flash 分別下降 29.6 與 47.0 個百分點。",
+      "insights": [
+        "實務評測不應只報告混合難度的總體準確率；應依 computation depth、operator type、derived concept 使用情形與表格格式分層，才能定位模型失效原因。",
+        "金融 QA 系統部署前應測試 missing values、OCR look-alikes、cross-sheet contamination 與 unit/scale shift；論文結果顯示，單位或尺度改變尤其可能造成嚴重失效。",
+        "可將 executable computation tree 與 symbolic verifier 用於訓練資料篩選及中間步驟驗證；論文中的 verified CoT LoRA 實驗顯示，低參數成本適配具有改善潛力，但仍需更大規模、獨立測試驗證。"
+      ],
+      "limitations": "論文指出，題目文字可能因運算步驟轉寫而產生歧義。實驗僅涵蓋六個模型、英文文件與單一表格格式，且受限於 compute，測試次數與統計顯著性不足。LoRA 最佳設定在僅 90 題的 held-out set 上選取，結果屬初步證據。未來將擴充金融概念、文件格式、跨表及跨文件推理，並研究 verifier-guided training 與 inference。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "financial question answering",
+        "tabular reasoning",
+        "compositional reasoning",
+        "robustness evaluation",
+        "parameter-efficient fine-tuning"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11146",
+      "title": "The Illusion of Cross-Lingual Safety in Low-Resource Languages",
+      "abstract": "Safety alignment in large language models (LLMs) is largely developed in English, assuming these safeguards generalize across multilingual settings. However, this assumption remains underexplored and exposes a vulnerability in low-resource languages. We investigate cross-lingual safety transfer in four African languages, Twi, Hausa, Amharic, and Swahili, using LoDNA, a new safety dataset that pairs literal translations with culturally localized prompts. To move beyond generation-based evaluation, we propose a latent geometric framework that probes hidden-state refusal representations in LLMs. Our experimental results show that cross-lingual safety transfer is severely limited; harmful prompts retain less than 10% of the English refusal signal across most language-model pairs. Literal and localized prompts are semantically aligned (cosine 0.95-0.996) but drift across layers, suggesting models encode the concepts without routing them to safety mechanisms. These findings demonstrate that current multilingual safety alignment is superficial, providing strong evidence against the assumption of a universal, language-agnostic harm manifold within the specific low-resource languages studied. Warning: This paper contains example data that may be offensive or harmful.",
+      "authors": [
+        "Abigail Oppong",
+        "P Sam Sahil",
+        "Tadesse Destaw Belay",
+        "Maryam Ibrahim Mukhtar",
+        "Esmael Ahmed Abdu",
+        "Tassallah Abdullahi",
+        "Jessica Oparebea",
+        "Saminu Mohammad Aliyu",
+        "Idris Abdulmumin",
+        "Abubakar Juma Chilala",
+        "Nicholaus Dismas Ladislaus",
+        "Alfred Malengo Kondoro",
+        "Lemofouet Valdini Douglace",
+        "Shamsuddeen Hassan Muhammad",
+        "Seid Muhie Yimam"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-11T17:05:26+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11146v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11146",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）的 safety alignment 主要以 English 開發，並假設 safeguards 能跨 multilingual settings 泛化；然而此假設在 low-resource languages 中仍缺乏充分研究，形成潛在弱點。本研究以 Twi、Hausa、Amharic、Swahili 四種非洲語言為對象，使用 LoDNA safety dataset，將 literal translations 與 culturally localized prompts 配對。為超越 generation-based evaluation，作者提出 Latent Geometric Framework，探測模型 hidden states 中的 refusal representations。結果顯示，cross-lingual safety transfer 極為有限：多數 language-model pairs 的 harmful prompts 保留不到 10% 的 English refusal signal。雖然 literal 與 localized prompts 在語意上高度一致（cosine 0.95–0.996），其表示在不同 layers 發生漂移，顯示模型可能編碼了 harmful concepts，卻未將其導向 safety mechanisms。研究因此指出，在所研究的特定 low-resource languages 中，multilingual safety alignment 仍相當表層，並不支持存在普遍且 language-agnostic 的 harm manifold。",
+      "problem_statement": "現有 multilingual safety evaluation 多依賴 literal translations、generation-based refusal 或 ASR，較難涵蓋低資源語言中的文化隱喻、coded language 與 pragmatic variation，也可能受生成不穩定及 LLM-as-judge 可靠性不足影響。論文要檢驗 English safety alignment 是否在 Twi、Hausa、Amharic、Swahili 的 hidden representations 中真正轉移，以及失效究竟源於語意複雜度還是跨語言 routing 的結構性缺陷。",
+      "proposed_solution": "作者提出 LoDNA 與 Latent Geometric Framework。LoDNA 對每個 harmful intent 同時保留 literal translation 和 culturally localized prompt，使研究能區分跨語言表示不匹配與文化脈絡造成的變化。框架以 English refusal direction 作為內部基準，從 residual stream 擷取 hidden states，計算 refusal-vector cosine、Signed Retained Component、dot product、逐層 drift、PCA clustering 與 English linear-probe zero-shot confidence。作者再以 SLL 和 refusal-sequence probability 將 latent geometry 與下游行為對照，避免完全依賴低資源語言中不穩定的生成與 LLM-as-judge ASR。核心創新是把 cross-lingual safety transfer 轉化為可觀測的表示幾何與 routing 問題。",
+      "core_contributions": [
+        "建立 LoDNA，將 Do-Not-Answer（DNA）資料集延伸至 Twi、Hausa、Amharic、Swahili，並配對 literal translation 與 culturally localized harmful prompts。",
+        "提出 Latent Geometric Framework，以 hidden-state refusal direction、layer-wise drift、cosine similarity、Signed Retained Component、PCA 與 linear probes 分析跨語言 safety representation transfer。",
+        "在 Mistral、Llama、Qwen2.5 與 AfriqueQwen 等 7B–8B 模型上，展示低資源語言的 safety routing 存在語言與架構依賴，並以 tokenization-aware 的 refusal likelihood 指標連結 latent findings 與下游行為。"
+      ],
+      "methodology": "研究評估 Mistral、Llama、Qwen2.5 與 AfriqueQwen 四類 decoder-only LLM，研究範圍為 7B–8B 模型。資料以 DNA 的 English safe/unsafe prompts 為來源：先用 Google Translate 產生 literal translations，再由 native speakers 校正語法、語意與清晰度；接著由目標語言作者依共同 annotation guidelines 改寫成 culturally localized variants，並交叉審查、討論至共識。每種語言包含 safe target prompts、literal harmful prompts 與 contextualized harmful prompts，後兩者保留 harmful intent 但改變表面表達。\n\n對每個輸入，作者在 transformer layers 擷取 final input token hidden state h_k(x)，主要分析 mid-to-late layers，並以 English unsafe 與 safe 平均表示的差定義 refusal direction：r_en,k=μ_k(U_en)−μ_k(S_en)。目標語言也以 harmful minus safe 定義 literal/contextual displacement。評估包括 English 與目標向量的 cosine similarity、Signed Retained Component（目標位移投影至 English refusal direction 的百分比）、centered dot product，以及逐層 raw projection drift（literal projection 減 cultural projection）。此外，作者在 English hidden states 上訓練 unsafe/safe logistic linear probe，測試其在目標語言上的 zero-shot confidence；以 English hidden states 建立 PCA 2D plane，觀察各語言群集是否接近 English unsafe region。行為層面則使用 tokenization-aware Normalized Refusal Sequence Log-Likelihood（SLL）與 standard refusal sequence probability，並由 native speakers 進行質性分析，記錄 unsafe compliance、語意理解、repetition、hallucination、language switching 與 script corruption。",
+      "key_results": "主要數據如下（論文主要報告 Layer 16 指標；AfriqueQwen 的相應數值未列於 Table 2）：\n\n| 模型 | 語言 | English–Literal cosine | English–Cultural cosine | Literal–Cultural cosine | Literal retained | Cultural retained | Mean drift |\n|---|---:|---:|---:|---:|---:|---:|---:|\n| Mistral | Amharic | 0.0732 | 0.0657 | 0.9763 | 2.1167% | 1.9374% | 0.0107 |\n| Mistral | Hausa | -0.0162 | -0.0743 | 0.9700 | -0.5970% | -2.8911% | 0.1501 |\n| Mistral | Swahili | -0.1482 | -0.1489 | 0.9709 | -7.4245% | -7.7326% | 0.0187 |\n| Mistral | Twi | 0.0762 | 0.0505 | 0.9895 | 3.6790% | 2.3766% | 0.0613 |\n| Llama | Amharic | -0.1456 | -0.1423 | 0.9925 | -7.4410% | -7.5866% | 0.0227 |\n| Llama | Hausa | -0.0276 | -0.0649 | 0.9841 | -1.5758% | -3.7099% | 0.3251 |\n| Llama | Swahili | 0.4626 | 0.4577 | 0.9946 | 27.3063% | 27.7349% | -0.0743 |\n| Llama | Twi | 0.1212 | 0.1019 | 0.9914 | 5.8478% | 4.9406% | 0.1308 |\n| Qwen2.5 | Amharic | -0.0436 | 0.0168 | 0.9740 | -1.2162% | 0.4872% | -5.4357 |\n| Qwen2.5 | Hausa | 0.0323 | -0.0716 | 0.9518 | 0.9710% | -2.2028% | 9.9004 |\n| Qwen2.5 | Swahili | -0.0215 | -0.0468 | 0.9843 | -1.0599% | -2.2623% | 3.9122 |\n| Qwen2.5 | Twi | 0.1430 | 0.1105 | 0.9957 | 8.5728% | 6.5843% | 4.6491 |\n\n作者的總結是：除 Swahili–Llama 外，多數模型—語言配對保留不到 10% 的 English refusal signal；Hausa–Qwen2.5 literal retention 僅 0.9710%，而 Swahili–Llama 達 27.3063%（literal）與 27.7349%（cultural）。literal 與 cultural prompts 的 cosine similarity 為 0.95–0.996。下游 Table 4 的整體 Refusal A/B 平均機率為 1.05%/1.15%；SLL 與標準 refusal 序列的完整跨語言基準，論文未報告。",
+      "insights": [
+        "實務部署 multilingual safety guardrails 時，不應只依賴 English safety alignment 或 literal-translation benchmark；應為各低資源語言加入 native-speaker 驗證與 culturally localized red-team prompts。",
+        "評估安全性時可同時檢查 hidden-state alignment 與實際拒答行為，但應將 refusal probability 與 SLL 視為輔助 proxy，並與語意理解、語言切換、重複生成及 script corruption 分開分析。",
+        "安全訓練與監控應納入架構特定的跨語言 routing 檢查；論文中的 Swahili–Llama 例子顯示，單一模型—語言組合的良好 transfer 不代表可泛化至其他架構。"
+      ],
+      "limitations": "研究僅涵蓋 7B–8B 模型，且 localized dataset 與 Twi community-sourced English 子集規模有限。Latent Geometric Framework 為 observational，不能證明因果關係；Amharic 等語言的 subword tokenization、script corruption、language switching 與生成退化可能混淆幾何結果。論文未提供具體資料總量，也缺少適合作為 control 的中度資源、已對非洲語言安全對齊模型。未來可擴充社群資料，並使用 activation patching 等 causal intervention。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多語言安全對齊",
+        "低資源語言評測",
+        "可解釋性與 hidden-state geometry",
+        "文化在地化 red teaming"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11167",
+      "title": "MultiModal Code-Switching: Interleaving Visual Objects into Language for Explicit Object-Level Alignment",
+      "abstract": "Existing Multimodal Large Language Models (MLLMs) predominantly rely on image-text pairs for modality alignment pretraining, mapping global image representations to long textual descriptions. However, this image-level alignment suffers from referential ambiguity: models struggle to infer the correspondences between multiple visual objects and textual entities from the global representation, leading to data inefficiency and suboptimal semantic grounding. To address this, we propose MultiModal Code-Switching (MMCS), a novel pretraining paradigm that provides explicit object-level supervision. Inspired by the linguistic phenomenon of code-switching, MMCS interleaves vision and language by replacing textual entities with their corresponding visual objects, enforcing local vision-language grounding. We further develop a scalable data synthesis pipeline to generate a pretraining dataset of 773K samples with accurate object-entity correspondences. Experiments show that MMCS is highly data-efficient: with only 50K samples, it matches or surpasses models trained on 600K image-text pairs. Furthermore, MMCS consistently improves visual grounding and perception capabilities across varying model scales.",
+      "authors": [
+        "Changhao Xiang",
+        "Shangyu Xing",
+        "Zhen Wu",
+        "Jianbing Zhang",
+        "Xinyu Dai"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-11T17:28:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11167v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11167",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "現有 Multimodal Large Language Models（MLLMs）主要以 image-text pairs 進行模態對齊預訓練，將整體影像表示映射至長篇文字描述。然而，這種 image-level alignment 存在指涉歧義：當影像包含多個物件時，模型難以從全域表示推斷多個視覺物件與文字實體的對應關係，造成資料使用效率低及語意 grounding 不佳。為此，本文提出 MultiModal Code-Switching（MMCS）預訓練範式，提供明確的 object-level supervision。受語言 code-switching 現象啟發，MMCS 以對應的視覺物件取代文字中的實體，交錯排列 vision 與 language，強制進行局部 vision-language grounding。作者並建立可擴展的資料合成流程，產生含準確物件—實體對應的 773K 筆預訓練樣本。實驗顯示，僅使用 50K 筆 MMCS 樣本即可匹敵或超越使用 600K image-text pairs 訓練的模型，且在不同模型規模下持續提升 visual grounding 與 perception 能力。",
+      "problem_statement": "主流 MLLM alignment pretraining 以整張影像對應 dense caption，雖提供較多文字細節，卻把多個物件壓縮在 global visual representation 中。模型必須自行推斷每個文字實體對應哪個視覺區域，形成 referential ambiguity 與 many-to-many mapping，容易依賴統計共現而非真正 semantic grounding，因而資料效率、物件辨識、區域理解與 visual grounding 均受限制。",
+      "proposed_solution": "作者提出 MultiModal Code-Switching（MMCS），把 vision 與 language 視為兩種可交錯的 code，將 caption 中可定位的文字實體替換成其對應的 visual object tokens。如此，物件後續的上下文生成及被替換實體的重建都直接依賴局部視覺特徵，對模型施加明確 object-entity correspondence 約束。方法不新增專用 grounding module 或 coordinate token，而是在 representation level 以兩項互補 loss 同時學習語意精確性與上下文整合，並透過自動 caption、entity extraction、grounding 與 segmentation 建立可擴展資料。",
+      "core_contributions": [
+        "提出 MultiModal Code-Switching（MMCS），以視覺物件 token 取代文字實體，將模態對齊由隱式 image-level association 轉為明確 object-level correspondence。",
+        "建立由詳細 caption、entity extraction、Grounding DINO 定位、篩選及 SAM-2.1 mask 處理組成的資料合成管線，產生 773K 筆帶物件—實體對應的預訓練樣本。",
+        "在不同 LLM 規模、vision encoder、資料量與解析度設定下評估 MMCS，並以消融、representation alignment metrics 及 attention maps 分析其效益來源。"
+      ],
+      "methodology": "模型採用 ViT-MLP-LLM 架構：預設 vision encoder 為具 tile-wise dynamic resolution 的 SigLIP2-SO-400M，projector 為含 2×2 pixel unshuffle 的兩層 MLP；LLM backbone 使用 Qwen2.5-3B-Instruct、Qwen3-8B 或 Llama3-8B-Instruct。資料合成時，先以 Qwen3-VL-32B-Instruct 產生詳細 image caption，再用 Qwen2.5-72B-Instruct 抽取 noun phrases 及辨識所需 attributes，接著以 Grounding DINO 取得文字實體的 bounding box 與 confidence，並以 box threshold 0.4、text threshold 0.3 篩選；移除小於單一 visual patch、超過影像 50%的框，最後用 SAM-2.1 產生 mask，剔除 mask area 小於 box area 20%的高度遮擋物件，形成 773K 樣本。對連續文字實體 e=[x_i,…,x_{i+m}]，MMCS 以其 bounding box 相交的 image tokens 所構成之 visual object tokens 取代 e，建立交錯序列。訓練包含僅對文字 token 計算的 language-modeling loss，以及根據 preceding context 與 visual object 重建原文字實體的 entity-reconstruction loss，兩者相加。預訓練後使用固定的 LLaVA-NeXT instruction SFT 資料，SFT 階段恢復 global image representation。評估涵蓋 visual grounding（RefCOCO、RefCOCO+、RefCOCOg）、visual perception（CVBench、OCRBench、TextVQA、V-Star 等）與 general VQA（MMBench、MME、MMStar、MMVet、GQA 等）；內部分析使用 CKA、CKNNA、Mutual k-NN 量測跨模態表示對齊，並比較 attention maps。",
+      "key_results": "主要結果如下；數值為論文報告的 benchmark 分數或平均分數，RefCOCO 系列為 Acc@0.5。\n\n| 設定／方法 | General | Perception | Grounding |\n|---|---:|---:|---:|\n| Qwen2.5-3B，Caption | 51.19 | 55.77 | 59.12 |\n| Qwen2.5-3B，MMCS | 51.84 | 58.24 | 70.29 |\n| Qwen3-8B，Caption | 57.61 | 61.23 | 76.89 |\n| Qwen3-8B，MMCS | 58.34 | 63.40 | 79.79 |\n| Llama3-8B，Caption | 53.48 | 59.57 | 63.16 |\n| Llama3-8B，MMCS | 54.01 | 61.15 | 72.91 |\n\n在 Qwen2.5-3B、SigLIP2 設定下，MMCS 的 RefCOCO/+/g 平均 grounding 分數為 70.29，Caption baseline 為 59.12；論文概括其平均提升為 7.9%。Perception 類任務的平均提升為 2.1%，其中 CVBench 提升 4.0%、OCRBench 提升 2.8%、V-Star 提升 2.0%。資料效率實驗指出，50K MMCS 樣本超越 600K image-level baseline，但圖表未提供所有資料量與方法的完整數值。消融中，移除 L_entity 的 grounding/perception/general 平均為 67.55/54.23/51.45；移除 L_LM 為 65.44/56.26/51.37；完整 MMCS 為 70.29/58.24/51.84。",
+      "insights": [
+        "若多模態資料包含多個可辨識實體，將全域 caption 改造成局部物件—文字對應，可能比單純增加 image-text pair 數量更有效；論文中 50K MMCS 樣本超越 600K image-level 樣本的結果支持此資料效率方向。",
+        "實務上可將 entity reconstruction 與 contextual language modeling 分開設計：前者強化物件身分辨識，後者強化物件與上下文的整合；消融結果顯示兩者對 perception 與 grounding 的作用不同。",
+        "自動產生的 grounding 標註不必要求像素級完美才可能有效，但仍應進行 confidence、box area、mask area 與空間條件篩選；論文的 10% 與 30% 對應擾動實驗可作為噪聲測試參考。"
+      ],
+      "limitations": "目前主要聚焦自然影像中的 visual objects，尚未涵蓋 chart understanding、scene text recognition、複雜 relations 或 actions。資料依賴自動 captioning 與 grounding，可能繼承來源資料及模型偏差；物件類別覆蓋亦可能不均。作者未來將探索更廣泛領域、iterative self-improvement 與複雜關係／動作建模。",
+      "tags": [
+        "alignment",
+        "benchmark",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "object-level vision-language alignment",
+        "visual grounding",
+        "multimodal pretraining",
+        "representation alignment"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11110",
+      "title": "Actions Speak Louder than Words: Measuring Cross-Lingual Policy Retention in Tool-Using Agents",
+      "abstract": "When a tool-using agent is given the same task in a different language, does it still take the same steps? Multilingual evaluation rarely asks: it compares final answers and discards the actions. Yet those actions are the product: they fix cost and latency, decide how the system fails, and are the only auditable part of its behaviour. We make the action policy the measured object across 8 models, 6 parallel benchmarks and 41 languages (2.38M rollouts). The naive measurement fails: five confounds sit between raw trace similarity and any defensible claim, each able to flip a conclusion. Short traces score higher, empty traces score perfectly, unrelated traces agree by chance over half the time, the gap is capped by each model's reproducibility, and a model asked the same question twice in one language answers differently, leaving no baseline. We remove all five, and every correction makes the effect larger. Divergence proves structural, not sampling noise: it survives greedy decoding in every cell and stays flat as temperature rises, even as models grow less self-consistent. Normalised by their own reproducibility, four very different frontier models converge under greedy decoding, each keeping 71-73% of its action policy across languages, with model identity explaining only 5.7% of the variance. Below roughly 10B parameters it breaks down, and the ordering among smaller models is largely an artifact of a chance floor we measure by permutation rather than assume. Agents route non-English tasks through English; this pivot is causally load-bearing, confirmed by a pre-registered prediction across four models, and models will not abandon it when told to. Finally, a single trace-extraction regex, not the model, manufactured a multilingual failure: two worked examples raise one model's measured accuracy twenty-sixfold while its accuracy on readable outputs barely moves.",
+      "authors": [
+        "Sourabrata Mukherjee",
+        "Kalika Bali",
+        "Sunayana Sitaram"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-11T16:18:34+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11110v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11110",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "當 tool-using agent 以不同語言接收相同任務時，是否仍會採取相同步驟？現有 multilingual evaluation 多比較 final answer，丟棄中間 actions；但對 agent 而言，action route 決定成本、延遲、失敗模式與可稽核性。本文在 8 個模型、6 個平行 benchmarks、41 種語言上執行 238 萬次 rollouts，將 action policy 作為跨語言評估對象。作者辨識並修正五項 confounds：短 trace 偏高、empty trace 得到完美分數、無關 trace 的 chance floor、模型自身 reproducibility 造成的 ceiling，以及缺乏 same-language baseline。以自身 reproducibility 正規化後，四個 frontier models 在 greedy decoding 下跨語言保留約 71–73% 的 action policy；10B parameters 以下則不穩定。實驗也顯示 agents 會透過 English pivot 處理非英語任務，且難以藉由指令移除。最後，作者證明單一 trace-extraction regex 可製造假性 multilingual failure，兩個 worked examples 使某模型 measured accuracy 提高 26 倍，但 readable outputs 的準確率幾乎不變。",
+      "problem_statement": "現有 multilingual evaluation 多以 final answer agreement 或 accuracy 衡量，忽略 agent 執行任務時的工具呼叫順序與中間 route，因此無法辨識相同答案背後的成本、延遲、失敗模式與治理風險。直接比較跨語言 trace similarity 又受短序列偏誤、empty trace、chance agreement、sampling ceiling 及模型自身不 reproducible 等因素干擾，且缺乏 same-language baseline，使跨語言 policy retention 在方法上難以識別。",
+      "proposed_solution": "作者把 executed action trace 定義為跨語言評估的主要對象，建立固定五工具 alphabet 與平行 task scaffold，使各語言只改變自然語言呈現而保留任務與工具空間。方法以相同模型的 same-language replicates 估計 Iwithin，再以跨語言配對估計 Icross，並以 Icross/Iwithin 進行 ceiling correction。配合雙向 length matching、empty-trace exclusion、permutation chance-floor correction、temperature ladder 與 task-level bootstrap，逐項排除 metric confounds。作者亦以 Translate 的 removal、mandate 與預先註冊的 head-room prediction，將 English pivot 從相關觀察推進至 action-level 因果檢驗。",
+      "core_contributions": [
+        "提出 ceiling-corrected 的 cross-lingual policy retention estimand，以 same-language self-consistency 作為 baseline，估計語言轉換後仍保留多少自身 action policy。",
+        "系統性量化五項 trace similarity confounds，包含 trace length、empty traces、chance floor、reproducibility ceiling 與缺乏同語言參照，並以 length matching、嚴格 empty-trace 排除、replicates 與 permutation 等方式修正。",
+        "在大規模 multilingual agent evaluation 中證明跨語言 action divergence 具有結構性，並以 English-pivot removal、mandate 與 pre-registered prediction 檢驗其因果角色。"
+      ],
+      "methodology": "作者將 5,776 個已驗證跨語言對齊的任務，取自 FLORES-200、XQuAD、XNLI、Belebele、XCOPA 與 synthetic benchmark，渲染為 41 種語言。所有模型使用相同 tool-use scaffold，工具包括 Search、Calc、Translate、Summarize 與 Finish；模型需輸出 Thought/Action 格式，trace 由單一 regex 擷取，工具呼叫只解析、不實際 dispatch，因此測量的是 induced tool-use policy。研究涵蓋 Gemma-3-27B、Sarvam-M、Qwen3-235B-A22B、Llama-4-Maverick、GPT-OSS-120B，以及 Gemma-3-4B、Qwen3-8B、Aya-Expanse-8B。每個 task-language instance 以相同 task、prompt、token budget 與 decoding 設定產生兩次 replicate，僅改 serving seed；same-language replicates 用於估計 Iwithin，跨語言 replicates 用於估計 Icross。核心指標為 normalized retention Ĩ=Icross/Iwithin，表示語言改變後保留自身 reproducibility 的比例。比較時進行雙向 length matching，排除任一 trace 為 empty 的 pair，並以 task-level bootstrap 建立區間。另以 permutation 估計不同任務 trace 的 chance floor c，分析五項 confounds；以 T∈{0,0.3,0.5,0.7,1.0} 分離 sampling noise 與 language effect。機制實驗移除或 mandate Translate，並操弄 Thought 的語言；另進行 trace length manipulation、few-shot parser repair、self-consistency voting 與 gold-answer accuracy 評估。",
+      "key_results": "| 評估項目 | 主要結果 |\n|---|---|\n| 規模 | 8 models、6 benchmarks、41 languages、505 cells、2,382,875 rollouts |\n| Greedy decoding 的 pooled raw gap | length-matched gap 為 +0.2074；24/24 cells 的 bootstrap interval 均排除 0 |\n| Sampling temperature | cross-lingual agreement 在 T=0 至 1.0 間近乎平坦，整段變化量 Δ=0.009；self-consistency 隨 temperature 顯著下降 |\n| Frontier policy retention | 四個模型在 T=0 的 normalized retention 為約 71–73%， pooled band 寬度 2.6 個百分點 |\n| 變異解釋 | T=0 時 model identity 僅解釋 5.7% variance，benchmark 解釋 26.9%；T=0.5 時 model identity 為 74.8% |\n| 小模型邊界 | 低於約 10B parameters 的 retention 不穩定；Gemma-3-4B=0.6259、Qwen3-8B=0.8016，均偏離 frontier band [0.708, 0.733]；Aya-Expanse-8B 因 31.2% empty traces 被視為 adherence failure |\n| English pivot | Translate 是 adapted benchmarks 中 compliant models 最常用工具；reasoning text 約 99% ASCII。移除 Translate 後，三個模型多數 benchmark 的 length-matched agreement 下降；mandate 的方向預測在四模型上以 5/6、5/6、3/6、2/6 benchmarks 符合 |\n| 指令移除 pivot | 要求以 task language 思考時，Gemma 僅 0.79%、Sarvam 僅 0.08% 非拉丁文字 Thought，均低於 1% compliance |\n| Parser artifact | GPT-OSS-120B 的 two worked examples 使 measured accuracy 提高 26 倍，但 accuracy on scorable/readable outputs 幾乎不變；0-shot empty-trace rate 為 76.4% |\n| Correctness 與 invariance | Qwen3 在 XCOPA 最佳與最差語言的 accuracy 為 0.990 對 0.330；論文指出 invariance 與 correctness 不可互相取代，adherent models 間相關約 r=+0.38 |",
+      "insights": [
+        "評估 tool-using agent 時不應只看 final answer；應同時記錄 action sequence、工具成本、延遲與失敗路徑，因為答案相同不代表行為或風險相同。",
+        "跨模型比較應先校正模型自身 reproducibility 與 chance floor；未校正的 absolute gap 可能只是 sampling determinism、trace length 或短序列偏誤，甚至導致模型排名反轉。",
+        "agent benchmark 的 parser 與格式遵循度必須獨立報告；可加入多樣化 trace extraction、worked examples 與 parse-failure threshold，避免把不可解析誤判為能力或 multilingual failure。"
+      ],
+      "limitations": "研究比較的是固定 scaffold 下、工具只被解析而未真正執行的 induced policy，尚未測試工具輸出改變環境狀態時的 divergence。frontier regularity 主要基於 4 個模型，10B 以下則只有 2 個 clean models；第四供應商模型因 parse failure 被排除。trace similarity metric 未與其他距離函數比較，reason-in-task-language manipulation 也未成功。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multilingual LLM evaluation",
+        "tool-use policy divergence",
+        "agent trace auditing",
+        "reproducibility and metric calibration"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11204",
+      "title": "Surgical WAM: A World-Action Model for Data-Efficient Surgical Robot Learning",
+      "abstract": "Learning reliable surgical manipulation policies is bottlenecked by the scarcity of action-labeled demonstrations: teleoperated surgical robot (e.g., dVRK) trajectories with synchronized kinematics are costly to collect, while surgical tasks demand precise contact handling, long-horizon reasoning, and bimanual coordination. Endoscopic video is comparatively inexpensive and abundant relative to synchronized video--kinematics trajectories, and a natural way to exploit it is to learn world models of surgical scenes. However, existing surgical world models use video primarily for simulation or policy evaluation, and rarely translate the learned dynamics into closed-loop control. This gap raises our central question: under a fixed budget of action-labeled demonstrations, does action-free video pretraining improve closed-loop surgical manipulation? To answer it, we introduce the Surgical World-Action Model (Surgical WAM), a unified generative model built on Cosmos Policy that jointly predicts future endoscopic observations and executable surgical robot action chunks. Surgical WAM first learns surgical visual dynamics from action-free video and is then fine-tuned on the fixed action-labeled budget; at deployment, it acts as a closed-loop, receding-horizon controller that executes a short prefix of each predicted action chunk and replans from the resulting observation. On a suite of four simulated surgical manipulation tasks, video pretraining improves the average success rate from 63.5% to 77.8%, including an absolute gain of 20 percentage points on PegTransfer, with the largest improvements on contact-rich and bimanual tasks. These results demonstrate that action-free video provides transferable visual dynamics priors for learning surgical robot control with limited action supervision, positioning data-efficient video pretraining as a practical path toward scaling up surgical robot learning.",
+      "authors": [
+        "Wenrui Bao",
+        "Tianyun Jiang",
+        "Zhiben Chen",
+        "Ser-Nam Lim",
+        "Peter D. Peng",
+        "Yuzhang Shang"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-11T17:59:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11204v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11204",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "可靠的 surgical manipulation policy 學習受到 action-labeled demonstrations 稀缺的限制：具同步 kinematics 的 teleoperated surgical robot（如 dVRK）軌跡成本高昂，而手術任務又要求精確接觸處理、長時程推理與雙手協調。相較之下，endoscopic video 較容易取得，因此可用於學習 surgical scene 的 world model。本文提出 Surgical World-Action Model（Surgical WAM），以 Cosmos Policy 為基礎，聯合預測未來 endoscopic observations 與可執行的 surgical robot action chunks。模型先以 action-free video 學習視覺動力學，再在固定 action-labeled budget 上 fine-tune；部署時採 receding-horizon closed-loop 控制，每次只執行預測 action chunk 的短前綴，並依新觀測重新規劃。在四個 simulated surgical manipulation tasks 上，video pretraining 將平均成功率由 63.5% 提升至 77.8%，PegTransfer 絕對提升 20 個百分點，且 contact-rich 與 bimanual 任務改善最大。",
+      "problem_statement": "論文聚焦於 action-labeled surgical robot demonstrations 稀缺造成的學習瓶頸。同步 endoscopic video、dVRK kinematics 與 teleoperation labels 的蒐集昂貴，但手術控制又要求次毫米級精度、接觸處理、長時程推理與雙手協調。既有 surgical world models多用於 video generation、simulation 或 policy evaluation，或先生成影片再用獨立 inverse-dynamics 與 policy，較少直接把學到的 dynamics 用於 closed-loop control，因此未回答固定 action-label budget 下 action-free video 是否能改善實際操控。",
+      "proposed_solution": "作者提出 Surgical World-Action Model，將 visual world modeling 與 action prediction 放入單一共享的 generative model。首先以大量 action-free surgical video 預訓練未來 endoscopic observation 的 diffusion dynamics representation；接著在固定且有限的 action-labeled demonstrations 上，同時 fine-tune 未來影像與可執行 dVRK action chunk。部署時採 closed-loop receding-horizon policy：模型聯合採樣未來影片與動作，只執行短前綴，依新觀測反覆 replan。核心創新是利用 video 學習 dynamics、用少量同步標籤完成 action grounding，並避免分離的 world model、inverse-dynamics model 或外部 policy。",
+      "core_contributions": [
+        "提出 Surgical WAM，將未標註 surgical video 的未來觀測預測與 dVRK action chunk 預測整合於單一 shared generative model，並直接用於 closed-loop surgical manipulation。",
+        "在固定 action-labeled demonstrations 與相同 fine-tuning 設定下，實驗隔離並驗證 action-free video pretraining 對閉迴路控制成功率與 fine-tuning 效率的貢獻。",
+        "透過 fine-tuning steps、execution horizon 與 JIGSAWS real surgical video 實驗，分析預訓練效益的條件，指出其在 contact-rich、bimanual 任務及不同執行視窗下的表現。"
+      ],
+      "methodology": "Surgical WAM 以 Cosmos Policy 的 diffusion-transformer 為 backbone，在同一 latent sequence 中處理過去 visual observations、robot-state tokens、future visual prediction tokens 與 action tokens；模型條件包括當前 endoscopic RGB frame、dVRK proprioception、goal/task embedding，並聯合建模未來觀測與 action chunk。訓練分兩階段。Stage 1 使用 action-free surgical video，只保留視覺歷史與未來 video latent，遮蔽 action 與 state slots，以 video diffusion denoising loss 學習 surgical visual dynamics。本文的初始化來自 He et al. 的 surgical video world model，視覺與未來預測權重移植至 WAM，action 與 state slots 則重新學習。Stage 2 從該初始化出發，在固定的 10k 筆同步 observations、proprioception、actions 與 task information demonstrations 上，對共享序列進行 joint diffusion fine-tuning，使 future-prediction 與 action tokens 共同去噪。每個 action 是 dVRK 各 PSM 的 absolute Cartesian end-effector target，包含 position、orientation 與 gripper open-close command。測試時模型產生長度 Hc=16 的 action chunk 與對應未來影像，僅執行前 He=4 步，取得新觀測後重複預測；execution-horizon 消融測試 He=1、2、4、8。評估使用 SurRoL 的 Needle Pick、Peg Transfer、Needle Regrasp 與 BiPeg Transfer，以在最大 episode horizon 內完成任務的 closed-loop success rate 為指標，每項結果評估 100 個 episodes。",
+      "key_results": "主要結果如下；所有 Surgical WAM 變體使用相同的 10k action-labeled demonstrations，並以 100 個 evaluation episodes 評估 closed-loop task success rate。\n\n| 模型 | Needle Pick | Peg Transfer | Needle Regrasp | BiPeg Transfer | 平均 |\n|---|---:|---:|---:|---:|---:|\n| Surgical WAM w/o PT | 96% | 66% | 50% | 42% | 63.5% |\n| Surgical WAM w/ PT | 99% | 86% | 62% | 64% | 77.8% |\n\nVideo pretraining 的平均提升為 14.3 個百分點；PegTransfer 提升 20 個百分點。與其他 baseline 相比，Surgical WAM w/ PT 在四項任務中的三項取得最佳成功率。π0.5 四項平均為 22.3%，其各任務結果為 8%、36%、12% 與 33%。Fine-tuning steps 消融中，w/ PT 在 80k steps 達 86% 最佳值，w/o PT 在 160k steps 達 79% 最佳值；但較長訓練下，w/ PT 在 120k 與 160k steps 分別為 34% 與 56.5%。Execution horizon 消融中，w/ PT 在 He=1、2、4、8 時分別為 86%、70%、86%、80%，w/o PT 分別為 50%、52%、66%、60%。JIGSAWS 實驗僅報告與模擬相同的定性趨勢，論文未報告具體成功率。",
+      "insights": [
+        "若同步 robot kinematics 成本高，可將 action-free surgical video 用於先學習視覺動力學，再以有限示範資料完成 action grounding；這能把資料瓶頸部分轉移至 video curation。",
+        "對需要精確接觸與長時程操作的任務，closed-loop receding-horizon 執行比一次完成整段預測更能持續根據新觀測修正動作；論文預設每次預測 16 步並執行前 4 步。",
+        "評估 video-to-action 方法時，應優先採用 closed-loop task success，而不能只依賴 open-loop video prediction 或 trajectory metrics；同時應固定 action-label budget，才能辨識未標註影片的額外價值。"
+      ],
+      "limitations": "實驗主要在 SurRoL simulated dVRK 的四項任務進行，論文未提供真實機器人 closed-loop task success 的定量結果；JIGSAWS 僅呈現定性趨勢。此外，video-pretrained 模型在更長 fine-tuning 後表現下降，作者歸因於有限 demonstrations 的 overfitting。論文也未報告 video 預訓練資料的具體規模、來源構成、計算成本或安全失效分析。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "world-action models",
+        "surgical robot learning",
+        "video diffusion",
+        "closed-loop robot control"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11095",
+      "title": "Why Does CLAUDE.md Keep Growing? Catastrophic Remembering in Agentic Coding",
+      "abstract": "Agentic coding READMEs like CLAUDE.md grow without bound in real repositories, stopping only when the repository retires or someone rewrites the file wholesale. We trace this to imperfect recall: appending an instruction is always cheap, but once an instruction's rationale is gone, deleting it without risking a correctness regression costs O(2^|D|) in a prompt of |D| instructions. We name the resulting divergence catastrophic remembering, the inverse of catastrophic forgetting around which continual learning is organized. First, we characterize this phenomenon across 247,694 instruction lifetimes in 1,867 repositories: agentic prompts grow without bound, more than tripling over their lifetime (+226%), gaining +4.9 net instructions every commit; further, the older an instruction gets, the less likely it is to be deleted (log-hazard -0.032/commit). Then, we show that prompt comments can halt the growth: inverting IFEval yields verifiable worlds whose optimal prompts are known, and there comments encoding latent reasoning remove 99.3% of excess instructions (+211.3% to +1.4%). Finally, applying the same inversion to WildIFEval, we show that prompt comments can improve real-world agentic instruction-following by up to 23.1%. If English is the new code, why don't we have comments yet?",
+      "authors": [
+        "Kushal Chakrabarti"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-08-11T16:00:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11095v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11095",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "Agentic coding 的 README（如 CLAUDE.md）在真實儲存庫中會無限制增長，通常直到儲存庫停止維護，或有人整份重寫才停止。作者將原因追溯至不完善的 recall：新增 instruction 的成本總是很低，但當 instruction 的 rationale 消失後，要在不冒 correctness regression 風險下刪除它，對含有 |D| 個 instructions 的 prompt 而言，需付出 O(2^|D|) 的代價。作者稱此現象為 catastrophic remembering，是 continual learning 中 catastrophic forgetting 的反面。研究首先分析 1,867 個 repositories 中 247,694 個 instruction lifetimes，發現 prompt 在生命週期內增長 226%，每次 commit 淨增 4.9 個 instructions，且 instruction 越老越不易被刪除。接著，作者反轉 IFEval，建立具有已知最佳 prompt 的可驗證世界；結果顯示，包含 latent reasoning 的 prompt comments 可移除 99.3% 的 excess instructions，使增長由 211.3% 降至 1.4%。在 WildIFEval 上，comments 更可使真實世界的 instruction-following 提升最多 23.1%。",
+      "problem_statement": "Agentic README 具有實際效益，但 instruction 會持續累積，造成 context 干擾與 instruction-following 下降。現有 line diff 或檔案大小分析無法追蹤單一 instruction 的生命史，也缺乏可辨識刪除原因的機制；逐條刪除需要難以負擔的 counterfactual tests，整份重寫則只重置大小，不能消除再次增長的根因。論文要判斷這種 growth 是否源自 rationale 遺失，並尋找能在不降低 correctness 下控制 prompt 大小的方法。",
+      "proposed_solution": "作者提出 catastrophic remembering：instruction 本身仍被保留，但其新增 rationale 會在多次編輯與多人接手後逐漸不可恢復，使維護者傾向新增而不刪除。解決方案是引入 prompt comments，將 instruction 與 executor 分離：instruction 告訴 agent 做什麼，comment 僅提供未來 maintainer 閱讀的 why。Informative comment 需保存觸發失敗、對原因的 hypothesis、實際 outcome、反覆出現次數、已被否證的方法，以及必要時被刪除 instruction 的原文。作者以反轉 IFEval 建立已知 minimum cover 的 evaluation，檢驗 comments 是否能使 prompt 在相同 correctness 下收斂至較小集合，並以 WildIFEval 測量其對真實 instruction-following 的改善。",
+      "core_contributions": [
+        "提出 catastrophic remembering 概念與理論模型，將 agentic prompt 的無限制增長歸因於 latent reasoning 隨時間衰退，而非單純 instruction staleness 或 content fragility。",
+        "在 1,867 個公開 GitHub repositories、247,694 個 instruction lifetimes 上進行生命史分析，使用 instruction matching、deletion hazard、frailty model 與多作者交互作用檢驗增長機制。",
+        "反轉 IFEval 使 minimum cover 可觀測，並以 informative prompt comments 保存 failure、hypothesis、outcome 與 falsified lineage；實驗顯示 comments 可使 prompt 接近最佳大小並改善 instruction-following。"
+      ],
+      "methodology": "論文分為理論、觀察性 repository 分析與受控實驗。理論上，將 prompt 視為 instruction set D，任務具有不可直接觀測的 constraint set C；executor 只回傳經 verifier 檢查的 censored、stochastic feedback。作者定義 minimum cover D⋆，並用 correctness（constraint satisfaction）與 excess size |D|/|D⋆|−1 評估 prompt。由於逐條刪除可能受到 redundancy 影響，完整判斷 instruction 是否 excess 需探測所有 subsets，成本為 O(2^|D|)；若保存新增時的 latent reasoning，則可近似降至 O(1)。作者以 recoverability ρ(a) 描述 rationale 隨 instruction age 衰退，並推導 deletion hazard h(a)≈ρ̄(a)s(a)，從而說明新增速度超過刪除速度時 prompt 會發散。資料方面，作者重建 1,867 個 GitHub repositories 的完整 context-file histories，得到 1,801 個 multi-version files、299,440 個 transitions 與 247,694 個 instruction spells；以 markdown 結構與句子邊界切分 clause-level imperatives，再用 similarity matcher 跨版本追蹤 instruction，並以 Nelson–Aalen、repository-stratified bootstrap、gamma frailty model 及 author-count interaction 分析 deletion hazard。受控部分反轉 IFEval：隱藏原始 instructions，保留 verifiers，把原任務摘要成 objective，讓 maintainer 在多輪僅憑 noisy、censored feedback 重建 prompt。Control 不提供 comments，Placebo 提供 comment-shaped noise，Treatment 提供含 failure、hypothesis、outcome 與 falsified lineage 的 informative comments；executor 會剝除 comments。另以 WildIFEval 加入跨項目 noisy instructions，評估真實 prose constraints 的 instruction-following；此處使用 arm-blind LLM judge，並以第二個 judge 重評 6,336 個 verdicts。",
+      "key_results": "| 實驗或分析 | 條件 | 主要結果 |\n|---|---|---|\n| Repository 歷史分析 | 1,867 repositories；247,694 instruction lifetimes | instruction count 在檔案生命週期內平均增加 **226%**；非 wholesale rewrite 的 commit 中平均每次淨增 **4.9** 個 instructions |\n| Deletion hazard | 28,426 次 tracked deletions | log-hazard 隨 instruction age 每 commit 下降 **0.032**；95% CI 為 **[-0.047, -0.019]** |\n| Wholesale rewrite | 52 個檔案對齊首次 rewrite | rewrite 後平均降至原先 **59.5%**，10 commits 後回升至 **91.5%**；rewrite 後增長率 **4.9%/commit**，rewrite 前為 **4.1%/commit** |\n| 反轉 IFEval，T=15 | no comments vs informative comments | excess size 由 **+60.4%** 降至 **−5.8%**，下降 **66.2 個百分點**；constraint satisfaction 約維持相當水準 |\n| 反轉 IFEval，T=51 | no comments vs informative comments | excess size 由 **+211.3%** 降至 **+1.4%**，移除 **99.3%** 的 excess size |\n| IFEval placebo ablation | comment-shaped noise vs informative comments | noise 接近 no-comment arm；作者指出真正有效的是包含 outcome 的 latent reasoning，而非 comments 形式本身 |\n| WildIFEval，64 worlds、K=1、G=16 | noisy instructions 對 true instructions 的干擾 | correctness 由 **65.6%** 降至 **41.5%**，下降 **24.1 個百分點** |\n| WildIFEval，3 rounds | informative comments vs identical un-commented prompt | satisfaction 由 **50.4%** 升至 **62.0%**，增加 **11.6 個百分點**，相對提升 **23.1%**；第二位 judge 的差異為 **7.8 個百分點**，其 CI 包含 0 |",
+      "insights": [
+        "實務上可為每個 agentic instruction 增加只供維護者閱讀的 rationale comment，記錄觸發失敗、推測原因、驗證結果與被否證的替代方案。",
+        "Prompt 維護不應只依賴逐條刪除；應建立可追蹤的 provenance 與 outcome 紀錄，並將 comment 與 instruction 一起版本化，以降低未來判斷刪除風險。",
+        "論文的安全提醒值得採用：comments 本身不會刪除 instruction，但根據 comments 自動刪除可能誤刪仍具價值的規則，因此安全關鍵指令應保留人工審核。"
+      ],
+      "limitations": "研究侷限包括：50% rewrite threshold、migration censoring 與 instruction matcher 主要以 50 個人工標註 transitions 驗證；受控實驗的 prompt cover 僅約 2–3 個 instructions，不能直接代表 median 39 個 instructions 的真實檔案。WildIFEval 使用 LLM judge，沒有 ground truth。資料只涵蓋公開 GitHub 與英文 context files；研究也未證明 comments 在大型真實 repository 中能長期阻止 ratchet，未來需進行更長期、跨語言與人工審核研究。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "prompt maintenance",
+        "continual learning",
+        "instruction following evaluation",
+        "software engineering comments",
+        "agent memory and eviction"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.11171",
+      "title": "From Interpretability to Control: Insights from Six Years of the TrustNLP Workshop",
+      "abstract": "The Workshop on Trustworthy Natural Language Processing (TrustNLP), co-located with major ACL conferences since 2021, has grown from 8 proceedings papers to 41 over six editions, documenting a field-wide transition from post-hoc interpretability of static models to mechanistic understanding and proactive control of generative systems. We synthesize insights from all 144 proceedings papers, classifying them along six trust dimensions grounded in established frameworks (TrustLLM, DecodingTrust). We observe co-occurrences with capability emergence. The release of the first high-impact chat models activated all trust dimensions simultaneously, while subsequent model generations shifted focus toward truthfulness and safety alignment. Analysis from the classification study reveals that truthfulness is the fastest-growing dimension (absent in 2021-2022, comprising 37% of papers by 2025-2026), fairness remains the most consistent theme, and explainability exhibits a U-shaped trajectory; declining as post-hoc methods lost relevance but resurging in 2026 through mechanistic interpretability. A cross-venue comparison with ACL, NAACL, EACL, and EMNLP (~2K papers) in the same period shows that TrustNLP's topical distribution closely follows the field average. We identify four structural insights and conclude with actionable directions for the research community.",
+      "authors": [
+        "Rahul Gupta",
+        "Abhinav Mohanty",
+        "Anaelia Ovalle",
+        "Anil Ramakrishna",
+        "Anubrata Das",
+        "Apurv Verma",
+        "Jwala Dhamala",
+        "Ninareh Mehrabi",
+        "Tharindu Kumarage",
+        "Yada Pruksachatkun",
+        "Yang Trista Cao",
+        "Kai-Wei Chang",
+        "Aram Galstyan"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CY"
+      ],
+      "published": "2026-08-11T17:30:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.11171v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.11171",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "Trustworthy Natural Language Processing（TrustNLP）工作坊自 2021 年起與 ACL 主要會議共同舉辦，六屆 archival proceedings 論文數由 8 篇增至 41 篇。本文綜合分析全部 144 篇論文，依據 TrustLLM 與 DecodingTrust 框架，從六個信任維度分類研究：Fairness & Bias、Robustness & Adversarial、Privacy、Machine Ethics & Safety、Truthfulness，以及 Explainability。結果顯示，研究領域已從靜態模型的 post-hoc interpretability，轉向生成系統的 mechanistic understanding 與 proactive control。Truthfulness 成長最快，Fairness & Bias 最穩定，Explainability 則因 post-hoc 方法式微而下降，並於 2026 年因 mechanistic interpretability 重新上升。跨 ACL、NAACL、EACL 與 EMNLP 約 2,000 篇論文的比較顯示，TrustNLP 的主題分布大致接近整體 NLP 領域平均。",
+      "problem_statement": "LLM 與 agentic、multimodal 系統快速出現，使「trust」從靜態模型的偏誤與可解釋性，擴展到 hallucination、adversarial robustness、safety alignment、privacy 與 controllability。既有 TrustLLM、DecodingTrust 等框架多是單一時間點的多維 benchmark，能列出信任面向，卻不足以說明研究主題如何隨 capability emergence 演化，也未形式化各維度間的 trade-off。本文因此要回答 TrustNLP 六年來關注什麼、方法如何轉變，以及 output-level 評測是否足以支持可信性判斷。",
+      "proposed_solution": "作者提出以 TrustNLP 為案例的 longitudinal synthesis framework：將 144 篇 proceedings 論文映射到六個可重疊的信任維度，結合人類與兩個 LLM 的獨立標註及一致性分析，再按年度與 capability phase 追蹤主題變化，並和四個主要 ACL venue 的約 2,000 篇論文比較。核心創新不是新的模型或 benchmark，而是把靜態信任分類轉化為 diachronic 分析，指出研究由 post-hoc interpretability 經 reliability、trade-offs，走向 mechanistic understanding、alignment verification 與 proactive control。作者進一步提出四項結構性洞察，主張未來框架需整合內部與輸出證據、互動模式、跨維度權衡，以及動態對抗性 benchmark。",
+      "core_contributions": [
+        "對 2021–2026 年 TrustNLP 全部 144 篇 archival proceedings 論文進行縱向、量化的信任維度分類，揭示各主題的出現、持續與轉型趨勢。",
+        "依研究主導範式整理五個階段：2021–2022 年的 interpretability and bias、2023 年的 generative pivot、2024 年的 trust trade-offs、2025 年的 agentic and multimodal frontiers，以及 2026 年的 mechanistic trust and safety at scale。",
+        "提出四項結構性觀察：信任研究通常落後於 capability events、信任證據取決於 interaction mode、output-level audits 可能遺漏內部行為，以及現有信任維度仍缺乏統一理論框架。"
+      ],
+      "methodology": "本文採用 proceedings-level 的縱向內容分析，而非訓練或評測單一 LLM。研究對象是 2021–2026 年 TrustNLP 的 144 篇 archival proceedings 論文；非 archival accepted papers 不納入統計。作者以 TrustLLM 的信任維度為起點，參考 DecodingTrust 細化範圍，將 Toxicity 納入 Fairness & Bias，合併 Safety 與 Machine Ethics，並因 TrustNLP 早期語料明確包含相關研究而新增 Explainability，形成六個可重疊標籤：Fairness & Bias、Robustness & Adversarial、Privacy、Machine Ethics & Safety、Truthfulness、Explainability。每篇論文可同時屬於多個維度。標註流程包含一位作者依據明確指示閱讀標題與摘要進行標註，以及 Claude Sonnet 5 和 Amazon Nova Lite 2.0 以相同指示獨立分類；對初始不一致案例，由人類標註者複核並決定最終標籤。作者使用 Cohen’s κ 衡量人類與兩個 LLM 分類器的一致性，另報告 overall decision-level accuracy、三方完全一致比例與至少一個 LLM 同意人類的比例。趨勢分析按年度統計六個維度的論文數與總數，並以五個時期整理技術主題。跨 venue 分析則先以關鍵字篩選 ACL、NAACL、EACL、EMNLP 的 trust papers，再比較各年度廣義主題比例；論文未說明更完整的關鍵字清單、抽樣細節、模型架構、訓練演算法或統一的外部效能指標。",
+      "key_results": "| 指標／結果 | 論文報告數據 |\n|---|---:|\n| TrustNLP archival proceedings 論文數（2021→2026） | 8→41；六屆合計 144 篇 |\n| Fairness & Bias 各年數量／總數 | 2、3、6、6、7、6／30 |\n| Robustness & Adversarial 各年數量／總數 | 0、0、6、5、8、8／27 |\n| Privacy 各年數量／總數 | 1、0、6、0、1、1／9 |\n| Machine Ethics & Safety 各年數量／總數 | 0、2、3、3、3、9／20 |\n| Truthfulness 各年數量／總數 | 0、0、6、5、14、13／38（占全體 26%，作者摘要另以 2025–2026 年 37% 描述） |\n| Explainability 各年數量／總數 | 5、4、2、3、2、13／29 |\n| 人類與 Claude Sonnet 5 的 Cohen’s κ | Fairness 0.892、Robustness 0.749、Privacy 0.881、Machine Ethics & Safety 0.532、Truthfulness 0.645、Explainability 0.737；整體 decision-level accuracy 92.2% |\n| 人類與 Amazon Nova Lite 2.0 的 Cohen’s κ | Fairness 0.782、Robustness 0.706、Privacy 0.882、Machine Ethics & Safety 0.506、Truthfulness 0.673、Explainability 0.647；整體 decision-level accuracy 90.5% |\n| 三位初始標註者完全一致 | 87/144 篇（60%） |\n| 至少一個 LLM 完全同意人類標註 | 112/144 篇（78%） |\n| 跨 venue 比較 | ACL、NAACL、EACL、EMNLP 約 2,000 篇；TrustNLP 主題分布大致接近四個會議平均 |\n| 新模型或方法的統一效能比較 | 論文未報告；本文主要是 proceedings 的描述性與分類分析 |",
+      "insights": [
+        "實務上的 LLM 評測不應只依賴單輪輸出或靜態 benchmark；應依照系統是否涉及 API、多輪對話、工具使用、agent trajectory 或多模態互動，設計相應的信任測試。",
+        "對高風險系統，應將 internal probes、activation-level analysis 與 behavioral evaluation 並列使用，因為輸出公平性、資料污染、潛在攻擊面與工具脆弱性可能無法由表面輸出充分揭露。",
+        "評測框架應同時追蹤 Truthfulness、Safety、Fairness、Robustness、Privacy 與 Explainability 的交互影響，並採用動態、對抗性維護的 benchmark，避免固定測試集快速飽和或被納入訓練資料。"
+      ],
+      "limitations": "研究只涵蓋 TrustNLP 單一工作坊、六屆 archival 論文，未納入非 archival 展示、tutorial 或其他 FAccT、AIES、ICLR、NeurIPS 等 venue。分類主要依標題與摘要，且人類複核由一位作者完成；Machine Ethics & Safety 與 Truthfulness 的一致性較低。語料、引用與分析偏向英語，結論為回溯性描述，未提供新的模型實驗、benchmark 數據或方法比較。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM trustworthiness taxonomy",
+        "mechanistic interpretability",
+        "truthfulness and hallucination evaluation",
+        "adversarial robustness and red-teaming",
+        "agentic and multimodal safety"
+      ],
+      "category": "Safety & Alignment"
+    }
+  }
+]
