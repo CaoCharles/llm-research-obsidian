@@ -1,6 +1,6 @@
-# 多模態大型語言模型評測
+# Tikz Latex 程式碼生成
 
-> 多模態大型語言模型評測 相關研究的彙整頁面。
+> Tikz Latex 程式碼生成 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 多模態大型語言模型評測 相關關鍵字
+- 標題或摘要含有 TikZ-LaTeX 程式碼生成 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Multimodal Evaluation]` [[[2608.12262] Diagram-MMU - A Multi-Modal Benchmark for Scientific Diagrams|Diagram-MMU: A Multi-Modal Benchmark for Scientifi...]] (2026-08-12)
-
-- `[Multimodal Evaluation]` [[[2608.07417] I Seek You in Videos - Identity-Conditioned Queries for Person-Centric Video Rea...|I Seek You in Videos: Identity-Conditioned Queries...]] (2026-08-07)
 
 ## 延伸閱讀
 

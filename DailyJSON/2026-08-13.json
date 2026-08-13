@@ -1,0 +1,543 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.12304",
+      "title": "Constructing Dynamic Master Logic Models as Knowledge Graphs for Complex System Diagnostics Using Retrieval-Augmented Large Language Models",
+      "abstract": "Dynamic Master Logic (DML) provides a hierarchical framework for representing system behavior by linking functional objectives to underlying structural elements. However, DML construction typically relies on expert interpretation of technical documentation, limiting scalability for complex systems. This study presents a framework for automated construction of DML models from system descriptions and their representation as Knowledge Graphs (KG-DML), using Retrieval-Augmented Generation and Large Language Models as enabling tools. Building on prior work with small-scale systems, the framework extends automated KG-DML construction and evaluation to substantially larger and more complex systems. Model construction proceeds across the DML hierarchy using targeted retrieval while preserving functional dependencies and explicit logical relationships. The resulting KG-DML supports diagnostic reasoning, safety assessment, upward failure propagation, and downward dependency tracing. A multi-level validation methodology evaluates layer-specific precision and recall, logical gate consistency, and overall structural integrity. Application to the Low-Pressure Coolant Injection system of a decommissioned Boiling Water Reactor demonstrates consistent reconstruction across repeated runs. The results show that automated KG-DML construction can transform technical documentation into executable functional models for diagnostic and reliability analysis.",
+      "authors": [
+        "Saman Marandi",
+        "Yu-Shu Hu",
+        "Mohammad Modarres"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-12T17:50:39+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12304v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12304",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "Dynamic Master Logic（DML）提供階層式框架，將系統行為表示為功能目標與底層結構元素的連結。DML不同於事件導向的Fault Tree Analysis，能在統一功能階層中描述系統目標、功能依賴與未預期失效情境。然而，DML建構通常依賴專家解讀技術文件，限制了複雜系統的擴展性。本研究提出一套自動化框架，利用Retrieval-Augmented Generation（RAG）與Large Language Models（LLMs），從系統描述建構DML模型，並以Knowledge Graph表示為KG-DML。模型沿DML階層逐層建構，透過目標式檢索保留功能依賴與明確邏輯關係。KG-DML可支援診斷推理、安全評估、失效向上傳播與依賴向下追蹤。研究以多層次驗證評估各層precision、recall、邏輯閘一致性與整體結構完整性，並以已除役沸水反應器的Low-Pressure Coolant Injection系統進行案例研究。結果顯示，自動化KG-DML建構能將技術文件轉換為可執行的功能模型，用於診斷與可靠度分析。",
+      "problem_statement": "複雜工程系統具有多層目標、功能、子功能、元件與成功條件，傳統ETA、FTA等事件導向方法需預先列舉失效事件與因果序列，難以涵蓋未預期或級聯情境。DML雖能以功能階層表達依賴與失效傳播，但其建構長期依賴專家閱讀大量技術文件，擴展性有限；既有LLM又可能產生幻覺、推理不一致與結構不穩定。",
+      "proposed_solution": "作者提出以RAG支援的LLM自動建構KG-DML框架。方法將大型工程文件切分並嵌入向量資料庫，依DML階層逐層檢索；每次檢索同時考慮當前層的語義定義與已建構的父節點，讓LLM在受限schema內輸出節點及其邏輯關係。經JSON結構驗證後，再轉換為Neo4j圖資料庫，並以閘節點保留AND/OR及巢狀邏輯。核心創新並非單獨提出RAG或LLM技術，而是整合受控抽取、階層式建構、可執行KG表示與多層結構評估，使模型可支援失效向上傳播、依賴向下追蹤與診斷推理。",
+      "core_contributions": [
+        "提出從工程技術文件自動建構DML功能模型的方法，結合目標式RAG、LLM結構化抽取、預定義DML schema與JSON驗證流程。",
+        "將先前針對小型系統的KG-DML方法擴展至較大型且文件密集的複雜系統，並以Neo4j實作可遍歷、可執行的圖表示。",
+        "提出多層次評估框架，分別衡量Goals、Functions、Subfunctions、Components與Success Conditions的節點品質，以及跨層連結、邏輯閘與整體結構完整性。"
+      ],
+      "methodology": "框架分為文件處理、逐層建構與圖合成三階段。首先標準化元件識別碼、展開縮寫、補充元件功能或位置描述，並解析代名詞與簡寫；文件依段落切分，每段上限1,500字元、重疊150字元，使用text-embedding-3-small建立向量並存入向量資料庫。其次依序處理Goals、Functions、Subfunctions、Components與Success Conditions。每一層以該層語義定義及上一層已驗證的父節點形成查詢，利用cosine similarity選取top-K=10個文件片段，交由GPT-4o（temperature=0）依預定義JSON schema抽取候選節點與AND/OR邏輯關係。輸出經結構正確性、識別碼有效性及層級限制檢查後，加入master JSON；不合格結果記錄並標示低信心。最後將JSON轉換為Neo4j Cypher，建立節點、父子關係與可遞迴表示巢狀Boolean gates的中介閘節點。評估先對預測模型與gold model做名稱標準化及語義對齊，再逐層計算precision、recall與偏重召回率的F2；另評估跨層連結的缺失、錯誤與多餘關係，以及各父節點的邏輯閘準確率。整體Integrity Score以加權各層F2，並透過結構錯誤的指數懲罰反映節點、連結、閘錯誤及孤立節點對完整功能路徑的影響。",
+      "key_results": "作者以Low-Pressure Coolant Injection系統進行五次執行，附錄報告的主要結果如下：\n\n| 評估項目 | Run 1 | Run 2 | Run 3 | Run 4 | Run 5 |\n|---|---:|---:|---:|---:|---:|\n| 節點F2：Goals | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |\n| 節點F2：Functions | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |\n| 節點F2：Subfunctions | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |\n| 節點F2：Components | 0.980 | 0.987 | 0.978 | 0.990 | 0.987 |\n| 節點F2：Success Conditions | 0.980 | 0.987 | 0.987 | 0.993 | 0.987 |\n| 連結F2：Goal-Function | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |\n| 連結F2：Function-Subfunction | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |\n| 連結F2：Subfunction-Component | 0.968 | 0.961 | 0.969 | 0.976 | 0.982 |\n| 連結F2：Component-Success Condition | 0.980 | 0.987 | 0.987 | 0.993 | 0.987 |\n| 邏輯閘準確率：Subfunction-Component | 0.926 | 0.962 | 0.963 | 0.889 | 0.926 |\n\n論文指出五次執行呈現一致的重建結果；但提供的內容未完整列出整體Integrity Score、批次大小比較及所有案例診斷結果的具體數字，故相關數據為「論文未報告」。",
+      "insights": [
+        "對工程文件建模而言，先依DML階層逐層建構，再以既有父節點限制檢索範圍，有助於降低開放式KG抽取的歧義。",
+        "若下游推理依賴圖遍歷與Boolean propagation，評測不能只看節點precision與recall，還應檢查跨層連結、邏輯閘及端到端功能路徑。",
+        "RAG與schema-constrained extraction可降低LLM自由生成的範圍，但論文也明確指出KG-DML仍屬LLM-informed模型，部署於安全或可靠度場景時必須保留領域專家驗證。"
+      ],
+      "limitations": "論文僅以一個已除役沸水反應器的Low-Pressure Coolant Injection系統展示方法，提供的內容未報告跨系統泛化、與人工建模或其他方法的baseline比較，也未完整呈現整體Integrity Score數值。作者指出模型仍需領域專家驗證；未來方向包括持續改善大型文件的建構與驗證，以及提升模型穩定性與結構完整性。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Dynamic Master Logic與功能建模",
+        "Knowledge Graph construction",
+        "工程系統診斷與可靠度分析",
+        "Boolean logic與失效傳播"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12313",
+      "title": "AVA-Encoder: Towards Agent-Native Video Representation Learning",
+      "abstract": "Creative agents still lack an effective way to learn from high-quality human films, limiting their ability to produce cinematic-grade videos. A key challenge is the absence of a structured video representation that is both faithful to film content and directly usable for agentic reasoning and manipulation. To address the challenge, we propose the Agentic Video Auto-Encoder (AVA-Encoder), a framework for learning agent-native video representations via agentic auto-encoding.   AVA-Encoder transforms a video into a knowledge graph (KG) representation and then reconstructs it back into video. Its hierarchy and state nodes store structured text, while a linked asset layer holds generated images, audio, and video. Typed edges preserve the relations between these text descriptions and assets in a form that agents can easily understand, query, and edit. The video reconstruction differences drive a textual-gradient optimization framework, which expresses evaluation feedback as natural-language update directions for Data-Independent Encoding Policy Pseudo-Training in the outer loop and optional Data-Dependent KG Representation Refinement in the test-time inner loop.   Extensive experiments show that AVA-Encoder improves by 20.7 percentage points over the strongest external baseline. In the controlled policy-only setting, its pseudo-trained shot-level Agentic Video Encoder policy also outperforms a carefully human-tuned policy while using 74.3% fewer system-prompt tokens. We release the complete AVA-Encoder framework, a reliable agentic video reconstruction benchmark, and the first dataset of high-quality film KG representations.",
+      "authors": [
+        "Chuyue Li",
+        "Jinpeng Yu",
+        "Haozhe Wang",
+        "Tian Xueyun",
+        "Zhijing Zhang",
+        "Bingnan Li",
+        "Shuqi Gu",
+        "Kan Ren",
+        "Jiaming Liu",
+        "Ruihua Hua"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CL"
+      ],
+      "published": "2026-08-12T17:58:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12313v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12313",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "創意 agents 仍缺乏有效學習高品質人類電影的方法，因而限制其生成電影級影片的能力。核心挑戰是缺少一種既忠實於電影內容，又能直接支援 agentic reasoning 與操作的結構化 video representation。作者提出 Agentic Video Auto-Encoder（AVA-Encoder），透過 agentic auto-encoding 學習 agent-native video representation。AVA-Encoder 將影片轉換為 knowledge graph（KG），再由 KG 重建影片。其階層與 state nodes 儲存結構化文字，linked asset layer 則保存生成的影像、音訊與影片；typed edges 維持文字描述與資產間的關係，使 agents 能理解、查詢與編輯。影片重建差異被轉化為 natural-language update directions，分別用於 Data-Independent Encoding Policy Pseudo-Training，以及可選的 test-time Data-Dependent KG Representation Refinement。實驗顯示，AVA-Encoder 比最強外部 baseline 提升 20.7 個百分點；在僅比較 policy 的設定中，pseudo-trained shot-level Agentic Video Encoder policy 以少 74.3% system-prompt tokens 的成本超越人工調整 policy。作者同時釋出完整框架、影片重建 benchmark 與高品質電影 KG representations dataset。",
+      "problem_statement": "現有影片表示難以同時滿足 agent-readable、agent-operable 與 cinematic faithfulness。pixels、latent tokens 與 embeddings 雖保留豐富視覺資訊，卻不易被 agents 查詢或編輯；線性 captions 會遺失 entity relationships、event organization 與跨模態依賴；既有 scene／video KG 多為 retrieval、QA 等理解任務設計，只保留稀疏語義事實，未以影片重建驗證是否保存生成所需的電影細節。",
+      "proposed_solution": "作者提出 AVA-Encoder，將電影轉為可讀、可查詢、可編輯且以重建忠實度約束的 film-creation knowledge graph。其核心包含三層 hierarchical Agentic Video Encoder、文字中心 KG 與 linked multimodal asset layer，以及 dual-loop textual-gradient evolution。Story–Event–Shot 節點和 Character、Scene、Object、Style、Camera、Audio states 儲存結構化文字，typed edges 保存跨層級、跨鏡頭與跨模態關係。固定 decoder 將 KG 重建為影片，重建失敗被轉為自然語言 correction records：outer loop 學習共享 shot policy，inner loop 則在測試時修正當前影片的 KG，並以 anti-forgetting／anti-degradation gates 控制更新。",
+      "core_contributions": [
+        "提出 Agentic Video Auto-Encoder paradigm，將 agent-native video representation learning 形式化為以重建為導向的 self-evolving agentic auto-encoding 問題；雙階段優化相較移除兩階段的設定，Overall reconstruction 提升 6.6 個百分點（相對 15.6%）。",
+        "建立 agentic video representation benchmark，以四個 reconstruction directions（V、KF、V-BC、KF-BC）及八個電影維度評估 narrative、visual、temporal 與 multimodal consistency；自動指標與人工判斷在 730 個 blinded triples 中有 710 個一致（97.3%）。",
+        "釋出 Film Knowledge Graph Dataset 與 graph-based editing framework，提供高品質電影 KG representations 及可供影片生成、editing、remixing 與 reuse 的結構化創作記錄。"
+      ],
+      "methodology": "AVA-Encoder 將影片 V 經 Agentic Video Encoder E 映射為文字中心的 knowledge graph G，再由固定 decoder 重建影片。Encoder 先以 adaptive segmentation 依 motion dynamics、frame similarity 與 semantic transitions 切分 shots；接著按 film、shot、keyframe 三層由粗到細理解，將上層 context 與 character、scene、object registries 注入下層，以保留全局敘事、鏡頭動態、構圖及跨鏡頭身份一致性。G 包含 Story–Event–Shot hierarchy、Character、Scene、Object、Style、Camera、Audio 等 text nodes，以及 linked keyframe、image、audio、video assets；Contains、Binds、References、Transition、Sequence、Narrative 等 typed edges 保存階層、時間與語義依賴。Decoder 固定使用 text-to-image 與 image-to-video 生成模型，且不接收或儲存輸入影片 frames，因此重建主要反映表示內容。優化分為兩個不同時更新的迴圈：outer loop 在六個影片上只更新 shot-level policy，透過約 30 個 source-derived atomic QA、文字梯度與 replay-based anti-forgetting gate 接受候選 policy；inner loop 在 test time 固定 policy，只修改當前影片 G 的 keyframe 或 shot generation payload，並以 QA reward、GT–reconstruction 差異及 anti-degradation gate 驗證。最終 R_eval 採四個方向：Video、Keyframe、Video Back-Captioning、Keyframe Back-Captioning，涵蓋 Character、Scene、Position、Motion、Audio、Style、Camera、Narrative 八個維度；VLM 只產生細粒度 factual judgments，再由固定規則聚合分數。",
+      "key_results": "| 比較項目 | 結果 |\n|---|---:|\n| AVA-Encoder 相較最強 external baseline | 提升 20.7 個百分點（論文摘要報告） |\n| 移除兩個優化階段 → 啟用兩階段 | Overall reconstruction +6.6 個百分點；相對提升 15.6% |\n| Human-tuned policy（policy-only） | Overall reconstruction 44.4% |\n| Pseudo-trained policy（policy-only） | Overall reconstruction 45.8%；較 human-tuned 高 1.4 個百分點（相對 3.2%） |\n| System-prompt tokens：human-tuned vs pseudo-trained | 31,336 vs 8,052；減少 74.3% |\n| 完整 AVA-Encoder（含 optional inner refinement） | Overall reconstruction 49.0% |\n| Benchmark 自動評估與人工判斷一致性 | 710/730 blinded triples，97.3% |\n| Pseudo-training / downstream evaluation clips | 6 / 18 個不重疊影片 clips |\n\n論文提供上述數據，但在提供的文字中未完整列出「比最強 external baseline 高 20.7 個百分點」所對應的各 baseline 名稱與完整表格數值。",
+      "insights": [
+        "若中間表示要服務 agent 操作，單純 caption 或 embedding 可能不足；將 narrative hierarchy、entity states、assets 與 typed relations 分離並互聯，有助於查詢、局部修改及跨鏡頭一致性維護。",
+        "以固定 decoder 將 representation faithfulness 轉化為可觀測的 reconstruction quality，並以 atomic factual QA 取代單一整體分數，可同時提供較細粒度的診斷訊號與文字修正方向。",
+        "可將共享 policy 的離線優化與單一輸入的 test-time representation refinement 分開，並透過 anti-forgetting、anti-degradation gates 限制更新風險；此設計適合需要可驗證迭代的 agent workflow。"
+      ],
+      "limitations": "論文提供的實驗集合為 6 個 pseudo-training clips 與 18 個 downstream clips，規模有限；提供文字亦未列出所有 baseline、完整分項結果及成本分析。方法依賴固定的 Gemini、Qwen、影像與影片生成模型，以及 VLM 的 QA／比較判斷，跨模型與更大規模資料的穩健性仍需驗證。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agentic video generation",
+        "knowledge graph representation",
+        "textual-gradient optimization",
+        "video reconstruction evaluation",
+        "multimodal video understanding"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12282",
+      "title": "VAKRA: Evaluating Multi-Hop Reasoning Across APIs and Retrieval Under Tool-Use Policies",
+      "abstract": "Agents deployed in enterprise settings must reason across structured APIs and document collections, yet existing benchmarks evaluate these capabilities in isolation. We introduce VAKRA (e\\textbf{V}aluating \\textbf{A}PI and \\textbf{K}nowledge \\textbf{R}etrieval \\textbf{A}gents), a benchmark of over $8{,}000$ executable APIs across $62$ domains with tasks spanning three settings of increasing difficulty: diverse API interaction styles, multi-hop reasoning over structured APIs, and multi-source reasoning with natural-language tool-use policy constraints. Correctness is verified by re-executing predicted tool calls against live APIs, accommodating multiple valid paths. Using a fixed ReAct harness to isolate model capabilities from agent architecture, we evaluate frontier and open-weight models and find that even the best model achieves only 70.4\\% on single-hop endpoint-style tasks and drops to 50--51\\% on compositional APIs; performance degrades by over 50\\% as reasoning depth increases, and policy-constrained questions expose severe failures (as low as 2.4\\% on unanswerable queries). Trace analysis shows failures concentrate at language-mediated reasoning - entity disambiguation, cross-source grounding, rather than tool invocation mechanics. Code is available https://github.com/IBM/VAKRA. Dataset is available https://huggingface.co/datasets/ibm-research/VAKRA",
+      "authors": [
+        "Ankita Rajaram Naik",
+        "Anupama Murthi",
+        "Benjamin Elder",
+        "Siyu Huo",
+        "Raavi Gupta",
+        "Abhinav Jain",
+        "Praveen Venkateswaran",
+        "Abdulhamid Adebayo",
+        "Danish Contractor"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-12T17:27:27+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12282v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12282",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "企業環境中的 agents 必須同時處理結構化 APIs 與文件集合，但既有 benchmarks 多半分開評估這些能力。本文提出 VAKRA（Evaluating API and Knowledge Retrieval Agents），涵蓋 62 個 domain、超過 8,000 個可執行 APIs，並設計三種遞增難度的任務：多樣化 API 互動風格、結構化 API 上的 multi-hop reasoning，以及受 natural-language tool-use policies 約束的 multi-source reasoning。系統透過重新執行預測的 tool calls 驗證 correctness，並允許多條有效路徑。作者使用固定的 ReAct harness 以隔離模型能力與 agent architecture。結果顯示，最佳模型在單跳 endpoint-style 任務僅達 70.4%，在 compositional APIs 降至約 50–51%；隨 reasoning depth 增加，性能下降超過 50%。Policy-constrained questions 尤其困難，unanswerable queries 的準確率最低僅 2.4%。Trace analysis 指出，主要失敗來自 entity disambiguation、cross-source grounding 與 schema alignment 等 language-mediated reasoning，而非 tool invocation mechanics。",
+      "problem_statement": "現有 tool-calling、web navigation、multi-hop retrieval、policy adherence 與 agent benchmarks 多在隔離環境測試，無法反映企業工作流中 API、文件與自然語言政策的連鎖依賴。特別是 entity disambiguation、異質 schema 對齊、跨來源 grounding，以及政策使問題不可回答時的判斷，缺少可執行且可驗證的整體評估。",
+      "proposed_solution": "作者提出 VAKRA，一個本地可執行、資料庫與文件集合共同支援的 agent benchmark。它以超過 8,000 個 APIs 和 62 個 domain 為基礎，將 API styles、結構化 multi-hop、API+retrieval multi-source reasoning 及 tool-use policies 組織成遞增難度設定。固定 ReAct harness 控制 agent architecture 變因；trajectory-level verifier 重新執行工具呼叫並比對必要資訊，允許 alternate valid paths，再分別評估答案 groundedness、correctness 與 policy adherence，從而定位語言推理而非單純工具操作的瓶頸。",
+      "core_contributions": [
+        "提出 VAKRA benchmark：在 62 個 domain 中提供超過 8,000 個以真實資料庫為後端、可本地執行的 APIs，並配對 domain-aligned document collections。",
+        "建立 2–5 hop 的 compositional 任務，將 API interaction、document retrieval 與 natural-language tool-use policies 納入同一條 reasoning trajectory。",
+        "提出 trajectory-level waterfall evaluation：重新執行預測 tool calls、允許 alternate valid paths，並分離 tool sequence、final grounded answer 與 policy adherence 的失敗來源。"
+      ],
+      "methodology": "VAKRA 的工具環境以單一 Docker image 本地部署：結構化工具由 62 個 BIRD-SQL domain 的 SQLite 資料庫支援，文件檢索使用各 domain 的 ChromaDB collection，並以 IBM granite-embedding-english-r2 建立索引。API 提供三種介面：SLOT 使用 9 個通用操作組合流程；SEL 將參數化函式展開為 26 個可選工具；Dashboard APIs 則提供每個 sample 可見的高度專用 endpoint，工具數可達 116。資料生成先從 BIRD-SQL 查詢抽取 entities，映射到 Wikidata5M，建立 API connectivity graph，再以 depth-first traversal 產生 1–3 hop 鏈；後續加入 Wikipedia/ClapNQ passage，生成 API+RAG 問題與 multi-turn retrieval 對話，並以 LLM-based filtering 排除 API 與 RAG 之間的 answerability contamination。多跳任務涵蓋 2–5 steps，部分加入限制來源選擇的 natural-language policies。每個模型均包裝在相同的 LangGraph ReAct agent 與 MCP tool interface 中。評估採 waterfall：先重新執行 predicted tool calls，透過 programmatic containment check 及 GPT-OSS-120B judge 驗證是否取得必要資訊；通過者再以 LLM judge 評估 final answer 的 groundedness 與 correctness；policy 任務另以 deterministic check 驗證是否呼叫禁用來源。資料品質研究抽樣每種設定 60 題，由三位 annotators 以 faithfulness、logical consistency、answer leakage、context sufficiency 與 cross-source entity consistency 五項 1–4 分量表評估。",
+      "key_results": "| 模型 | BI APIs (SEL) | BI APIs (SLOT) | Dashboard APIs | Multi-hop Reasoning | Multi-source Multi-hop | Avg. Score |\n|---|---:|---:|---:|---:|---:|---:|\n| GPT-5.5 | 51.0% | 50.0% | 70.4% | 52.4% | 26.0% | 50.1% |\n| Gemini-3-Flash-Preview | 38.6% | 39.0% | 60.3% | 36.9% | 16.7% | 38.7% |\n| Claude-Sonnet-4.5 | 35.3% | 38.4% | 49.5% | 38.1% | 17.3% | 35.9% |\n| Qwen-3.5-397B | 42.3% | 47.8% | 46.7% | 30.0% | 16.6% | 37.1% |\n| GPT-OSS-120B | 40.1% | 42.7% | 50.5% | 25.1% | 15.5% | 35.0% |\n\n補充結果：GPT-5.5 在 Dashboard endpoint-style 任務達 70.4%，在 SEL 與 SLOT compositional BI APIs 分別為 51.0% 與 50.0%。多數模型隨 reasoning depth 增加而損失超過 50% 的準確率。Policy-constrained unanswerable queries 的準確率最低為 Claude Opus 4.7 的 2.4%。論文未報告所有 hop 數與各模型的完整逐跳數值。",
+      "insights": [
+        "評估企業 agent 時不應只測 endpoint-style function calling；應同時涵蓋 SLOT、SEL 等 compositional interfaces，因為模型在不同 API paradigm 的排名可能反轉。",
+        "系統改進應優先處理 entity disambiguation、跨來源 grounding、長工具回應的資訊抽取與 schema/parameter alignment，而不只是增加工具數量或改善工具呼叫格式。",
+        "對不可回答情境應設計明確的 policy-aware abstention 與 answerability checks；VAKRA 顯示模型可能在政策禁止必要來源時仍強行回答，這對企業流程與合規部署具有實務風險。"
+      ],
+      "limitations": "資料主要由 BIRD-SQL、Wikidata5M 與 ClapNQ 經 pipeline 及 LLM 輔助生成，雖有小型人工品質研究，但仍可能存在生成偏差與 shortcut artifacts。評估固定於 ReAct harness，未比較 planner、memory 或其他 agent architectures；Stage 1、Stage 2 亦部分依賴 GPT-OSS-120B 作為 LLM judge。論文未提供完整的人工 judge 校準、統計顯著性與真實企業流量驗證。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多跳工具使用與 compositional reasoning",
+        "Retrieval-Augmented Generation 與跨來源 grounding",
+        "LLM agent policy adherence 與 trajectory-level evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12308",
+      "title": "DreamFly: Causal Memory and Receding-Horizon Diffusion Planning for Aerial Vision-Language Navigation",
+      "abstract": "Aerial vision-language navigation (VLN) requires an embodied agent to integrate visual evidence over time, plan future actions, and determine when it has reached a navigation goal under partial observability. Although recent VLA models offer a promising perception-to-action paradigm, adapting them to aerial navigation remains challenging due to limited historical context, short planning horizons, and unreliable implicit termination. To address these challenges, we propose DreamFly, a diffusion-based aerial VLN framework built on Dream-VLA. DreamFly introduces a causally aligned historical memory that augments the current visual representation using only observations preceding the current decision step, enabling temporal reasoning without future information leakage. We further formulate navigation as receding-horizon diffusion planning, where the policy predicts a $K$-step action chunk but executes only the first action before replanning. This plan-$K$, execute-one strategy uses future actions as auxiliary planning targets while preserving closed-loop visual feedback. Finally, LiteStop estimates the stop probability directly from action logits at the initial all-mask state, decoupling explicit termination from action generation. Experiments on the OpenFly benchmark demonstrate consistent improvements in seen and unseen environments. DreamFly achieves 32.04%/29.46% SR and 28.22%/23.54% SPL on the test-seen/test-unseen splits, respectively, outperforming all compared methods on both metrics while attaining the lowest navigation error. These results demonstrate the effectiveness of jointly modeling historical context, future action structure, and explicit termination for aerial VLN.",
+      "authors": [
+        "Yan Deng",
+        "Fei Xu"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T17:54:33+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12308v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12308",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "Aerial vision-language navigation（Aerial VLN）要求具身 agent 在部分可觀測環境中，隨時間整合視覺證據、規劃未來動作，並判斷是否抵達導航目標。現有 VLA 方法應用於空中導航時，可能因歷史上下文不足而遺失地標，單步動作預測的規劃視野有限，且透過一般動作生成隱式決定終止往往不可靠。本文提出建立於 Dream-VLA 之上的 diffusion-based 框架 DreamFly。其一，設計因果對齊的歷史記憶，只使用當前決策步驟之前取得的觀測，避免未來資訊洩漏；其二，將導航形式化為 receding-horizon diffusion planning，預測 K 步 action chunk，但僅執行第一個動作後重新規劃；其三，提出 LiteStop，從初始 all-mask 狀態的 action logits 直接估計停止機率，使終止判斷與動作生成解耦。在 OpenFly 上，DreamFly 於 seen 與 unseen 環境均提升表現。",
+      "problem_statement": "Aerial VLN 是部分可觀測的閉迴路 3D 導航問題，UAV 必須同時處理水平、垂直與視角變化。現有方法主要有三項不足：僅依賴當前觀測時容易遺失歷史地標；單步動作預測缺乏短期 lookahead；將 Stop 與一般動作一起生成，可能造成終止判斷不可靠。本文聚焦如何在不洩漏未來資訊下，統合歷史記憶、多步規劃與顯式終止。",
+      "proposed_solution": "作者提出 DreamFly，一個建構於 Dream-VLA 的閉迴路 aerial VLN framework。第一，使用 read-before-write 的 causal memory，確保步驟 t 的歷史分支只包含 t 之前取得的視覺觀測，並透過 instruction-conditioned candidate selection、固定容量 slots 與 gated cross-attention 融合相關證據。第二，以 bidirectional discrete diffusion 預測 K 步 action chunk，但採 plan-K、execute-one：只執行首動作，之後依新觀測重新規劃。第三，LiteStop 從初始 all-mask action logits 推斷停止機率，獨立於 motion action policy 訓練，以改善顯式終止控制。",
+      "core_contributions": [
+        "提出具有明確時間邊界的因果對齊歷史記憶，採用 read-before-write 協議，僅讓決策步驟前的觀測進入歷史分支，並以 gated cross-attention 融合目前視覺特徵。",
+        "提出 receding-horizon diffusion planning，以 bidirectional diffusion 聯合預測 K 步離散動作，採用 plan-K、execute-one 策略，在利用未來動作結構的同時維持閉迴路重新規劃。",
+        "提出 LiteStop 終止模組，從初始 all-mask planning logits 的完整 K×|A| action-logit grid 預測停止機率，並在凍結導航策略下獨立訓練。"
+      ],
+      "methodology": "DreamFly 建立於 Dream-VLA 的離散 diffusion VLA backbone。輸入為導航指令 I、當前 egocentric RGB observation Ot，以及只由先前觀測構成的歷史記憶 M<t。記憶模組以 frozen CLIPSeg dense router 與 frozen OWLv2 region router 擷取 instruction-conditioned candidates，透過視覺與空間一致性建立 active tracks；穩定或符合條件的候選寫入最多 16 個 long-term slots，每步最多選擇兩個寫入候選。每個 slot 可保存 anchor、prototype、有效性與距離上次更新的步數。當前影像 token 作為 query、記憶 slot 作為 key/value，經 masked cross-attention 取得歷史 context，再以 gated residual connection 融合；其 projection 與 gate 零初始化，使初始 adapter 等同 identity mapping。訓練與部署皆採 read-before-write，訓練使用 expert trajectory prefix memory，部署則使用 agent 實際取得的歷史。動作規劃方面，模型以固定長度 K 的 masked action slots 聯合預測目前及未來動作，對有效 prefix 施加 cross-entropy，尾端 padding 的 Stop 不計入損失，並以 horizon weighting 強調近端動作。推論從全 MASK 狀態開始進行 iterative discrete diffusion，限制生成 token 屬於 action-token set；完整 chunk 生成後僅執行首動作，接收新觀測後重新規劃。LiteStop 讀取初始 all-mask 狀態下所有 K 個位置的 action-logit slices，經 LayerNorm 與 MLP 輸出停止機率；以當前 expert action 是否為 Stop 作二元標籤，正類權重為 4.0，且凍結導航策略獨立訓練。OpenFly 評估指標包括 navigation error（NE，越低越好）、success rate（SR）、oracle success rate（OSR）與 success weighted by path length（SPL）。成功條件為最終位置與目標的 Euclidean distance 小於 20 m。",
+      "key_results": "作者在 OpenFly 上報告的主要結果如下。論文指出 DreamFly 在 test-seen 與 test-unseen 上均優於比較方法，並取得最低 navigation error；但提供的摘要僅明確列出 DreamFly 的 SR 與 SPL，未列出所有比較方法的完整數值。\n\n| Split / 設定 | NE | SR | SPL |\n|---|---:|---:|---:|\n| Test-seen（DreamFly） | 論文未報告 | 32.04% | 28.22% |\n| Test-unseen（DreamFly） | 論文未報告 | 29.46% | 23.54% |\n| Ablation：Dream-VLA baseline | 67.82m | 21.55% | 16.09% |\n| Ablation：+ Causal Memory | 48.93m | 24.11% | 19.85% |\n| Ablation：w/o Memory | 62.02m | 19.60% | 18.76% |\n| Ablation：w/o Chunk | 46.72m | 27.73% | 23.77% |\n| Ablation：w/o LiteStop | 50.69m | 26.61% | 22.29% |\n| Ablation：DreamFly（表 3） | 44.97m | 31.46% | 27.17% |\n\n此外，論文報告 LiteStop 在短距離組別的增益最大，歷史記憶在中等距離更明顯；這些是作者的分組分析結論，未提供各組完整數值。",
+      "insights": [
+        "對需要長序列決策的 embodied agent，歷史記憶應明確定義資訊可見性與讀寫時序；read-before-write 可作為避免時間洩漏的工程規範。",
+        "多步預測不必等同於開迴路執行；預測 action chunk、只執行首動作並在新觀測後重規劃，可兼顧短期規劃結構與環境反饋。",
+        "終止判斷具有不同於一般動作的錯誤代價，將其設為獨立模組與專門二元目標，有助於分析和控制 premature stopping 與抵達後繼續移動的問題。"
+      ],
+      "limitations": "目前評估僅在模擬環境 OpenFly 進行，尚未驗證實體 UAV 上的導航能力。作者將未來工作指向真實平台部署，並評估感測噪聲、環境擾動及 sim-to-real domain shift 下的 robustness。論文也未提供實機延遲、能耗或完整部署成本分析。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Vision-Language-Action Models",
+        "Diffusion Policy",
+        "Aerial Vision-Language Navigation",
+        "Long-Term Visual Memory"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12262",
+      "title": "Diagram-MMU: A Multi-Modal Benchmark for Scientific Diagrams",
+      "abstract": "Multimodal Large Language Models (MLLMs) have been growing the capability for scientific writing and collaboration. For example, OpenAI Prism is a free workspace for scientific writing and collaboration. One important feature in Prism is turning scientific diagrams directly into LaTeX TikZ code. In this paper, we build a benchmark, Diagram-MMU, a multi-modal benchmark designed to assess MLLMs' ability for scientific diagram parsing and understanding. Diagram-MMU features 3.7k curated diagrams and 18.3k human-validated questions across six domains. It evaluates MLLMs on three tasks common in vibe writing workspaces: diagram-to-code parsing, diagram-to-code editing, and diagram question answering, alongside agentic settings per task. The evaluation of 12 MLLMs reveals that diagram-to-code tasks are more challenging than diagram question answering: models can reason well over diagrams but struggle to parse and edit them, underscoring the need for methods to enhance MLLMs' capability in diagram-to-code generation. Under agentic settings, most models improve parsing and editing performance but degrade on question answering, while Claude-4.6 Opus consistently improves across all three tasks. Project Page: https://vi-ocean.github.io/projects/diagram-mmu.",
+      "authors": [
+        "Weihao Bo",
+        "Shan Zhang",
+        "Yanpeng Sun",
+        "Jie Liu",
+        "Yongke Yao",
+        "Jinhao Du",
+        "Wei He",
+        "Kai Zou",
+        "Zechao Li",
+        "Jingdong Wang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T17:04:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12262v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12262",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Multimodal Large Language Models（MLLMs）日益具備支援科學寫作與協作的能力，例如 OpenAI Prism 可將科學圖表直接轉換為 LaTeX TikZ 程式碼。本文提出 Diagram-MMU，一個評估 MLLM 科學圖表解析與理解能力的多模態 benchmark，包含 3.7k 個人工整理圖表，以及跨六個領域、經人工驗證的 18.3k 個問題。benchmark 涵蓋三項常見於 vibe writing workspace 的任務：diagram-to-code parsing、diagram-to-code editing 與 diagram question answering，並為各任務加入 agentic evaluation。對 12 個 MLLM 的實驗顯示，diagram-to-code 任務比 diagram question answering 更困難；模型能對圖表進行推理，卻難以準確解析與編輯圖表。Agentic setting 通常提升 parsing 與 editing，但降低 question answering 表現；Claude-4.6 Opus 則在三項任務皆持續改善。",
+      "problem_statement": "現有 diagram benchmark 多集中於 charts，常使用 Python、SVG 或 HTML，且通常只評估 parsing、editing 或問答其中一項，缺少同一圖表上的跨任務比較，也未測試模型如何使用工具、管理中間狀態與規劃。這使其難以反映 LaTeX 科學寫作工作流中的實際需求，尤其無法區分圖像看似相似、程式碼可編譯與物件語義及空間位置正確等不同層次的能力。",
+      "proposed_solution": "作者提出 Diagram-MMU，將 TikZ 作為貼近 Overleaf 與科學寫作環境的統一程式碼表示，收錄六種科學圖表並以模板與人工審查建立 parsing、editing、QA 資料。其核心是多層評估：以圖像指標衡量外觀，以 CrystalBLEU 衡量 TikZ 語法相似度，再從編譯後 SVG 萃取 SOM，計算物件類型、文字、顏色及位置的 F1。除此之外，作者建立 MCP TikZ 搜尋工具，並以 16 種設定拆解 context utilization、tool use、state management 與 planning 等 agentic 能力。",
+      "core_contributions": [
+        "提出 Diagram-MMU，建立涵蓋 charts、planar geometry、3D shapes、graphs、chemistry 與 circuits 六類科學圖表的 TikZ benchmark，共 3,744 個獨特圖表與 18,305 個評估樣本。",
+        "統一評估 diagram-to-code parsing、diagram-to-code editing 與 diagram question answering，並設計 16 種 foundational 與 agentic evaluation settings。",
+        "針對 code generation 提出三層評估：rendered image、TikZ code syntax，以及由 SVG 萃取的 Semantic Object Model（SOM）物件層級 F1，並分析 type、text、color 與 bounding box。"
+      ],
+      "methodology": "資料方面，作者從 TikZ/PGF、PGFPlots、CircuiTikZ、TKZ-Euclide、ChemFig、TikZ-Network 官方手冊，以及 texample.net、TeX Stack Exchange 和 GitHub tikz_favorites 蒐集 6,849 份程式碼。流程先移除與圖表無關的前置內容，使用 pdflatex、lualatex 或 xelatex 編譯，並比對原始與簡化版本的 rendered image；編譯失敗、圖像不一致、近重複或過於簡單的樣本會被刪除，再分類至六個領域，最後保留 3,744 個圖表。13 名研究生交叉驗證資料與問題，形成 18,305 個樣本。D2C-P 要求模型根據圖像與指定 preamble 產生可執行 LaTeX/TikZ；D2C-E 要求在文字、顏色、scope 或 layout 等維度修改圖表；DQA 則包含描述、標準推理與 what-if 問題。作者評估 12 個 MLLM，並在六模型、300 個圖表的子集上測試 16 種設定。D2C 任務以 rendered image 的 SSIM、CLIP、FID、LPIPS，code-level 的 CrystalBLEU，以及 SOM 的 type、text、color、bbox F1 評估；editing 另分 preserve-only 與 edit-only。DQA 使用 accuracy，由 Qwen3-Next-80B-A3B-Instruct 擷取答案並進行二元評分。Agentic 工具為以 MCP server 提供的 TikZ 搜尋服務，另測試物件上下文、先產生 TikZ code 的狀態管理，以及工具與上下文協同的 planning。論文未提供新的 MLLM 架構；研究重點是 benchmark 與評估流程。",
+      "key_results": "主要結果如下（數值為論文 Table 5 與 Table 6 報告；D2C-P/D2C-E 的 F1avg 與 CrystalBLEU 為百分比）：\n\n| 模型 | D2C-P F1avg | D2C-P CrystalBLEU | D2C-E F1avg（全部/保留/編輯） | DQA Acc. |\n|---|---:|---:|---|---:|\n| Gemini-3.0 Pro | 54.64 | 32.76 | 53.60（65.12/44.77） | 86.46 |\n| Claude-4.6 Opus | 52.23 | 31.27 | 51.18（62.56/43.59） | 68.75 |\n| GPT-5.2 | 51.35 | 28.81 | 46.15（55.59/38.75） | 81.67 |\n| Qwen3-VL-235B-A22B | 55.11 | 37.92 | 52.25（63.79/43.05） | 63.60 |\n| Kimi-K2.5 | 57.48 | 36.13 | 52.13（63.12/42.11） | 79.74 |\n| Qwen3-VL-8B | 44.66 | 33.31 | 19.00（21.26/16.29） | 47.12 |\n\n論文指出，DQA 最高可達 86%，而 D2C-P 物件層級 F1約為 31–57%；因此模型的圖表推理能力優於解析與程式碼生成。D2C-P 中 bounding-box F1普遍最低，例如 GPT-5.2 為 8.0、Claude-4.6 Opus 為 9.2。Agentic evaluation 的 300 圖表子集顯示：Claude-4.6 Opus 在 D2C-P 使用工具後 F1avg 增加 2.2，在 D2C-E 增加 4.4；Gemini-3.1 Pro 的 D2C-P 工具設定下降 4.3，且回應率下降 25.0%。DQA 的 planning 設定對多數模型造成退化，幅度為 −0.3 至 −8.8 accuracy points；只有 Claude-4.6 Opus 在整體 agentic 趨勢上持續改善。",
+      "insights": [
+        "若應用於科學寫作工作流，不能以圖像相似度或問答正確率代表程式碼重建品質；應同時檢查是否可編譯、物件語義與空間位置。",
+        "模型通常能利用文字編輯指令改善局部修改，但新增物件與精確定位仍是瓶頸，因此實務系統可優先採用保留原始 code、再執行受限編輯的流程。",
+        "工具增強不必然提升效果；應設置查詢目標、停止條件與上下文管理，否則過度檢索可能造成 context rot、輸出失敗與問答退化。"
+      ],
+      "limitations": "論文的 agentic evaluation 只涵蓋特定的 context utilization、tool use、state management 與 planning，未涵蓋長程任務分解、異質多工具協作、執行回饋、自我修正或人機互動。資料與程式碼表示主要限於 TikZ，未涵蓋 Python、SVG、HTML 或其他 LaTeX 套件；DQA 也尚未納入論文圖說與完整上下文，專家級問題則列為未來方向。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態大型語言模型評測",
+        "科學圖表理解與視覺程式碼生成",
+        "TikZ/LaTeX 程式碼生成",
+        "Agentic tool use 與 planning"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12246",
+      "title": "VICBench: A Multi-Language Benchmark for Code Vulnerability Detection",
+      "abstract": "Evaluating security vulnerability detection tools requires benchmark datasets with vulnerability-inducing commits (VICs) - the commits that first introduce vulnerabilities into codebases. VICs are essential for determining the full range of vulnerable software versions. Existing vulnerability datasets suffer from limited programming language coverage, restricted patch complexity, and narrow project scope. Through our dual annotation by human experts and an agentic workflow, we create a benchmark - VICBench - of 100 verified VICs for 100 CVEs across 88 projects in Python, Java, and C++, covering 48 CWE types. VICBench features complex real-world vulnerability fixes averaging 38.6 lines and corresponding VICs of 252.5 lines - significantly larger than prior work. Our evaluation shows that state-of-the-art algorithms V-SZZ and LLM4SZZ achieve only 33.3%-40.1% F1, confirming that using existing approaches still entails significant manual effort. VICBench enables robust evaluation of vulnerability detection approaches.",
+      "authors": [
+        "Jin Lu",
+        "Xuening Han",
+        "Yang Zhong",
+        "Lin Tan",
+        "Kevin Luo",
+        "Andrew Gacek",
+        "Neha Rungta"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.CL",
+        "cs.SE"
+      ],
+      "published": "2026-08-12T16:45:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12246v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12246",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "評估資安漏洞偵測工具，需要包含 vulnerability-inducing commits（VICs，首次將漏洞引入程式碼庫的提交）的基準資料集。VICs 對於判定完整的受漏洞影響軟體版本範圍至關重要。既有漏洞資料集存在程式語言覆蓋有限、修補複雜度受限及專案範圍狹窄等問題。本研究透過人類專家與 agentic workflow 的雙重標註，建立 VICBench：涵蓋 Python、Java 與 C++ 的 88 個專案、100 個 CVE 對應的 100 個經驗證 VIC，涉及 48 種 CWE。其真實世界修補提交平均修改 38.6 行，對應 VIC 平均包含 252.5 行，顯著大於先前工作。評估顯示，V-SZZ 與 LLM4SZZ 僅達 33.3%–40.1% F1，說明現有方法仍需大量人工工作。VICBench 可支援更 robust 的漏洞偵測方法評估。",
+      "problem_statement": "漏洞偵測工具需要知道漏洞最初被引入的 VIC，才能評估原始漏洞模式並判定完整受影響版本範圍。然而既有資料集多集中於少數語言、單一專案或小型修補，且部分資料不可重現或未公開 VIC 標註。基於 git blame 的 SZZ 類方法又容易受跨檔案移動、重構、檔案刪除及 addition-only fix 影響，無法可靠辨識漏洞的語意起源。",
+      "proposed_solution": "作者提出公開基準 VICBench，透過人工專家與 LLM 驅動的 VIC-Agent 進行雙重標註，再由第二位人工標註者解決分歧並由資安專家抽樣驗證。VIC-Agent 不採固定 SZZ 啟發式，而是根據 CVE 語意與修補內容，動態組合 git blame、git log -S、git show 及 LLM 分析，追蹤漏洞模式在不同檔案、函式名稱與重構階段的延續。核心創新是將語意判定與歷史模式搜尋結合，建立涵蓋多語言、多專案及複雜真實修補的 VIC 評測基準。",
+      "core_contributions": [
+        "建立公開的 VICBench，包含 100 個經驗證的 vulnerability-inducing commits，涵蓋 100 個 CVE、88 個專案、Python/Java/C++ 三種語言及 48 種 CWE。",
+        "提出結合人類專家標註與 VIC-Agent 的雙重標註流程；兩者達到 κ=0.707 的 substantial agreement，並由第二位人工標註者及資安專家進行爭議處理與抽樣驗證。",
+        "以 V-SZZ、LLM4SZZ 與 VIC-Agent 評估資料集難度，顯示現有自動化方法 F1 僅為 33.3%–40.1%，而 VICBench 能捕捉跨檔案移動、重構及 addition-only fixes 等複雜情境。"
+      ],
+      "methodology": "論文將 VIC 定義為首次在程式碼庫中引入安全漏洞、使程式由非漏洞狀態轉為可被利用狀態的提交。資料從 ReposVul、CWE-Bench-Java 與 VJBench 隨機抽取 100 個案例，涵蓋 Python、Java、C++/C、88 個專案與 48 種 CWE。每個案例提供 CVE 描述、修補提交、版本庫歷史及相關程式碼。標註包含兩條程序：Human Annotation 由具九年程式設計經驗的作者依據 CVE/CWE、提交訊息、git blame 及程式邏輯，向歷史回溯並判定安全漏洞在語意上首次出現的提交；VIC-Agent 則先分析 CVE 與修補提交，再動態選擇 git blame、git log -S、git show 等工具，利用 LLM 檢查候選提交是新增漏洞邏輯還是僅重構既有漏洞，必要時沿著跨檔案模式演化繼續向前搜尋。兩者必須識別完全相同的提交才算一致；29 個不一致案例由 Human B 複核，最終資料再由具 16 年經驗的資安工程師抽查 11 個案例。評估以 exact-commit matching 計算 Recall、Precision、F1，並以 Cohen’s kappa 衡量標註一致性。V-SZZ 在 Java/C++ 40 個 CVE 上評估，LLM4SZZ 與 VIC-Agent 在全部 100 個案例上評估。",
+      "key_results": "| 方法 | 評估範圍 | Recall | Precision | F1 |\n|---|---:|---:|---:|---:|\n| V-SZZ | Java/C++，40 CVEs | 52.3% | 24.5% | 33.3% |\n| LLM4SZZ | 全部 100 CVEs | 56.9% | 31.0% | 40.1% |\n| VIC-Agent | 全部 100 CVEs | 84.4% | 94.9% | 89.3% |\n\n資料集統計：100 個 CVE、88 個專案、3 種語言、48 種 CWE；修補提交平均 38.6 行（中位數 22），VIC 平均 252.5 行（中位數 181）。Human A 與 VIC-Agent 有 71/100 個案例識別出完全相同的提交，Cohen’s κ=0.707；另一位資深資安工程師獨立抽查 11 個案例，論文報告確認其識別正確。論文未報告更細的語言別、CWE 別或專案別效能。",
+      "insights": [
+        "漏洞引入提交的判定不宜只依賴 git blame；實務工具應追蹤跨檔案程式碼移動、檔案刪除、重命名與語意模式演化，並區分真正引入漏洞的提交與後續重構提交。",
+        "基準資料集的難度應反映真實修補與演化情境，而不只包含小型、單檔案修補；VICBench 的平均修補 38.6 行、VIC 252.5 行可作為設計複雜漏洞評測集的參考。",
+        "LLM agent 可透過 git blame、git log -S 與 git show 的動態組合輔助資料建構，但由於 VIC-Agent 參與標註，其 89.3% F1 僅能視為建構工具參考上限，不應直接視為獨立模型效能。"
+      ],
+      "limitations": "資料集只有 100 個人工驗證 CVE，且來源自既有資料集，可能有取樣偏差；語言僅涵蓋 Python、Java、C++，其中 C++ 僅 8%。資料主要來自公開開源專案，未必能泛化至商業程式碼。每個 CVE 只標註一個主要 VIC，未完整處理由多個提交共同造成的漏洞。未來可擴充語言、規模與多提交標註。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "vulnerability-inducing commit detection",
+        "SZZ 與軟體演化分析"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12220",
+      "title": "SCOUT: Unlocking Enhanced Spatial Reasoning via Structured Chain-of-Thought and Multi-Objective Process Reward",
+      "abstract": "Existing Vision-Language Models (VLMs) exhibits a critical bottleneck in robust spatial reasoning. Recent reinforcement learning (RL) methods aim to close this gap with verifiable outcomes, yet they suffer from poor credit assignment across intermediate reasoning steps. Concurrently, structured reasoning approaches overlook the critical depth perception necessary for comprehensive 3D understanding. To address these challenges, we propose SCOUT (Structured Chain-Of-Thought Utilizing Process-Supervised RL Training). Specifically, we design a structured Chain-of-Thought (CoT) framework that explicitly models 3D environmental perception to ensure robust spatial understanding and reasoning. Furthermore, we introduce a novel RL algorithm featuring multi-objective process rewards and a tailored advantage estimation method, facilitating fine-grained credit assignment across distinct segments of the reasoning trajectory. To support our framework, we develop SCOUT-24k, a structured spatial reasoning CoT dataset synthesized through a customized pipeline. Extensive evaluations demonstrate that SCOUT-3B improves upon baseline models by 16.85% and 6.3% on general spatial benchmarks and complex spatial reasoning tasks respectively. Notably, our larger SCOUT-7B even outperforms GPT-4o by a margin of 4.28%. Moreover, despite being trained exclusively on single image, SCOUT-7B exhibits robust out-of-domain generalization to multi-image and video scenarios. These empirical results render SCOUT as a critical step towards next generation of spatially-aware VLMs.",
+      "authors": [
+        "Zile Zhou",
+        "Huining Yuan",
+        "Weichen Zhang",
+        "Xinlei Chen",
+        "Xiao-ping Zhang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T16:14:25+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12220v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12220",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "現有 Vision-Language Models（VLMs）在穩健 spatial reasoning 上仍存在關鍵瓶頸。近期以可驗證結果為目標的 Reinforcement Learning（RL）方法，常因中間推理步驟的 credit assignment 不佳而受限；另一方面，structured reasoning 方法又忽略全面 3D understanding 所需的關鍵 depth perception。為此，本文提出 SCOUT（Structured Chain-of-Thought Utilizing Process-Supervised RL Training）。SCOUT 設計 structured Chain-of-Thought（CoT）框架，明確建模 3D environmental perception，以強化 spatial understanding 與 reasoning；並提出結合 multi-objective process rewards 與客製化 advantage estimation 的 RL 演算法，針對推理軌跡不同區段進行細粒度 credit assignment。此外，作者建立 SCOUT-24k structured spatial reasoning CoT dataset。實驗顯示，SCOUT-3B 在 general spatial benchmarks 與 complex spatial reasoning tasks 上分別較 baseline 提升 16.85% 與 6.3%；SCOUT-7B 在部分評估中超越 GPT-4o，且僅以 single image 訓練仍能泛化至 multi-image 與 video 情境。",
+      "problem_statement": "論文聚焦 VLM 在 2D/3D spatial reasoning 中的穩健性不足。既有 RLVR 多依賴稀疏的最終答案 reward，難以判定哪些中間 token 或推理階段真正有貢獻；既有 structured CoT 雖提升可解釋性，卻常未明確表示 depth，限制 3D 空間理解。SFT 方法則被作者指出可能依賴大量合成資料並產生模板記憶，因而需要兼顧 depth perception、推理一致性與細粒度 credit assignment 的訓練框架。",
+      "proposed_solution": "作者提出 SCOUT，將 structured CoT 與 process-supervised RL 結合。模型先以 caption 建立場景語義，再於 scene 區段顯式預測物件 bounding box 與 depth，最後在 analyze 區段依據這些 3D 觀測進行邏輯推理，並在 answer 區段輸出結論。RL 部分以 grounding、depth、reasoning consistency、accuracy 與 format 五種目標提供中間及最終監督；再依 perception、analysis、answer 三個區段分配 token-level advantage，且將局部 reward 與最終正確性混合，改善 sparse reward 下的 credit assignment。SCOUT-24k 則支援 SFT cold-start 與後續 RL。",
+      "core_contributions": [
+        "提出包含 caption、scene、analyze 與 answer 區段的 depth-aware structured CoT，將 3D perception 與後續邏輯推理分離。",
+        "提出由 grounding、depth、consistency、accuracy 與 format 五類 reward 組成的 multi-objective process-supervised RL，並依推理區段配置 advantage。",
+        "建立 SCOUT-24k，涵蓋 Spatial Relation Understanding、Relative Distance Prediction、Perspective Transformation Reasoning 與 Object-Centric Spatial Reasoning，並以消融實驗驗證各元件。"
+      ],
+      "methodology": "SCOUT 以 Qwen2.5-VL-3B/7B 為初始化模型。推理輸出固定為 <think><caption>…</caption><scene>…</scene><analyze>…</analyze></think><answer>…</answer>：caption 描述全局場景，scene 以 JSON 列出物件 label、2D bounding box 與 depth，analyze 依據感知結果進行比較、座標計算與 perspective reasoning，answer 輸出結論。訓練分兩階段：首先以 SCOUT-24k 的 SFT 子集進行一個 epoch 的 LoRA cold-start（rank=8）；接著以 18,614 筆 RL 資料進行 200 steps 的 full-parameter RL，使用每個 prompt 8 條 trajectory、temperature 1.0、global batch size 128，並加入 KL regularization。Process rewards 包含：以 Hungarian matching 對齊預測與標註物件的 regularized grounding reward（含 EIoU 與過度生成懲罰）、depth reward、僅輸入文字問題與推理鏈的 blind consistency reward、答案正確性的 binary accuracy reward，以及格式 reward。各 reward 先做 group z-score normalization；scene token 使用 grounding 加 depth advantage，analyze token 使用 consistency advantage，answer token 使用 format 加 accuracy advantage，前兩者再以 α1=α2=0.3 與 outcome advantage 混合。模型以 clipped policy objective 與 KL penalty 更新。評估採 greedy decoding，使用 EmbSpatial、CV-Bench、BLINK、RoboSpatial、SpatialBench、3DSRBench，並以 accuracy 為主要指標，另測 ViewSpatial 與 VSI-Bench 的跨 multi-image/video 泛化。",
+      "key_results": "主要結果如下（數值為論文報告的 accuracy 或 overall accuracy）：\n\n| 評估 | 模型 | SCOUT | 對照 | 差異 |\n|---|---:|---:|---:|---:|\n| General spatial benchmarks Overall Avg. | SCOUT-3B | 77.56 | Qwen2.5-VL-3B：60.71 | +16.85 個百分點 |\n| General spatial benchmarks Overall Avg. | SCOUT-7B | 79.66 | Qwen2.5-VL-7B：70.15 | +9.51 個百分點 |\n| General spatial benchmarks Overall Avg. | SCOUT-7B | 79.66 | GPT-4o：75.38 | +4.28 個百分點 |\n| Complex spatial reasoning Overall | SCOUT-3B | 58.31 | Qwen2.5-VL-3B：52.01 | +6.30 個百分點 |\n| Complex spatial reasoning Overall | SCOUT-7B | 61.79 | GPT-4o：60.92 | +0.87 個百分點 |\n| ViewSpatial Overall | SCOUT-3B | 38.91 | Qwen2.5-VL-3B：36.20 | +2.71 個百分點 |\n| ViewSpatial Overall | SCOUT-7B | 40.49 | Qwen2.5-VL-7B：38.03 | +2.46 個百分點 |\n| VSI-Bench MCQ | SCOUT-3B | 32.97 | Qwen2.5-VL-3B：31.65 | +1.32 個百分點 |\n| VSI-Bench MCQ | SCOUT-7B | 38.07 | Qwen2.5-VL-7B：34.94 | +3.13 個百分點 |\n| 六項 benchmark 消融平均 | SCOUT-3B | 67.94 | w/o Process：65.15；w/o Credit：65.24 | 分別 +2.79、+2.70 個百分點 |\n\n論文另報告：SCOUT-3B 在複雜任務相對 Qwen2.5-VL-3B 的 RoboSpatial 為 72.81 對 59.64；SCOUT-7B 的 3DSRBench 為 48.23，低於 SpatialReasoner-7B 的 53.03，故 SCOUT 並非所有子基準均為最高。",
+      "insights": [
+        "若任務需要模型同時完成視覺定位與推理，可將中間輸出結構化，讓 grounding 與 logical analysis 分別接受可驗證訊號。",
+        "多目標 reward 不宜只獎勵最終答案；本文結果顯示，將局部 process reward 與 global outcome reward 混合，能改善不同推理階段的訓練平衡。",
+        "評估跨模態泛化時應拆分子任務：SCOUT 在 ViewSpatial 與 VSI-Bench 的 multiple-choice 部分提升，但 video numerical questions 下降，顯示整體平均可能掩蓋 temporal tracking 與 absolute estimation 的差異。"
+      ],
+      "limitations": "作者指出，實驗受計算資源限制，僅涵蓋 3B 與 7B；SCOUT-24k 依賴 bounding box 與 object label，缺乏 multi-image 和 video 訓練資料；RL 又依賴嚴格 CoT 標籤格式，限制推理彈性。未來將擴展更大模型、加入多圖與影片資料，並降低對固定格式的依賴。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Vision-Language Models",
+        "3D spatial reasoning",
+        "Process-supervised reinforcement learning"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12290",
+      "title": "Beyond Trial-and-Error: Agentic Optimization for Image-to-Video Adherence",
+      "abstract": "Modern black-box Image-to-Video (I2V) models offer powerful capabilities in automated content creation, yet their lack of fine-grained control and reliability presents significant challenges in professional workflows. Their inherent stochasticity causes minor variations in textual prompts or hyperparameters to yield drastically different outputs often necessitating inefficient, brute-force trial-and-error processes. To address these limitations, we introduce the ``Agentic Self-Improvement\" framework, which reframes video synthesis into a closed-loop, goal-directed optimization. Our framework systematically navigates the generation parameter space using a novel two-stage approach. In the first stage, an iterative prompt optimization loop uses a multimodal Large Language Model (mLLM) to refine the input prompt. This refinement implements two automated evaluations: Davidsonian Scene Graph (DSG) queries ensure semantic adherence, and Common Mistake Questions (CMQ) for artifact detection. At the second stage, we use Bayesian optimization to efficiently co-optimize stochastic seeds and CFG scales. This search is guided by a suite of quality metrics, including the novel Video-Text Adherence (VTA) score derived from the DSG and CMQ evaluations. Our framework significantly outperforms unguided search methods: in human preference studies, videos generated via our agentic approach were strongly preferred over baseline outputs, achieving win rates up to 69\\%. This work provides a practical and extensible methodology for enhancing the predictability and control of state-of-the-art video generation models, moving the field beyond speculative curiosities toward reliable, production-ready tools.",
+      "authors": [
+        "Aman Tyagi",
+        "Hemanth Boinpally",
+        "Jonathan Chen",
+        "Douglas Gebert",
+        "Steven Hickson"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.MM"
+      ],
+      "published": "2026-08-12T17:35:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12290v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12290",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "現代黑箱 Image-to-Video（I2V）模型具備強大的自動化內容創作能力，但缺乏細粒度控制與可靠性，對專業工作流程造成挑戰。模型的隨機性使文字提示或超參數的微小變化，也可能產生截然不同的結果，因而常需低效率的反覆試錯。本文提出「Agentic Self-Improvement」框架，將影片生成重新定義為閉環、目標導向的最佳化問題。第一階段使用多模態大型語言模型（mLLM）迭代最佳化提示，透過 Davidsonian Scene Graph（DSG）問題檢查語意遵循度，並以 Common Mistake Questions（CMQ）偵測生成瑕疵。第二階段採用 Bayesian optimization，共同搜尋隨機 seed 與 CFG scale，並由包含新穎 Video-Text Adherence（VTA）分數在內的品質指標引導。實驗顯示，該方法優於無引導搜尋；在人類偏好研究中，最高獲得 69% 勝率，展現提升影片生成可預測性與控制力的實務方法。",
+      "problem_statement": "黑箱 I2V 模型對提示、隨機 seed 與 CFG scale 高度敏感，微小設定變化便可能導致語意偏離、角色不一致、瑕疵或時間錯誤。現有工作流程多依賴大量生成後人工挑選的 trial-and-error，成本高、效率低且難以預測。論文要解決的是如何在不存取模型內部梯度的情況下，系統化提升影片對輸入圖片、文字意圖與品質要求的遵循度。",
+      "proposed_solution": "作者提出兩階段 Agentic Self-Improvement 框架。第一階段讓 mLLM 從圖片與提示自動建立 DSG/CMQ 評估 rubric，觀看生成影片後回答結構化問題，依失敗項目重寫提示並迭代，將提示本身視為可最佳化對象。第二階段以 Bayesian optimization 在固定最佳提示下搜尋 seed 與 CFG scale，透過 UVQ、RAHF、時間錯誤過濾及 VTA 的多目標回饋選出候選影片。核心創新是把 mLLM 的多模態批評能力與黑箱參數搜尋結合，形成跨語言提示空間與數值／類別參數空間的閉環控制。",
+      "core_contributions": [
+        "提出 Agentic Self-Improvement 框架，將黑箱 I2V 生成由開放式試錯轉為閉環、目標導向的控制與最佳化流程。",
+        "提出以 mLLM 為核心的提示最佳化方法，利用自動生成的 Davidsonian Scene Graph（DSG）與 Common Mistake Questions（CMQ）進行語意及瑕疵評估。",
+        "使用 Bayesian optimization 對 CFG scale 與隨機 seed 進行共同搜尋，並提出由 DSG/CMQ 回答聚合而成的 Video-Text Adherence（VTA）指標。"
+      ],
+      "methodology": "框架以 Veo 2.0 作為實驗用黑箱 I2V 模型，針對 V-Bench 的 100 組 image-prompt pairs 進行測試，每支影片為 96 frames、4 秒。第一階段由 mLLM 根據輸入圖片與提示生成階層式 DSG 與 CMQ 問題；DSG 分解代理、動作、物件、位置與屬性，CMQ 聚焦不自然轉場、解剖錯誤、物件消失、靜態元素、額外角色及細節不一致。模型生成影片後，Gemini 2.5 Pro 以 Yes/No VQA 評估問題，回答為 Yes 的比例及否定項目用於改寫提示，固定迭代 10 次，保留最高分提示。第二階段固定最佳提示，以 Vizier Gaussian Process Bandit 進行 Bayesian optimization，搜尋 CFG 1–15 及視為無序類別的 seed，使用 UCB、探索常數 β=1.8。獎勵函數結合 UVQ、RAHF 與 VTA；RAHF 對等距抽取的 10 幀取最低品質分，UVQ 使用內容、失真與壓縮網路的 MOS，另以 optical flow/shotcut 與 loop detection 檢查時間一致性。VTA 將 DSG/CMQ 的二元回答按樹狀父子關係遞迴遮罩，再以均勻權重平均；影片先過濾 loop 或 shotcut，最後分別依 UVQ、VTA、RAHF 或三者正規化平均選出 Top-1，並以兩位專家對 100 個案例進行人類偏好比較。",
+      "key_results": "| 實驗／比較 | 基線勝率 | 方法勝率 | 平手率／補充 |\n|---|---:|---:|---|\n| 提示最佳化，100 組 image-prompt pairs | 5% | 27% | 68% 平手 |\n| Bayesian search，10 次，RAHF 排序 vs Random | 14% | 47% | 39% |\n| Bayesian search，10 次，VTA 排序 vs Random | 8% | 45% | 47% |\n| Bayesian search，100 次，RAHF 排序 vs Random | 9% | 69% | 22% |\n| Bayesian search，100 次，Avg 排序 vs Random | 6% | 66% | 25% |\n| Bayesian search，100 次，RAHF vs Best-of-Random | 8% | 42% | 50% |\n| Gemini 2.5 Pro VQA 與人工標註一致性 | — | DSG 92%、CMQ 82% | 總體準確率 87% |\n\n作者報告的 100 次搜尋人類偏好勝率依 Top-1 排序指標而異，方法相對隨機基線約為 60%–69%；相較較強的 Best-of-Random，優勢縮小但仍在各指標下勝出。附錄中的 V-Bench++ 自動指標在不同條件間變化有限，論文未報告可據此支持明確優勢的統計差異。",
+      "insights": [
+        "對需要穩定遵循創意 brief 的影片生成流程，可將生成器、結構化評估器與搜尋器串成閉環，而非僅依賴人工挑選候選結果。",
+        "DSG 適合拆解物件、動作、位置等可驗證語意；CMQ 則補足角色持續性、解剖結構、轉場與閃爍等影片特有錯誤，顯示評測 rubric 應依任務動態生成。",
+        "實驗中 RAHF 排序的結果在人類偏好比較中表現最佳，但自動 V-Bench++ 指標差異有限，實務部署時應同時保留人類偏好驗證與自動指標，避免單一評分器主導最佳化。"
+      ],
+      "limitations": "框架仍需多次影片生成與 mLLM 評估，計算成本顯著。mLLM 對細緻動作、時間因果與主觀 CMQ 的判斷仍有限；CMQ 與人工標註準確率為 82%。目前提示與超參數採兩階段分開最佳化，未處理兩者交互作用。作者建議研究更具樣本效率的方法、蒸餾較小的 reward model，以及聯合最佳化提示與參數。",
+      "tags": [
+        "llm-as-judge",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態 LLM 評測",
+        "影片生成的提示最佳化",
+        "Bayesian optimization",
+        "人類偏好評估"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12197",
+      "title": "NetlistBench: Evaluating LLM Reliability in SPICE Netlist Recognition and Manipulation",
+      "abstract": "Large Language Models (LLMs) are increasingly used in circuit design workflows, yet their reliability on simulator-facing SPICE netlist recognition and manipulation remains poorly understood and is rarely separated from high-level design reasoning. Although netlists are textual, they encode structured circuit objects through topology and parameters. We present \\textbf{NetlistBench}, a structure-verified benchmark for SPICE netlist recognition and manipulation. NetlistBench contains 2,342 cases across 24 task families, covering parameter and connectivity recognition and edits, hierarchical operations, equivalence judgment, and long-horizon compound editing. Model outputs are evaluated by a deterministic structure-aware oracle. Across six non-thinking LLMs, performance varies substantially with operation-level structural complexity. Simple local edits reach $96\\%$--$100\\%$ accuracy, while device addition drops to $41\\%$--$83\\%$ and equivalence judgment to $49\\%$--$90\\%$. Enabling reasoning substantially improves weaker models but does not eliminate structure-preservation failures, with performance still degrading sharply as the edit horizon increases. NetlistBench identifies netlist reliability as a distinct bottleneck for trustworthy LLM-based circuit design automation.",
+      "authors": [
+        "Jiarui Ma",
+        "Jianghan Wang",
+        "Yuheng Ma",
+        "Ziyi Zhuang",
+        "Xiaoguang Liu"
+      ],
+      "categories": [
+        "eess.SY",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T15:51:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12197v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12197",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）日益被用於電路設計流程，但其在面向 simulator 的 SPICE netlist 識別與操作上的可靠性仍缺乏充分理解，且通常未與高階設計推理分開評估。Netlist 雖是文字，卻透過拓撲與參數編碼結構化電路物件。本文提出 NetlistBench，一個具結構驗證能力的 SPICE netlist 識別與操作 benchmark，包含 2,342 個案例、24 個任務家族，涵蓋參數與 connectivity 識別及編輯、hierarchical 操作、equivalence judgment，以及長程複合編輯。模型輸出由 deterministic、structure-aware oracle 評估。六個 non-thinking LLM 的表現會隨操作層級結構複雜度顯著變化：簡單 local edit 可達 96%–100%，device addition 降至 41%–83%，equivalence judgment 為 49%–90%。啟用 reasoning 能大幅改善較弱模型，但無法消除 structure-preservation failure；隨 edit horizon 增加，表現仍急遽下降。研究指出，netlist reliability 是可信賴 LLM 電路設計自動化的獨立瓶頸。",
+      "problem_statement": "現有 LLM 電路評測多聚焦於 syntactic validity、simulation success、specification improvement 或 end-to-end design outcome，難以分辨高階電路推理與低階 netlist corruption。一般 code benchmark 也無法表達 SPICE 的 positional terminal semantics、shared-node connectivity、node identity 與 ordered subcircuit interface。因此，模型是否能正確識別並局部、結構保持地修改 simulator-facing SPICE netlist，仍缺乏直接且可重現的量化評估。",
+      "proposed_solution": "作者提出 NetlistBench，將 SPICE netlist 視為具 devices、terminals、nodes、parameters、directives 與 hierarchy 的結構化 circuit artifact，分別測試 recognition 與 manipulation。其核心創新是以 deterministic template pipeline 從 flat 與 hierarchical source corpus 產生可驗證案例，並以 canonical IR 和 structure-aware oracle 取代 raw text matching 或單純 simulation success。oracle 要求輸出在 device 集合、terminal-node binding、參數、名稱 locality、directives 及 subcircuit interface 上精確符合 target；另以 VF2 graph-isomorphism 審核 equivalence labels。此設計能系統性比較不同 operation complexity、hierarchy 與 edit horizon 的可靠性。",
+      "core_contributions": [
+        "將 SPICE netlist reliability 定義為 representation-level evaluation 問題，區分結構識別與結構保持的轉換能力，避免與高階電路設計推理、simulation 或 optimization 結果混淆。",
+        "提出 NetlistBench，包含 2,342 個案例、24 個 task families，涵蓋 recognition、manipulation、hierarchical operations、equivalence judgment 與長程 compound editing。",
+        "建立以 canonical circuit representation 為核心的 deterministic、structure-aware evaluation oracle，使輸出可依 device、terminal binding、node、parameter、directive 與 hierarchy 進行結構驗證，而非只比對文字或 simulation 是否成功。"
+      ],
+      "methodology": "NetlistBench 從兩類來源建立資料：AnalogGenie 的 flat CMOS analog netlist，以及 ALIGN 的 hierarchical analog netlist。作者先進行 normalization，再透過 deterministic、template-driven pipeline 套用 task-specific transformation rules、syntax perturbations 與 prompt templates，形成 source netlist、instruction、target 的 self-contained triplet。資料在納入前會驗證 manipulation target 是否只執行指定結構變更，並檢查 recognition 與 equivalence target 是否符合 canonical intermediate representation（IR）。Benchmark 包含 8 個 recognition families 與 16 個 manipulation families，後者包括 connectivity edit、device addition/removal/replacement、parameter edit、rename propagation、3 至 15 步 compound edit，以及 subcircuit 操作。模型以 single-shot、deterministic decoding 呼叫官方 API；六個主要模型關閉 reasoning，另以 DeepSeek-V4-Flash 的 native thinking 作為 reasoning reference。輸出會被 parser 轉為 canonical IR，逐項比對 named devices、device kind、ordered terminal nodes、parameters、directives、subcircuit port interface、internal devices 與 hierarchy；允許有限的 semantics-preserving normalization，例如數值格式正規化及 R/C/L 對稱端點無序比較。Recognition 與 manipulation 皆以 binary pass/fail 計分；equivalence judgment 則比較模型輸出的 binary verdict。等價案例的 ground truth 另以 device–net graph 與 VF2 graph-isomorphism 檢查，確認正負配對標籤，但不直接用於模型 scoring。作者報告 pass rate 與 Wilson 95% confidence interval，並在 n=718 的 paired stratified subset 比較 SPICE、PySpice、direct、native thinking 與 CoT。",
+      "key_results": "主要結果如下；整體與 subtotal 為 case-weighted pass rate，DS+R 為啟用 native reasoning 的 DeepSeek-V4-Flash，且不納入 non-thinking 模型比較。\n\n| 評估項目 | 主要結果 |\n|---|---|\n| Benchmark 規模 | 2,342 cases、24 task families；recognition 800、manipulation 1,542 |\n| Non-thinking overall | Claude Sonnet 4.6：82%；GPT-4.1：71%；Gemini 2.5 Flash：64%；Qwen3.6-Flash：47%；Qwen3-30B-A3B：41%；DeepSeek-V4-Flash：55% |\n| Non-thinking recognition subtotal | Claude：98%；GPT-4.1：87%；Gemini：74%；Qwen3.6-Flash：62%；Qwen3-30B-A3B：55%；DeepSeek：74% |\n| Non-thinking manipulation subtotal | Claude：97%；GPT-4.1：70%；Gemini：59%；Qwen3.6-Flash：39%；Qwen3-30B-A3B：33%；DeepSeek：45% |\n| Device removal | 各模型約 97%–100% |\n| Parameter editing | 各模型約 96%–100% |\n| Device addition | 各模型 41%–83% |\n| Equivalence judgment | 各模型 49%–90% |\n| Flat compound editing | Claude：3 steps 80%→15 steps 26%；GPT-4.1：71%→34%；DeepSeek：44%→0%；DS+R：74%→31% |\n| Reasoning paired subset（n=718） | DeepSeek：52% direct→81% native thinking→75% CoT；Qwen：45%→85%→78% |\n| PySpice paired subset（n=718） | DeepSeek：52% SPICE→58% PySpice；Qwen：45%→45%，差異不顯著（p=0.51） |",
+      "insights": [
+        "實務上不應將 LLM 視為可未經驗證直接修改 simulator-facing netlist 的 editor；每次編輯後應執行結構驗證，檢查 device 集合、terminal-node binding、參數與 hierarchy 是否出現非預期變化。",
+        "長程複合操作的可靠性不能由單一步驟表現推定。對多個相依修改，較適合採用分解式流程，逐步套用、驗證並保留中間狀態，以降低錯誤累積。",
+        "若任務涉及 connectivity、terminal role、port order 或 equivalence，應優先提供能顯式表達拓撲的結構化表示；論文的 paired subset 顯示 reasoning 通常比 SPICE 改寫為 PySpice 帶來更一致的整體改善，但兩者都未完全解決結構保持問題。"
+      ],
+      "limitations": "研究僅涵蓋 bounded、circuit-block-level 的 AnalogGenie 與 ALIGN 類比 CMOS netlist，未評估 industrial-scale post-layout deck、長上下文處理或數百萬 parasitic statements。亦未完整涵蓋 symbolic .param、複雜 .model、behavioral/controlled sources、include hierarchy、PDK-specific syntax，以及 RF、power、digital 或 mixed-signal netlist。模板化指令與每個 model-case 僅測試一次，也限制了對真實語言變異與輸出分布的涵蓋。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "SPICE netlist 結構解析",
+        "電子設計自動化（EDA）",
+        "結構化程式碼與圖形等價性",
+        "長程多步驟 LLM 執行"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.12299",
+      "title": "Class Activation Mapping in Explainable Computer Vision: A Method-Centered Review of CNN, Transformer, and Foundation-Model-Era Visual Explanations",
+      "abstract": "Class activation mapping (CAM) is one of the most widely used visual explanation families in explainable artificial intelligence. Its purpose is intuitive: it converts internal model evidence into a heatmap that highlights the image regions, convolutional channels, tokens, or patches that support a target class or concept. Since the first CAM formulation in 2016, the field has moved far beyond global-average-pooled CNN classifiers. CAM-style methods now include gradient-based post-hoc explanations, gradient-free score and ablation methods, high-resolution upscaling, weakly supervised localization and segmentation, transformer token attribution, causal and debiasing methods, and foundation-model-era approaches that use CLIP, DINO, SAM, or feature-distribution comparisons. This review synthesizes a strict corpus of 57 method-centered papers published from 2016 onward. The paper develops a taxonomy that separates methods by attribution mechanism, architectural dependence, and evaluation objective. It then reviews gradient-based CAMs, recent and hybrid CAM-style methods, and model-based or architecture-aware methods. Across the corpus, the main trend is clear: the field is shifting from explaining one class score in one low-resolution CNN layer toward comparative, multi-layer, probabilistic, token-aware, and foundation-model-aware explanations. At the same time, evaluation remains fragmented. Faithfulness, localization, robustness, computational cost, and human trust are often measured with different protocols. The review therefore emphasizes not only what each method contributes, but also which gap it leaves open and which later methods attempt to close that gap.",
+      "authors": [
+        "AmirHossein Eshghi",
+        "Hamid Saadatfar",
+        "Seyyed Ali Hoseini",
+        "AmirMohsen Eshghi",
+        "Siavash Arjomand Bigdel"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-12T17:45:03+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.12299v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.12299",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "Class Activation Mapping（CAM）是可解釋人工智慧中廣泛使用的視覺解釋方法，其目標是將模型內部證據轉換為熱圖，指出支持特定類別或概念的影像區域、卷積通道、token 或 patch。自 2016 年首個 CAM 方法提出後，研究已由依賴 global-average pooling 的 CNN，擴展至 gradient-based、gradient-free score／ablation、高解析度上採樣、弱監督定位與分割、Transformer token attribution，以及結合 CLIP、DINO、SAM 或特徵分布比較的 foundation-model 方法。本論文整理 2016 年後 57 篇以方法為中心的研究，依 attribution mechanism、架構依賴性與 evaluation objective 建立分類法。整體趨勢是從單一 CNN 層的單類別分數解釋，轉向 comparative、multi-layer、probabilistic、token-aware 與 foundation-model-aware 解釋；然而 faithfulness、localization、robustness、計算成本與 human trust 的評估仍缺乏標準化。",
+      "problem_statement": "CAM 研究已從原始 global-average-pooled CNN 擴展到一般 CNN、Transformer、弱監督定位／分割與 foundation model，但方法名稱相近、歸因機制不同，容易造成混淆。現有工作分別強調解析度、faithfulness、定位、效率或人類信任，卻使用不一致的資料集與評估協定；此外，梯度飽和、低解析度、背景捷徑、attention 不等於 explanation、prompt 敏感性與高昂的 gradient-free 成本仍未被共同解決。",
+      "proposed_solution": "作者提出一套以方法為中心的 CAM review 框架，而非單一新模型。其核心是以 57 篇嚴格篩選的研究建立發展脈絡與分類法，按歸因機制、架構依賴性及評估目標區分 gradient-based、gradient-free、hybrid、high-resolution、token／patch 與 foundation-model-era 方法。框架同時整理各方法如何改變權重訊號、層級、目標或先驗，並將其結果放回相容的評估協定中比較，強調任何熱圖都必須連同解釋目標、證據來源、成本、faithfulness、localization 與限制一起理解。",
+      "core_contributions": [
+        "建立一個以方法為中心的嚴格 CAM-style 文獻語料庫，納入 2016 年起 57 篇產生、改良、評估或理論分析 CAM、activation map、token map 與 patch attribution map 的論文，排除僅在應用研究中展示 Grad-CAM 的工作。",
+        "提出依 attribution mechanism、architectural dependence 與 evaluation objective 組織的分類法，涵蓋 CNN、gradient-based、gradient-free、hybrid、high-resolution、Transformer token-level、foundation-model-era 與 architecture-aware 方法。",
+        "在不混合不相容指標的前提下，整理各方法對 faithfulness、localization、解析度、成本、因果性、偏差與人因信任的改善方向，並指出後續方法如何回應前一代方法的限制。"
+      ],
+      "methodology": "論文採 method-centered literature review，而非提出新的 CAM 演算法。作者在 IEEE Xplore、IEEE/CVF Open Access、ACM Digital Library、Elsevier ScienceDirect、SpringerLink 等來源搜尋 2016 年起的視覺 XAI 文獻，使用 CAM、Grad-CAM、Score-CAM、Ablation-CAM、LayerCAM、activation map、token attention map 等概念詞，搭配 CNN、ViT、CLIP、SAM 與 foundation model 等架構詞，以及 explainability、attribution、saliency、WSOL、WSSS 等方法詞。納入條件要求研究必須產生、改良、評估或理論分析 CAM-style map；排除僅展示 Grad-CAM 的應用論文、survey-only、非視覺、2016 年前、重複及超出指定來源範圍的紀錄，形成 57 篇語料庫。技術上，作者以 L_c= h(Σ_k α_k^c A_k) 概括 CAM，其中 A_k 是特徵圖或其 token／patch 對應，α_k^c 是重要性權重，h 通常為 ReLU；不同方法主要差異在權重估計、抽取層與目標定義。評估分為 faithfulness（deletion、insertion、Average Drop、Increase in Confidence、ADCC、ROAD）、localization（Top-1／Top-5、pointing game、energy localization、box／mask overlap）、dense prediction（mIoU、DSC）、robustness（sanity check）及 human-centered trust。作者依方法機制比較 gradient-based、gradient-free／perturbation、hybrid、high-resolution、Transformer token-level、foundation-model-era 與 architecture-aware 方法，並只在協定相容或明確標示的情況下討論量化結果。",
+      "key_results": "論文未提供可在全文摘錄中一致比較的完整數值表；作者明確避免將不同資料集、任務與評估協定的數字混合排名。可確認的結果如下：\n\n| 方法或家族 | 論文報告的結果／觀察 | 數值狀態 |\n|---|---|---|\n| Relevance-CAM | 在 ResNet-50 設定中，相較 Grad-CAM 與 Grad-CAM++，改善淺層的 Average Drop 與 Average Increase | 論文未報告具體數字 |\n| LIFT-CAM | 在 ImageNet 設定中，相較 Grad-CAM 與 Grad-CAM++，具有較高 insertion AUC 與較低 deletion AUC | 論文未報告具體數字 |\n| Integrated Grad-CAM | 在 PASCAL VOC 2007 的 ResNet-50 bounding-box 評估中改善定位分數 | 論文未報告具體數字 |\n| ScoreCAM++ | 在 ImageNet／VGG-19 比較中降低 Average Drop 並提高 confidence，相較 Score-CAM 與梯度基線呈現較佳 faithfulness | 論文未報告具體數字 |\n| Finer-CAM | 在 CUB-200 與 Cars 上，將目標改為 target-versus-reference logit difference 後，改善 Grad-CAM、LayerCAM 與 Score-CAM 的細粒度定位 | 論文未報告具體數字 |\n| TS-CAM | 在 CUB-200-2011 報告較大的 Top-1 localization 增益 | 論文未報告具體數字 |\n| gScoreCAM | 以梯度選取通道、再用 Score-CAM 式 forward score 加權；在 CLIP 上將 Score-CAM 的 runtime 約降低八倍，同時維持強物件定位 | 約 8 倍；其他數字未報告 |\n| 全體語料庫 | 評估涵蓋 deletion、insertion、Average Drop、Increase in Confidence、ADCC、ROAD、localization、mIoU、DSC、pointing game、sanity check 與 human-centered studies，但協定分散 | 論文未報告統一總排名或彙總數字 |",
+      "insights": [
+        "實務上不應把所有 CAM 熱圖視為同一種解釋；部署前應明確定義目標是模型除錯、類別歸因、細粒度差異、WSOL／WSSS 偽標籤，或 foundation model 的 prompt 解釋。",
+        "評估應至少同時報告 faithfulness 與 localization，並揭露 target、選取層、normalization、thresholding、forward／backward 次數及是否使用 CRF、SAM 或其他先驗，以避免跨論文產生誤導性比較。",
+        "對梯度不穩定或需要較高可信度的情境，可考慮 Score-CAM、Ablation-CAM 或其分組與輕量化變體；但應把額外 forward 成本納入部署評估。對細粒度或 foundation-model 任務，還應測試 reference class、reference set 與 prompt 的敏感度。"
+      ],
+      "limitations": "語料庫受限於指定資料庫、出版社、會議與 2016 年後的納入規則，且各研究的模型、資料集、層、目標與指標不同，無法形成統一排名。論文也指出 causal faithfulness、gradient-free 成本、prompt／reference sensitivity 與 human validation 仍未充分標準化。未來需建立可重現的評估協定，結合反事實或介入式資料、因果指標、效率測試與人因任務。",
+      "tags": [
+        "faithfulness",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Explainable Computer Vision",
+        "Class Activation Mapping",
+        "Visual Transformer Interpretability",
+        "Weakly Supervised Object Localization",
+        "Weakly Supervised Semantic Segmentation",
+        "Foundation Model Explainability"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  }
+]
