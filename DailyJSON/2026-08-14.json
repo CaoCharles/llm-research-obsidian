@@ -1,0 +1,681 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.13463",
+      "title": "MLLM-Routed Heterogeneous Ensembles for Robust Cross-Dataset Image Classification",
+      "abstract": "Modern image classification models excel when trained on single task-specific datasets but often struggle to generalize across domains and difficulty levels. We propose ARMDIL, an Adaptive Router for Multi-Domain Image classification with LLMs. ARMDIL is an ensemble that uses a multimodal large language model (MLLM) agent to dynamically route each image to the most suitable vision backbone. Our diverse ensemble employs convolutional neural networks (ResNets), self-supervised representation learners (SSL), and vision-language models (VLMs), each trained on a unified label space constructed from multiple image datasets with differing distributions and characteristics. Empirical evaluations illuminate the distinct capabilities and vulnerabilities of each architecture across disparate visual domains. Crucially, we show that ARMDIL effectively navigates these trade-offs, performing competitively with specialized training-based routers. Furthermore, it drastically improves adaptability by allowing new information to be integrated via simple prompt modifications, while enhancing interpretability through natural language reasoning traces. These advances in cross-dataset image classification pave the way for more reliable general-purpose vision systems such as AI assistants and autonomous robots.",
+      "authors": [
+        "Daniel Perkins",
+        "John Squires",
+        "Janou Milligan",
+        "Chandra Raskoti",
+        "Linda Ungerboeck"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-13T16:45:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13463v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13463",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "現代影像分類模型在單一任務資料集上表現優異，但通常難以跨域及跨越不同難度層級進行泛化。本文提出 ARMDIL（Adaptive Router for Multi-Domain Image classification with LLMs），一種使用 multimodal large language model（MLLM）代理動態路由影像至最適合 vision backbone 的 ensemble。異質 ensemble 包含 convolutional neural networks（ResNets）、self-supervised representation learners（SSL）及 vision-language models（VLMs）；各模型均在由多個分布與特性不同的影像資料集所建構之統一 label space 上訓練。實驗分析各架構於不同視覺領域的能力與弱點，顯示 ARMDIL 能有效處理其間的取捨，表現可與專門訓練的 router 競爭。此外，透過簡單修改 prompt 即可整合新資訊，並以自然語言 reasoning traces 提升可解釋性。此研究為 AI 助理與自主機器人等更可靠的一般用途視覺系統提供方向。",
+      "problem_statement": "單一影像分類模型通常在特定資料集內準確，遇到醫療、臉部、航空地理與自然影像等異質分布時卻難以泛化。傳統 dense ensemble 必須執行所有模型，成本高；訓練式 dynamic router 雖可選擇 expert，卻需要額外訓練、對新增領域僵化，且決策缺乏語意可解釋性。",
+      "proposed_solution": "作者提出 ARMDIL，以 MLLM 作為 meta-classifier 與 domain router，先根據影像語意及低階品質統計判斷領域，再將影像送至相應的 ResNet、DINO 或 CLIP expert。核心創新是把異質架構放入共享 38 類 label space，並以 prompt 取代 routing-specific neural classifier，使新增領域或先驗知識可透過修改 prompt 與配置 expert 整合。模型亦可輸出自然語言 reasoning trace，提供比傳統路由器更直接的控制與可讀性。",
+      "core_contributions": [
+        "提出 ARMDIL，使用 Gemma-4-12B MLLM 以零樣本 prompt-based inference 將影像分派至異質 vision experts。",
+        "整合 ResNet、DINO SSL 與 CLIP VLM 分類器，並在涵蓋 CIFAR10、FER2013、EuroSAT 與 OrganAMNIST 的統一 38 類 label space 上進行跨資料集評估。",
+        "實驗顯示 ARMDIL 的整體準確率高於 balanced DINOv3 與 majority-vote ensemble，且接近需要訓練的 NN-Router，同時提供 prompt 可調整性與自然語言路由說明。"
+      ],
+      "methodology": "ARMDIL 將 CIFAR10、FER2013、EuroSAT 與 OrganAMNIST 合併為統一 N=38 類 label space，分別對應 GENERAL、FACIAL、GEOGRAPHIC 與 MEDICAL 四個領域。輸入影像先 resize 與 normalize，並計算 blur、mean brightness、contrast 及 noise 等 image-quality statistics。三類 experts 離線訓練：以 ImageNet 預訓練 ResNet-50 作為 CNN；以 DINOv2 ViT-L/14 與 DINOv3 ViT-L/16 作為 SSL backbone；以 OpenCLIP ViT-L/14 作為 VLM，凍結 CLIP 權重並在 visual transformer MLP layers 注入 LoRA，再接統一 label-space classification head。專家模型以 70% 目標領域、其餘領域各 10% 的 domain-skewed sampling 訓練，另建立 25% 均衡設定。推論時，量化的 Gemma-4-12B MLLM 同時接收影像與品質統計，依 system prompt 輸出 GENERAL、MEDICAL、GEOGRAPHIC、FACIAL 或 UNSURE；前四者路由至對應 domain expert，UNSURE 則交由整體 validation accuracy 最佳模型。評估使用 unified test set 的 overall accuracy、各資料集 top-1 accuracy、F1-score 與 per-dataset macro F1，並比較 balanced DINOv3、majority vote、訓練式 ResNet-18 NN-Router 及理論 oracle router。另以 self-consistency、移除 CoT、移除 image-quality statistics 進行消融。",
+      "key_results": "主要結果如下（數值為 top-1 accuracy；論文同時報告 macro F1）：\n\n| 方法 | CIFAR10 | EuroSAT | FER2013 | O-MNIST | Overall |\n|---|---:|---:|---:|---:|---:|\n| ARMDIL | 99.02% | 97.91% | 70.49% | 96.69% | **90.78%** |\n| Balanced DINOv3 | 99.05% | 97.24% | 69.82% | 92.52% | 89.61% |\n| Majority Vote | 98.87% | 98.42% | 68.35% | 96.25% | 90.47% |\n| NN-Router | 99.13% | 98.56% | 69.81% | 97.22% | 91.18% |\n| Oracle Router | 99.24% | 98.56% | 70.49% | 97.20% | 91.04% |\n\nARMDIL 的 overall macro F1 為 90.71%，高於 balanced DINOv3 的 89.52% 與 majority vote 的 89.43%，但低於 NN-Router 的 90.41%（表格中的 overall accuracy 與 macro F1 依論文排版呈現）。MLLM domain routing 對 CIFAR10、FER2013、O-MNIST 的分布分別為 97.80%、99.82%、95.21% 正確，EuroSAT 為 78.20%，另有 12.72% 被分派至 UNSURE。消融中，self-consistency（無 CoT）使 EuroSAT 路由準確率由 78.20% 升至 82.17%；再移除 image-quality statistics 後為 83.87%，但對應 overall ARMDIL 分類準確率為 90.71% 與 90.75%，均低於原始 90.78%。",
+      "insights": [
+        "對跨域部署而言，先進行領域路由、再使用專門 expert，可能比讓單一 backbone 處理所有分布更有效；本文 ARMDIL 比 balanced DINOv3 高 1.17 個百分點。",
+        "路由器的 UNSURE 機制與 fallback expert 可降低錯誤路由的影響；本文中 EuroSAT 路由較弱，但整體下游分類仍維持競爭力。",
+        "影像品質統計不一定普遍有益：在本文消融實驗中，移除品質統計反而提升 EuroSAT 路由準確率，但整體 ARMDIL 下游結果仍略優於消融設定，因此應依領域驗證輔助訊號。"
+      ],
+      "limitations": "研究僅使用四個公開資料集，且資料集大小、解析度與類別設定相對受限，尚未在更大、更困難或真實部署資料上驗證。MLLM 對 EuroSAT 路由較不穩定；reasoning trace 雖具可讀性，論文未提供其 faithfulness 的正式評估。作者建議採用更大型 MLLM、改良 prompt 或進行 fine-tuning。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multimodal model routing",
+        "heterogeneous ensemble learning",
+        "cross-domain image classification"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13420",
+      "title": "Enhancing Virtual Agents through SLMs and Edge-Computing: An Exploratory Evaluation of Think and Memory Processes",
+      "abstract": "Embodied intelligent virtual agents are expected to operate as persistent, adaptive, and context-aware entities within complex virtual and Metaverse worlds. However, implementing cognitively capable agents in such environments is conceptually and technologically challenging. Among a range of blueprints and development approaches, the Cognitive Embodied Agent Architecture (CEAA) has been developed as an implementation-oriented framework for architecting components of perception, memory, reasoning, planning, and embodied action. Considering the recent advances in edge computing and generative AI language models, this paper explores the use of Small Language Models (SLMs) to support edge-based operation of selected CEAA components, focusing on \"Think\" and \"Memory\" as processes central to cognitive orchestration and persistence of virtual agents in interactive virtual worlds. An edge-based virtual agent gateway system was developed and evaluated on an NVIDIA Jetson Orin NX using Qwen2.5 models of different sizes, exploring the system's capability to process service requests and handle memory-driven conversations. A series of simulation experiments evaluated routing accuracy, memory-read performance, and latency, demonstrating an SLM-driven prototype agent system that partially implements selected CEAA processes to support the development of embodied agents whose cognitive \"brain\" can operate efficiently and contextually for interactive experiences in immersive virtual worlds.",
+      "authors": [
+        "Aimilios Hadjiliasi",
+        "Louis Nisiotis"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-13T16:12:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13420v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13420",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "具身智能虛擬代理人需要在複雜的虛擬世界與 Metaverse 中持續運作、適應環境並理解上下文，但其認知能力的實作仍具概念與技術挑戰。本文以 Cognitive Embodied Agent Architecture（CEAA）為基礎，探索 Small Language Models（SLMs）在 edge computing 環境中支援 CEAA「Think」與「Memory」流程的可行性。作者在 NVIDIA Jetson Orin NX 上建置 edge-based virtual agent gateway，使用不同尺寸的 Qwen2.5 模型，評估其服務請求 routing、結構化記憶讀取與延遲。模擬實驗顯示，SLM 驅動的原型系統可部分實作 CEAA 的認知協調與記憶處理，讓虛擬代理人的部分認知後端能在資源受限的 edge 環境中，以具情境性的方式運作。",
+      "problem_statement": "虛擬代理人常以 scripted behavior、rule-based flow 或 symbolic game AI 運作，雖能處理預定情境，卻難以適應動態輸入、維持跨互動連續性，並整合 perception、memory、reasoning、planning 與 action。大型模型又可能不適合 edge-based、低延遲與資源受限環境。因此本文探討 SLM 是否能在 edge 上部分支援 CEAA 的 Think 與 Memory，完成服務 routing 與結構化記憶處理。",
+      "proposed_solution": "作者建置 edge-based virtual agent gateway，將 Qwen2.5 SLM 作為 CEAA 認知後端的一部分。Think 以互動意圖分類及服務 routing 實作，模型依使用者請求在 conversation、memory 操作與十種虛擬世界服務間選擇路徑，並輸出結構化 JSON。Memory 則結合 Qwen2.5、LangMem 與 SQLite，從每輪互動抽取可持久化 fact，依 session、時間與內容鍵保存，並透過 relevance 與 recency 決定讀取內容，再交由模型生成回答。核心創新不是完整 CEAA 或完整 embodied cognition，而是以不同 SLM 尺寸在單一 edge 裝置上，實證比較認知 routing、記憶讀取與延遲的取捨。",
+      "core_contributions": [
+        "部分實作 CEAA 的 Think 與 Memory 流程：以服務 routing 代表認知協調，以結構化 fact 的寫入與讀取代表記憶處理。",
+        "在 NVIDIA Jetson Orin NX 8GB edge 硬體上，比較 Qwen2.5 0.5B、1.5B 與 3.0B Instruct 模型在 routing、記憶讀取、結構化輸出與延遲方面的表現。",
+        "提供受控實驗的初步證據，說明部分虛擬代理人後端認知流程可在本地端運作，但模型尺寸與準確性、反應速度之間存在明顯取捨。"
+      ],
+      "methodology": "作者將 Unity-based InterwovenXR 虛擬世界 testbed 與外部 edge-hosted gateway 串接；Unity 負責 embodied-agent 介面，gateway 負責 language processing、memory management、route selection 與 service dispatch。硬體為 NVIDIA Jetson Orin NX 8GB，模型為 Qwen2.5 0.5B、1.5B、3.0B Instruct 的 GGUF Q4_K_M quantisation，透過 llama.cpp 本地服務，context 為 4,096 tokens，最多生成 420 tokens。每個 HTTP request 包含 user prompt 與 session id。模型先將互動分類為 conversation、memory-read、memory-write、service request 或 ambiguous；服務請求則輸出包含 route、intent、confidence 與 rationale 的 JSON。十個預先配置的 route 以每類 100 個、共 1,000 個經作者審閱的 prompts 評估，計算 accuracy、macro precision、macro recall、macro-F1、invalid-output、timeout，以及 mean、median、P95 latency。記憶流程中，所有 session turns 存入 SQLite，LangMem 使用同一模型抽取 concise durable facts，並以 content-keyed items、session id、timestamp 與 metadata 保存；重複 fact 更新既有項目，非一致修正則保留為較新紀錄。記憶測試包含 125 個 fact-introduction turns 與 125 個配對問題，評估 end-to-end read accuracy、memory-write label recall、service leakage 與端到端延遲。答案由 ChatGPT 5.5 High Reasoning 依固定 prompt 評估，再由作者以 model-blinded 方式人工審查。",
+      "key_results": "| 模型 | Routing 準確率 | Routing macro-F1 | Routing 平均延遲 | Memory read 準確率 | Memory-write label recall | Memory 平均延遲 |\n|---|---:|---:|---:|---:|---:|---:|\n| Qwen2.5-0.5B | 29.4% | 28.9% | 1,504 ms | 72.8%（91/125） | 1.6% | 2,025 ms |\n| Qwen2.5-1.5B | 85.4% | 84.3% | 3,349 ms | 78.4%（98/125） | 5.6% | 3,794 ms |\n| Qwen2.5-3.0B | 87.7% | 87.8% | 5,067 ms | 93.6%（117/125） | 63.2% | 9,693 ms |\n\nRouting 實驗使用 1,000 個 prompts、10 個 route，每類 100 個。3.0B 的 routing P95 延遲為 6,159 ms，memory P95 延遲為 14,531 ms；其 routing 無 invalid output。0.5B 的 routing accuracy 僅 29.4%，主要出現 route collapse；3.0B 的 memory read accuracy 最高，但延遲顯著增加。論文未報告下游服務實際執行成功率、完整 embodied interaction 的使用者評估，或與 keyword routing、embedding similarity、task-specific fine-tuned SLM 的比較結果。",
+      "insights": [
+        "若應用重點是服務選擇，1.5B 模型在本文設定下提供較佳的 routing 與延遲折衷；但實際部署仍需依任務需求驗證。",
+        "記憶系統的端到端表現不只取決於生成模型，也受到互動分類、fact extraction、persistence、retrieval 與 response generation 共同影響，因此應分階段監測錯誤。",
+        "可考慮模組化或 hybrid 配置：以較小模型處理低延遲 orchestration，將記憶密集或語意較複雜的任務交由較大模型；這是根據本文結果提出的實務洞察，而非作者已驗證的部署方案。"
+      ],
+      "limitations": "研究僅在受控 test-bed、單一 Jetson Orin NX 8GB 設定與三個 Qwen2.5 變體上進行，且只涵蓋 CEAA 的 Think 與 Memory 部分流程。Prompt 可能無法代表不可預測的真實使用者行為；LLM-as-a-judge 亦可能存在評估偏差。延遲未拆分各處理階段，也未進行完整 embodied user study。未來應比較非生成式 routing 與微調模型，分別評估 extraction、retrieval、correction 與答案正確性，並擴充長期及多類型記憶。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Small Language Models",
+        "Edge Computing",
+        "Cognitive Embodied Agent Architecture",
+        "Agent Memory",
+        "Service Routing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13560",
+      "title": "AutoDesign: Meta-Harness Optimization for Long-Horizon Agentic Design",
+      "abstract": "Transforming multimodal sources into condensed and structured media outputs can be fundamentally conceptualized as a long-horizon agentic process centered on a model-harness system. While an ideal harness system should align with human design priors and accumulate reusable experience through empirical exploration to drive recursive self-improvement, existing paradigms remain static and fall short of this capability. In this paper, we present AutoDesign, a framework that aligns with human design priors, where a meta-harness optimizer guides a code agent to recursively improve harness based on rollout feedback. To instantiate and evaluate this framework, we focus on the academic paper-to-poster generation task and introduce PosterBench, comprising a 100-paper Main Track spanning five disciplines and PosterBench-mini, a shared 10-paper subset for controlled evaluation. On the PosterBench Main Track, AutoDesign achieves the highest score of 78.32, surpassing the closed-source commercial system Claude Design by 7.45 points. Across seven controlled code-agent-model configurations, integrating the learned DesignHarness consistently improves performance, increasing the average PosterBench Score from 54.99 to 67.39 (+12.4%). In a fully autonomous long-horizon loop, it executes 253 tool calls and 11 editing turns within 40 minutes for under $3, reaching average conference-poster quality in human evaluation. A system-blind human study further demonstrates that AutoDesign achieves the highest human preference among evaluated systems.",
+      "authors": [
+        "Yaxin Luo",
+        "Haobin Jiang",
+        "Jialv Zou",
+        "Xu Huang",
+        "Wenhao Yan",
+        "Haodong Li",
+        "Zhengrong Yue",
+        "Jing Li",
+        "Xiaofu Chen",
+        "Xiaohan Zhao",
+        "Jiacheng Liu",
+        "Jiacheng Cui",
+        "Zhiqiang Shen",
+        "Xiaotong Li"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-13T17:59:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13560v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13560",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "將多模態來源轉換為濃縮且結構化的媒體輸出，可視為以 model harness 為核心的長視域 agentic process。理想的 harness 應符合人類設計先驗，並透過經驗探索累積可重用知識，以遞迴自我改進；然而既有方法多為靜態系統。本文提出 AutoDesign，由 meta-harness optimizer 根據 rollout feedback 引導 code agent 遞迴改進 harness。作者以學術論文轉海報為實例，建立涵蓋五個學科、100 篇論文的 PosterBench Main Track，以及用於受控評估的10篇 PosterBench-mini。在 Main Track 中，AutoDesign 得分78.32，較封閉商用系統 Claude Design 高7.45分。七種受控 code-agent/model 設定中，加入學得的 DesignHarness 後，平均分數由54.99升至67.39，增加12.4分。全自主長視域流程在40分鐘內完成253次工具呼叫與11輪編輯，成本低於3美元；盲測人評亦顯示其獲得最高偏好。",
+      "problem_statement": "多模態設計需要長流程地擷取來源證據、組織高密度內容、完成渲染並維持可用性，而非只改善一次輸出。既有 paper-to-poster 方法多分別評估 layout、extraction、faithfulness 或 visual quality，且設計系統通常把 feedback 視為一次性訊號，無法累積成可重用、符合人類設計偏好的 harness 能力。",
+      "proposed_solution": "作者提出 AutoDesign，將 design harness 本身而非模型權重作為優化對象。系統以內層 artifact revision 與外層 harness evolution 組成巢狀迴圈：內層透過來源擷取、可編輯 HTML、規則驗證及 VLM critic 反覆修訂；外層由 meta-harness optimizer 分析多次 rollout 的軌跡與評分，讓 code agent 每輪只提出一個 functional component 的程式更新，再以 training gain 與 development retention 的 acceptance gate 決定是否採用。持續累積的更新形成 DesignHarness，使人類設計先驗、來源 provenance、品質檢查與修訂經驗成為可重用的系統能力。",
+      "core_contributions": [
+        "提出 AutoDesign meta-harness optimization，透過 rollout、評估、單一元件更新與 acceptance gate，遞迴改進固定模型周邊的 design harness。",
+        "建立可編輯、具來源脈絡的 DesignHarness，結合 paper ingestion、HTML 生成、rule-based validator、VLM critic、局部修訂與候選版本選擇。",
+        "提出 PosterBench，涵蓋100篇、五個學科與七維評分，並以 PosterBench-mini、受控消融及 system-blind human study 評估系統品質。"
+      ],
+      "methodology": "AutoDesign 將系統分成內外兩層迴圈。Design harness H 在固定底層模型參數 πθ 下，把 paper.pdf 與設計條件轉成 editable HTML artifact；其五個功能元件為 Context and Memory、Tools and Specifications、Execution Runtime、Orchestration，以及 Evaluation and Feedback。內層由 designer code agent 產生或局部修訂 artifact，並接受 rule-based validator 與 VLM critic 的回饋；validator 檢查資產、provenance、overflow、overlap、字體與版面等 blocking constraints，critic 評估渲染後的 layout、readability、aesthetics 與設計符合度，最多進行 K=12 次 refinement，最後選出最佳有效候選並輸出 HTML、PNG、PPTX 或 MP4。外層 meta-harness optimizer 先在 training tasks 上 rollout，收集 execution trajectories、分數與 optimization record，再由 planner 分析反覆失敗，派遣 subagents 整理證據，接著由 code editor 僅修改五個 functional components 中的一個。候選 harness 必須同時滿足 training objective 嚴格提升、development objective 不下降，才通過 acceptance gate；否則保留原版本。優化時間的 Rmeta 由人類標註 reference artifacts 建立，結合規則檢查與 VLM 判斷，並在自主迭代中固定；最終比較則使用獨立凍結的 PosterBench。PosterBench 對每篇海報評估 Faithfulness、Coverage、Density、Visual Evidence、Layout、Readability、Aesthetics 七維，權重為10/10/15/10/20/25/10，套用 layout、viability、failure 與 render-integrity ceilings 後取100篇平均。另以PosterBench-mini進行七種設定的 harness 消融，並以11位 reviewer 的 system-blind pairwise comparison 進行人類驗證。",
+      "key_results": "| 評估或設定 | 結果 |\n|---|---|\n| PosterBench Main Track，AutoDesign + Claude Code + Claude 4.8 | **78.32** |\n| Claude Design，同一主評估比較 | 70.87；AutoDesign 高 **7.45** 分 |\n| OpenDesign，同一主評估比較 | 69.45；AutoDesign 高 **8.87** 分 |\n| PosterBench-mini，七種設定平均：未加入/加入 DesignHarness | 54.99 → 67.39，增加 **12.40** 分 |\n| DesignHarness 對七種 code-agent/model 設定的增益 | **5.0–19.6** 分；最佳整體分數 81.5 |\n| PosterBench-mini，Codex 設定：原生 Codex / AutoDesign | 75.87 / 81.46 |\n| PosterBench-mini，Claude Code 設定：原生 / AutoDesign | 69.55 / 74.56 |\n| 全自主長視域生成流程 | 253次工具呼叫、11輪編輯、約40分鐘、低於3美元 |\n| System-blind human study | 933次有效排名；Bradley–Terry 偏好估計 **64.0%**，95%區間55.2–77.8% |\n\n上述結果支持：優化可重用的 DesignHarness，不只改善單一 artifact，也能在多種固定 code-agent/model 組合上帶來一致提升；人評則提供自動 PosterBench 之外的獨立驗證。",
+      "insights": [
+        "若模型權重固定，仍可藉由改進 context/memory、工具規格、runtime、orchestration 與 feedback 機制，取得跨模型的系統性增益。",
+        "將可編輯 artifact、來源定位、規則驗證與視覺批評組成內層迴圈，有助於把局部錯誤修復轉化為可重複的生產流程。",
+        "訓練集增益加上 development retention 的 acceptance gate，可作為 harness 演化的基本防過擬合機制；但實務部署仍應維持獨立且凍結的外部評估。"
+      ],
+      "limitations": "論文目前主要以 paper-to-poster 驗證，PosterBench 雖涵蓋100篇論文，仍不能代表所有多模態媒體與長視域任務。更新每次只限一個 harness functional component，且自主搜尋可能過早停滯，需要 human guidance 重新導向。外部評估含 VLM judgment；人評名義 Krippendorff agreement 僅0.101。作者將 slides、webpages、videos 的格式適配與各自 rendering、communication release gate 列為未來方向。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長視域多模態代理",
+        "Harness／scaffold optimization",
+        "可編輯 artifact 生成與視覺品質評估"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13476",
+      "title": "MARC v1: An Open-Source Multi-Agent Framework for Clinical AI Reasoning and Coordination",
+      "abstract": "We present Multi-Agent Reasoning and Coordination (MARC), an open-source framework that replaces monolithic LLM prompting with deterministic multi-agent orchestration for clinical reasoning. MARC coordinates role-specialized agents for extraction, reasoning, answer generation, and evaluation, with explicit context passing and traceable intermediate outputs, enabling stage-wise failure attribution. We additionally introduce a Decomposer module that generates task-specific agent prompts from a plain-language description, eliminating manual prompt engineering. The framework supports both API-based and local CPU-compatible deployments and is entirely configurable via YAML, without code modifications. MARC is designed to be model-agnostic, interpretable, and accessible to clinical domain experts without programming expertise. The full framework is available at https://github.com/Penn-RAIL/MARC-v1.",
+      "authors": [
+        "Saisha Shetty",
+        "Satvik Tripathi",
+        "Austin Lin",
+        "Colin Zhao",
+        "Theodore Kim",
+        "Don Enwerem",
+        "Jacinta Arnold",
+        "Shahriar Faghani",
+        "Tessa S Cook"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-13T17:00:08+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13476v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13476",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 Multi-Agent Reasoning and Coordination（MARC），一個開源的 clinical AI framework，以 deterministic multi-agent orchestration 取代單一、整合式的 LLM prompting。MARC 協調分工明確的 agents，分別執行資訊擷取、推理、答案生成與評估，並透過明確的 context passing 傳遞資訊及記錄可追蹤的中間輸出，因此能進行分階段的 failure attribution。作者另提出 Decomposer module，能從 plain-language task description 自動產生 task-specific agent prompts，降低手動 prompt engineering 的需求。框架支援 API-based 與 local CPU-compatible deployment，所有設定皆可透過 YAML 修改而不需變更程式碼。MARC 具備 model-agnostic、可解釋及易於使用等特性，讓 clinical domain experts 即使沒有 programming expertise 也能建立與調整臨床 AI workflow。完整框架已開放於 GitHub。",
+      "problem_statement": "現有 clinical LLM 系統常以 single prompt 要求單一模型同時完成資訊擷取、推理、驗證與行動生成，使中間過程不透明，也難以判斷錯誤來自遺漏資訊、推理失誤、指令遵循問題或答案格式化。固定 workflow 與手動 prompt engineering 亦限制臨床任務適配、模型替換及非程式設計專家的使用。",
+      "proposed_solution": "作者提出 MARC，以 deterministic、sequential 的 multi-agent orchestration 將臨床任務拆分為 extraction、reasoning、answer generation 與 evaluation 等角色，透過顯式 context passing、標準化 verdict 與中間輸出 logging 建立可追蹤的 handoffs 和 stage-wise failure attribution。其核心創新包括 YAML-based、無需改碼的 pipeline/configuration；可逐 agent 更換模型與 RAG 知識來源；支援 Gemini API 和 Ollama local deployment；以及以 MedGemma 4B 實作的 Decomposer，從自然語言任務描述自動產生角色、子任務與 prompt templates，降低人工 prompt 設計成本。",
+      "core_contributions": [
+        "提出開源且 domain-agnostic 的 MARC multi-agent framework，以 sequential、role-specialized agents 分離資訊擷取、推理、答案格式化與評估，並記錄各階段中間輸出以支援 failure attribution。",
+        "提出 Decomposer module，使用 MedGemma 4B 將 plain-language task description 分解為三個 subtasks，並自動產生包含 agents、roles 與 prompt templates 的結構化 JSON 規格。",
+        "以 YAML 宣告式設定支援 agent sequence、model assignment、prompt templates 與 optional RAG knowledge sources，並同時支援 Gemini API 與透過 Ollama 的 local CPU-compatible deployment。"
+      ],
+      "methodology": "MARC 是以 Python 與 LangChain 實作的 domain-agnostic multi-agent system，採 Level 2 autonomy 的 structured workflow design。每個 agent 包含 language model、task-specific prompt，以及可選的 RAG module；agent name、model identifier、prompt file path 與 context file paths 由 config/agents.yaml 宣告。執行時，Agent 1 僅接收原始輸入，擷取 2–4 個與任務相關的 evidence bullets，不直接作答；Agent 2 接收原始輸入與 Agent 1 的完整輸出，進行 categorization、multi-step reasoning、選項或假設比較，並以標準化 VERDICT 或 FINAL 行結束；Agent 3 接收原始輸入與 Agent 2 輸出，定位 verdict 並原樣回傳，以產生可解析答案。主要 runtime variables 為 {input} 與 {previous_agent_output}。所有 agents 採 zero-shot、temperature=0；prompt 包含角色定義、任務指示、輸出限制與 runtime variables。Decomposer 使用 MedGemma 4B，在單一 conversational turn 中把自然語言任務分解為三個 subtasks，產生包含 agent names、roles 與完整 prompts 的 JSON，並檢查變數綁定、VERDICT 格式及輸出長度限制。代表性 workflow 包括 biomedical QA，以及含 conditional routing 的 radiology pipeline；正常報告可跳過分類階段。框架支援 Gemini API 與 Ollama local deployment，但論文未提供定量評估指標或實驗數據。",
+      "key_results": "論文主要是 framework design 與 representative use cases，未提供可量化的 benchmark 結果、資料規模、baseline 對比或 accuracy、latency、cost 等數字。\\n\\n| 評估面向 | 論文報告內容 |\\n|---|---|\\n| Biomedical QA | 展示三 agent pipeline：Extractor → Reasoner → Answer Agent，可對應 PubMedQA 與 MedQA USMLE 類型任務；論文未報告具體效能數字。 |\\n| Radiology report generation | 描述包含 extraction、pathology classification、impression generation、follow-up recommendation 與 evaluation 的 extended workflow，支援條件式 routing；論文未報告具體效能數字。 |\\n| Decomposer | 以 MedGemma 4B 從 plain-language description 產生 task-adaptive pipeline，並示範於 chest CT pathology classification 與 USMLE-style reasoning；論文未報告成功率或品質數字。 |\\n| Deployment | 說明 Gemini API 與 Ollama/MedGemma 4B local deployment 均已測試；論文未報告速度、成本、資源需求或模型間比較。 |",
+      "insights": [
+        "若臨床 workflow 需要可稽核性，可將 extraction、reasoning、decision formatting 與 evaluation 拆成具體階段，並保存每階段輸出，以便定位錯誤來源。",
+        "YAML-based orchestration 可讓臨床專家在不修改 Python 程式碼的情況下替換模型、提示詞與知識來源，但實際部署仍應進行任務與安全性驗證。",
+        "標準化 verdict line 與明確變數綁定能提高輸出可解析性與流程重現性；然而，這種格式控制不等同於臨床正確性或 hallucination prevention，應搭配獨立評估與人工審查。"
+      ],
+      "limitations": "作者明確指出，MARC v1 主要採 sequential execution，尚未充分支援 parallel agents、dynamic routing、disagreement resolution、iterative refinement、variable-depth pipeline 與 human-in-the-loop。論文亦未進行 comprehensive empirical benchmark，未比較 single-prompt baselines，未提供 accuracy、reliability、latency、cost、error localization 或 clinician usability 的量化結果。未來將評估更多 clinical tasks、datasets 與 model backends，並研究更彈性的 orchestration。",
+      "tags": [
+        "agent-evaluation",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-agent orchestration",
+        "clinical AI workflow",
+        "prompt engineering",
+        "retrieval-augmented generation",
+        "radiology report generation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13472",
+      "title": "AaLLM: An End-to-End Analog Circuit Design Framework from Topology Generation to Sizing Using Large Language Models",
+      "abstract": "Analog circuit design is a time-consuming, iterative process in a nonlinear and high-dimensional design space that relies heavily on expert intuition. Among recent developments, LLMs have introduced a promising approach by bringing natural language reasoning to circuit design tasks. The majority of conventional LLM-based approaches provide fragmented solutions that focus either only on sizing or topology generation. These methods require adding specific technical knowledge manually, which is inefficient and prone to hallucinations during circuit sizing. Moreover, the inherent trade-off in meeting different specs makes current approaches iterative and tedious. Another shortcoming is the inability to create innovative topologies, which may lead to sub-optimal designs due to reliance on conventional topologies. In this paper, we present AaLLM, an open-source end-to-end multi-agent LLM workflow that takes user specs as input and outputs the appropriate netlist, encompassing both topology generation and circuit sizing. AaLLM automates the creation of a relevant knowledge base from research papers and textbooks to combat tedious manual data collection. A RAG model is implemented to emulate circuit design expertise using this knowledge base. Moreover, AaLLM uses a novel tri-agent feedback system comprising a Designer that determines circuit component values, a Critic that scrutinizes these values, and an Evaluator that minimizes circuit sizing iterations by arbitrating between the other two agents. AaLLM-generated novel topologies achieve a figure of merit (FoM) comparable to that of known topologies, and up to 3x higher for certain circuits. Testing on several circuit topologies, our results show a 3x - 4.5x decrease in the number of SPICE calls at inference when compared to SOTA multi-agent LLM pipelines. The results also show a 40x decrease in wall-clock time compared to existing approaches.",
+      "authors": [
+        "Mohammed Ayman Habib",
+        "Rylan Hart",
+        "Morteza Fayazi"
+      ],
+      "categories": [
+        "eess.SY",
+        "cs.AI"
+      ],
+      "published": "2026-08-13T16:57:07+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13472v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13472",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Analog 電路設計是在非線性、高維度設計空間中進行的耗時迭代流程，高度依賴專家直覺。現有 LLM 方法多半只處理 sizing 或 topology generation，且需要人工加入技術知識，可能造成 circuit sizing hallucination；不同規格間的取捨也使設計反覆而繁瑣，並限制創新 topology 的產生。本文提出 AaLLM，一個開源、端到端的 multi-agent LLM workflow，輸入使用者規格後輸出包含 topology generation 與 circuit sizing 的 netlist。系統自動從論文與教科書建立 knowledge base，使用 RAG 模擬電路設計專業知識，並以 Designer、Critic、Evaluator 組成 tri-agent feedback system。另以 fine-tuned Seq2Seq 模型產生新穎 topology。實驗顯示，新 topology 的 FoM 可與已知 topology 相當，部分電路最高提升 3 倍；相較 SOTA multi-agent LLM pipelines，SPICE calls 減少 3 至 4.5 倍，wall-clock time 減少 40 倍。",
+      "problem_statement": "類比電路設計同時包含 topology selection 與 parameter sizing，具有非線性、高維度及多規格取捨。既有 LLM 方法多聚焦單一階段，常依賴人工技術知識或單次生成，可能產生違反 device physics 的 sizing hallucination；既有 topology 方法則受限於小型 library，或生成大量難以驗證的候選。因此缺少能以知識支援、模擬驗證並端到端完成 topology 與 sizing 的統一流程。",
+      "proposed_solution": "作者提出 AaLLM，將 fine-tuned FLAN-T5 topology generator、RAG-based topology selector 與 SPICE-in-the-loop tri-agent sizing system 串成端到端流程。Topology generator 以固定格式的 bipartite component-node matrix 產生 conventional 與 novel candidates；RAG 從論文、教科書及 PDK 文件檢索電路理論，協助選擇 topology 與 sizing。Sizing 則分離 Critic 的診斷、Evaluator 的策略仲裁和 Designer 的參數修改，並以 curriculum controller 依序處理 DC、AC 與 transient 目標。核心創新是將 topology synthesis、知識檢索、模擬驗證與多代理 sizing 置於同一自動化 pipeline。",
+      "core_contributions": [
+        "提出涵蓋 topology generation、topology selection 與 circuit sizing 的開源端到端 AaLLM framework。",
+        "在 topology selection 與 sizing 階段導入 RAG，結合 semantic retrieval、BM25 與 contextual augmentation，從類比電路論文、教科書及 PDK 文件提供設計知識。",
+        "提出 Designer、Critic、Evaluator 三代理 sizing loop，搭配 SPICE feedback、physics heuristics、matching constraint 與 curriculum-based optimization，以降低 sizing iterations。"
+      ],
+      "methodology": "AaLLM 將設計問題形式化為同時尋找 topology T 與參數向量 x，使所有性能約束 c_k(T,x)<0。首先，specification resolver 將使用者的 inequality constraints 與 fine-tuning 規格範圍相交，並對每項規格取有效區間中點；超出訓練範圍時則夾到邊界並發出警告。Topology 以 bipartite component-node matrix 表示，包含 component-type vector、元件與 net 名稱，以及固定長度的 connection matrix。Fine-tuned FLAN-T5 Seq2Seq 模型以規格文字和 masked matrix template 為輸入，透過三階段 curriculum 學習連接生成、元件排列與同時預測元件類型及連接。每個規格產生多個候選，先以預設參數進行 SPICE，按加權規格距離排序，再由 RAG selection agent 選擇。RAG knowledge base 來自論文、教科書與 PDK 文件，採 contextual augmentation；檢索同時使用 dense semantic index 與 BM25 keyword index，再以 weighted reciprocal-rank fusion 合併，並可在 ReAct loop 中進行 web scraping。Sizing 階段由 Critic 根據 SPICE 結果診斷未達規格的元件與嚴重程度，Evaluator 分析歷史趨勢、停滯或退化並給出策略，Designer 執行 SET、SCALE 或 OFFSET 參數修改。流程以 SPICE 閉迴路迭代，並依序處理 DC biasing、AC analysis、transient analysis，後續階段若使早期規格退化可回退。評估使用 Pass@1、規格成功率、FoM、iterations、LLM calls 與 SPICE simulations。",
+      "key_results": "| 評估項目 | AaLLM 結果／比較 |\n|---|---|\n| Topology structural validity | Pass@1 = 100%，涵蓋 24 個 OPAMP target specs |\n| Topology electrical validity | Pass@1 = 100%，定義為 SPICE convergence 且 gain 為正 |\n| Novel topology vs canonical Miller（12 tasks、每 task 2 seeds） | Novel：FoM 平均 0.394、22/24 成功；Canonical：FoM 平均 0.454、22/24 成功 |\n| Tri-agent sizing success | 24 個 target specs 的 test bench 中達成所有目標規格的比例為 91.6% |\n| AaLLM vs AnaFlow | 同一 45 nm ASU PTM canonical Miller benchmark：AaLLM 使用 2 次 SPICE calls，AnaFlow 使用 9 次；作者報告 wall-clock time 減少 40 倍 |\n| AaLLM vs Atelier | 4 個 two-stage circuits、每電路 2 seeds：AaLLM 成功 8/8、使用 9104 次 simulations；Atelier 成功 4/8、使用 2540 次 simulations |\n| Ablation（two-stage Miller OTA） | 完整 AaLLM：10.3 iterations、31.0 LLM calls、gain 50.7 dB、UGB 19.45 MHz；移除 RAG：17.3 iterations、49.7 LLM calls、gain 48.1 dB、UGB 11.24 MHz |\n| Active filters | 在 SK LPF、SK HPF、MFB BPF 的展示案例中，表 VI 所列 gain、frequency、selectivity 與 power 均達到目標；論文未報告更大規模的 filter success rate。",
+      "insights": [
+        "對需要工具互動的工程任務，可將生成、診斷、策略仲裁與參數修改拆分為不同 agent，並以 simulator 或其他外部工具作為客觀 feedback。",
+        "RAG 系統同時結合 semantic search 與 keyword search，對具有相近縮寫或精確技術術語的電路規格較具實務價值；但其效果仍應透過移除 RAG 的 ablation 驗證。",
+        "將離散 topology generation 與連續 parameter sizing 分成不同模型與階段，並用中間的 SPICE 預篩和知識檢索銜接，有助於建立可重現的端到端評測流程。"
+      ],
+      "limitations": "論文主要在 SkyWater 130 nm 與 ASU PTM 45 nm、OPAMP 及少量 active-filter 拓撲上驗證，跨製程、電路類型與更大 topology space 的泛化仍未充分量化。雖報告 novel topology，但未提供完整的新穎性判定流程或資料規模；RAG 自動抓取資料的錯誤與知識庫品質影響也未作系統性分析。與 Atelier 的 simulation 總量比較數字顯示其使用較多 simulations，與摘要所稱效率改善需依具體 benchmark 解讀。",
+      "tags": [
+        "agent-evaluation",
+        "rag-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "RAG-based engineering design",
+        "SPICE-in-the-loop multi-agent optimization",
+        "analog circuit topology generation",
+        "LLM agent evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13505",
+      "title": "Intern-S2-Preview: Scientific Agentic Foundation Model",
+      "abstract": "Scientific discovery increasingly requires AI systems that can reason over scientific evidence of heterogeneous modalities, interact with scientific tools and environments, and sustain progress across long task horizons. We present Intern-S2-Preview, a series of scientific agentic foundation models designed to support multimodal scientific understanding, reasoning, generation, and long-horizon tasks. The training pipeline begins with scientific multimodal pre-training over rendered scientific documents, interleaved image-text data, and diverse scientific corpora. Starting from the pretrained checkpoint, we apply a unified post-training pipeline consisting of supervised fine-tuning, scalable multi-task reinforcement learning (RL), black- and white-box agentic RL, and on-policy distillation. This pipeline is supported by practical techniques that improve rollout and training stability and efficiency, including partial rollout with off-policy correction, adaptive length regularization, online speculative decoding, robust multi-task optimization, and trace-aware experience assembly for agentic tasks. At the architecture level, Intern-S2-Preview-397B extends time series modelling from efficient long-sequence understanding to numerical forecasting, while Memory Decoder is studied as a separate memory-augmented path for rapid scientific specialization without modifying the frozen 397B backbone. Evaluations across scientific, multimodal, agentic, and general-purpose benchmarks show that Intern-S2-Preview-397B achieves competitive or leading results in multiple settings. The time series modules improve scientific signal understanding and forecasting on SciTS, while the separate Intern-MemDec-4B extension improves the Biology-Instructions average score from 56.92 to 60.32 without modifying the frozen 397B backbone.",
+      "authors": [
+        "Lei Bai",
+        "Jiaqi Cao",
+        "Chiyu Chen",
+        "Guanzhou Chen",
+        "Kai Chen",
+        "Guangran Cheng",
+        "Erfei Cui",
+        "Xuanlang Dai",
+        "Shengyuan Ding",
+        "Shangheng Du",
+        "Yanhui Duan",
+        "Yue Fan",
+        "Youqing Fang",
+        "Quan Gan",
+        "Yuanyuan Gao",
+        "Jiaye Ge",
+        "Lixin Gu",
+        "Yuzhe Gu",
+        "Qipeng Guo",
+        "Junjun He",
+        "Xin Hong",
+        "Ming Hu",
+        "Zhouqi Hua",
+        "Haian Huang",
+        "Junhao Huang",
+        "Zixian Huang",
+        "Minxi Jin",
+        "Lingkai Kong",
+        "Alexander Lam",
+        "Zehao Li",
+        "Zonglin Li",
+        "Tianhao Liang",
+        "Dahua Lin",
+        "Junyao Lin",
+        "Tianyang Lin",
+        "Zhouhan Lin",
+        "Jiangning Liu",
+        "Jin Liu",
+        "Kuikun Liu",
+        "Wenran Liu",
+        "Yifei Liu",
+        "Yuhong Liu",
+        "Yuhong Liu",
+        "Zhoumianze Liu",
+        "Ziyan Liu",
+        "Ziyu Liu",
+        "Haijun Lv",
+        "Han Lv",
+        "Chengqi Lyu",
+        "Le Ma",
+        "Ningsheng Ma",
+        "Zerun Ma",
+        "Haoyang Peng",
+        "Runyu Peng",
+        "Jifei Shan",
+        "Zixin Shang",
+        "Kou Shi",
+        "Xiang Shi",
+        "Qisheng Su",
+        "Xuerui Su",
+        "Hao Sun",
+        "Xiao Sun",
+        "Yanan Sun",
+        "Yu Sun",
+        "Huanze Tang",
+        "Yinghao Tang",
+        "Wenhui Tian",
+        "Zhongbo Tian",
+        "Bingli Wang",
+        "Haomin Wang",
+        "Jiarui Wang",
+        "Jingzhi Wang",
+        "Rui Wang",
+        "Xiquan Wang",
+        "Yi Wang",
+        "Zhecan Wang",
+        "Ziyi Wang",
+        "Zun Wang",
+        "Rubin Wei",
+        "Lianyi Wu",
+        "Wen Wu",
+        "Yue Wu",
+        "Yuhan Wu",
+        "Zhenyu Wu",
+        "Zijian Wu",
+        "Shuhao Xing",
+        "Jun Xu",
+        "Xingle Xu",
+        "Xuenan Xu",
+        "Xiangchao Yan",
+        "Ziang Yan",
+        "Bowen Yang",
+        "Danni Yang",
+        "Lin Yang",
+        "Zhiqi Yang",
+        "Qian Yao",
+        "Haochen Ye",
+        "Peng Ye",
+        "Jinhui Yin",
+        "Jiashuo Yu",
+        "Dingbo Yuan",
+        "Fei Yuan",
+        "Yuhang Zang",
+        "Bo Zhang",
+        "Chao Zhang",
+        "Chen Zhang",
+        "Hongjie Zhang",
+        "Junming Zhang",
+        "Wenlong Zhang",
+        "Wenwei Zhang",
+        "Yiming Zhang",
+        "Zhuo Zhang",
+        "Ziyang Zhang",
+        "Haiteng Zhao",
+        "Penghao Zhao",
+        "Yibo Zhao",
+        "Zhonghan Zhao",
+        "Zhihang Zhong",
+        "Bowen Zhou",
+        "Peiheng Zhou",
+        "Xin Zhou",
+        "Xinyu Zhou",
+        "Yunhua Zhou",
+        "Dongsheng Zhu",
+        "Yicheng Zou"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.CL",
+        "cs.CV"
+      ],
+      "published": "2026-08-13T17:31:28+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13505v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13505",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "科學發現需要 AI 系統能對異質模態的科學證據進行推理、操作科學工具與環境，並在長期任務中持續推進。本文提出 Intern-S2-Preview 系列 Scientific Agentic Foundation Models，支援多模態科學理解、推理、生成與長時域任務。訓練先涵蓋 rendered scientific documents、交錯圖文資料及多樣科學語料的 scientific multimodal pre-training，再採用 supervised fine-tuning、可擴展 multi-task reinforcement learning、black-/white-box agentic RL 與 on-policy distillation。系統另提出 partial rollout with off-policy correction、adaptive length regularization、online speculative decoding、GEPO 與 trace-aware experience assembly 等技術。397B 模型加入 time-series forecasting 分支；獨立的 Memory Decoder 則在凍結 backbone 下進行科學領域特化。評估顯示模型在多項科學、多模態、agentic 及通用 benchmark 具競爭力。",
+      "problem_statement": "現有通用 LLM 雖具指令遵循與推理能力，卻未充分專精於異質科學模態、領域協議與可驗證工具互動；科學多模態模型也多以靜態問答評估，缺乏長時域規劃、反覆執行與環境回饋。因此，論文要解決的是如何建立可整合科學證據理解、數值訊號處理、工具使用及持續任務推進的科學 agentic foundation model。",
+      "proposed_solution": "作者提出 Intern-S2-Preview 系列及其主模型 Intern-S2-Preview-397B，採用從科學多模態預訓練到 SFT、multi-task RL、agentic RL，再到 on-policy distillation 的分階段統一流程。資料層面保留 PDF 的文字、圖表、方程式與版面關係；訓練層面以可驗證獎勵和黑／白盒環境培養推理與工具互動。架構上加入專用 time-series forecasting branch，並以凍結 397B backbone 外接 Memory Decoder，透過 token-level router 動態融合領域記憶與通用模型，達成不改寫核心參數的快速科學特化。",
+      "core_contributions": [
+        "提出面向科學發現工作流的 Intern-S2-Preview-397B，將多模態科學理解、推理、生成、工具互動與長時域 agentic 能力整合於單一 foundation model。",
+        "建立由 scientific multimodal pre-training、SFT、multi-task RL、agentic RL 及 on-policy distillation 組成的統一訓練流程，並配套 partial rollout、off-policy correction、adaptive length regularization 與 online speculative decoding 等穩定化及效率技術。",
+        "提出兩條互補的架構路徑：在 397B backbone 中加入 time-series numerical forecasting 模組，並以凍結 backbone 搭配獨立 Memory Decoder 實現不改寫核心參數的領域特化。"
+      ],
+      "methodology": "模型以 Intern-S2-Preview-397B 為主體。預訓練包含 scientific text、rendered scientific pages 的 Visual Pre-training，以及由 PDF 經 OCR/layout parsing、視覺單元裁切、交錯序列組裝與 visual-gain filtering 建立的 image-text corpus；另以 image embedding 建立向量資料庫，支援 text-to-image 與 image-to-image retrieval，並以去重、reranking 和品質分數後處理。時間序列 encoder 使用 temporal chunk、normalization、CNN、compressive patching、Q-Former、channel-wise Transformer 與全局 temporal modelling，支援最高約 300,000 time steps；forecasting branch 以 LLM 語義表徵和數值時間表徵條件化 causal Transformer，並由 horizon predictor 決定預測長度。後訓練依序採 SFT、具 verifiable objectives 的 multi-task RL，以及 black-/white-box agentic RL；以 harness×task abstraction 對齊環境軌跡與 token rollout，最後用 on-policy distillation 合併專家策略。RL 系統採 partial rollout、token-level importance sampling correction、staleness 約束、R3 routing replay、BKL outlier mask、GEPO、adaptive length regularization 與 online speculative decoding。Memory Decoder 以 retrieval distillation 加 gold-token CE 訓練，推論時由 router 動態融合 backbone 與 memory distributions。評估涵蓋科學、多模態、agentic、通用及 SciTS 等 benchmark，並報告任務分數、forecasting 表現與輸出長度／reward 比較。",
+      "key_results": "論文報告的主要數據如下；對於僅以「competitive」或「leading」描述、但未給出具體分數的 benchmark，不能補列數值。\n\n| 評估或設定 | 結果 |\n|---|---|\n| SciTS time-series understanding and forecasting | 論文稱 time-series modules 帶來改善，但未報告具體數字 |\n| Biology-Instructions，Intern-S2-Preview-397B backbone | 平均分 56.92 |\n| Biology-Instructions，搭配獨立 Intern-MemDec-4B | 平均分 60.32，提升 3.40 分 |\n| Intern-S2-Preview-397B 的科學、多模態、agentic 與通用 benchmark | 論文稱多項結果具競爭力或領先，但未在提供內容中報告完整數值對比 |\n| Adaptive length regularization（Intern-S2-Preview-35B 訓練比較） | reward 曲線相近，平均輸出長度顯著降低；論文未報告具體長度與 reward 數字 |\n\n以上區分了作者明確報告的數據與定性結論。",
+      "insights": [
+        "若要訓練長時域科學 agent，應將可驗證任務獎勵、工具互動軌跡、環境觀察及 token-level rollout trace 對齊，避免只以靜態問答衡量能力。",
+        "在多任務 RL 中，可採用按任務難度啟用的 adaptive length regularization：對已具較高通過率的問題鼓勵較短的正確推理，對困難問題保留探索空間。這是根據論文方法提出的實務應用洞察。",
+        "對持續演化且長尾的科學領域，可考慮以外接 parametric memory 進行模組化特化，保留凍結通用 backbone；實際部署仍需同步驗證專業任務與通用能力。"
+      ],
+      "limitations": "論文未完整提供各 benchmark 的數值表格、baseline 細節、資料規模與消融結果，因此難以獨立判斷各訓練技術的個別貢獻。Memory Decoder 只以 Biology-Instructions 展示，領域泛化、記憶衝突、長期可靠性與實際科學發現成效仍需更多評估；模型規模與 agentic RL 的部署成本也未量化。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "科學多模態模型",
+        "長時域工具使用 agent",
+        "時間序列理解與預測",
+        "參數化外部記憶"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13522",
+      "title": "Vero: Can AI Agents Build Formally Verified Software Repositories?",
+      "abstract": "AI agents are increasingly used for programming, but do not provide any guarantee on the correctness of generated code. Verified code generation, in which an agent produces both an implementation and a machine-checked proof of its specification, offers a stronger path toward trustworthy AI-generated software. Existing benchmarks in this direction either focus on individual functions or only evaluate proof generation with provided implementations. It is still an open question whether agents can make coherent implementation and proof choices across real multi-module codebases. To bridge this gap, we introduce Vero, the first benchmark to evaluate joint implementation and proof synthesis at the repository level. Vero contains 43 multi-module instances sourced from real-world repositories spanning Python, Dafny, Verus, and Coq, and covering diverse domains from cryptographic protocols to distributed systems. Each instance consists of a multi-module Lean 4 repository with predetermined API interfaces, manually curated formal specifications, and reference implementations, supporting both proof-only and code-and-proof evaluation modes. To improve benchmark reliability, Vero also includes an audit mechanism where agents are allowed to formally prove unsatisfiability of provided specification or incorrectness of reference code, which surfaces and corrects latent code and specification errors during curation. We evaluate frontier coding-agent configurations with Lean toolchain access. The strongest agent fully solves only 27 of 43 instances and closes no specifications on the hardest repositories. Vero provides a concrete testbed for measuring progress toward repository-scale verified software synthesis, where current agents still fall short. We release the benchmark, curation pipeline, and evaluation harness at https://github.com/sunblaze-ucb/vero.",
+      "authors": [
+        "Zhe Ye",
+        "Hantao Lou",
+        "Yuechun Sun",
+        "Peiyang Song",
+        "Zhengxu Yan",
+        "Timothe Kasriel",
+        "Qingyang Zhang",
+        "Kaiyu Yang",
+        "Soonho Kong",
+        "Jingxuan He",
+        "Dawn Song"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.LO",
+        "cs.PL",
+        "cs.SE"
+      ],
+      "published": "2026-08-13T17:41:27+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13522v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13522",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "AI agents 越來越常被用於程式設計，但通常無法保證生成程式的正確性。Verified code generation 要求 agent 同時產生 implementation 與符合 specification 的 machine-checked proof，提供更強的可信度。既有 benchmark 多聚焦個別函式，或在固定 implementation 上評估 proof generation，尚未回答 agent 能否在真實 multi-module codebase 中協調 implementation 與 proof。作者提出 Vero，首個評估 repository-level joint implementation and proof synthesis 的 benchmark，包含來自 Python、Dafny、Verus 與 Coq 的 43 個多模組 Lean 4 repository，涵蓋 cryptographic protocols、distributed systems 等領域。Vero提供 proof-only 與 code-and-proof 兩種模式，並以 formal audit 機制檢查 specification 不可滿足性及 reference code 錯誤。最強 agent 在 code-and-proof 模式僅完整解決 43 個 instance 中的 27 個，且未能解決最困難 repository 的 specifications，顯示現有 agents 距離 repository-scale verified software synthesis 仍有明顯差距。",
+      "problem_statement": "既有 verified code generation benchmark 多半只評估單一函式，或在固定 implementation 上進行 proof generation，無法衡量真實 repository 中跨模組依賴、長程推理，以及 implementation 與 proof 的相互影響。當 implementation 被修改時，可能連帶破壞其他檔案的 proofs；而 specification 或 reference code 的潛在錯誤也可能被誤判為 agent 失敗。因此需要能評估完整 codebase 一致性、同時具備實作與證明能力，並可辨識 benchmark 缺陷的 repository-level benchmark。",
+      "proposed_solution": "作者提出 Vero，一個以 Lean 4 為統一驗證目標的 repository-scale benchmark。其核心是將多個 API、共享 definitions、reference implementations 與跨模組 specifications 組成完整 Lean project，並提供 proof-only 及 code-and-proof 兩種互補任務。前者隔離 proof synthesis，後者要求 agent 選擇 implementation 並證明其正確性，以直接測量兩者耦合。Vero的另一項創新是 formal audit mechanism：允許提交 machine-checked 證據，證明 reference implementation 不正確、個別 specification 不可滿足或 specifications 彼此不一致，將潛在資料錯誤轉化為可供 curator 修正的正式發現。",
+      "core_contributions": [
+        "提出 Vero，首個在 Lean 4 repository level 評估 joint implementation and proof synthesis 的 benchmark；資料集包含 43 個多模組 instance、743 個 scored APIs 與 2,705 個 specifications。",
+        "建立可由 agent 提交 machine-checked negative evidence 的 formal audit mechanism，用於發現 specification 不可滿足、reference implementation 錯誤及 specification set 不一致，協助持續修正 benchmark。",
+        "以兩種 coding-agent harness、四個 frontier model configurations，在 proof-only 與 code-and-proof 模式進行完整 repository 評估，並分析 shared lemma libraries、implementation-proof coupling 與失敗類型。"
+      ],
+      "methodology": "Vero將每個 instance 表示為多模組 Lean 4 project，固定提供 data type、helper definitions、API signatures 與形式 specifications，並以 RepoImpl 結構統一收集 API implementation。每個 specification 都是 RepoImpl→Prop，因而可在不同 implementation 上驗證，也支援 audit。資料由兩條路徑建立：Track 1 將 Dafny、Verus、Coq 等 formal repository 翻譯為 Lean 4；Track 2 將 Python repository 的 implementation 與文件、測試轉譯為 Lean，並由人工審查 specifications。每個階段由 LLM agent 執行，經 curator review、結構與 build 檢查及語意審查後才進入下一階段。Proof-only 模式提供 reference implementation，agent 只需證明全部 specifications；code-and-proof 模式則須實作所有 APIs 並證明其自身 implementation 滿足全部 specifications。Grader 從指定 marker 擷取內容，在乾淨副本重建 repository，使用 Lean toolchain 重新編譯，並透過 axiom allowlist、宣告檢測與 LLM judge 防止 axiom injection、definition edits 等 reward hacking。評估指標採 repository-level full solve：只有所有 implementation 與 specifications 均通過才算成功；實驗使用 Lean 4.29.1、90分鐘預算、兩種 coding-agent harness 與四個 frontier model configurations。另設 formal audit 路徑，接受 reference implementation 違反 specification、個別 specification 不可滿足，以及 specification set 不一致的 machine-checked evidence。",
+      "key_results": "| 評估項目 | GPT-5.5 xhigh | GPT-5.5 mid | Claude Opus 4.8 xhigh | Claude Sonnet 5 xhigh |\n|---|---:|---:|---:|---:|\n| Code-and-proof 完整解決數 | 27/43 | 2/43 | 8/43 | 2/43 |\n| Proof-only 完整解決數 | 25/43 | 6/43 | 10/43 | 2/43 |\n| GPT-5.5 xhigh code-and-proof specification 通過率 | 87.3% | 論文未報告 | 論文未報告 | 論文未報告 |\n| GPT-5.5 xhigh proof-only specification 通過率 | 85.8% | 論文未報告 | 論文未報告 | 論文未報告 |\n\n此外，10 個 instance 在兩種模式及全部八個 configuration 下皆未被完整解決。82 個 full solves 中，code-and-proof 的 helper theorem proof lines 中位數占比為 73.6%，proof-only 為 71.6%；80/82 個 full solves 的 helper 至少被兩個 specifications 共用，65/82 個至少被五個共用。",
+      "insights": [
+        "若評估目標是可信任的程式生成，應採用 repository-level 的完整通過標準，而非只統計個別 proof 或 specification 的通過率。",
+        "Agent 工作流程應讓 implementation、proof 與 lemma-library 建構形成反覆迭代；論文觀察到 agents 往往早期固定 implementation，遇到證明困難後持續堆疊 proof，而不回頭重構較易驗證的實作。",
+        "正式驗證 benchmark 需要獨立的 audit 與 anti-cheating 機制；同時，code-and-proof 評估應補充 complexity 等未被 specifications 涵蓋的性質，否則 agent 可能以較低效率但較易證明的 implementation 換取完整得分。"
+      ],
+      "limitations": "Vero目前只以 Lean 4 為 target，且資料集偏向能轉譯至中等規模 Lean scaffold 的程式；並未充分涵蓋 concurrent 或 temporal protocols。benchmark 也尚未評估 incremental maintenance。formal audit 能確認形式上的 satisfiability，卻不能保證 specification 在語意上完整或正確，因此仍需人工審查與來源 formalization 交叉核對。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "形式化驗證與 Lean theorem proving",
+        "repository-level code generation",
+        "coding-agent evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13426",
+      "title": "Reduced Matrix Multiplication: Input-Adaptive Matrix-Product Reduction for LLM Inference",
+      "abstract": "Transformer-based language models achieve strong performance but incur substantial inference cost due to repeated high-dimensional matrix multiplications. We propose Reduced Matrix Multiplication (RMM), a training-free, input-adaptive inference method that reduces Transformer matrix products by selecting informative slices along their contraction dimensions, without modifying model weights. Under a simple retention-ratio control, RMM provides a smooth and predictable accuracy-efficiency trade-off. Across language models ranging from 1B to 70B parameters, we find that reduction tolerance depends on the model family, task, component, and retention ratio, although it often improves with model scale. Under moderate reduction, RMM remains robust across the evaluated discriminative, autoregressive generation, and long-context settings. We further show that the same principle extends to multimodal vision-language inference. Mechanistic ablations reveal a structural asymmetry within Transformers: attention-side computations are substantially more reducible than MLP components. Finally, wall-clock benchmarks with custom kernels on an NVIDIA A100 show that these computational savings can translate into practical runtime gains, especially at longer sequence lengths. Together, these results position RMM as a scalable direction for input-adaptive inference-time optimization.",
+      "authors": [
+        "Zixuan Lan",
+        "Yanhong Li",
+        "Jiawei Zhou"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-13T16:16:04+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13426v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13426",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "Transformer-based language models 雖具備強大性能，卻因反覆執行高維度矩陣乘法而產生龐大 inference 成本。本文提出 Reduced Matrix Multiplication（RMM），一種 training-free、input-adaptive 的 inference 方法：沿矩陣乘法的 contraction dimension 選取具資訊性的 slices，無須修改 model weights。透過簡單的 retention ratio，RMM 提供平滑且可預測的 accuracy–efficiency trade-off。作者在 1B 至 70B 的 language models 上發現，可容忍的 reduction 取決於 model family、task、component 與 retention ratio，且通常隨模型規模增大而改善。在中度 reduction 下，RMM 對 discriminative、autoregressive generation、long-context 與 multimodal vision-language inference 均具穩健性。機制分析顯示 attention-side 比 MLP 更具可 reduction 性；A100 wall-clock 實驗也證明，尤其在較長序列下，計算節省可轉化為實際 runtime gains。",
+      "problem_statement": "Transformer inference 大量成本來自 attention 與 MLP 中反覆的高維矩陣乘法；固定結構 pruning、低秩或 dimension reduction 通常在 inference 前決定刪除內容，token/KV 方法則主要改變 context 或 cache，未直接處理每次矩陣乘法的 contraction axis。activation sparsity 雖具輸入依賴性，主要針對 activation entries。論文要回答的是：每個輸入是否真的需要計算 contraction axis 上的所有 index，以及能否在不修改權重下動態減少這些計算。",
+      "proposed_solution": "作者提出 Reduced Matrix Multiplication（RMM），將任意矩陣乘法 Y=AB 的共享 contraction dimension 視為可動態縮減的計算軸。方法觀察當前 activation A，依各 column 的 L2 norm 評估資訊量，在指定 retention ratio 下以 deterministic TopK 選取索引，只計算對應的 A[:,I]B[I,:]。它可套用於 attention 的 QKᵀ feature axis、P V token axis，以及 MLP/linear projections。核心創新是把 input-adaptive selection 直接放在 matrix-product level，而非固定剪枝模型結構；同時以單一比例控制計算—性能取捨，並允許依 component 採用異質 retention policy。",
+      "core_contributions": [
+        "提出 RMM：不修改權重、依目前 activation magnitude，在每個矩陣乘法的 contraction dimension 以 TopK 選取保留索引，並由 retention ratio 控制計算量。",
+        "在 1B–70B language models、多種 discriminative、generation、long-context 任務及 Qwen2.5-VL-7B 上評估，展示輸入自適應 reduction 的準確率—效率取捨與跨模態延伸性。",
+        "透過 component-wise ablation 與理論分析指出 attention-side 比 MLP 更可 reduction，並以 Triton kernels 在 NVIDIA A100 上驗證 kernel-level 與 end-to-end latency gains。"
+      ],
+      "methodology": "RMM 將 Transformer 中的計算統一表示為 Y=AB，其中 A 是由當前輸入決定的 activation matrix，B 是 weight matrix 或 intermediate representation，兩者共享 contraction dimension d。對每個產品，先計算每個輸入維度的 activation column norm：s_j=||A[:,j]||₂；在使用者指定 retention ratio ρ 下，以 TopK 選出 k=ceil(ρd) 個索引 I，僅計算 A[:,I]B[I,:]。此選擇在每個 input、layer、attention head 與 decoding step 可不同。Attention 中，作者可沿 head feature dimension reduction QKᵀ，依 Q 的 column norm 選擇對應 Q/K 維度；也可在 P V 中沿 token dimension 依 attention-weight norm 選取 token。MLP 與 linear projection 則分別對 Up、Gate、Down projection 的 contraction axis 進行選擇，各自使用當前 activation 的 TopK subset。方法不修改或永久刪除 full model weights。理論上，單一矩陣乘法成本由 O(ndm) 降為約 O(nρdm)，但需額外計算 norm、TopK 與 indexing。作者以 LLaMA 3.1 1.5B/3B/8B/70B、Qwen3 7B/32B 與 Qwen2.5-VL-7B，在 zero-shot QA、language modeling、GSM8K、HumanEval、summarization、RULER long-context 及視覺任務上評估；指標包括 accuracy、ROUGE、BERTScore、任務分數與 latency。基線涵蓋 SparseGPT、Wanda、SliceGPT、magnitude pruning、H2O、static RMM 與 random pruning。另以 component ablation、不同 retention ratios、Triton kernels 及 A100 wall-clock 測試驗證機制與實用性。",
+      "key_results": "論文報告的主要結果如下；未在提供內容中列出的數字不另行補充。\n\n| 實驗 | 方法/設定 | 主要結果 |\n|---|---|---|\n| LLaMA 3.1 8B，zero-shot QA | RR=0.5；Full model vs RMM | Full model 平均 69.8；RMM 平均 59.8；RMM 在 ARC-C/ARC-E/COPA/PIQA/CommQA 為 36.8/63.0/70.6/76.6/51.9，優於 SparseGPT 平均 56.1、Wanda 52.7、SliceGPT 37.0、Magnitude 39.3。 |\n| LLaMA 3.1 8B，CNN/DailyMail | autoregressive summarization | Full model ROUGE-1/2/L/Lsum、BERTScore 為 37.4/15.6/24.3/31.3/86.8；RMM RR=0.8 為 37.5/15.7/24.2/31.4/86.7；RR=0.5 為 34.2/13.6/22.0/28.7/85.8。 |\n| Long-context RULER | LLaMA 3.1 8B，RR=0.8/0.5 | CWE 在 5K/15K/30K：Base 98.2/94.0/29.6，RR=0.8 為 98.1/94.1/29.3，RR=0.5 為 98.0/94.0/28.9；Hotpot：Base 53.6/56.4/51.2，RR=0.8 為 53.6/55.8/50.8，RR=0.5 為 53.6/55.6/50.5。 |\n| Qwen2.5-VL-7B | multimodal tasks，RR=0.5 | Full model POPE/Art./Foren./Count. 為 83.7/100.0/100.0/100.0；RMM 為 67.3/97.4/97.7/99.2；Static 為 63.0/91.3/43.3/79.2；Random 為 1.3/41.9/53.0/43.3。 |\n| A100 kernel latency | LLaMA 3.1 8B，RR=0.8 | QKᵀ 在序列長度 1024/2048/4096 的 speedup 為 1.36×/1.29×/1.56×；AV 為 1.67×/1.81×/1.89×。 |\n| A100 end-to-end latency | batch size 1，RR=0.8 | 序列長度 1024/2048/4096：Dense 109.39/264.67/661.36 ms；RMM 103.91/208.93/473.21 ms；speedup 1.05×/1.27×/1.40×。 |\n| 理論複雜度 | 單一 AB 矩陣乘法 | 保留 contraction dimension 的比例 ρ 後，目標乘法 arithmetic cost 由 O(ndm) 降為 O(nρdm)，但不包含 selection overhead。 |",
+      "insights": [
+        "實務部署可優先對 attention-side matrix products 使用較積極的 retention ratio，對 MLP 採取更保守或 component-specific 的 ratio；論文的 ablation 顯示整體 MLP reduction 對性能傷害較大。",
+        "若要在相同 reduction budget 下維持 generation 與 multimodal 表現，應採用依當前 activation 動態選擇維度的策略，而非固定 subset 或 random selection；但正式部署仍需以目標模型與任務重新校準 retention ratio。",
+        "RMM 的理論計算量約隨保留的 contraction dimension 比例縮放，但實際 speedup 取決於 TopK、norm、gather、kernel fusion、序列長度與硬體；因此評估效率時應同時報告 end-to-end latency，而不能只看 MACs。"
+      ],
+      "limitations": "論文聚焦於 training-free RMM，尚未探討結合訓練或額外適應的方法。多模態部分僅證明可行性，未詳細分析 vision-language model 各元件的動態 redundancy。實作也未完整整合所有 Transformer operations、inference frameworks 或 quantized backends；RMM 不減少權重儲存與模型參數量，實際收益仍受硬體、kernel 與 selection overhead 影響。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "input-adaptive inference",
+        "activation sparsity",
+        "structured pruning",
+        "approximate matrix multiplication",
+        "efficient Transformer inference"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13558",
+      "title": "OmniScientist: An Omni-Modal Omni-Discipline AI Scientist",
+      "abstract": "Recent advances in foundation models have enabled AI scientists to automate increasingly complete research workflows, from hypothesis generation and code execution to manuscript preparation. Yet workflow coverage alone does not provide access to the full evidence on which scientific discovery depends. Existing systems typically reason over text, code, labels, or precomputed summaries, leaving scientifically decisive spatial, temporal, cross-channel, and procedural relations unavailable to the agent. We introduce OmniScientist, an end-to-end, omni-modal AI scientist that conducts multidisciplinary research directly from heterogeneous raw evidence. A perception layer and 3 autonomous agents for ideation, experiment, and writeup operate within a deterministic pipeline, allowing observations to shape research questions, experimental decisions, and final claims throughout the research lifecycle. By running idea, rigour, and claim checks in code, the system enforces novelty screening, statistical validity, execution provenance, and numerical traceability. We evaluate OmniScientist on 36 real-data cases spanning 5 discipline families, 4 families of scientific evidence, and modalities including images, signals, audio, video, 3-D structures, trajectories, tables, formulae, and graphs. The system completes the full path from raw data to a compiled manuscript in all 36 cases and achieves a mean overall paper score of 6.3 with the reference reasoning backbone. In paired comparisons against a blind variant that receives only precomputed scalar features, direct perception improves all 7 evaluation dimensions and wins 85% of head-to-head judgments. These results show that lifecycle-wide perception is essential for evidence-grounded scientific discovery and provides a practical path toward broadly capable AI scientists.",
+      "authors": [
+        "Bobo Li",
+        "Hao Fei",
+        "Tianjie Ju",
+        "Mong-Li Lee",
+        "Wynne Hsu"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-13T17:59:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13558v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13558",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "基礎模型的進步使 AI scientist 能自動化假說生成、程式執行與論文撰寫等研究流程。然而，流程覆蓋並不等於能取得科學發現所依賴的完整證據；現有系統多半只處理文字、程式碼、標籤或預先計算的摘要，因而失去關鍵的空間、時間、跨通道與程序關係。本文提出 OmniScientist，一個端到端、全模態且跨學科的 AI scientist，直接從異質原始證據進行研究。系統由 perception layer 與 ideation、experiment、writeup 三個 autonomous agents 組成，置於 deterministic pipeline 中，使觀察能持續影響研究問題、實驗決策與最終主張。系統以程式碼執行 idea、rigour 與 claim checks，檢查新穎性、統計有效性、執行 provenance 及數值可追溯性。在涵蓋五類學科、36 個真實資料案例的評估中，系統完成全部端到端流程；使用 reference reasoning backbone 時，平均論文總分為 6.3。在與僅接收預計算 scalar features 的 blind variant 配對比較中，直接 perception 在七項評估維度皆有改善，並贏得 85% 的一對一判斷。",
+      "problem_statement": "現有 AI scientist 雖能涵蓋假說生成、程式執行與論文撰寫，卻通常只接收文字、程式碼、標籤或預計算摘要。這些介面會丟失影像的空間結構、訊號的時間順序、跨通道關係與實驗程序資訊，使代理只能在人工選定的表示上推理，限制異常發現、問題形成與主張支持；即使具備多模態能力，既有系統也多只在單一局部階段使用 perception。",
+      "proposed_solution": "作者提出 OmniScientist，將直接 raw-evidence perception 與三個 autonomous agents——ideation、experiment、writeup——整合進 deterministic pipeline。每個階段內部以 ReAct 交錯觀察、推理與工具操作，但階段轉移、失敗回溯與結果接納由程式碼控制。其核心創新是 lifecycle-wide perception：同一組原始觀察可影響研究問題、實驗設計、結果檢查與論文主張；同時透過 idea、rigour、claim checks 強制新穎性與可反駁性、統計嚴謹性、執行 provenance、anti-HARKing 及數值與主張追溯。新增學科主要透過 specification file，而非修改核心引擎。",
+      "core_contributions": [
+        "提出 OmniScientist，一個可直接處理異質原始科學證據、跨五類學科與多種模態的端到端 AI scientist。",
+        "提出 perception-first 的多代理研究架構，使原始觀察能在 ideation、experiment 與 writeup 全生命週期中影響決策。",
+        "將 novelty、falsifiability、leakage、effective sample size、multiple comparisons、execution provenance、anti-HARKing 與 claim traceability 等檢查以程式碼強制執行，並建立包含36個案例的跨學科 demonstration suite。"
+      ],
+      "methodology": "OmniScientist 將任務表示為 specification file，包含 dataset、scientific subject、target property、原始資料與模態資訊。Perception layer 先按 perceptual、symbolic、quantitative-statistical、procedural 四類 evidence family 組織資料，再依 modality 提供原生 numeric readers 與視覺工具；系統可分析 FFT、趨勢、軌跡、音訊統計、3-D PCA，也可渲染 image、signal、audio、video、3-D 或 trajectory 供模型檢視，並設有視覺檢查預算。Ideation agent 透過 ReAct 流程盤點資料、搜尋 OpenAlex／Crossref 文獻、產生至少五個候選想法，評估 novelty risk、可行性、可反駁性與統計 power，最後形成可執行的 falsifiable hypothesis。Experiment agent 在受控 run_python 環境中迭代產生與除錯程式，執行 primary test、baseline、ablation、mechanism、breakdown、sensitivity 與 leakage/grouping 分析，保存 data I/O、stdout、figures、configs 與所有嘗試。Rigour check 驗證資料確實載入、程式成功執行、數值來自真實輸出、測試數量完整計入 multiple-comparison correction、避免 leakage 與 circular prediction，並將不支持的分析降級至 trace。Writeup agent 依五種學科寫作規格逐節撰寫，只能引用 execution record；最後由 claim check 將論文數值與主張逐一追溯到輸出與分析。評估使用七個維度：Novelty、Soundness、Clarity、Significance、Reproducibility、Multimodal Grounding、Factual Accuracy，並由兩個跨系統 judge 評分。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---:|\n| 端到端案例完成數 | 36/36（100%）|\n| 評估案例與學科範圍 | 36 個真實資料案例、5 個 discipline families、4 個 evidence families |\n| Reference reasoning backbone 平均 overall paper score | 6.3（七維度評分）|\n| 直接 perception 相對 blind variant | 七個評估維度全部改善 |\n| 配對比較勝率 | 85% |\n| 主要 backbone（Sonnet 5）完成數／平均分 | 36／6.5 |\n| 最佳報告平均分（GLM-5.2）完成數／平均分 | 17／6.7 |\n| 36 次 primary runs 的 outcome | Supported 16（44%）、Mixed 17（47%）、Refuted 2（6%）、No verdict 1（3%）|\n| Rigour check 通過實驗階段 | 35/36（97%）|\n| 論文是否報告外部專家或實驗室驗證 | 論文未報告 |",
+      "insights": [
+        "若評測目標是證據導向的科學代理，應將原始觀察能力納入評估，而不能只比較文字、特徵向量或最終論文。",
+        "將開放式 LLM reasoning 放在由程式碼控制的 deterministic pipeline 內，可降低階段轉移、統計報告與數值引用依賴模型自律的風險。",
+        "研究代理應保存完整 execution record，將所有嘗試過的分析、資料輸入、stdout、圖表與設定納入 provenance，並讓最終主張只能引用已驗證紀錄。"
+      ],
+      "limitations": "評估主要是 36 個 demonstration cases，且論文未提供與完整既有 AI scientist 系統的全面端到端 baseline；論文分數由兩個 model judges 評定，可能不足以代表真實專家審查。系統也受限於可計算研究、工具與時間預算，且許多案例的科學發現仍屬資料內驗證，未證明可泛化或具因果性。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態科學代理",
+        "自主科學發現",
+        "LLM agent orchestration",
+        "科學研究 provenance",
+        "統計嚴謹性與 anti-HARKing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.13555",
+      "title": "HumanTracker: Towards Comprehensive and Human-Aligned Motion Tracking Benchmark",
+      "abstract": "Humanoid motion tracking is central to teleoperation and whole-body imitation, yet evaluation often disagrees with what people perceive in videos. Kinematic errors average per-frame pose differences but miss the physical artifacts that matter most, particularly unstable support and incorrect contacts such as foot skating and mistimed touch-downs. Meanwhile, widely used test suites are small and lack the diversity needed to stress contact-rich, long-horizon behaviors. We introduce HumanTracker to make humanoid tracking evaluation both perceptually aligned and scalable. The HumanTracker benchmark contains approximately 153 hours of optical motion trajectories from multiple professional performers, organized into four motion families with text labels for fine-grained diagnosis. We further propose HumanScore, a preference-aligned metric trained on 12K motion pairs containing 24K motions. Across representative state-of-the-art trackers, HumanScore better predicts human preferences and reveals contact and stability failures that kinematic metrics often miss.",
+      "authors": [
+        "Dairu Liu",
+        "Zekun Qi",
+        "Jiayu Zeng",
+        "Ruixi Yu",
+        "Yu Guan",
+        "Yintianrun Zhang",
+        "Xuchuan Chen",
+        "Sikai Liang",
+        "Zekai Li",
+        "Chenghuai Lin",
+        "Xinqiang Yu",
+        "Wenyao Zhang",
+        "He Wang",
+        "Li Yi"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-13T17:59:40+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.13555v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.13555",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "Humanoid motion tracking 是 teleoperation 與 whole-body imitation 的核心，但現有評估結果經常與人們觀看影片時的感受不一致。傳統 kinematic metrics 通常平均每幀姿態差異，卻忽略最重要的物理瑕疵，尤其是不穩定支撐，以及 foot skating、錯誤接觸與 touch-down 時機不正確等問題。此外，常用測試集規模較小，缺乏足以檢驗接觸密集與長時間行為的多樣性。本文提出 HumanTracker，使 humanoid tracking 評估更符合人類感知且可擴展。HumanTracker 包含約153小時、由多名專業表演者以光學動作捕捉取得的軌跡，分為四類動作並附有文字標籤，以支援細粒度診斷。作者進一步提出 HumanScore，利用包含12K動作對、共24K motions 的偏好資料訓練 preference-aligned metric。在多個代表性 state-of-the-art trackers 上，HumanScore 比 kinematic metrics 更能預測人類偏好，並揭示接觸與穩定性失敗。",
+      "problem_statement": "現有 humanoid motion tracking 評估主要依賴逐幀姿態差異，例如 joint error、keypoint error 或 MPJPE，無法充分反映 foot skating、錯誤接觸、支撐不穩、平衡與長時間誤差累積，因此數值可能與人類觀看影片的偏好不一致。此外，常用 AMASS 測試集僅約140條序列，缺少接觸轉換、非對稱平衡、複雜恢復與長尾動作，也通常只報告單一 aggregate score，難以定位 tracker 的失敗原因。",
+      "proposed_solution": "作者提出由兩部分組成的 HumanTracker 框架。第一部分是大規模、分類化的 optical motion benchmark：將24名專業表演者的約153小時動作 retarget 至同一29-DoF humanoid，並依主要接觸與 tracking failure regimes 分成 Daily、Highly Dynamic、Interaction、Ground，提供文字描述及 robot-space reference，以支援標準化與家族級診斷。第二部分是 HumanScore：從不同 trackers 對同一 reference 的同步 rollout 建立 pairwise human preference data，使用 temporal Transformer 直接處理 reference、姿態、控制、接觸動力學、root motion 與 keypoint 時序特徵，學習預測人類對穩定、接觸、平滑與自然性的偏好。",
+      "core_contributions": [
+        "提出 HumanScore：以人類對同步 tracking rollouts 的 pairwise preferences 訓練 trajectory reward model，評估接觸、穩定性、平滑度與自然性。",
+        "發布 HumanTracker benchmark，包含約153小時、24,995條軌跡，來自24名專業表演者，並分成 Daily、Highly Dynamic、Interaction 與 Ground 四個動作家族。",
+        "建立標準化 humanoid tracking 評估協議：統一29-DoF humanoid、MuJoCo入口、reference representation、rollout accounting 與指標，同時保留各 tracker 的原生 policy interface。"
+      ],
+      "methodology": "資料方面，作者以多相機 optical motion capture 從24名專業表演者取得約153小時動作，使用 General Motion Retargeting 轉換至 benchmark humanoid，人工檢查並移除漂浮、穿透地面與接觸不連續等瑕疵。資料包含 SMPL sequence、robot-space qpos reference、家族標籤與自然語言描述，按 source motion 分割為9:1 training/test；共24,995條軌跡，training 22,495、test 2,500，均以50Hz儲存。四類為 Daily、Highly Dynamic、Interaction、Ground。評估統一29-DoF humanoid與 MuJoCo entry point，但保留各 tracker 的原生 observation 與 action decoder；記錄 qpos、qvel、action、motor target、foot contacts、contact forces、pelvis/foot velocity、14個 keypoint pose與速度。Succ 在垂直位置誤差超過0.25m、pelvis rotation error超過1 rad或出現非有限值時終止；MPJPE為29個 actuated joint angle 的平均絕對誤差。HumanScore 的偏好資料來自 GMT、Humanoid-GPT、SONIC、TWIST2 在 training split 的同步 rollout，每段切成250 frames、即5秒窗口；六名 humanoid robotics 博士研究者標註 Left better、Right better、Similar 或 Cannot compare，後者不進入訓練。模型以每幀539維 token（70維 reference、469維 simulated state/control/contact/root/keypoint features）輸入四層、256維、八頭 attention、FFN 1024的 bidirectional temporal Transformer，使用 positional encoding、padding mask與masked mean pooling，再由三層 linear reward head輸出 scalar reward。以 Bradley–Terry loss 學習 strict preference，並對 Similar pair 使用對稱 equality loss。推論時每250 frames計算 sigmoid reward，按實際 frame 數加權平均並乘100形成 HumanScore。",
+      "key_results": "主要結果如下；Succ 越高、HumanScore 越高、MPJPE 越低越好。\n\n| 方法 | Daily Succ / MPJPE / HumanScore | Highly Dynamic Succ / MPJPE / HumanScore | Interaction Succ / MPJPE / HumanScore | Ground Succ / MPJPE / HumanScore |\n|---|---:|---:|---:|---:|\n| GMT | 17.0% / 0.250 / 2.4 | 36.2% / 0.196 / 7.0 | 81.4% / 0.205 / 11.7 | 0.0% / 0.456 / 4.0 |\n| TWIST2 | 60.1% / 0.105 / 10.1 | 39.9% / 0.112 / 16.9 | 91.3% / 0.111 / 28.3 | 0.0% / 0.341 / 4.5 |\n| SONIC | 93.8% / 0.102 / 49.5 | 82.1% / 0.118 / 41.0 | 97.6% / 0.128 / 54.6 | 20.1% / 0.231 / 26.5 |\n| Humanoid-GPT | 94.4% / 0.046 / 54.7 | 86.9% / 0.047 / 49.2 | 97.2% / 0.070 / 56.8 | 32.9% / 0.216 / 24.9 |\n\nHuman preference 對齊率：HumanScore 為90.83%，MPJPE為80.49%，MPJVE為84.04%，keypoint position MAE為84.05%，foot contact accuracy為78.82%，平均 joint acceleration 為69.33%，平均 joint jerk 為72.32%。HumanScore 的95% bootstrap CI 為87.36%–93.83%。作者報告 Humanoid-GPT 在 Daily 與 Highly Dynamic 三項指標均領先；SONIC 在 Interaction 的 Succ 與 Ground 的 HumanScore 分別最高。",
+      "insights": [
+        "評估 humanoid motion tracking 時，不應只依賴 MPJPE；應將 Succ、接觸一致性、速度、加速度、jerk 與 trajectory-level preference 分數並列，以區分姿態接近但物理表現不穩定的 rollout。",
+        "接觸相關特徵與數秒 temporal context 對 Ground 等多接觸動作特別重要；實務上可在評估管線中保留 foot contact、contact force、foot velocity 與 recovery 過程，而非只分析單幀姿態。",
+        "資料集應按失敗機制分層報告結果。HumanTracker 的家族級統計能揭示某 tracker 在一般行走可靠，但在 ground-level transitions 或 highly dynamic motions 中失敗，避免單一 aggregate score 掩蓋問題。"
+      ],
+      "limitations": "HumanScore 僅以 HumanTracker training motions 及四個 trackers 的 rollout 訓練，尚未證明對未見 robot、simulator 或 controller family 的泛化。其539維輸入包含硬體未必可取得的 simulator state 與 contact quantities。偏好資料每對主要只有一次判斷，未量化重複標註不確定性；資料家族分布不均，且目前僅評估單一29-DoF MuJoCo embodiment。作者未來將擴展至跨 embodiment、真實硬體與罕見接觸情境。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "humanoid motion tracking",
+        "human preference learning",
+        "robotics benchmark evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]

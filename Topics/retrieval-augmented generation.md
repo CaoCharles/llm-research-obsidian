@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2608.13476] MARC v1 - An Open-Source Multi-Agent Framework for Clinical AI Reasoning and Coo...|MARC v1: An Open-Source Multi-Agent Framework for ...]] (2026-08-13)
+
 - `[RAG Evaluation]` [[[2608.07370] LitTraceQA - A Benchmark for Multi-Stage Grounding and Verification in Scientifi...|LitTraceQA: A Benchmark for Multi-Stage Grounding ...]] (2026-08-07)
 
 - `[RAG Evaluation]` [[[2608.06305] Beyond Top-K - Replacing Black-Box Retrieval with Interpretable Agentic Operatio...|Beyond Top-K: Replacing Black-Box Retrieval with I...]] (2026-08-06)
