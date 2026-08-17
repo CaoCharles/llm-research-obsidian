@@ -1,0 +1,525 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.14446",
+      "title": "Wyvern: An Agentic Framework for Generating Grounded Multimodal Reports",
+      "abstract": "In the current artificial intelligence-driven innovation era, the pace of knowledge growth is accelerating, and is hard to keep up with. While generative models are increasingly used to synthesize content, they often lack in information grounding. To address these peculiarities of our time, we propose Wyvern, a multi-agent framework for the automated generation of grounded, multimodal technical reports. Wyvern allows for the generation of multimodal outputs, integrating images, tables, and text with supporting references in a unified report. Additionally, a particular focus is placed on the grounding of the content, with the implementation of a claims auto-revision stage. We conduct a human evaluation study to assess the quality of our proposed framework. The results show that the figures' informativeness is perceived as superior to that of a recent baseline in 87% of cases. Furthermore, Wyvern's reports are rated as more useful than those produced by three alternative methods in 63% to 100% of instances. We also carry out automatic evaluations showing that Wyvern gains up to 2.3$\\times$ in citation recall and 1.6$\\times$ in citation precision with respect to the baselines.",
+      "authors": [
+        "Beatrice Alessandra Motetti",
+        "Emilien Guandalino",
+        "Daniele Jahier Pagliari",
+        "Alessio Burrello",
+        "Lorenz K. Müller",
+        "Konstantin Berestizshevsky",
+        "Lukas Cavigelli"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T16:31:43+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14446v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14446",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "在人工智慧驅動創新的時代，知識成長速度加快，使人們難以持續掌握最新資訊。生成模型雖日益用於內容綜合，卻經常缺乏資訊 grounding。為此，本文提出 Wyvern，一個用於自動生成 grounded、多模態技術報告的 multi-agent framework。Wyvern 將 images、tables、text 與 supporting references 整合於統一報告中，並特別設計 claims auto-revision 階段，以強化內容 grounding。作者透過 human evaluation 評估框架品質；結果顯示，在 87% 的比較中，其 figures informativeness 被認為優於近期 baseline，且相較三種替代方法，Wyvern 報告在 63% 至 100% 的比較中被評為更有用。Automatic evaluation 也顯示，相較 baselines，Wyvern 的 citation recall 最高提升 2.3 倍，citation precision 最高提升 1.6 倍。",
+      "problem_statement": "Web 與科學文獻持續快速增長，使研究者難以整理異質且大量的資訊。既有自動長文生成方法雖能檢索與綜合內容，但常缺乏可追溯的 grounding，且多數只輸出文字，未能有效整合 figures 與 tables。論文因此聚焦於如何產生兼具資訊覆蓋、多模態呈現與 citation-supported factuality 的技術報告。",
+      "proposed_solution": "作者提出 Wyvern multi-agent framework，以模組化 workflow 協調多個 LLM agents。系統先透過 web search、文件解析、品質評分、連結擴展、去重與摘要建立 knowledge base，再以 outline planning 和 section expansion 生成報告。其核心創新包括從來源文件選擇並定位 informative figures、建立 overview table，以及在生成後將文字拆為 atomic claims，依 cited references 進行兩階段 grounding 檢查，對不精確 claims 進行 auto-revision，或移除 unsupported claims。",
+      "core_contributions": [
+        "提出 Wyvern，一個由多個專責 LLM agents 組成的框架，能從 web retrieval 到報告生成，產出含文字、圖片、總覽表格與 references 的 grounded multimodal technical reports。",
+        "設計 figures retrieval、selection、section assignment、placement 與 text integration 流程，並以 figure descriptions、captions 和來源內容協助選取較具資訊性的圖片。",
+        "提出 claims auto-revision grounding module：將段落拆解為 atomic claims，先以 reference summaries、再以 references full text 進行 grounding/NLI 檢查，並修訂或移除 unsupported claims；同時比較 automatic evaluation 與 human judgment。"
+      ],
+      "methodology": "Wyvern 由 search、report generation 與 grounding 三個 sequential modules 組成，並以多個專責 LLM agents 處理子任務。Search phase 接收使用者 topic title、興趣範圍與可選 URLs；LLM 先細化主題並生成 30 個 search queries，透過 Serper 取得每個 query 的 top-3 URLs。系統依網頁類型使用 Docling、Playwright、Trafilatura 或 Wikipedia API 解析內容，接著以 completeness、追加搜尋需求與 embedded-link relevance 評分，依門檻 5、5、7 篩選，並用 Jaccard similarity 0.9 去重；之後摘要、過濾 semantic outliers，建立 references 與 reference summaries。Report generation 先由多個候選 outlines 探索主題覆蓋，再合併成 final outline，並平行擴寫 sections。圖片流程會從來源文件擷取 figures，利用 title、summary、caption 與 figure-related excerpts 生成描述，再選取圖片、分配 section、決定位置、產生 caption 並修正文句；另建立 overview comparative table，最後進行 section refinement。Grounding phase 將 paragraph-level text units 拆成 atomic claims，先以 cited reference summaries 檢查，疑似 unsupported 時再對 full text 進行 entailment/NLI 評估；claims 會被修訂或刪除，並重新調整 headings。主要指標為 citation recall、citation precision，以及 human/automatic pairwise report-quality 評估。實驗使用 DeepSeek-R1 作 reasoning agents、DeepSeek-V3 作一般 agents，並與 STORM、WebThinker、WikiAutoGen 比較。",
+      "key_results": "| 評估項目 | Wyvern | STORM | WikiAutoGen | WebThinker |\n|---|---:|---:|---:|---:|\n| Citation recall（全部 claims） | 73.79% | 52.29% | 31.45% | 論文未報告；無 citations |\n| Citation recall（排除 uncited claims） | 94.64% | 70.32% | 60.87% | 論文未報告；無 citations |\n| Citation precision | 75.45% | 55.17% | 47.91% | 論文未報告；無 citations |\n| Claims revision 前後 citation recall | 60.92% → 73.79% | — | — | — |\n| Claims revision 前後 citation precision | 67.15% → 75.45% | — | — | — |\n| Human：figures informativeness 優於 WikiAutoGen | 86.96% | 不適用 | — | 不適用 |\n| Human：usefulness 優於 baseline | 對 STORM 100%；WebThinker 62.5%；WikiAutoGen 87.5% | — | — | — |\n| Wyvern absolute factuality（5 分制） | 4.22 ± 0.72 | 論文未報告 | 論文未報告 | 論文未報告 |\n| Wyvern absolute usefulness（5 分制） | 4.00 ± 0.83 | 論文未報告 | 論文未報告 | 論文未報告 |\n\nHuman study 使用 23 份完成問卷；整體而言，Wyvern 在與 STORM 的所有比較項目均獲較高偏好，但 WebThinker 在 structure 與 engagement 上分別獲得較高偏好。60 個 claims 的人工與 LLM grounding 判斷一致率為 93.33%。",
+      "insights": [
+        "若應用於研究報告生成，應把 citation verification 放在完整內容生成之後，並以 atomic-claim 粒度檢查，避免整句部分被來源支持時仍被誤判為完全正確。",
+        "多模態 RAG 不宜只做圖片檢索；圖片的來源 caption、內文提及、主題描述與目標 section 應共同用於 selection 和 placement，且需要最終的人工作品質審查。",
+        "LLM-as-judge 不應被視為穩定的人類評測替代品：本文觀察到 DeepSeek-V3 與 Qwen3-32B 的 ordering bias 分別為 36.11% 與 30.56%，因此實務上應採用雙向排序、多人類抽查與多評審交叉驗證。"
+      ],
+      "limitations": "框架依賴 search APIs，因此來源會受時間、地點與搜尋引擎索引變化影響，完整性與 reproducibility 均有限。實驗只涵蓋英文主題，跨語言能力尚未驗證。系統也沒有過濾 web sources 中偏見或錯誤資訊的機制；此外，報告可能過長、冗餘，圖片解析與 placement 也可能失準。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Retrieval-Augmented Generation",
+        "citation verification",
+        "multimodal report generation",
+        "LLM-as-judge evaluation"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14457",
+      "title": "Information Satisfaction: A Reader-Centered Axis for Summarization Evaluation",
+      "abstract": "The majority of work on summarization evaluation focuses on general summary quality (e.g., ROUGE, BERTScore) or specific desired properties (e.g., readability, factuality). However, these metrics fail to measure the utility of a summary to an individual user. For example, a biomedical researcher learning about the latest vaccine research will have different informational needs from a family doctor. Query-focused summarization captures part of this need, but in practice, users rarely state everything relevant in a query: a single short query is likely inadequate to distinguish the needs of a researcher from those of a physician. By contrast, a reader's background or persona (their role and expertise) is comparatively stable across queries and recovers much of this missing context, which makes it a practical signal for assessing whether a summary satisfies that reader's needs. In this work, we assess how sensitive popular summarization metrics are to both informational and persona differences, and find that many popular metrics, including strong LLM-as-judge metrics, fail basic perturbation tests of informational content. We additionally conduct an expert human evaluation, measuring summary preferences based on information satisfaction given a specific person's background and use case. We find that both traditional and LLM-based metrics are insufficient measures of information satisfaction and agree poorly with human judgment.",
+      "authors": [
+        "Isabel Cachola",
+        "William Walden",
+        "Reno Kriz",
+        "Mark Dredze"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-14T16:41:23+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14457v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14457",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "現有摘要評估多聚焦於一般品質（如 ROUGE、BERTScore）或特定屬性（如可讀性、事實性），但無法衡量摘要對個別讀者的實際效用。例如，生醫研究者與家庭醫師閱讀疫苗研究時，所需資訊可能不同。Query-focused summarization只能部分表達此需求，因讀者通常不會在短查詢中說明完整背景。本文提出以讀者為中心的「information satisfaction」軸，將查詢與描述角色、專業程度及用途的 persona 結合。作者以資訊內容與讀者 persona 的控制式擾動，檢驗傳統指標與 LLM-as-judge 的敏感度，並進行專家人工評估。結果顯示，許多指標甚至強大的 LLM 評審無法通過基本資訊擾動測試；傳統與 LLM-based metrics 也都與特定讀者對 information satisfaction 的判斷高度不一致。",
+      "problem_statement": "摘要的價值取決於特定讀者能否以它完成資訊目的，但 ROUGE、BERTScore、factuality 指標及多數 LLM-as-judge 通常把品質視為獨立於讀者的固定屬性。Query-focused summarization 雖納入查詢，卻難以表達短查詢未明說的角色、專業背景與用途，因此無法可靠衡量不同讀者對同一摘要的資訊滿足程度。",
+      "proposed_solution": "作者提出 information satisfaction，將摘要評估從摘要本身的通用品質轉向特定 reader-centered utility。其操作化表示為 query 加上 persona，其中 query 表達當下問題，persona 表達相對穩定的角色、領域、專業程度、用途與資訊需求。研究以控制式擾動檢驗現有指標是否能感知資訊內容與受眾差異，再以真實讀者的 persona-conditioned pairwise preference 驗證指標是否符合人工判斷。作者也提出 Persona Precision 與 Persona Recall，分別衡量摘要是否包含 persona 相關且少有冗餘的 nuggets，以及是否覆蓋 persona 所需的資訊需求；但將其定位為初步方案，而非已解決的完整評估框架。",
+      "core_contributions": [
+        "提出 information satisfaction 作為摘要評估的新軸，將摘要效用定義為其滿足特定讀者、查詢與用途之資訊需求的程度。",
+        "以五類控制式擾動測試系統性檢驗 lexical、embedding、reference-free 與 LLM-as-judge 指標，揭示其對內容完整性、長度與 audience shift 的脆弱性。",
+        "建立以真實查詢與自陳 persona 為基礎的專家人工評估資料，並提出 Persona Precision 與 Persona Recall 作為初步 persona-aware 指標。"
+      ],
+      "methodology": "RQ1 使用 arXiv、PubMed、SciTLDR 與 eLife 四個科學摘要語料庫，各從 test set 抽取 50 篇文件。評估指標涵蓋 ROUGE、BLEU、chrF、METEOR、extractive coverage/density、compression、novel n-grams、summary length、syntactic complexity、BERTScore、SUPERT、SummaQA、BLANC，以及由 Llama-3.3-70B 和 Prometheus-7B 擔任 judge 的 FActScore、relevance、consistency、fluency、coherence、informativeness、overall、annotator-style judge。作者對參考摘要施加五種序列擾動：加入其他文件的 distractor sentences、逐句 incremental addition、保留內容的 lengthen、shorten，以及改寫給不同 audience。以擾動層級與平均分數的 Spearman ρ 和符合預期方向的 monotonicity M 評估；方向測試以 |ρ|≥0.4、穩定性測試以 |ρ|≤0.2、M≥0.5 為通過標準。另設 Persona Precision：將摘要拆成 informational nuggets，判斷其對 persona 的相關比例；Persona Recall：由 LLM 根據 persona、query 與 source 產生需求，再計算摘要覆蓋比例。RQ2 中，20 位具真實資訊需求的志願者完成最多八次 query 流程，共 140 sessions。系統從 OpenAlex 擷取每個 query 的前十篇論文摘要，使用 Llama-3.3-70B 與 DeepSeek-V3.1，交叉比較有無 persona conditioning 的四種摘要，並透過三場 pairwise single-elimination tournament 排名。作者以 Krippendorff’s α 衡量自動指標與個別讀者選擇的一致性，且使用每指標的相似度閾值將近似分數視為 neither。",
+      "key_results": "| 評估面向 | 主要結果 |\n|---|---|\n| Distractor sentences | ROUGE-1/2/L、BLEU、chrF、METEOR 均達 ρ=-1.00、M=1.00；Llama-70B 下 FActScore ρ=-0.60、coherence ρ=-0.58 通過，但不同 judge 結果不一致。 |\n| Incremental addition | 詞彙重疊指標反而呈負相關，ρ 約 -0.56 至 -0.65；Llama-70B 的多數 prompt 維度為正相關 ρ=0.42–0.58，但 M≤0.13，顯示評分雜訊高。 |\n| Lengthen/shorten | 幾乎所有 overlap metrics、BERTScore 與多數 LLM judge 對保留內容的長度改寫呈 ρ=±1.00，未能保持穩定。 |\n| Different audience | 多數指標失敗；Prometheus-7B 的 fluency、informativeness、overall 與 FActScore 甚至呈錯誤方向的正相關 ρ=0.80–1.00。 |\n| 人工偏好 | DeepSeek-V3.1 在 final round 勝率 72.8%（91/125）；同模型比較下，persona-conditioned DeepSeek 相對 generic 的勝算比 OR=1.86，95% CI [1.01,3.42]，p=0.046。 |\n| 指標與人工一致性 | 所有指標大致接近機會水準；最佳傳統指標 SummaQA α=0.173，ROUGE-2 α=0.117；Persona Precision/Recall 在兩個 judge 下 α 約 -0.150 至 -0.087。 |\n\n上述數字為作者報告的實驗結果；論文未報告可作為 information satisfaction 通用解法的單一最佳指標。",
+      "insights": [
+        "摘要評估應將 query 與穩定的 reader persona 一起建模，而不能只依賴 reference overlap 或摘要本身的通用品質。",
+        "在導入新評估指標前，應先執行 distractor injection、incremental addition、length-preserving rewrite 與 audience-shift 等基本 robustness tests。",
+        "Persona-aware 評估不應只計算相關資訊的存在或需求覆蓋率；實務上還需考慮讀者已知內容、資訊重要性及不同摘要間的相對偏好。"
+      ],
+      "limitations": "研究僅使用四個科學摘要語料庫，每個資料集抽取 50 篇文件；人工評估只有 20 位志願者與 140 個 query sessions，且參與者主要對語言科技有真實興趣。persona 依賴自陳資料，人工偏好採單淘汰 tournament，可能限制泛化性。Persona Precision/Recall 仍依賴 LLM 生成需求與判斷 nugget，未解決資訊重要性與讀者先備知識的建模。",
+      "tags": [
+        "llm-as-judge",
+        "rag-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "reader-centered NLP",
+        "query-focused summarization",
+        "persona-conditioned generation",
+        "LLM-as-a-judge evaluation",
+        "automatic metric robustness"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14496",
+      "title": "Generating Benchmark Health Data Using a Tabular Diffusion Transformer",
+      "abstract": "Cross-Tabular Data Generation (CTDG) seeks to learn a generative model from multiple heterogeneous tables and produce new synthetic tabular datasets. However, existing synthetic tabular data generation methods are largely restricted to single-input-table scenarios and struggle to effectively handle multiple heterogeneous tables with diverse feature sets. To address this limitation, we propose a two-stage framework for cross-tabular data generation. In the first stage, each heterogeneous raw table is transformed into a standardized statistical table with the same set of columns across all tables. Each statistical table captures the marginal distributions of the original columns and the pairwise correlations among them. In the second stage, a diffusion transformer model is trained to capture structural patterns across these homogeneous statistical tables and to generate synthetic statistical tables. Synthetic raw tables are subsequently reconstructed from the generated statistical tables via multivariate Gaussian sampling followed by an inverse probability integral transform. This two-stage CTDG framework enables the learning of a unified generative model from multiple heterogeneous tables and supports the generation of an unlimited number of realistic synthetic heterogeneous tables. Experimental results demonstrate high fidelity in the learned statistical representations and a favorable fidelity-diversity trade-off in the generated synthetic data, validating the effectiveness of the proposed approach.",
+      "authors": [
+        "Hao Yan",
+        "Lisa Pilgram",
+        "Dan Liu",
+        "Linglong Kong",
+        "Fida Dankar",
+        "Khaled El Emam"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-14T17:10:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14496v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14496",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "Cross-Tabular Data Generation（CTDG）旨在從多個異質資料表學習生成模型，產生新的合成表格資料。然而，現有 Synthetic Tabular Data Generation（STDG）方法大多限於單一輸入表格，難以處理具有不同特徵集合的多個異質表格。本文提出兩階段 CTDG framework：第一階段將每個異質原始表格轉換為具有統一欄位的 standardized statistical table，描述原始欄位的邊際分布與兩兩相關性；第二階段訓練 Tabular Diffusion Transformer，學習這些同質統計表格的結構模式並生成合成統計表格。接著透過 multivariate Gaussian sampling 與 inverse probability integral transform 重建合成原始表格。實驗顯示，統計表示具有高 fidelity，生成資料亦取得良好的 fidelity–diversity trade-off。",
+      "problem_statement": "現有 synthetic tabular data generation 方法主要以單一資料表為輸入，假設固定 schema、欄位集合與資料型態，因此難以同時學習多個欄位結構不同的 heterogeneous tables。這限制了跨資料集知識共享，也使健康 benchmark 難以兼具真實統計特性、多樣性與可重現的大規模生成能力。本文聚焦於從多個真實健康及一般 tabular datasets 學習統一生成模型。",
+      "proposed_solution": "作者提出兩階段 CTDG framework。第一階段把每個 heterogeneous raw table 壓縮為同質化 statistical table，以 Beta–Binomial 參數描述欄位 marginal distribution，以 missing rate 描述缺失模式，並以 spectral factorization 表示欄間 correlation structure。第二階段將每個 statistical table 視為一個可變長度序列，使用 Tabular Diffusion Transformer 學習跨表格的分布與結構，再透過 DDPM 反向去噪生成新的統計表格。最後以 Gaussian sampling 加 inverse probability integral transform 重建 synthetic raw tables。核心創新在於以 table-level statistical representation 取代 record-level schema 對齊，讓模型能生成未與原始欄名及類別定義綁定的異質資料表。",
+      "core_contributions": [
+        "提出一個可從多個 heterogeneous tables 學習的兩階段 Cross-Tabular Data Generation（CTDG）framework，將不同 schema 統一轉換為 statistical tables。",
+        "設計結合 Beta–Binomial 邊際統計、缺失率與 spectral correlation representation 的固定維度表格級表示，並以 Tabular Diffusion Transformer 生成新的統計表格。",
+        "以 144 個 Health domain datasets 進行重建、消融與五折交叉驗證，並公開生成 1,000 個健康 benchmark datasets，支援大規模可重現評測。"
+      ],
+      "methodology": "方法分為兩階段。第一階段對每個原始表格逐欄提取統計表示。Categorical column 依頻率排序類別並映射為整數，再以 Beta–Binomial distribution 擬合，取得 alpha、beta 與 cardinality；numerical column 先離散化為 100 個 intervals，再採相同程序；每欄另記錄 missing rate。為保存欄間依賴，將 mapped columns 經 probability integral transform 轉為 normal variables，計算 correlation matrix，並以 eigen-decomposition 得到 A=U Lambda^{1/2}，每個欄位以其 spectral row vector 表示。固定 K=256；欄數不足時 zero-padding，超過時隨機刪除欄位至 K。每個統計表欄位列包含 K+4 個參數。接著對全部統計表的各參數施加 global quantile transformation，映射至可比較尺度。\n\n第二階段使用 Tabular Diffusion Transformer：每個統計表的 row 作為 embedding，整個表格作為可變長度 sequence；輸入投影至 768 維，加上 sinusoidal diffusion timestep embedding，經 12 層、12 attention heads 的 Transformer encoder，再由輸出投影還原為 260 維。模型採 DDPM noise-prediction loss，T=1000、AdamW learning rate=1e-4、batch size=64、訓練 500 epochs；先以 4,095 個 OpenML datasets 預訓練，再用 131 個 OpenML Health datasets 與 13 個 healthcare datasets 微調。生成後反轉 quantile transformation，依 A 重建 correlation matrix，從 multivariate Gaussian sampling，再以 inverse probability integral transform 映射至各欄 Beta–Binomial 分布，最後按 missing rate 隨機加入缺失值。評估使用 dimension-Normalized Wasserstein Distance（dNWD）衡量重建 fidelity，以及無一對一對應時使用 Closest Wasserstein Distance（CWD）評估生成表格與 real domain 的接近程度。",
+      "key_results": "主要結果如下；除論文明確報告的數字外，未補充其他結果。\n\n| 評估項目 | 設定 | 結果 |\n|---|---|---|\n| 原始表格重建 | 144 個 Health datasets，完整統計表示 | dNWD 平均 **0.095**，標準差 **0.061**；多數低於 0.2 |\n| 重建消融 | 僅 marginal statistics，identity correlation | dNWD 平均 **0.304**，標準差 **0.164** |\n| 重建消融 | random correlation matrix | dNWD 平均 **0.636**，標準差 **0.270** |\n| 生成資料 fidelity | 五折交叉驗證，生成 2,000 個 synthetic tables，與 29 個 Health real tables 比較 | Health CWD 五折平均 **0.72** |\n| 跨 domain 比較 | Economics、Statistics、Engineering、Finance、Games 的 CWD 五折平均 | 分別為 **0.97、0.98、1.35、1.55、1.75**；Health 最低 |\n| 生成資料 diversity | synthetic samples 對 real tables 的 neighborhood coverage | 比率接近 **0.95**；論文據此主張廣泛涵蓋 real Health domain |\n| 公開 benchmark | 生成資料集 | 1,000 個 datasets；每個 10,000 rows，欄數 10–256 |\n\n論文未報告與 CTGAN、TabDDPM、TabSyn 等方法在同一 CTDG 設定下的直接 baseline 數字，也未報告完整 downstream utility 或正式 privacy attack 數字。",
+      "insights": [
+        "若目標是生成跨資料集的 benchmark，先將異質原始資料轉成統一的 table-level statistical representation，可避免直接對齊欄名與語意的限制。",
+        "評估合成表格時不應只檢查 marginal distributions；論文的消融結果顯示，保留真實 correlation structure 對重建 joint distribution 十分重要。",
+        "使用此類資料進行模型 benchmark 時，應將其視為保留一階與二階統計特性的合成資料，並另外檢查 outliers、極高維欄位與實際任務效用。"
+      ],
+      "limitations": "作者指出，statistical table representation 可能遮蔽原始資料中的 outliers，極端值可能需要後續人工加入。模型最多支援 256 個欄位，無法處理更高維 benchmark。未來可研究保留更多結構資訊的其他 embedding techniques。論文亦未提供正式差分隱私保證或 membership、attribute disclosure 的量化評估。",
+      "tags": [
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "synthetic tabular data generation",
+        "cross-table learning",
+        "healthcare benchmark datasets",
+        "diffusion models",
+        "Wasserstein distance evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14452",
+      "title": "SheetCompass: Hierarchical Relation Graphs for Agentic Spreadsheet Reasoning",
+      "abstract": "Spreadsheets are widely used to organize, analyze, and manipulate semi-structured data, yet automated spreadsheet reasoning remains challenging for large language models (LLMs). Real-world workbooks often contain implicit cross-table associations, fine-grained column dependencies, and complex spatial layouts. Existing methods typically flatten these multidimensional structures into sequential strings, losing important intra-sheet boundaries and inter-sheet semantics. Consequently, LLMs cannot exploit the global spatial context that human experts naturally use when inspecting spreadsheets. We propose SheetCompass, a graph-guided and memory-driven agentic framework for spreadsheet reasoning and automation. SheetCompass explicitly models structural relationships within and across worksheets while maintaining task-relevant information in memory, enabling agents to reason more effectively over complex workbooks.",
+      "authors": [
+        "Panjing He",
+        "Mingyue Cheng",
+        "Yucong Luo",
+        "Li Li",
+        "Xiaohan Zhang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T16:39:16+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14452v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14452",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "試算表廣泛用於組織、分析與操作半結構化資料，但 automated spreadsheet reasoning 對大型語言模型（LLM）仍具挑戰。真實工作簿常包含隱含的跨表關聯、細粒度欄位依賴與複雜空間布局。現有方法通常將多維結構扁平化為連續字串，因而遺失工作表內邊界與工作表間語義，使 LLM 無法利用人類專家檢視試算表時所依賴的全域空間脈絡。本文提出 SheetCompass，一個由圖結構引導且由記憶驅動的 agentic spreadsheet reasoning framework。該方法明確建模工作表內外的結構關係，並在記憶中保留與任務相關的資訊，使 agents 能更有效地處理複雜工作簿。",
+      "problem_statement": "論文聚焦於 LLM 進行複雜試算表自動化時的結構推理問題。現有方法多把含有二維布局、表格邊界與跨工作表依賴的工作簿轉成 Markdown、JSON 等線性字串，破壞列欄位置、鄰近關係及跨表資料流。LLM 因而難以定位目標欄位、理解隱含關聯並在長流程執行後可靠修正錯誤。",
+      "proposed_solution": "作者提出 SheetCompass，將 spreadsheet automation 分解為 space reconstruction 與 coordinated reasoning。系統先建立 hierarchical relation graph，以 table 與 column 節點、結構邊及語義邊保存工作表內布局和跨表依賴；再以 expert knowledge memory 提供工具與領域規則，以 reasoning experience memory 累積當前執行錯誤和成功經驗。最後由 explorer 導航與分解任務、programmer 生成受圖約束的程式、reflector 依狀態 checklist 驗證並觸發修正，形成圖引導的閉環 agent workflow。",
+      "core_contributions": [
+        "提出 SheetCompass，將試算表從原始表格轉換為可供 agent 規劃、執行與反思的結構化證據空間，以減少傳統扁平化表示造成的結構資訊遺失。",
+        "提出由 table-level 與 column-level 節點構成的 hierarchical contextual graph，透過 structural edges 保留表格布局，並以 semantic edges 表達跨欄位與跨工作表的邏輯關聯。",
+        "提出 expert knowledge memory 與 reasoning experience memory 組成的 dual-level memory，並協調 navigational explorer、logical programmer 與 critical reflector 三種 agents 進行定位、程式執行及閉環驗證。"
+      ],
+      "methodology": "SheetCompass 將每個工作簿中的多個 table 組成圖 G=(V,E)。節點採兩層階層：table nodes 與 column nodes；欄位節點由 header name 加上代表性原始資料樣本表示，避免建立密集的 cell-level 圖。Structural edges 由確定性解析規則建立，包括 table-to-column inclusion edges，以及依水平位置連接相鄰欄位的 adjacency edges。Semantic alignment 先以預訓練 transformer Φ 將欄位特徵映射為 h_i，再計算欄位間 cosine similarity；同時要求 LLM 評估 primary key、foreign key 等邏輯關係，將兩者依 β 加權，若分數超過信心閾值 α，便建立 semantic edge。記憶分為永久性的 expert knowledge memory，以及記錄當前圖搜尋、sandbox 錯誤與檢查不匹配的 reasoning experience memory；成功軌跡與高價值經驗可回存前者。Explorer 將指令拆成原子子任務，依 cosine threshold λ 選取 seed nodes，使用 BFS 建立相關子圖並取共享子圖以壓縮上下文。Programmer 在 Python interpreter 與 Excel engine sandbox 中，受圖節點約束生成並執行程式。Reflector 將指令轉成 checklist，檢查試算表 metadata state，若不符便回饋並觸發最多 τ 次修正。評估使用 SCB、SB、SheetRM；SCB 與 SheetRM 使用 exec@1、pass@1，SB 使用跨三個獨立測試案例的 soft restriction 與必須全部通過的 hard restriction。",
+      "key_results": "作者在 SCB、SB 與 SheetRM 上比較 Binder、VBA、OS-Copilot、SheetCopilot、SheetAgent 與 SheetCompass。論文報告的 GPT-4 與 GPT-5 結果如下；「/」表示該方法或指標未提供數值。\n\n| Backbone | Method | SCB Exec@1 | SCB Pass@1 | SB Soft | SB Hard | SheetRM Exec@1 | SheetRM Pass@1 |\n|---|---|---:|---:|---:|---:|---:|---:|\n| GPT-4 | SheetAgent | 94.1 | 61.1 | 17.6 | 13.5 | 92.4 | 31.2 |\n| GPT-4 | SheetCompass | 95.1 | 63.2 | 22.6 | 18.3 | 93.7 | 42.5 |\n| GPT-5 | SheetAgent | 90.0 | 70.0 | 18.3 | 15.1 | 89.3 | 44.8 |\n| GPT-5 | SheetCompass | **96.4** | **71.3** | **24.7** | **22.0** | **94.2** | **52.3** |\n\n以 GPT-5 為 backbone，SheetCompass 相較 SheetAgent 在 SCB Pass@1、SB Soft、SB Hard 與 SheetRM Pass@1 的絕對提升分別為 1.3、6.4、6.9 與 7.5 個百分點。消融實驗顯示，移除 hierarchical graph 後，SCB Pass@1 由 71.3% 降至 56.4%，SheetRM Pass@1 由 52.3% 降至 41.4%，SB Hard 由 22.0% 降至 14.5%。移除 multi-agent 後 SCB Pass@1 為 59.1%，移除 dual-level memory 後為 60.4%。",
+      "insights": [
+        "對複雜試算表自動化而言，先建立表格與欄位層級的結構索引，再生成程式，可能比直接將整份工作簿序列化後提示 LLM 更穩定。",
+        "應將結構驗證與語義驗證分開：table-column topology 有助於定位資料，而跨欄位 semantic links 對跨表依賴與隱含公式尤其重要。",
+        "對長流程工具使用任務，可保留當前錯誤、執行狀態與成功軌跡，並由獨立 reflector 根據明確 checklist 驗證輸出，而非只依賴單一 agent 自我確認。"
+      ],
+      "limitations": "論文未報告各資料集的實例數、資料切分細節、統計顯著性、完整執行成本與延遲，也未提供不同 LLM backbone 的成本效益分析。semantic edge 依賴預訓練 transformer 與 LLM 評分，但其模型、提示、標註品質及錯誤案例分析未充分說明；此外，論文未量化 graph 建構錯誤或 reflector 造成的反覆修正失敗。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Spreadsheet automation",
+        "Hierarchical graph representation",
+        "Multi-agent systems",
+        "Tool-augmented LLM reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14465",
+      "title": "You Only Pass Once: Answering and Abstaining Together in a Single Forward Pass of a Frozen Language Model",
+      "abstract": "A frozen language model on reasoning tasks has two coupled weaknesses: it under-uses evidence its own residual stream already encodes, and it fails to detect when the input is insufficient to answer, so it confabulates. This paper consolidates two research lines that address these on the same residual stream: a conditional steering probe writes the stream at mid-stack layers and recovers reasoning accuracy from a frozen backbone, and a zero-shot sufficiency direction reads the stream and abstains when information is insufficient. Deployed in one forward pass they interfere: the steering write shifts the state the direction reads, costing up to 8 AUROC points of cross-domain transfer on small models; a separate clean pass doubles inference cost. We keep the direction fixed and train a small network to reconstruct the pre-steering residual from the steered one -- mean-squared error on (steered, clean) pairs, no sufficiency labels -- and read the direction on the reconstruction. The resulting system, YOPO (You Only Pass Once), answers, steers, and abstains in one forward pass of a frozen Qwen2.5 backbone (1.5B/3B/7B). End to end, three-way accuracy more than doubles the frozen baseline (0.375->0.798 on 1.5B alphaNLI) and one pass beats the two-pass reference at every scale (0.798/0.830/0.893 vs 0.753/0.790/0.863) and on ten backbones across six model families. We chart the capacity-transfer frontier quantifying the principle that abstention should not be trained in; a source-side audit catches our own alphaNLI construction leaking a surface artifact, so architectural claims are anchored on native-label replications (SQuAD2, RepLiQA, MuSiQue); and on the standard four-domain suite we contribute, to our knowledge, the first answer-or-abstain benchmark, where our gate tops every in-domain dataset and the label-free direction is the only gate family to survive domain transfer.",
+      "authors": [
+        "Ziyang Luo",
+        "Zhongyao Chu",
+        "Xinjie He",
+        "Youting Wang",
+        "Xukui Qin",
+        "Runxiong Wu",
+        "Yan-Syuan Chen"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-14T16:44:35+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14465v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14465",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "Frozen language model 在推理任務中有兩個相互耦合的弱點：未充分利用 residual stream 已編碼的證據，以及無法辨識輸入資訊不足而產生 confabulation。本文將兩條研究線整合到同一 residual stream：conditional steering probe 在中間層寫入訊息，以提升 frozen backbone 的推理準確率；zero-shot sufficiency direction 則讀取該表示，於資訊不足時 abstain。兩者在單次 forward pass 中會互相干擾，尤其小模型的跨域 AUROC 最多下降 8 個百分點。作者因此訓練小型 reconstruction network，從 steered residual 重建 pre-steering residual，使用 steered-clean 配對的 MSE，且不使用 sufficiency labels，再於重建結果上讀取固定方向。YOPO 可在一次 forward pass 中回答、steer 並 abstain；在 Qwen2.5-1.5B 的 alphaNLI 上，three-way accuracy 由 0.375 提升至 0.798，且單次推論在各模型規模均超過 two-pass reference。",
+      "problem_statement": "Frozen language model 在推理時一方面未能把 residual stream 中已有的證據傳到答案輸出，另一方面在資訊不足時仍自信作答，造成 confabulation。既有 steering 方法改善回答卻會改變 sufficiency reader 所依賴的表示；clean second pass 可恢復讀取品質，但推論成本加倍。直接對 steered state 訓練 supervised gate 又容易吸收來源任務特徵，導致跨域轉移崩潰。",
+      "proposed_solution": "作者提出 YOPO（You Only Pass Once），在同一次 frozen backbone forward pass 中整合 conditional steering writer 與 zero-shot sufficiency reader。核心創新是只修復 steering 對 residual 的幾何擾動，而不重新訓練 abstention：以同一輸入的 steered/clean residual 配對，使用無 sufficiency labels 的 MSE 訓練小型 reconstruction map M，將 steered state 映射回 pre-steering state，再以固定 direction d 讀取 sufficiency score。低於 calibrated threshold 即 abstain，否則輸出 steering 強化的答案；另提供加入 BCE boost 的 flagship，並明確量化其 in-domain 與 transfer 的交換代價。",
+      "core_contributions": [
+        "提出 YOPO 單次 forward pass 融合框架，以 label-free residual reconstruction 消除 steering writer 對 sufficiency reader 的干擾，同時保留回答與 abstention 能力。",
+        "在 Qwen2.5 1.5B、3B、7B 及十個跨六種模型家族的 backbone 上，系統性量化 steering、sufficiency reading、重建修正與監督式 gate 之間的 capacity-transfer frontier。",
+        "建立 answer-or-abstain hybrid benchmark，並以 SQuAD2、RepLiQA、MuSiQue 等 native-label 資料驗證：label-free direction 最能維持跨域轉移，而訓練 abstention 的方法通常承擔 transfer cost。"
+      ],
+      "methodology": "YOPO 使用 frozen Qwen2.5 backbone（1.5B、3B、7B），僅訓練約 1% 參數的 probes。conditional steering writer 在三個中間層讀取 spread-5 prompt positions 的 residual，透過 MLP 產生 input-conditioned unit direction u(r) 與 gated magnitude a，並寫回 r' = r + a||r||u(r)；writer 以 answer cross-entropy 訓練，backbone 保持凍結。reader 則由 source-domain sufficient 與 insufficient 樣本的 residual 平均差建立固定 direction d，於指定 read layer 計算 s=dᵀh，並以 in-domain threshold 或跨域未標註資料的 median/percentile calibration 決定 abstain。為避免 writer 改變 reader 所讀的狀態，作者收集同一輸入在 steering hooks on/off 下的 (hsteer, hclean) 配對，訓練 reconstruction map M，使 M(hsteer) 以 MSE 重建 hclean；M 不使用 sufficiency labels。YOPO 推論時只執行一次 forward pass：沿途寫入 steering、擷取 steered residual、套用 M、讀取 d，若分數低於 threshold 則 abstain，否則輸出 steered answer logits。作者比較 single-layer residual corrector、multi-layer MLP、疊加 BCE supervised boost，以及 two-pass clean-read reference。資料包含 alphaNLI、HellaSwag、RepLiQA、BoolQ 的 constructed conditions，以及具 native labels 的 SQuAD2、RepLiQA、MuSiQue；指標包括 steering accuracy、full-versus-replace AUROC、cross-domain transfer AUROC、三向 answer-or-abstain accuracy 與 abstention recall。",
+      "key_results": "| 實驗項目 | 結果 |\n|---|---|\n| 1.5B alphaNLI three-way accuracy：frozen baseline → YOPO flagship | 0.375 → 0.798 |\n| YOPO flagship vs. two-pass reference，1.5B / 3B / 7B | 0.798 / 0.830 / 0.893 vs. 0.753 / 0.790 / 0.863 |\n| 1.5B gate AUROC，naive steered → label-free reconstruction（in-domain / transfer） | 0.913 / 0.836 → 0.944 / 0.888 |\n| 1.5B label-free reconstruction vs. supervised BCE boost，transfer AUROC | 0.888 vs. 0.859 |\n| 3B flagship gate AUROC（in-domain / transfer） | 0.984 / 0.917；two-pass reference 為 0.967 / 0.922 |\n| 7B naive steered read vs. clean read（in-domain / transfer） | 0.995 / 0.955 vs. 0.985 / 0.968 |\n| steering contamination 的 clean−steered transfer gap，1.5B / 3B / 7B | 0.082 / 0.031 / 0.013 |\n| Native-label direction-transfer：Qwen2.5-7B off-diagonal mean / minimum AUROC | 0.879 / 0.766 |\n| Hybrid benchmark HellaSwag transfer，1.5B：label-free de-contam vs. flagship | 0.592 vs. 0.512 |\n| MuSiQue answerable multi-hop QA：chain-of-thought answering | 0.062 → 0.313 |\n\n作者另報告：standard four-domain suite 中，supervised gate 在所有資料集的 in-domain 表現最佳；label-free direction 是唯一能在跨域轉移中存活的 gate family。",
+      "insights": [
+        "若部署同時需要提升回答品質與避免資訊不足時的幻覺，可將回答用的 activation write 與 abstention 用的 representation read 分離，並以無判斷標籤的 reconstruction 先恢復乾淨表示。",
+        "模型容量與監督式 gate 的增加不必然改善實際部署：論文顯示小模型上 in-domain 準確率提升可能換來跨域能力下降，因此應以 transfer performance 與容量—轉移 Pareto frontier 共同選擇方案。",
+        "評估 answer-or-abstain 系統時，應同時報告回答正確率、abstention、AUROC、跨域校準與三向準確率；僅看模型是否能辨識 sufficiency，可能掩蓋決策層 threshold 或 force-answer 行為的失敗。"
+      ],
+      "limitations": "論文的部分 constructed transfer axis 過於容易，因表面差異即可辨識；同文件刪除答案句的 hard variant 又使所有 gate 接近 0.56–0.68。多層 reconstruction 在 7B 及 native-label 實驗多次不收斂。監督式 flagship 在小模型跨域表現明顯下降，且主要 backbone 實驗集中於 Qwen2.5；論文未報告更廣泛真實部署成本、延遲與長期校準結果。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "activation steering",
+        "answerability detection",
+        "representation probing",
+        "uncertainty calibration",
+        "cross-domain transfer"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14425",
+      "title": "Knowing When to Stop: Bayesian Optimal Stopping for LLM Evaluations",
+      "abstract": "LLM evaluations often use fixed sampling budgets, testing every item the same number of times even after estimates are precise. We introduce optstop, a precision-based adaptive stopping framework that treats evaluation as a sequential measurement problem: keep sampling where uncertainty remains high, and stop where estimates are precise or stable enough. The framework builds on hierarchical Bayesian inference, supports binary, ordinal, and continuous outcomes, and keeps every benchmark item eligible for sampling, without requiring a calibrated item bank. It runs live or retrospectively, and includes a safeguard that samples more cautiously as measured performance approaches zero, where rare successes matter most. In an illustrative 200-item, 10-epoch evaluation, it removes 57%-97% of planned trials across nine validation settings, with overall conclusions equivalent to the full run. These results show that LLM evaluation compute can be allocated by uncertainty rather than by fixed repetition counts, with the magnitude of savings depending on evaluation design.",
+      "authors": [
+        "Toby D. Pilditch"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T16:06:41+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14425v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14425",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "LLM 評測經常採用固定 sampling budget，對每個項目執行相同次數的測試，即使估計結果已足夠精確。本文提出 optstop，一個以 precision 為基礎的 adaptive stopping framework，將評測視為 sequential measurement problem：在不確定性仍高的地方持續 sampling，並在估計已足夠精確或穩定時停止。此 framework 建立於 hierarchical Bayesian inference，支援 binary、ordinal 與 continuous outcomes；所有 benchmark items 都保持可被抽樣，且不需要 calibrated item bank。它可在線上執行，也可對既有資料進行 retrospective analysis，並加入 safeguard：當測得的 performance 接近零時採取更保守的 sampling，因為此時 rare successes 尤其重要。在一個 200-item、10-epoch 的示範性評測中，九個 validation settings 移除了原定 trials 的 57%–97%，且整體結論與完整執行結果等價。結果顯示，LLM evaluation compute 可依 uncertainty 而非固定 repetition counts 進行配置，但節省幅度取決於 evaluation design。",
+      "problem_statement": "現有 LLM 評測多採固定 repetition counts，對所有 items 與 model-task combinations 使用相同 sampling budget，未依不確定性分配計算資源。這會在估計已精確後繼續浪費 inference calls，也可能在真正高變異或 rare-event 情境下證據不足。傳統 sample mean 與 standard error 又常不適合 sparse、ordinal、continuous heterogeneous data；既有 adaptive item selection 方法通常需要 calibrated item bank，且會減少 benchmark coverage。",
+      "proposed_solution": "作者提出 optstop，將 LLM evaluation 視為 sequential measurement problem，依 posterior precision 動態決定何處繼續 sampling、何處停止。其核心是在 item 與 grouping 兩層使用 hierarchical Bayesian inference，當 credible interval 寬度低於使用者指定 threshold，或 CI width 進入 stabilisation 狀態時停止。與 IRT/CAT 類方法不同，optstop 不需 calibrated item bank，所有 benchmark items 仍具抽樣資格；可 live 整合 inspect_ai，也可 retrospective 執行。另一項創新是低 performance 時的 asymmetric conservatism adjustment，透過放大有效 CI width 並收緊穩定化條件，避免尚未發現 rare successes 便過早終止。",
+      "core_contributions": [
+        "提出 optstop precision-based adaptive stopping framework，以 Bayesian credible-interval width 與 stabilisation criterion 決定 item-level 及 grouping-level 的資料收集何時停止。",
+        "以 hierarchical Bayesian models 處理 evaluation data 的階層結構，支援 binary、ordinal、continuous bounded 三類 outcome，且不需預先 calibrated item bank，也不刪除 benchmark items。",
+        "透過 3×3 validation matrix 驗證效率與結果保真度，並提出低 performance 情境下的 asymmetric conservatism adjustment，以降低尚未觀察到 rare successes 而過早停止的風險。"
+      ],
+      "methodology": "optstop 將評測資料視為 responses nested within items，items nested within model-task groupings。資料可在線上透過 inspect_ai 的 live early stopping protocol 收集，或對完整資料作 retrospective analysis。每次 batch 更新後，使用 PyMC 的 MCMC 計算 posterior，再檢查兩層 stopping：item-level 的重複 epochs，以及 grouping-level 的 item 數量。主要規則是 posterior (1−α) credible interval 寬度 W=θU−θL 小於 δ 即停止；預設 credibility 為 97%，δ=0.05 代表約 ±2.5 percentage points 的 precision target。若寬度長期下降近乎停滯，則使用 sliding-window slope 的 stabilisation criterion 作 fallback。Binary outcome 在 item level 使用 adaptive Beta，group level 使用 logit-normal hierarchical model，estimand 為 population mean success probability。Ordinal outcome 使用 item-level Bayesian bootstrap over modal category，group level 使用 hierarchical ordered logistic；若 ordered assumptions 不適用則使用 Dirichlet-Multinomial fallback，並以 modal category 或 entropy convergence 作 hybrid stopping。Bounded continuous outcome 將分數正規化至 [0,1]，item level 以 method-of-moments 的 Beta，group level 使用作用於 item-level means 的 hierarchical logit-normal model。當 estimated performance 低於預設 low-performance threshold 時，將 effective interval width 乘以 conservatism factor c，並同步收緊 stabilisation slope threshold；預設 c=5。有效使用假設包含 grouping 內 observations exchangeable，以及 randomised item presentation order。實驗採 3×3 matrix，包含 binary、ordinal、continuous 三 pathways 與 low、mid、high performance levels；每 cell 約 200 items、10 epochs、δ=0.05，並以 shadow mode 在同一完整 run 中比較 full-run 與依停止點截斷的估計。結果使用 absolute score deviation、HDI+ROPE Bayesian equivalence、hierarchical meta-analysis、ranking preservation，以及 presentation-order replay 評估。",
+      "key_results": "| Validation pathway | Performance settings | Full planned trials | Efficiency gain | Score deviation / equivalence |\n|---|---:|---:|---:|---|\n| Binary | low、mid、high | 2,000；mid-binary 為 1,980 | 59%–84%；平均 73.3% | 平均 absolute deviation 0.006；兩個 per-cell binary tests undecided，但在 pooled hierarchical meta-analysis 中解決 |\n| Ordinal | low、mid、high | 2,000 | 57.2%–92%；平均 75.0% | 平均 absolute deviation 0.001；mid-ordinal 透過 entropy convergence pathway 停止 |\n| Continuous | low、mid、high | 2,000 | 93%–97%；平均 95.1% | 平均 absolute deviation 0.011；最大單一 cell deviation 0.022 |\n| 全部九個 cells | 3 pathways × 3 performance levels | 18,000 planned trials（mid-binary 實際為 1,980） | 平均 81.1%；各 cell 為 57.2%–97.3% | mean absolute score deviation 0.006；meta-analysis 的 truncation effect 為 +0.0003，97% HDI [−0.002, +0.003]，完全位於 ROPE ±0.02 |\n\n此外，相同 WritingBench 的 max_tokens 排名 5,000 > 500 > 50 在 full-run 與 truncated conditions 中均被保留。低 performance conservatism sensitivity 中，1% true success rate、c=1 於 120 trials 停止且估計為 0.027；c=5 延至 910 trials，估計為 0.008，而真值為 0.0065。",
+      "insights": [
+        "實務上可將 delta_item 與 delta_cap 依評測目的設定，讓已達到所需 precision 的 item 或 model-task grouping 停止，並把資源轉移至不確定性較高的區域；論文未提供不同應用情境的最佳 threshold。",
+        "若評測資料允許，continuous 或 ordinal rubric 的 information density 高於 binary scoring，論文實驗中 continuous pathway 的平均 efficiency gain 為 95.1%，ordinal 為 75.0%，binary 為 73.3%；但 ordinal estimand 是 modal category，不能直接當作 mean 解讀。",
+        "部署 live stopping 時應啟用 item randomisation，例如 inspect_ai 的 sample_shuffle，並檢查 grouping 內 exchangeability；論文明確指出 item ordering 與 difficulty 相關時，可能產生 subset selection bias。"
+      ],
+      "limitations": "驗證主要集中於單一 200-item、10-epoch 設定，尚缺更廣泛的 benchmark、規模與 grouping replication。epochs 可能相關，卻被視為 exchangeable，會高估 effective sample size。hierarchical binary simulation 顯示 94% nominal 下 empirical coverage 約 80%；接近 0% 或 100% 時可能 undercoverage。ordinal 結果也受 modal-category 與 mean 的 estimand mismatch 影響。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Sequential Bayesian inference",
+        "Adaptive benchmark evaluation",
+        "Hierarchical uncertainty quantification"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14490",
+      "title": "Twin: Playing an Unknown Game with a Test-Time Digital Twin",
+      "abstract": "We present a Test-time World-model Inference (Twin) system, in which a frontier coding agent writes an executable world model for completing continual learning tasks, such as ARC-AGI-3 games. Traditional approaches hand-engineer such models, one custom design per task. Each game hides its rules and goal, and our system constructs them from simulation and interaction alone. Its inductive prior over grid games is strong enough to recover the true transitions of the game and the goal on nearly all levels. Replay validation happens in a twin world model. The harness enforces that an action is not made until the program reproduces every previous observed game transition. Each mismatch between a world model prediction and the actual action result becomes a counterexample that is used to repair the world model. Twin clears 179 out of 183 levels (97.8%), and does so more efficiently than humans in 158 out of 179 levels (88.3%). The system infers the goal before any reward on 156 of the levels it clears (87.2%), and in the remaining levels automatically discovers the goal by search. The benchmark scores completion and action efficiency, between 0 and 100, against humans playing each game for the first time. Played directly, the base model scores only 7.8%; an off-the-shelf harness increases it to 61.1%, whereas our twin world model increases the same base model to 93.3%, clearing 23 out of 25 games. Building a usable world model is simpler than anticipated, whereas the harder problem is inferring the right goal.",
+      "authors": [
+        "Alexy Skoutnev",
+        "Kirill Acharya",
+        "Gaston Longhitano",
+        "Madeleine Udell",
+        "Kevin Ellis",
+        "Iddo Drori"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T17:06:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14490v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14490",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 Test-time World-model Inference（Twin）系統：由 frontier coding agent 在測試時撰寫可執行的 world model，以完成 ARC-AGI-3 等 continual learning 任務。每個遊戲的規則與目標皆隱藏，Twin 僅依靠模擬與互動建構模型。系統以 grid-game 的歸納偏置恢復轉移規則，並在 twin world model 中進行 replay validation；只有當程式重現所有歷史轉移後，harness 才允許執行真實動作。任何預測與實際結果的不一致都會形成 counterexample，用於修補模型。Twin 清除 183 個 level 中的 179 個（97.8%），其中 158 個比首次遊玩的真人更有效率；在已清除的 level 中，156 個（87.2%）於獲得 reward 前即推斷出目標。結果顯示，建立可用 world model 比推斷正確目標容易。",
+      "problem_statement": "未知互動遊戲同時隱藏 dynamics 與勝利條件；agent 必須透過有限真實互動學會如何行動及何時完成。直接使用 frontier model 或一般 coding harness 容易反覆試錯、累積 transition 錯誤，且通常等到第一次 reward 才處理目標。既有 world-model 方法多依賴手工設計、跨回合訓練或未強制驗證，因此難以在測試時可靠規劃長序列。論文聚焦於如何從互動即時建構可驗證模型，並處理 reward 尚未出現時的 goal inference。",
+      "proposed_solution": "Twin 讓 coding agent 在測試時撰寫未知遊戲的 executable digital twin，將環境變成可檢查、可反駁、可修補的程式假設。其核心是非對稱學習流程：對 dynamics 採硬性 consistency，任何真實 action 前都要重播並匹配完整 log；對 goal 則採 optimistic search，從 twin 中尋找具進展特徵的可達狀態，形成候選 predicate，再以最有效率的真實路徑驗證。整體循環由 harness 控制 validate、explore、plan 與 checked execution；mismatch 會立即停止行動並提供 counterexample，促使 agent 修復模型，避免錯誤計畫在長遊戲中擴散。",
+      "core_contributions": [
+        "提出 Twin 的 test-time world-model inference：讓 coding agent 將未知環境寫成可執行、可檢查與可修補的 Python 模型，而非僅以反應式方式決策。",
+        "設計由 harness 強制執行的 validate–explore–plan–execute_checked 循環；真實動作前必須重播並匹配完整互動歷史，錯誤則轉化為 counterexample 進行修復。",
+        "將 dynamics learning 與 goal discovery 分離，透過可達狀態、候選 goal predicate 及真實 level boundary 測試，在 reward 稀疏或尚未出現時探索隱藏目標。"
+      ],
+      "methodology": "Twin 使用 OpenAI Codex 驅動的 frontier coding agent；論文實驗的 base model 為 GPT-5.6 Sol，agent 透過檔案與 sandbox 連接遊戲，沒有 game-specific tools。每個 game 初始化 identity twin 與空的 append-only transition log D，模型需實作 step(grid, action) 與 goal_reached(grid)。每次觀察到 64×64、16 色 grid 的真實轉移後，系統先執行 Validate，逐筆 replay D，要求預測完全等於觀察結果；失敗時 Explore 將 mismatch 依失敗頻率、結果多樣性與證據不足等訊號排序，交由 agent 修補，且修補後必須重新通過完整歷史驗證。若 dynamics 已驗證但沒有目標路徑，Explore 從可達狀態產生候選進展，agent 將其寫成暫時 goal predicate；候選不得匹配任何已記錄 frame，若抵達卻沒有 level boundary，便永久排除。Plan 在 validated twin 中以 BFS 搜尋深度 8、最多 20,000 nodes 的路徑；goal discovery 使用深度 14、最多 30,000 nodes。ExecuteChecked 逐步提交路徑，首個預測 mismatch 即停止並追加 counterexample。評估採 ARC-AGI-3 的 completion 與 action-efficiency 分數（0–100），並報告遊戲及 levels 清除數、相對首次遊玩真人的 action 效率、模型轉移預測準確率與 goal hypothesis 成功率。",
+      "key_results": "| 系統 | 分數 | 完整清除遊戲 | 清除 levels |\n|---|---:|---:|---:|\n| Human reference | 100.0 | 25/25 | 183/183 |\n| Codex（無 Twin harness） | 61.1 | 13/25 | 148/183 |\n| EWM | 63.8 | 14/25 | 146/183 |\n| Prime Agent（GPT-5.6 Sol） | 78.3 | 論文未報告 | 164/183 |\n| OPINE-World | 78.4 | 20/25 | 160/183 |\n| Twin（GPT-5.6 Sol） | 93.3 | 23/25 | 179/183 |\n\nTwin 在 179 個已清除 levels 中，有 158 個（88.3%）比首次遊玩真人更有效率；其中 156 個（87.2%）在任何 reward 前即提出正確的第一個 goal hypothesis。92.9% 的 scored actions 執行了已在 twin 中測試的路徑；首次出現的 state–action pair 有 8,210/10,392（79.0%）被準確預測。Twin 與無 harness Codex 的比較顯示，移除整個 Twin 循環後分數由 93.3 降至 61.1，完整清除遊戲由 23 降至 13。實驗共使用 2.60 billion processed tokens、91.4 小時推論時間。",
+      "insights": [
+        "對互動式 agent 而言，將環境知識外化為可執行 artifact，並以完整歷史 replay 作為行動門檻，能降低錯誤在長序列中的累積。",
+        "應分別評估 dynamics 的 faithfulness 與 goal inference；前者每次互動都可獲得轉移監督，後者通常只有完成任務才得到正例。",
+        "在成本敏感的環境中，可先於真實執行在模型內搜尋最短路徑，並將少量真實 action 保留給模型修正或候選目標驗證；但需要處理錯誤 goal 假設造成的探索成本。"
+      ],
+      "limitations": "Replay validation 假設環境具 deterministic、可由程式表示的 dynamics，且主要適用於離散、可逐格比較的狀態。固定的 planning 與 goal-discovery 搜尋預算可能找不到較深目標；長時間歷史或完全 latent state 也超出範圍。連續觀測與 probabilistic twin 尚未處理，作者列為未來工作。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "test-time compute",
+        "executable world models",
+        "program synthesis",
+        "counterexample-guided repair",
+        "ARC-AGI-3"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14441",
+      "title": "PACE-Bench: Benchmarking Physics Adaptation via Code Evolution in Dynamic Environments",
+      "abstract": "Self-evolving agents improve future behavior from interaction experience, yet existing evaluations typically optimize under fixed execution conditions and do not test recovery after those conditions change. To address this gap, we introduce PACE-Bench (Physics Adaptation via Code Evolution), a simulator-grounded benchmark of 144 source-to-target adaptation pairs across six physics domains. Each pair links a source environment to a mutated target environment with the same goal and interface. A code-driven design that succeeds in the source fails in the target, where agents must iteratively adapt it into a working target design using diagnostic sandbox feedback within a limited attempt budget. We compare ten self-evolving methods from four paradigms. The benchmark remains far from saturated: Reflexion + Qwen3-14B succeeds on only 35.9\\% of full-benchmark pairs, while GPT-5.5 solves 66.7\\% of the Statics subset under the full budget. Together, these results show that simulator-grounded reflection is more reliable than unverified self-revision, while memory anchors agents to early designs and broad tree search explores without converging. Even revealing exact physical changes does not raise the performance ceiling, pointing to mechanism redesign rather than parameter inference as the central bottleneck. Data and code are available at https://github.com/thunlp/PACE-Bench.",
+      "authors": [
+        "Yuhao Zhan",
+        "Bingxiang He",
+        "Zecong Tang",
+        "Chaojun Xiao"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-14T16:25:43+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14441v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14441",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "Self-evolving agents 能從互動經驗改善未來行為，但現有評測通常在固定執行條件下最佳化，未測試環境改變後的恢復能力。本文提出 PACE-Bench（Physics Adaptation via Code Evolution），一個以 simulator 為基礎的 benchmark，涵蓋六個物理領域、144 個 source-to-target adaptation pairs。每個 pair 將具有相同目標與介面的 source environment 連接至經突變的 target environment；原本在 source 中成功的 code-driven design 會在 target 中失敗，agent 必須在有限的 attempt budget 內，利用 diagnostic sandbox feedback 反覆修改並驗證設計。作者比較四種 paradigm 的十種 self-evolving methods。結果顯示 benchmark 尚未飽和：Reflexion + Qwen3-14B 在完整 benchmark 的成功率為 35.9%，GPT-5.5 在 Statics 子集、完整 budget 下達到 66.7%。Simulator-grounded reflection 比未驗證的 self-revision 更可靠；memory 可能使 agent 錨定早期設計，而 broad tree search 雖能探索，卻常無法收斂。即使揭露精確的物理變化，效能上限仍未提高，顯示核心瓶頸是 mechanism redesign，而非單純的 parameter inference。",
+      "problem_statement": "現有 self-evolving agent benchmarks 多聚焦於固定執行條件下的 task stream improvement、knowledge transfer 或 held-out generalization，未評估同一目標與介面在環境物理條件改變、原有 executable design 失效後，agent 能否診斷過時假設並重設機制。既有 physical benchmarks 也多只測 design、feedback 或 environment variation 的單一面向，因此缺乏可控且可驗證的 dynamic adaptation 評測。",
+      "proposed_solution": "作者提出 PACE-Bench，將可執行的 code-driven physical design 與 controlled environment mutation 結合。每個任務先提供在 source environment 成功、但在 target environment 必然失效的設計，再讓 self-evolving agent 在 20 次互動內，根據 simulator 回傳的 constraints、分數與診斷訊息反覆修改程式。資料集以六個 physics domains、36 個 base tasks 和四級 target mutations 建構，並透過 reference solutions 與多層 audit 確認 target 可解且 source solution 不可直接重用。核心創新是將 hidden physical change inference 與 mechanism redesign 放在同一個可重現的 code evolution protocol 中。",
+      "core_contributions": [
+        "提出 PACE-Bench，系統性評估物理環境變化後，agent 對既有 executable design 進行自我適應與 code evolution 的能力。",
+        "建立涵蓋六個物理領域、36 個 base tasks、144 個 source-to-target pairs 的可重現 simulator-grounded 評測套件，並確保每個 target environment 具有可驗證的 reference solution。",
+        "比較四種 paradigm 的十種 self-evolving methods，並透過 code similarity、九類錯誤 taxonomy、參數揭露與 video feedback 實驗分析 exploration、exploitation、設計錨定及收斂問題。"
+      ],
+      "methodology": "PACE-Bench 的基本單位是 source-to-target pair。每個 base task 具有固定 context template C 與五個 environments：source E0 及四個依難度遞增的 mutated environments E1–E4。Prompt 提供自然語言任務描述、constraints、success criteria 與 permitted primitive APIs；設計是定義 build_agent() 與 agent_action() 的 Python program，並在 Box2D sandbox 中執行。每次執行回傳 constraint satisfaction fraction v、task score s 與 diagnostic report d，例如 peak joint force、failure timestamp 或失效位置。Agent 從 source design x0 開始，在 target task 中最多提交 20 個候選程式；第 t 次生成會條件於 task context、Uniform Suffix（列出可能變動的變數但不指出實際變化）及過往候選、分數與診斷歷史。最終分數是所有 attempts 的最高 st，Pass@2 與 Score@2 則由兩次獨立 runs 計算。資料建構分三階段：生成六個物理 domains、每 domain 六個 base tasks；以 modular architecture 與 Claude Code 2 衍生各 environment 的 reference solutions；最後進行 cross-module consistency、variable exposure、API exclusivity、feedback 與 solvability audits，並以 Qwen3-4B 兩次獨立失敗校準難度。實驗以 Qwen3-4B、8B、14B 在完整 benchmark 比較 Vanilla 與十種 methods，並在 Statics 子集測試 Qwen3-32B、DeepSeek-V4-Pro 與 GPT-5.5。方法涵蓋 context-based 的 Reflexion、Self-Refine；memory-augmented 的 ACE、ExpeL、ReasoningBank；inference-time search 的 ToT、CodeEvolve；以及 parameter-based 的 SEAL、RAGEN、TTT-Discover。另以 code similarity、九類失敗 taxonomy、Change-Hidden/Change-Exposed 與 VLM 產生的 video feedback 分析失敗機制。",
+      "key_results": "主要結果如下（Pass@2 為兩次獨立 runs 中至少一次成功的 pair 比例；Score@2 為兩次 run 的最佳分數平均）：\n\n| 設定 | Pass@2 (%) | Score@2 |\n|---|---:|---:|\n| Vanilla + Qwen3-4B（完整 benchmark） | 11.5 | 10.7 |\n| Reflexion + Qwen3-4B（完整 benchmark） | 19.5 | 14.6 |\n| Vanilla + Qwen3-8B（完整 benchmark） | 15.6 | 12.0 |\n| Reflexion + Qwen3-8B（完整 benchmark） | 26.6 | 18.1 |\n| Vanilla + Qwen3-14B（完整 benchmark） | 32.0 | 25.5 |\n| Reflexion + Qwen3-14B（完整 benchmark） | 35.9 | 28.0 |\n| Vanilla + Qwen3-4B（Statics，20 attempts） | 8.3 | 12.0 |\n| Vanilla + Qwen3-14B（Statics，20 attempts） | 37.5 | 27.3 |\n| Vanilla + Qwen3-32B（Statics，20 attempts） | 37.5 | 28.4 |\n| Vanilla + DeepSeek-V4-Pro（Statics，20 attempts） | 45.8 | 48.7 |\n| Vanilla + GPT-5.5（Statics，20 attempts） | 66.7 | 78.1 |\n\n在完整 benchmark 中，Reflexion + Qwen3-14B 是表 2 的最佳 self-evolving configuration，但仍只成功 35.9% 的 pairs。Qwen3-32B 在 Statics 的 Pass@2 未超越 Qwen3-14B。方法比較顯示，Self-Refine 在 Qwen3-14B 僅達 7.1% Pass@2；ToT 在 Qwen3-4B 達 23.4%，但隨模型增大至 Qwen3-14B 降至 20.3%。Kinematics 的成本正規化比較中，ToT 的 Score/Hr 為 45.7、46.4、57.8，分別高於其他方法的多數設定。從 scratch 建構的 Pass@2 為 11.3–18.3%，source environment 為 32.3%，target environments 為 6.4–13.4%。作者報告的 Change-Exposed 實驗中，最佳結果（Reflexion-14B，14.6%）仍低於 Change-Hidden 的 Reflexion-8B（17.9%）。",
+      "insights": [
+        "實務上應將每次 code revision 都接入可執行 simulator 或測試環境，以驗證修改是否真正改善，而不是只依賴 LLM 的內部 self-critique。",
+        "自我演化系統需要同時處理設計多樣性與收斂：memory retrieval 應避免反覆強化早期方案，search 則應加入更明確的方向性選擇與停止條件。",
+        "改善診斷資訊不必然解決問題；當 agent 已知道環境改變內容時仍表現受限，系統設計應優先培養機制重構與因果 redesign 能力，而非只進行參數調整。"
+      ],
+      "limitations": "PACE-Bench 只評估受控的 2D Box2D simulation，結果未必能轉移至 3D environment 或具有 noisy sensing、actuation 的真實 robot。固定的 20-attempt budget 未涵蓋長期適應。受計算成本限制，frontier model、parameter disclosure 與 visual feedback 僅涵蓋部分 domains、methods；未來可擴展至更豐富的 simulator、real hardware、更長 adaptation horizon 及更廣泛模型。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Self-evolving agents",
+        "Code generation and executable design",
+        "Physics simulation",
+        "Test-time adaptation",
+        "Inference-time search"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14533",
+      "title": "Finding Vulnerabilities via LLM-Augmented Semantics-Aware Type-Checking",
+      "abstract": "Vulnerability detection via static analysis traditionally relies on security experts encoding insecure coding patterns into algorithmic rules. However, this approach often focuses on syntactic patterns and overlooks deeper semantic information in the code, such as the meanings of variable and function names. As software systems grow more complex, modeling vulnerabilities using only syntactic rules becomes increasingly challenging.   In this paper, we propose a semantics-aware approach to detecting software vulnerabilities. We present SETYPE, a semantics-aware type system that can be derived directly from source code based solely on the meanings of symbols and expressions in natural language. In the SETYPE type system, both type inference and checking are performed by Large Language Models (LLMs), and a failed type check indicates a potential vulnerability.   We prototype PYSETYPE to demonstrate the feasibility of SETYPE for detecting vulnerabilities in Python web applications. Our evaluation on real-world applications achieves 87% detection precision and 88% detection accuracy. Using PYSETYPE, we identified 15 potential zero-day vulnerabilities, nine of which were confirmed by developers.",
+      "authors": [
+        "Ruizhe Wang",
+        "Meng Xu",
+        "N. Asokan"
+      ],
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-08-14T17:49:19+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14533v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14533",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "傳統的軟體漏洞偵測通常依賴安全專家將不安全的程式模式編碼為演算法規則，但這類方法多聚焦於語法模式，忽略變數與函式名稱所包含的深層語意。隨著軟體系統日益複雜，僅使用語法規則建模漏洞更加困難。本文提出具語意感知的漏洞偵測方法，設計可直接由原始碼中符號與表達式的自然語言意義推導出的 SETYPE semantics-aware type system。在 SETYPE 中，語意型別推論與型別檢查皆由 Large Language Models (LLMs) 執行，型別檢查失敗則表示可能存在漏洞。作者實作 PYSETYPE，展示其在 Python web applications 中的可行性；於真實應用程式上達到 87% detection precision 與 88% detection accuracy，並發現 15 個潛在 zero-day vulnerabilities，其中 9 個獲開發者確認。",
+      "problem_statement": "現有 static analysis 多依賴人工撰寫、建構於 AST、CFG 或 PDG 上的 syntactic rules，難以完整表達變數與函式的語意、外部函式行為及多樣化的 sanitization。規則維護成本高，也容易在提高 recall 時引入大量 false positives。直接讓 LLM 閱讀整個 codebase 又受限於 context、跨檔案依賴與長程推理，因此需要兼具程式探索覆蓋率與語意理解能力的分析框架。",
+      "proposed_solution": "作者提出 SETYPE，將漏洞條件視為一種 semantic type mismatch：變數與表達式被賦予如「由使用者提供的檔案路徑」等自然語言型別，操作則定義其所需的語意型別。PYSETYPE 將此方法整合進 pytype，以確定性的 CFG 與 bytecode traversal 探索程式，再在局部操作中呼叫 LLM 執行 SETYPE inference、unification、branch-context tracking 與 vulnerability checking。其核心創新是以 LLM 直接處理程式語意，而非要求 LLM 產生完整靜態分析規則，同時透過 CWE checklist、taint analysis 與既有 syntactic analysis 約束推理範圍。",
+      "core_contributions": [
+        "提出 SETYPE，一種以自然語言語意型別描述變數與表達式，並以 LLM 執行型別推論及檢查的漏洞偵測方法。",
+        "實作 PYSETYPE，將 SETYPE 整合至 pytype，透過 CFG、bytecode-level execution traversal、syntactic types 與 LLM semantic reasoning 分析 Python web applications。",
+        "在 SVEN、近期 CVE 及 103 個熱門開源專案上進行評估；SVEN 上達到 87% precision、87% recall、88% accuracy 與 87% F1，並報告 15 個潛在漏洞，其中 9 個獲開發團隊確認。"
+      ],
+      "methodology": "PYSETYPE 建立在 pytype 2024.10.11 之上，使用 Qwen3 32B，透過 Ollama API 執行，top-p 設為 0.3，其餘參數採預設值。首先以 pytype 分析 dependencies，產生 interface stubs、per-file object maps 與 CFG；再辨識 main function 及 Flask、FastAPI、Django 的 web endpoints。之後以延伸的 pytype virtual machine 在 bytecode 層級模擬 execution flow，沿 CFG 探索可達基本區塊，並追蹤 syntactic type、SETYPE 與每個區塊的 execution context。SETYPE 是由變數名稱、函式名稱、comments、docstrings 及操作上下文形成的自然語言語意型別。對 assignment、function call、branch、merge 與 loop 等操作，系統使用 zero-shot prompt 要求 LLM 推論或更新型別；分支合併與迴圈則由 LLM 彙整不同路徑的語意。漏洞偵測針對外部函式呼叫套用 CWE-based rules，並以 checklist 分別檢查來源、操作及 sanitization 條件；若 SETYPE 與預期操作型別不匹配，便提出潛在漏洞。系統亦使用 taint analysis 追蹤外部輸入，以減少不必要的 LLM 查詢。評估使用 precision、recall、accuracy、F1，並與 CodeQL、Bandit、VulnHuntr 比較。",
+      "key_results": "論文在 SVEN 上比較四種工具，結果如下：\n\n| Tool | Precision | Recall | Accuracy | F1 Score |\n|---|---:|---:|---:|---:|\n| CodeQL | 0.67 | 0.39 | 0.83 | 0.49 |\n| Bandit | 0.75 | 0.84 | 0.70 | 0.79 |\n| VulnHuntr | 0.52 | 0.45 | 0.53 | 0.48 |\n| PYSETYPE | 0.87 | 0.87 | 0.88 | 0.87 |\n\nSVEN 經篩選後包含 27 個 repositories 的 80 個 vulnerability instances，並以 vulnerable 與 patched 版本共 160 個程式版本評估。PYSETYPE 另分析 103 個熱門 Python 專案，發現 15 個潛在 zero-day vulnerabilities，其中 9 個獲開發者確認。最大 codebase 包含 195 個 API endpoints 與 26k Python bytecodes，分析約需 14 小時，估計 LLM inference cost 為 3.19 美元。近期 CVE 資料集包含 9 個 CVEs、14 個 program versions；論文未在提供文字中報告該資料集的完整 precision、recall、accuracy 或 F1 數值。",
+      "insights": [
+        "將 LLM 限制在約 200 tokens 的局部語意推論，並由確定性的 CFG traversal 負責程式探索，可作為結合符號分析與 LLM 的實務設計模式。",
+        "自然語言中的變數名稱、註解與 docstrings 能補充傳統 AST、CFG 與 data-flow analysis 未直接表達的意圖；實務部署時可將其作為 taint analysis 與 vulnerability rules 的語意補強。",
+        "漏洞規則仍可採 checklist 形式拆解，例如同時檢查檔案存取、外部輸入來源與 sanitization，藉此降低單次 LLM 判斷的複雜度；但工具輸出仍應交由開發者確認。"
+      ],
+      "limitations": "作者指出 PYSETYPE 繼承傳統 static analysis 的限制，包括 imprecise point-to analysis；同時也有 LLM inference cost、非決定性與語意推論錯誤。實作僅支援 Python 3.10、Flask、FastAPI、Django，且對 inheritance interactions 的處理不完整，可能造成分析遺漏。論文未提供完整的模型消融、跨語言評估或所有資料集的詳細統計。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM-assisted static analysis",
+        "semantic type systems",
+        "software vulnerability detection",
+        "taint analysis"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.14528",
+      "title": "Handover of In-Context Learning State Across Session Boundaries",
+      "abstract": "This study investigates the methodological and theoretical properties of session handover in applications that use large language models. A task may continue in a new session when the context reaches the model's input limit, when the application restarts, or when another agent is asked to finish the task. The application must then decide which information from the earlier session to pass on. We formulate handover as the transfer of a task-relative in-context learning (ICL) state and distinguish exact recovery of earlier material from preservation of the target distribution. Under an exogeneity condition, predictive equivalence characterizes the coarsest deterministic sufficient handover and gives a fixed-length bit requirement. The analysis isolates the effects of the memory constraint, the writer, and the continuation procedure, and quantifies the cost of writing before the realized downstream query is known. We propose a three-part record that stores decisions and constraints exactly, uses task-justified statistics for repeated evidence, and retains original observations whose effect is not preserved by those statistics. Gaussian linear regression gives an exact finite-dimensional handover and finite-bit perturbation bounds, while nonparametric regression gives upper and lower bounds that relate memory to squared prediction error. These results provide a theory and method for deciding what a handover must retain and how its memory requirement depends on the continuation task.",
+      "authors": [
+        "Masahiro Kato",
+        "Taka Kato"
+      ],
+      "categories": [
+        "cs.AI",
+        "econ.EM",
+        "math.ST",
+        "stat.ME",
+        "stat.ML"
+      ],
+      "published": "2026-08-14T17:47:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.14528v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.14528",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "本研究探討使用大型語言模型之應用中的 session handover 方法與理論性質。當 context 達到模型輸入上限、應用程式重啟，或改由另一個 agent 接續任務時，系統必須決定從前一 session 傳遞哪些資訊。作者將 handover 定式化為與任務相關的 in-context learning（ICL）state transfer，並區分先前材料的 exact recovery 與 target distribution 的 preservation。在 exogeneity 條件下，predictive equivalence 可刻畫最粗的 deterministic sufficient handover，並給出固定長度的 bit requirement。研究分離 memory constraint、writer 與 continuation procedure 的影響，也量化在未知 downstream query 前寫入記錄的成本。作者提出由精確保存 decisions 與 constraints、以任務有充分理由的 statistics 壓縮重複證據，以及保留統計量未能涵蓋之原始觀察所組成的三部分記錄。Gaussian linear regression 展示 exact finite-dimensional handover 與 finite-bit perturbation bounds；nonparametric regression 則建立 memory 與 squared prediction error 的上下界。",
+      "problem_statement": "論文處理多次 LLM 呼叫或 agent 接力時的 session handover 問題：當 context 超限、程式重啟或任務移交，系統如何在有限記憶體下保留真正影響後續 prediction 或 action 的資訊。既有 prompt compression 常可先看到 query，具有 query-aware 優勢；文字摘要則可能遺漏 constraints、decisions、examples 或 tool evidence。研究因此需要區分全文 exact recovery、target distribution preservation，以及固定 continuation procedure 的實際任務表現。",
+      "proposed_solution": "作者把 handover 視為 task-relative ICL state 的編碼問題，writer 在 downstream query 尚未知時產生 record，並以 predictive sufficiency 判定資訊是否足夠。核心框架包括：以 predictive equivalence 找出最粗 deterministic sufficient state；以 risk decomposition 分離 memory、writer 與 decoder 造成的損失；以資訊理論量化遺失資訊與 pre-query writing cost。具體記錄採三部分設計：exact 部分保存不可改寫的 decisions、constraints 與 unresolved issues；stat 部分只使用有任務保證的 sufficient statistics 或近似統計量；residual 部分保留統計量未涵蓋的原始觀察。Gaussian regression 顯示可有固定維度 state，nonparametric regression 則說明記憶需求會隨精度與函數類增長。",
+      "core_contributions": [
+        "將 session handover 形式化為任務相對的 ICL state transfer，並以 predictive sufficiency 區分任務資訊保存與全文重建。",
+        "在 later input 對先前 context 具 exogeneity 時，提出 predictive equivalence、最粗 sufficient state 與固定長度 bit 下界之理論刻畫。",
+        "提出由 exact、statistical、residual 三部分組成的 handover record，並以 Gaussian 與 nonparametric regression 推導精確充分性、有限位元誤差及 memory–risk 上下界。"
+      ],
+      "methodology": "作者以 episode ω=(C,T,X,Y) 建模：C 是 handover 前的對話、指令、examples 與 tool results；T 是 writer 已知的任務資訊與 scoring rule；handover 後才觀察 X，即 query 或 current task state；Y 是被評分的答案、最終狀態或允許 action。writer E 在未知道 realized X 前產生 H=(V,M)，其中 V 是新 session 直接使用的 record，M 是可讀取的外部 file、index 或 archive，並分別限制 prompt 大小與總儲存量。後續由 prompt construction、LLM generation、decoding、parser 及 environment interaction 組成 continuation procedure D，使用 expected task loss、trajectory loss、log loss、KL divergence、Brier score 或 squared error 評估。理論上以 P(Y|C,X,T)=P(Y|H,X,T) 定義 predictive sufficiency；在 exogeneity 下，依據 contexts 對後續 target distribution 的 predictive equivalence 建立最粗 sufficient state 與 bit requirement。風險分解為 memory budget 的不可避免損失、writer 額外損失及 continuation procedure 相對 ideal decoder 的損失。方法設計採三部分 record：精確保存 decisions、constraints 與 unresolved issues；僅在有 sufficient statistic 或誤差保證時壓縮重複 evidence；其餘保留 residual 原始 observations。統計驗證包括已知 noise variance 的 Bayesian Gaussian linear regression，以及 Hölder 函數類的分箱 nonparametric regression，分別推導 exact statistic、量化穩定性、achievable upper bound 與 minimax memory lower bound。",
+      "key_results": "論文主要提供理論結果與回歸分析，未報告以實際 LLM、代理任務或外部 benchmark 進行的實驗；因此沒有可呈現的模型間實驗數據對比。\n\n| 分析設定 | 主要結果 |\n|---|---|\n| Predictive state | 在 exogeneity、finite/countable context support 下，predictive equivalence classes 構成最粗的 deterministic sufficient handover；若有 $N_t$ 個狀態，固定長度至少需 $\\lceil\\log_2 N_t\\rceil$ bits。 |\n| Log loss | 理想 handover 與完整 context 的風險差等於 $I(Y;C\\mid H,X,T)$。 |\n| Query 未知的成本 | Bernoulli 座標例中，若 $I(C;H)\\le B$，則 $H_2(Y\\mid H,X)\\ge\\max\\{0,1-B/m\\}$；query-aware encoder 則以 1 bit 傳送 $C_X$ 可達零 log loss。 |\n| Gaussian linear regression | $(G_n,b_n)=(X_n^\\top X_n,X_n^\\top y_n)$ 對所有後續輸入 $x$ 都是 predictively sufficient；其維度為 $d(d+1)/2+d$ 個實數。有限位元量化後，預測 KL divergence 可達 $O(2^{-2(B-B_0)/p})$，其中 $p=d(d+1)/2+d$。 |\n| Nonparametric regression | Cell statistics 的誤差上界包含 approximation、sampling、empty-cell 與 quantization 四項；適當選擇 $M\\asymp n^{d/(2\\beta+d)}$、$q\\asymp n^{-\\beta/(2\\beta+d)}$ 時，達到 $O(n^{-2\\beta/(2\\beta+d)})$。所需記憶量為 $O(n^{d/(2\\beta+d)}\\log n)$ bits。 |\n| Memory lower bound | 非參數模型的 minimax risk 至少為 $c\\max\\{n^{-2\\beta/(2\\beta+d)},(B+1)^{-2\\beta/d}\\}$。 |",
+      "insights": [
+        "實務上不應以摘要與原始對話的文字相似度評估 handover；應以後續 prediction、action 或 trajectory 的 task loss，以及可計算時的 ideal risk 評估。",
+        "handover writer 通常在 realized downstream query 尚未出現前寫入記錄，因此不能直接套用 query-aware prompt compression；記錄應保留能跨後續輸入維持效用的資訊。",
+        "應分開報告 prompt 中的記錄大小、外部檔案或 archive 的總儲存量，以及 continuation procedure 的使用能力，否則無法辨識 memory loss、writer loss 與 decoder loss。"
+      ],
+      "limitations": "研究核心是理論與兩類回歸模型，未提供實際 LLM、agent session、真實工具使用情境或 benchmark 的量化實驗，因此三部分記錄在自然語言任務中的效能仍未驗證。Predictive sufficiency 的主要 state quotient 亦依賴 exogeneity；若後續輸入受先前 context 影響，需改用聯合任務分布分析。論文也指出 adaptive trajectory 不能僅由單一步驟 target 的 sufficiency 保證。",
+      "tags": [
+        "agent-evaluation",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "session memory與prompt compression",
+        "in-context learning與statistical sufficiency",
+        "agent handoff與memory-constrained prediction"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]
