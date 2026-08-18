@@ -1,0 +1,531 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.15832",
+      "title": "The Authority Resolution Framework: A Five-Domain Ontology for Governing Who and What Decides, at Scale",
+      "abstract": "As AI systems become increasingly capable of autonomous action, determining whether an agent is technically capable of performing an action is insufficient: the system must also determine whether the action is authorised in its context.   This paper introduces the Authority Resolution Framework (ARF), a five-domain ontology for representing and resolving authority across organisational roles and informal influence, business concepts, codified processes, machine-readable permissions and executable systems, and external real-world context. ARF defines the Authority Relation (AR) as a cross-domain primitive binding an actor, action, object, bounded context, justification chain, and a calibration measure termed the DNA-Coefficient, which captures divergence between documented authority structures and authority as practiced.   The framework provides a machine-interpretable representation of authority provenance and scope, with JSON-LD representations and knowledge-graph query patterns for authority resolution. ARF is designed to support AI agents in determining the provenance, scope and contextual validity of authority before executing consequential actions. The framework positions authority resolution as a knowledge-representation and reasoning problem at the intersection of ontology engineering, semantic AI, agentic AI and AI governance.",
+      "authors": [
+        "Parviz Shariff"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-16T16:05:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15832v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15832",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "隨著 AI 系統具備越來越強的自主行動能力，判定代理程式在技術上能否執行某項行動已經不足；系統還必須判定該行動在其情境中是否獲得授權。本文提出 Authority Resolution Framework（ARF），這是一套用於表示與解析權威的五領域本體，涵蓋組織角色與非正式影響力、商業概念、成文流程、機器可讀的權限與可執行系統，以及外部現實情境。ARF 將 Authority Relation（AR）定義為跨領域原語，綁定行動者、行動、對象、有界情境、正當化鏈，以及稱為 DNA-Coefficient 的校準度量；該度量用於描述文件化權威結構與實際運作中權威之間的偏離。此框架提供可由機器解讀的權威來源與範圍表示，並提出 JSON-LD 表示法及知識圖譜查詢模式，用於權威解析。ARF 旨在協助 AI 代理人在執行具後果的行動前，判定權威的來源、範圍與情境有效性，並將權威解析定位為結合本體工程、語意 AI、代理式 AI 與 AI 治理的知識表示與推理問題。",
+      "problem_statement": "論文關注自主 AI 代理執行具後果行動時的授權判定問題。僅知道代理在技術上能否執行，無法確認其在特定情境中是否有權執行；權威又可能分散於組織角色、流程、系統權限與外部現實情境。作者因此將權威解析視為需要跨領域表示來源、範圍與情境有效性的知識表示與推理問題。",
+      "proposed_solution": "作者提出 Authority Resolution Framework（ARF），以五領域 ontology 統一表示不同來源的權威資訊，並以 Authority Relation（AR）作為跨領域連結原語。AR 同時描述 actor、action、object、bounded context 與 justification chain，讓代理能追溯授權來源及適用範圍。框架另以 DNA-Coefficient 表示文件化權威與實際運作權威的偏離，並透過 JSON-LD 與 knowledge-graph query patterns 支援機器可解讀的 authority resolution。其核心創新是把授權判定從單純系統權限檢查擴展為跨組織、流程、語意與外部情境的治理問題。",
+      "core_contributions": [
+        "提出 Authority Resolution Framework（ARF），以五個領域本體表示組織與非正式權威、商業概念、成文流程、機器權限與可執行系統，以及外部現實情境。",
+        "將 Authority Relation（AR）定義為跨領域核心原語，統一描述行動者、行動、對象、有界情境與正當化鏈。",
+        "引入 DNA-Coefficient 以校準文件化權威結構與實際運作權威的差異，並提供 JSON-LD 表示與知識圖譜查詢模式。"
+      ],
+      "methodology": "ARF 將權威解析建模為跨領域的知識表示與推理問題。其五個領域包括：組織角色與非正式影響力、商業概念、成文流程、機器可讀權限與可執行系統，以及外部現實情境。核心單位 Authority Relation（AR）綁定 actor、action、object、bounded context、justification chain 與 DNA-Coefficient。前述欄位用於表達誰要執行什麼行動、作用於何種對象、在何種限定情境下執行、授權依據如何串接，以及文件化權威和實際運作權威的差異。框架以 JSON-LD 提供機器可解讀的表示，並使用知識圖譜查詢模式解析權威的 provenance、scope 與 contextual validity。摘要未提供更細的模型架構、演算法步驟、資料處理流程、DNA-Coefficient 的數學定義、推理規則或評估指標；因此不能據此宣稱存在特定模型、訓練資料、實驗流程或效能結果。",
+      "key_results": "論文未報告具體實驗、資料集、baseline、數值指標或效能比較。根據提供的摘要與內容，僅能確認作者提出 ARF、Authority Relation、DNA-Coefficient、JSON-LD 表示及知識圖譜查詢模式，無法建立主要數據對比表。\n\n| 項目 | 論文提供的結果 |\n|---|---|\n| 實驗數據 | 論文未報告 |\n| baseline 比較 | 論文未報告 |\n| 資料集與規模 | 論文未報告 |\n| 評估指標與數值 | 論文未報告 |",
+      "insights": [
+        "在具後果的代理行動前，可將「技術上能否執行」與「情境中是否獲得授權」分離檢查，避免把系統權限直接等同於完整授權。",
+        "實務上可保存權威的來源、適用範圍、正當化鏈與情境條件，讓代理程式在決策時具備可追溯的權威 provenance。",
+        "可把正式規範與實際運作中的非正式影響力分開建模，再使用 DNA-Coefficient 所代表的校準概念識別兩者之間的偏離；但其具體計算仍需依實際系統定義。"
+      ],
+      "limitations": "依提供的摘要與論文內容，尚無法確認 ARF 的完整本體結構、推理演算法、DNA-Coefficient 的正式計算方式，以及在真實代理系統中的驗證結果。論文也未提供資料集、baseline、實驗數據或量化評估，因此其有效性與可擴展性仍需後續實證研究檢驗。",
+      "tags": [
+        "agent-evaluation",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "知識表示與本體工程",
+        "代理式 AI 授權治理",
+        "知識圖譜推理"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15804",
+      "title": "Hallucination Span Detection with Input-Side Evidence Alignment",
+      "abstract": "Hallucinations remain a major obstacle to the reliable use of large language models (LLMs) in conditional text generation. Existing methods primarily assess the factuality of an entire generated text, providing limited insight into which output spans are hallucinated or how they relate to the input. We introduce the task of hallucination span detection with input-side evidence alignment, which jointly identifies hallucinated spans and aligns output tokens with the corresponding input evidence. Our approach is based on the observation that faithful output tokens are predictable from the input, whereas hallucinated tokens are not. We therefore train an encoder-based model to predict masked output tokens from the input representation, using prediction confidence for hallucination detection while naturally producing alignments to the input. Experiments show that the proposed method effectively detects hallucinated spans and identifies meaningful input-side evidence. Human evaluation confirms the quality of the predicted alignments.",
+      "authors": [
+        "Miyu Yamada",
+        "Yuki Arase"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-16T15:30:29+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15804v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15804",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Hallucination 是 conditional text generation 中妨礙大型語言模型（LLM）可靠使用的主要問題。既有方法多半評估整段生成文本的 factuality，難以指出哪些 output spans 是 hallucinated，也無法說明它們與 input 的關係。本研究提出具 input-side evidence alignment 的 hallucination span detection 任務，聯合辨識輸出中的 hallucinated spans，並將 output tokens 對齊至相應的 input evidence。方法基於一項觀察：faithful output tokens 通常可由 input 預測，而 hallucinated tokens 則不可預測。因此，作者訓練 encoder-based model，根據 input representation 預測被遮罩的 output tokens，並以 prediction confidence 偵測 hallucination；同時，透過檢索到的 input token 自然產生 evidence alignment。實驗顯示，此方法能有效偵測 hallucinated spans 並找出具意義的 input-side evidence；human evaluation 亦確認其 alignment 品質。",
+      "problem_statement": "論文針對 conditional generation 中 hallucination 的細粒度定位與證據追溯問題。既有方法多在 sentence 或 document level 判斷 factuality，或只分類 output tokens，無法同時指出 hallucinated spans 及其 input evidence；人工 alignment 標註又昂貴，且難以隨模型與領域更新。",
+      "proposed_solution": "作者提出 input-grounded masked token prediction 框架，以 distant supervision 避免人工 alignment。模型將 output span 遮罩後，只根據 input representation 預測原 token；faithful token 若能由 input 恢復，應具有較高 confidence，hallucinated token 則 confidence 較低。最高相似度的 input token 或 span 同時作為 evidence alignment。訓練採 SRL span-level masking 提升效率，推論改用 token-level masking 取得細粒度偵測；核心創新是以可預測性統一 hallucination scoring 與 input-side grounding。",
+      "core_contributions": [
+        "提出具 input-side evidence alignment 的 hallucination span detection 任務，聯合進行輸出 span 偵測與輸入證據對齊。",
+        "在不依賴人工 input-output alignment 標註的 distant supervision 設定下，將 hallucination detection 轉化為 input-grounded masked token prediction。",
+        "以輕量級 ModernBERT-large encoder 的 prediction confidence 判斷 hallucination，並透過最高相似度的 input token 產生證據對齊；human evaluation 顯示對 faithful 與 baseless hallucinated words 可提供有用證據。"
+      ],
+      "methodology": "資料來自 RAGTruth，使用 QA 與 news summarization，排除 data-to-text；資料含六個 LLM 的輸出及 hallucinated span 標註，但沒有 input-output alignment 標註。作者以 SRL 將 output 切成 predicate 與 argument spans，訓練時以 span-level masking 取代被遮罩 span 的兩個連續特殊 token <mask><mask>。input 與 masked output 串接後送入 ModernBERT-large encoder（0.4B parameters）；取兩個 mask embedding 與 input token hidden representations，對每個 input span 計算兩個 cosine similarities 的總和，最高值為 span confidence，對應的 input span 即 evidence alignment。訓練目標對 hallucinated span 壓低 confidence，對 faithful span 提高 confidence，分別使用 γh=0.8、γf=1.4，並對 hard examples 加權 w=2.0。訓練遮罩 15% output tokens，優先取含 hallucination 的 spans，最終使用 35,578 個 faithful 與 13,269 個 hallucinated spans；ModernBERT-large fine-tune 5 epochs、learning rate 1.0e-5。推論時改用 token-level masking，若最高 confidence 低於 λh=0.68，則判為 hallucinated；subwords 聚合至 word，只有所有 subwords 均被判 hallucinated 才標記該 word。自動評估採 RAGTruth 的 character-level precision、recall、F1；alignment 則抽取 700 words，由一位作者以 top-1／top-3 input tokens 按 0–3 分人工評估。",
+      "key_results": "主要自動評估結果如下，數值為 character-level precision、recall 與 F1（百分比）：\n\n| 方法 | QA P | QA R | QA F1 | Summary P | Summary R | Summary F1 |\n|---|---:|---:|---:|---:|---:|---:|\n| Llama-SFT | 45.0 | 35.6 | 39.8 | 64.1 | 37.9 | 47.6 |\n| LettuceDetect | 66.9 | 62.1 | **64.4** | 60.2 | 35.5 | 44.6 |\n| OTAlign | 8.9 | 45.3 | 14.9 | 4.5 | 34.8 | 7.9 |\n| Proposed | 40.9 | **82.7** | 54.8 | 42.8 | **38.0** | 40.3 |\n\n作者報告：Proposed 在 QA 與 summarization 均取得最高 recall；QA 的最高 F1 為 LettuceDetect，summarization 的最高 F1 為 Llama-SFT。依 hallucination 類型分析，Proposed 對 QA／Summary 的 evident baseless recall 分別為 87.6／50.1，subtle baseless recall 分別為 91.2／37.7；對 evident conflict 的 recall 為 14.0／16.6，subtle conflict 在 QA 沒有可報告數值、Summary 為 18.3。Human evaluation 中，Proposed 對 faithful words 的平均分數為 Top-1 1.97、Top-3 2.15；baseless words 為 1.96、2.21；conflict words 僅為 0.39、0.44。評估者為一位作者，樣本為 70 篇文本中的 700 個 words。",
+      "insights": [
+        "若應用場景更重視不要漏掉 hallucination，可採用論文方法的高 recall 特性；但實務部署仍應搭配其他 contradiction 或 fact-checking 模組。",
+        "對齊結果不一定是精確原文片段，論文中較常獲得「相關句子或證據所在句」等級的 alignment，因此使用者介面應同時呈現 top-k 證據，而非只顯示單一 token。",
+        "confidence-based 方法對 baseless hallucination 較有效，對 conflict hallucination 明顯較弱；涉及數值、否定、立場或關係反轉的系統，應特別加入語義矛盾檢測。"
+      ],
+      "limitations": "推論時每個 output token 都要獨立遮罩並重新編碼 input 與 masked output，成本隨輸出長度線性增加。實驗僅涵蓋 RAGTruth 的 QA 與 news summarization，其他任務、領域、語言及 LLM families 尚未驗證。方法對 conflict hallucination 的偵測與 alignment 明顯不足；作者未來計畫使用更複雜的 confidence estimation，例如 non-linear neural models。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "RAG hallucination detection",
+        "input-output word alignment",
+        "masked language modeling",
+        "fine-grained faithfulness evaluation"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15776",
+      "title": "ALKEMIE Agent: an autonomous platform for computational materials design",
+      "abstract": "Despite the powerful multi-scale modeling methods and high-throughput infrastructures established in the materials community, real material computation workflows remain fragmented and heavily manual, requiring researchers to constantly bridge software tools, data analysis, and intermediate decisions. This growing gap between methodological capability and practical execution highlights the need for a new kind of autonomous computational framework, one that can coordinate tools, knowledge, and workflows in a more unified and adaptive way. Here, we introduce ALKEMIE Agent, an agentic platform in which retrieval-augmented generation, a materials-computation knowledge base, registered skills, database-supported provenance, AI-assisted structure modeling, bounded task execution, tool-calling iteration, and error-diagnostic assistance are integrated within a traceable control loop. The capabilities of ALKEMIE Agent are demonstrated through applications including materials recommendation, structure modeling, phonon calculations, machine-learned interatomic potential training, LAMMPS simulations, Ab Initio Monte Carlo (AIMC) sampling, and active-learning-based materials screening. Finally, we outline the future directions and challenges for the development of agentic platforms for computational materials design.",
+      "authors": [
+        "Hongfu Huang",
+        "Yuzhe Li",
+        "Ao Xu",
+        "Bo Liu",
+        "Changrui Wang",
+        "Kan Tang",
+        "Ning Yang",
+        "Shengxian Liu",
+        "Hanyu Liu",
+        "Pengpeng Zhang",
+        "Linggang Zhu",
+        "Fengkai Liu",
+        "Yichen Lu",
+        "Tong Zhao",
+        "Naihua Miao",
+        "Jian Zhou",
+        "Zhimei Sun"
+      ],
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "cs.AI"
+      ],
+      "published": "2026-08-16T14:54:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15776v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15776",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "儘管材料社群已建立強大的多尺度建模方法與高通量基礎設施，實際材料計算工作流程仍然破碎且高度依賴人工，研究人員必須持續銜接軟體工具、資料分析與中間決策。方法能力與實際執行之間日益擴大的落差，凸顯對新型自主計算框架的需求：此框架能以更統一且具適應性的方式協調工具、知識與工作流程。本文提出 ALKEMIE Agent，一個整合 retrieval-augmented generation、材料計算知識庫、註冊技能、資料庫支援的 provenance、AI 輔助結構建模、有界任務執行、tool-calling 迭代及錯誤診斷輔助的 agentic platform，並將其置於可追蹤的控制迴路中。作者透過材料推薦、結構建模、聲子計算、machine-learned interatomic potential 訓練、LAMMPS 模擬、Ab Initio Monte Carlo（AIMC）取樣及基於 active learning 的材料篩選展示其能力，最後提出 agentic computational materials design 平台的未來方向與挑戰。",
+      "problem_statement": "論文聚焦於材料計算工作流程碎片化且高度依賴人工的問題。雖然材料社群已有多尺度建模方法與高通量基礎設施，研究人員仍須手動銜接軟體工具、資料分析與中間決策，造成方法能力與實際執行之間的落差。現有工作流程缺乏能統一協調工具、知識與任務、並具備適應性與可追蹤性的自主框架。",
+      "proposed_solution": "作者提出 ALKEMIE Agent，一個面向 computational materials design 的自主 agentic platform。其核心做法是把 retrieval-augmented generation、材料計算知識庫、registered skills、tool-calling iteration 與資料庫 provenance 放入可追蹤控制迴路，並加入 AI 輔助結構建模、有界任務執行與錯誤診斷輔助。這種設計旨在統一協調材料計算工具、知識與工作流程，支援從材料推薦到模擬、取樣及 active-learning 篩選的多類任務。",
+      "core_contributions": [
+        "提出 ALKEMIE Agent，將 retrieval-augmented generation、材料計算知識庫、註冊技能與工具呼叫整合於可追蹤控制迴路。",
+        "納入資料庫支援的 provenance、有界任務執行、AI 輔助結構建模與錯誤診斷，使材料計算工作流程能被協調與記錄。",
+        "展示平台涵蓋材料推薦、結構建模、聲子計算、machine-learned interatomic potential 訓練、LAMMPS、AIMC 與 active-learning 材料篩選等應用。"
+      ],
+      "methodology": "ALKEMIE Agent 被描述為一個整合式 agentic platform，而非單一計算模型。其控制迴路結合 retrieval-augmented generation、材料計算 knowledge base、registered skills 與 tool-calling iteration，使 agent 能在材料計算任務中取得相關知識、選擇或呼叫已註冊工具，並迭代推進工作流程。平台同時提供 database-supported provenance，以保存計算與流程的可追溯資訊；AI-assisted structure modeling 用於支援結構建立；bounded task execution 則限制任務執行範圍；error-diagnostic assistance 用於協助辨識與處理執行錯誤。摘要列出的工作流程涵蓋材料 recommendation、structure modeling、phonon calculations、machine-learned interatomic potential training、LAMMPS simulations、AIMC sampling，以及 active-learning-based materials screening。提供的證據未說明底層語言模型、知識庫資料規模、技能註冊格式、具體演算法步驟、資料前處理、控制策略或評估指標；因此不能補充模型架構、資料集、baseline 或效能數字。",
+      "key_results": "論文摘要僅說明 ALKEMIE Agent 已透過多類材料計算應用展示能力，未提供具體數值、比較基線或量化評估結果。因此無法根據現有證據製作實驗數據對比表。\n\n| 應用或能力 | 論文提供的結果證據 |\n|---|---|\n| 材料推薦 | 論文提及作為展示應用；論文未報告量化結果 |\n| 結構建模 | 論文提及作為展示應用；論文未報告量化結果 |\n| 聲子計算 | 論文提及作為展示應用；論文未報告量化結果 |\n| Machine-learned interatomic potential 訓練 | 論文提及作為展示應用；論文未報告量化結果 |\n| LAMMPS 模擬 | 論文提及作為展示應用；論文未報告量化結果 |\n| AIMC 取樣 | 論文提及作為展示應用；論文未報告量化結果 |\n| Active-learning 材料篩選 | 論文提及作為展示應用；論文未報告量化結果 |\n| 整體效能比較 | 論文未報告 baseline、資料規模、評估指標或數值比較 |",
+      "insights": [
+        "若要將 agent 用於科學計算，應把工具、知識、任務邊界與中間決策納入同一個可追蹤控制迴路，而不只是讓模型產生文字。",
+        "材料計算平台可透過註冊化 skills 與 tool-calling 迭代銜接不同軟體工具，並以 provenance 支援結果回溯與工作流程管理。",
+        "錯誤診斷與有界任務執行可作為自主計算系統的實務控制點；但具體可靠度與效能仍需以明確基準、失敗案例及量化指標驗證。"
+      ],
+      "limitations": "根據提供的摘要與論文內容，作者未提供資料規模、模型架構細節、baseline、評估指標、失敗率或量化效能，因此無法判斷平台相對既有方法的改善幅度。作者也指出 agentic materials-design 平台仍面臨未來發展方向與挑戰；具體限制需查閱完整論文。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "科學計算代理（scientific agents）",
+        "計算材料設計",
+        "Retrieval-Augmented Generation",
+        "工具呼叫與工作流程 provenance"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15703",
+      "title": "HyMem: Hierarchical Context Management for Long-Horizon Agents via Information Isolation",
+      "abstract": "Large language model (LLM) agents often perform poorly on complex, long-horizon tasks because their context becomes increasingly cluttered over time. As interactions accumulate, detailed execution traces and intermediate outputs dominate the context, making it difficult for the model to retain and use high-level planning information. Most existing methods address this issue through compression or retrieval applied to a single, flat context, which does not clearly separate different types of context information and often leads to degraded reasoning. To address this challenge, we propose HyMem, a hierarchical framework that explicitly separates the agent's context into distinct functional layers. HyMem organizes context by function to separate high-level planning from execution and complex analysis. Its isolated reasoning module handles complex subtasks without adding intermediate reasoning traces to the persistent planning context, while its memory management module preserves task progress across context refreshes through structured summaries. These components reduce redundant context accumulation, retain task-critical information, and support coherent long-horizon reasoning within a limited context window. Experiments on GAIA and Browsecomp-plus show that, with DeepSeek-V4, HyMem achieves average Pass@1 scores of 66.7% and 61.3%, outperforming the strongest baseline by 6.1 and 4.7 percentage points, respectively. Further analysis indicates that HyMem effectively controls the growth of the reasoning context, allowing the model to maintain focus and accuracy across complex, long-horizon tasks.",
+      "authors": [
+        "XinQi Wang",
+        "Jinwei Xiao",
+        "Sijia Cui",
+        "Hongming Zhang",
+        "Yanna Wang",
+        "Qingyang Zhang",
+        "Bo Xu"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-16T12:15:01+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15703v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15703",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）代理人在複雜、長時程任務上常表現不佳，原因是互動累積後，context 日益混雜。詳細執行軌跡與中間輸出會佔據主要篇幅，使模型難以保留及運用高階規劃資訊。現有方法多在單一扁平 context 上進行 compression 或 retrieval，未能清楚分離不同功能的資訊，並可能損害推理。本文提出 HyMem，一個以 information isolation 為核心的 hierarchical context management framework，將 context 依功能分層，分離高階規劃、執行與複雜分析。isolated reasoning module 在獨立空間處理複雜子任務，避免中間推理軌跡進入持久化規劃 context；memory management module 則以 structured summaries 保存任務進度。實驗顯示，搭配 DeepSeek-V4 時，HyMem 在 GAIA 與 Browsecomp-plus 的平均 Pass@1 分別為 66.7% 與 61.3%，較最強 baseline 高 6.1 與 4.7 個百分點。",
+      "problem_statement": "複雜長時程 agent 同時需要高階策略規劃、低階工具執行與多步證據分析，但 ReAct 等 flat context 將它們交錯保存。執行軌跡、raw tool outputs、重試與中間推理會快速增長，稀疏的目標、限制與關鍵事實因 context dilution 而被掩蓋。既有 compression 或 external retrieval 通常在資訊已混合後處理，可能遺失推理鏈、破壞時間邏輯，且難以區分策略訊號與執行噪聲。",
+      "proposed_solution": "作者提出 HyMem，以 typed context isolation 將代理人的資訊按功能分層。Planner 維持跨任務的高階決策狀態；Executor 在短暫獨立空間執行工具並將 raw observations 蒸餾成結構化 RESULTS；isolated reasoning module 在另一個暫時空間處理 multi-hop、假設驗證與衝突證據整合，只回傳結論及支援資訊，不把中間推理寫入 Planner。Memory Management 以 episode、working、tool 三種 structured memory 保存里程碑、目前目標、缺口與工具經驗，並在 context refresh 時重新注入。核心創新不是單純壓縮已混合的軌跡，而是從資訊產生與跨層傳遞的介面上阻止執行細節進入持久化規劃 context。",
+      "core_contributions": [
+        "將長時程代理人的 context dilution 形式化為稀疏規劃訊號與密集執行軌跡之間的 information-density mismatch，提出 hierarchical context isolation 作為設計原則。",
+        "提出 training-free 的 HyMem inference-time framework，以明確邊界分離 Planner、Executor、isolated reasoning 與 memory management，僅允許 schema-constrained 訊息跨層傳遞。",
+        "在 GAIA 與 Browsecomp-plus 上評估 HyMem，並透過不同 backbone、資源分析、context growth 分析及 ablation study，驗證 isolated reasoning 與 structured memory 的互補作用。"
+      ],
+      "methodology": "HyMem 是包裝 frozen base LLM 的 training-free、inference-time controller。其 persistent Planner context 包含 system prompt、query、episode memory、working memory、tool memory，以及先前 session 的 typed returns；Executor 與 isolated reasoning context 則按需建立並在回傳後丟棄。Planner 每一步輸出四種控制動作之一：TASK、ISOREASON、FOLD 或 ANSWER。TASK 將子任務交給 Executor；Executor 在 bounded tool-call loop 中處理 raw observations，透過 relevance-conditioned distillation 移除導航文字、重複段落、格式雜訊與工具錯誤 boilerplate，保留實體、日期、數值、來源與證據，再以 RESULTS schema 回傳 findings、evidence、sources、status、gaps。需要 multi-hop analysis、假設檢查或衝突證據整合時，Planner 呼叫 ISOREASON；該模組可使用工具，但中間推理只留在獨立 context，最後回傳 conclusion、supporting facts、sources、confidence 與 assumptions。Memory Management 維護 episode、working、tool 三種可重寫記憶，分別保存已完成里程碑與驗證事實、目前目標與未解缺口、有效或失敗的工具使用經驗。FOLD 可由 Planner 顯式觸發，或在 Planner context 使用率超過 0.99、Executor invocation 達 5、連續失敗達 3、Planner turns 達 8、tool calls 達 10 時觸發。評估使用 GAIA validation text-only 子集（165 題）與 Browsecomp-plus 平衡抽樣 150 題，指標為 Pass@1，並比較 Qwen3-32B、DeepSeek-V4 搭配 ReAct、Summary、ReSum、A-MEM、THREAD 與 HyMem；另分析 token consumption、tool-call count、context growth，並進行移除 isolated reasoning 或 memory management 的消融。",
+      "key_results": "主要數據如下；表中數字為 Pass@1（%），GAIA 欄位依 Level 1/2/3 與平均值呈現，Browsecomp-plus 依 Easy/Medium/Hard 與平均值呈現。\n\n| Backbone / Framework | GAIA L1 | GAIA L2 | GAIA L3 | GAIA Avg. | Browse Easy | Browse Medium | Browse Hard | Browse Avg. |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|\n| DeepSeek-V4 ReAct | 66.6 | 56.1 | 36.8 | 56.6 | 94.0 | 62.0 | 14.0 | 56.6 |\n| DeepSeek-V4 ReSum | 76.2 | 54.5 | 47.4 | 60.6 | 78.0 | 46.0 | 6.0 | 43.3 |\n| DeepSeek-V4 HyMem | **77.0** | **65.2** | **49.1** | **66.7** | 90.0 | **64.0** | **30.0** | **61.3** |\n| Qwen3-32B ReAct | 19.0 | 10.6 | 0.0 | 11.8 | 70.0 | 24.0 | 2.0 | 32.0 |\n| Qwen3-32B HyMem | **45.2** | **30.3** | **15.8** | **33.0** | 48.0 | 24.0 | **4.0** | 25.3 |\n\nDeepSeek-V4 HyMem 相較 ReAct 在 GAIA 平均提升 10.1 個百分點，相較 ReSum 提升 6.1 個百分點；在 Browsecomp-plus 平均為 61.3%，較 ReAct 高 4.7 個百分點，Hard 由 14.0% 提升至 30.0%。消融結果：Browsecomp-plus 上移除 isolated reasoning 為 58.0%（下降 5.0 個百分點），移除 memory management 為 54.0%（下降 9.0 個百分點）；GAIA（Qwen3-32B）兩者移除後皆為 13.4%，完整 HyMem 為 32.0%。論文未報告統計顯著性檢定或各試驗的變異數。",
+      "insights": [
+        "長時程 agent 的 context management 不宜只在扁平軌跡變長後進行 compression；在資訊產生時即按規劃、執行與子任務推理分流，可能更能保護高價值決策訊號。",
+        "架構隔離與記憶連續性是不同功能：isolated reasoning 可避免推理噪聲污染 Planner，而 episode、working、tool memory 則保存里程碑、未解缺口與工具經驗，兩者不能簡單互相替代。",
+        "評估長時程 agent 時，除 Pass@1 外，應同步觀察 persistent planner context、總 token consumption、tool-call count 與不同難度表現；本文結果顯示效能提升主要體現在中高難度任務，但跨 backbone 並不一致。"
+      ],
+      "limitations": "論文指出，HyMem 的效果依賴 backbone 遵循 typed control instructions 並產生可靠 structured returns 的能力，跨模型與 benchmark 的增益並不一致；Qwen3-32B 在 Browsecomp-plus 未勝過 ReAct。實驗僅涵蓋 GAIA text-only 與 Browsecomp-plus 150 題子集，且未報告統計顯著性。未來工作包括 adaptive routing、改進 memory-folding policy、降低 auxiliary distillation 成本，以及處理互動式多輪任務中的 user-intent 變化。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長時程 LLM agents",
+        "context engineering",
+        "agent memory 與 context compression",
+        "tool-using agents",
+        "long-horizon reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15736",
+      "title": "Toward AI-Friendly Cartography: Understanding How Color Design Influences Foundation Model Spatial Reasoning on Sequential Choropleth Maps",
+      "abstract": "Foundation models (FMs) increasingly support multimodal and geospatial reasoning, yet it remains unclear whether cartographic principles designed for human perception are equally effective for machines. Focusing on sequential choropleth maps, we examine how hue palette, color ordering, and lightness contrast influence FM spatial reasoning. We construct a controlled benchmark of 5,760 maps and 28,800 questions spanning Attribute Identify, Spatial Recognition, Compare, Rank, and Pattern Delineate, and evaluate 21 open-source and proprietary multimodal FMs. Results show that hue choice has limited and inconsistent effects, whereas disrupting sequential color ordering substantially reduces performance, especially for comparison and ranking. Reduced lightness contrast also consistently impairs reasoning, while increasing contrast beyond sufficient separability provides only marginal gains. LoRA fine-tuning improves overall accuracy but preserves these relative sensitivities. Additional factorial experiments further indicate that errors arise from color-and-legend decoding, spatial reasoning, and the integration of thematic attributes with spatial structure. These findings show that conventional sequential ordering and sufficient contrast remain important for machine map understanding and provide empirical guidance for AI-friendly cartographic design.",
+      "authors": [
+        "Yonghe Sun",
+        "Zhenjia Liu",
+        "Hua Liao",
+        "Wenjia Xu",
+        "Nai Yang",
+        "Weihua Dong",
+        "Zhiwei Wei"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-16T13:24:31+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15736v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15736",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "Foundation models（FMs）逐漸支援多模態與地理空間推理，但為人類知覺設計的製圖原則是否同樣適用於機器仍不清楚。本研究聚焦 sequential choropleth maps，系統分析 hue palette、色彩順序與 lightness contrast 對 FMs 空間推理的影響。作者建立包含 5,760 張地圖與 28,800 道問題的受控 benchmark，涵蓋 Attribute Identify、Spatial Recognition、Compare、Rank 與 Pattern Delineate 五類任務，並評估 21 個開源及 proprietary multimodal FMs。結果顯示，hue 選擇影響有限且不一致；破壞 sequential color ordering 會顯著降低表現，尤其影響比較與排序；降低 lightness contrast 也會一致地損害推理，而在已具備足夠可分性的情況下進一步提高 contrast，收益有限。LoRA fine-tuning 可提升整體準確率，但保留上述相對敏感性。研究指出，傳統 sequential ordering 與足夠 contrast 對機器地圖理解仍然重要，並提供 AI-friendly cartographic design 的實證指引。",
+      "problem_statement": "現有 map-understanding 與 GeoAI 研究多以任務準確率或應用展示為主，較少隔離分析底層 cartographic design 對 foundation models（FMs）推理的影響。傳統 hue、色彩順序與 contrast 原則主要根據人類知覺建立，不能直接假定適合 patch-based visual token 與 attention 機制。論文因此探討哪些 sequential choropleth 設計是機器的核心訊號，哪些影響有限。",
+      "proposed_solution": "作者提出 AI-friendly cartography 的受控評估框架，將 hue、色彩與數值的順序對應、以及 CIELab lightness contrast 分離操弄，並在相同地理結構、主題值、版面與問題設定下比較 FMs。核心創新是建立 CHROMA benchmark，跨五種層級化空間推理維度評估 21 個 multimodal FMs，再以人類驗證、answer-shortcut 控制、LoRA fine-tuning 與 value-in-region 實驗交叉檢查。研究由此將製圖設計因素轉化為可量化的機器推理敏感性分析。",
+      "core_contributions": [
+        "提出針對 classical choropleth color design principles 與 FM spatial reasoning 關係的系統性研究，連結傳統製圖學與 AI-friendly cartography。",
+        "建立 CHROMA 受控 benchmark，包含 5,760 張 sequential choropleth maps、28,800 道 QA、5 個認知維度及 12 種細分任務。",
+        "以 21 個開源與 proprietary multimodal FMs 實證比較 hue、sequential/randomized ordering 及 lightness contrast 的影響，指出色彩順序與對比度的重要性高於 hue 變化。"
+      ],
+      "methodology": "研究以四階段框架進行：首先提出三個 machine-centered hypotheses，分別檢驗 sequential hue palettes、sequential versus randomized encoding，以及 lightness contrast。其次以 Python、geopandas 與 matplotlib 建立受控地圖生成流程：從美國、法國、德國與瑞士的 county-level 或等價行政區中隨機選取窗口，每張地圖保留 20–50 個區域；將來源 thematic values 按 cluster、trend、structure、random 四種空間結構分配，再套用色彩模板。地圖統一輸出為 1200×1200 pixels、220 DPI，包含區域標籤、legend、north arrow 及一致的邊界與版面設定。Hue 實驗使用 18 種 ColorBrewer sequential palettes、4–7 個 classes；ordering 實驗保留同一組色彩但隨機置換 class–color correspondence；contrast 實驗在 CIELab 中固定 a*、b*，將 lightness 差異調整為標準、1.5 倍 high contrast 或向中點縮減 50% 的 low contrast，並限用 4 或 5 classes。Benchmark 共 5,760 張地圖、28,800 道問題，涵蓋 Attribute Identify、Spatial Recognition、Compare、Rank、Delineate 五維度與 12 種題型。作者以 6 名 GIS 學生驗證隨機 20% 子集。模型部分評估 21 個開源及 proprietary multimodal FMs，採統一 zero-shot prompt、單題 multiple-choice、greedy decoding；無法解析時最多重試兩次。主要指標為 accuracy，另以 LoRA fine-tuning、無圖／空白圖控制及 value-in-region 變體進行補充分析。論文未提供這些模型內部架構的詳細說明。",
+      "key_results": "| 實驗因素／條件 | 主要結果 |\n|---|---|\n| Hue palette（18 種 ColorBrewer sequential palettes） | 平均模型準確率介於 51.2%（Purples）與 55.5%（YlGn），差異有限且不具系統性。 |\n| Sequential vs. Randomized ordering | 隨機化色彩與 thematic value 的對應會實質降低多數模型表現；降幅主要集中於 global rank、local rank，其次為 attribute comparison；direction 與 adjacency 變化可忽略。具體整體平均降幅數字：論文未報告。 |\n| Lightness contrast | Low Contrast 一致造成推理退化；High Contrast 相較 Standard 的提升在已有足夠可分性後僅邊際增加。具體跨模型平均準確率與差值：論文未報告。 |\n| Human validation | 6 名 GIS participants 在隨機 20% 子集上的 overall accuracy 為 94.8%；Sequential 95.7%、Randomized 91.7%；Standard 95.5%、High Contrast 96.7%、Low Contrast 94.7%。 |\n| LoRA fine-tuning | 顯著提升整體 geospatial reasoning accuracy，但 sequential ordering 與 lightness contrast 的相對敏感性仍維持。具體提升幅度：論文未報告。 |\n| 無圖／空白圖控制 | InternVL3.5-8B：28.1%、27.2%、27.1%；Qwen3.5-9B：27.8%、27.5%、27.2%；平均約 27%，接近加權 chance level 27.8%。 |\n| Color-free value-in-region 補充實驗 | 三模型平均：D1 Color 80.1% vs Value 55.9%；D2 68.8% vs 68.9%；D3 55.5% vs 53.1%；D4 76.1% vs 59.7%；D5 39.4% vs 34.2%。作者強調此比較含 OCR 與 region–value association 混淆，不能視為純粹 color encoding 因果估計。 |",
+      "insights": [
+        "實務上生成供模型閱讀的 sequential choropleth maps 時，應維持 thematic value 與色彩明度的單調對應，避免僅保留相同色彩集合卻隨機置換其順序。",
+        "應優先確保相鄰 thematic classes 具有足夠的 lightness separability；在已能區分類別後，單純提高 contrast 的額外效益可能有限。",
+        "若要診斷模型錯誤，不能只測整體 accuracy；應分開檢查 legend/color decoding、空間關係推理，以及 thematic attribute 與 spatial structure 的整合，特別是 comparison、ranking 與 attribute identification 任務。"
+      ],
+      "limitations": "研究主要使用受控、合成式 choropleth maps，地理區域來自美國、法國、德國與瑞士，未涵蓋更廣泛的地圖類型、文化脈絡或真實製圖複雜性。評估指標以 multiple-choice accuracy 為主，且人類驗證僅有 6 名參與者。論文未完整報告所有條件的統計顯著性、效應量與各模型詳細數值；未來可擴展至真實地圖、更多視覺設計因素與更細緻的錯誤分析。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "AI-friendly cartography",
+        "choropleth map design",
+        "GeoAI",
+        "vision-language model spatial reasoning",
+        "ColorBrewer",
+        "multimodal benchmark"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15763",
+      "title": "TaoLive Digital Avatar Agent Technical Report: Training Agents to Evolve with Their Harness",
+      "abstract": "AI-powered digital-avatar streamers in live e-commerce must answer product questions, engage viewers, and execute changing business strategies in real time. This requires low latency, factual and effective replies, and rapid adaptation to updated campaign, compliance, and style requirements. We develop an evolvable Harness that decouples Skills, Hooks, system prompts, and tools from model weights, allowing runtime behavior to change without retraining. However, Harness evolution creates a moving execution environment: compact models fine-tuned on one configuration may memorize names, schemas, and prompt templates rather than follow the Harness currently provided, while stronger zero-shot models are too slow for real-time use. We address this tension with Harness-Aware Training (HAT), which makes Harness states part of the training distribution. HAT applies task-preserving Harness-State Augmentation (HSA) to Skills, tool schemas, prompt structures, and interaction constraints, and comprises three stages: HSA-based supervised fine-tuning, general on-policy distillation to recover general capabilities, and HSA-based agentic reinforcement learning in a production-informed live-room simulator. Across four evaluation sets with more than 4,500 cases, our compact 35B model scores 94.8 on real-world Live-Stream QA, versus 80.3 for the base model and 93.0 for the strongest evaluated general LLM, while scoring 94.6 on Harness-Variant QA and retaining 83.5 on IFEval. By contrast, fixed-Harness SFT reduces IFEval by 7.7 points. In a controlled complete-agent replay on one NVIDIA H20 GPU with MTP enabled, the system achieves 3.407 s P50 and 8.114 s P95 latency. These results show that HAT produces a latency-feasible compact agent that remains effective under evaluated Harness changes without sacrificing general instruction following.",
+      "authors": [
+        "TaoLive AIGC LLM Team",
+        "Yuhan Sun",
+        "Wenhao Lin",
+        "Yongdong Luo",
+        "Yibo Hu",
+        "Meiguang Jin",
+        "Junfeng Ma",
+        "Weihang Pan",
+        "Jiaxin Zhao",
+        "Zulong Chen"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-16T14:32:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15763v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15763",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "AI 驅動的數位虛擬主播在直播電商中，必須即時回答商品問題、與觀眾互動並執行不斷變動的商業策略，因此同時要求低延遲、事實正確、回覆有效，以及快速適應活動、合規與風格更新。作者建立可演化的 Harness，將 Skills、Hooks、system prompts 與 tools 與模型權重解耦，使執行行為可在不重新訓練下更新。然而，固定 Harness 上微調的 compact model 可能記憶名稱、schema 與 prompt template，而非遵循當前 Harness；強大的 zero-shot model 又太慢。為此提出 Harness-Aware Training（HAT），將 Harness state 納入訓練分布，透過 task-preserving 的 Harness-State Augmentation（HSA）擾動 Skills、tool schemas、prompt structures 與 interaction constraints，並依序進行 HSA-SFT、General On-Policy Distillation（General OPD）及模擬生產環境的 HSA-based agentic RL。實驗顯示，compact 35B model 在 Live-Stream QA 得分 94.8，在 Harness-Variant QA 得分 94.6，IFEval 為 83.5；單張 NVIDIA H20 上 P50/P95 延遲為 3.407/8.114 秒。",
+      "problem_statement": "直播電商 Agent 的商業規則、工具與提示會持續更新，但低延遲又限制了可使用的模型規模。固定 Harness SFT 雖能提升特定領域表現，卻可能記憶 Skill/tool 名稱與 prompt template，導致面對新 Harness 時失效，並造成一般 instruction-following 能力下降；大型 zero-shot model 則被作者測得超過 11 秒的 median latency，test-time adaptation 與反覆 continual learning 也不符合更新與延遲需求。",
+      "proposed_solution": "作者提出可演化 Harness 與 HAT。Harness 將 Skills、Hooks、system prompt pipeline 和 ToolRegistry 獨立於模型權重，使業務方可透過人工審核流程快速修改策略。HAT 的核心是讓 Harness state 成為訓練分布，而非固定背景；HSA 對 Skill、tool、prompt、Hook 的表面形式與互動限制作保持任務語義的變換，迫使 compact model 閱讀當前功能性指令。完整流程依序為 HSA-SFT、General OPD 與在生產導向 simulator 中的 HSA-RL，兼顧業務能力、Harness 變化適應、一般指令遵循與端到端延遲。",
+      "core_contributions": [
+        "提出可演化的 Harness 架構，將 Skills、Hooks、system prompt pipeline 與 tools 從 policy model 權重中解耦，支援由開發者審核的 Diagnose→Confirm→Edit→Evaluate→Regression Check 更新流程。",
+        "提出 Harness-Aware Training（HAT）與 Harness-State Augmentation（HSA），在 SFT 與 agentic RL 階段將多種 Harness 狀態納入訓練，降低固定 Harness 的 surface-form overfitting。",
+        "建立涵蓋真實直播互動、Harness 變體、合成工具與 prompt robustness，以及 IFEval 的四類評測，並校準 Harness-based Agent-as-a-Judge；同時報告完整 Agent replay 的實際部署延遲。"
+      ],
+      "methodology": "作者將 policy 表示為 πθ(a|x,h)，其中 x 是使用者輸入及業務 context，Harness state h=(S,T,P,K)，分別代表 Skills、tool registry、system prompt 與 Hooks。Runtime 由動態 Skill 載入、prompt assembly、工具呼叫、多輪 policy–tool loop、Hook 驗證/重試及 stop gate 組成。HSA 對五個維度進行 task-preserving 擾動：新增或遮罩 Skills、改名及改寫 Skill descriptions、重排或遮罩規則、改寫 tool names/descriptions、重排 prompt blocks 並調整有效數值限制，以及改變 Hook 的 retry、message structure 與觸發行為；生成後以 Accuracy、Effectiveness 與 consistency check 篩選。訓練第一階段以 10K 個真實直播案例，由 teacher 在原始與 augmented Harness 下產生軌跡，進行 HSA-SFT，並刪除多數中間錯誤 retry 內容、保留少量完整 recovery 軌跡。第二階段在 Tulu3 general instruction data 上，以原始 base model 作 teacher，執行 General OPD 以最小化 student 與 base distribution 的 KL divergence。第三階段在 production-informed simulator 中使用 HSA-RL；環境包含直播情境、Skills、工具 sandbox、Hook、多輪限制及 timeout、malformed response、permission denial 等失敗注入，採 GRPO/GDPO 式分組優化。Reward 包含 Accuracy、Effectiveness、Tool Rationality、Skill Selection，並懲罰過長 CoT。評估包含 T1/T2 各 978 筆真實資料、T3 2,023 筆合成 robustness 案例、IFEval 541 筆及 110 筆部署 replay；指標涵蓋 Accuracy、Effectiveness、工具正確性、prompt 遵循、IFEval 與 wall-clock latency。",
+      "key_results": "| 方法 | T1 Live-Stream QA AVG | T2 Harness-Variant QA AVG | IFEval-P | IFEval-I |\\n|---|---:|---:|---:|---:|\\n| Qwen3.6-35B-A3B Base | 80.3 | 75.4 | 81.5 | 87.7 |\\n| Naive/Fixed-Harness SFT | 89.5 | 88.2 | 73.8 | 82.4 |\\n| HAT（Ours） | **94.8** | **94.6** | **83.5** | **88.7** |\\n| 最強 evaluated general LLM（T1） | 93.0 | 論文未以單一數字概括 | 論文未以單一數字概括 | 論文未以單一數字概括 |\\n\\nHAT 相較 Base 在 T1 AVG 提升 14.5 個百分點、T2 提升 19.2 個百分點；Fixed-Harness SFT 的 IFEval-P/I 分別下降 7.7/5.3 個百分點，而 HAT 相較 Base 為 +2.0/+1.0。T3 中 HAT 的 Tool Robustness AVG 為 84.0、Prompt Robustness AVG 為 77.6；固定部署 replay 使用 110 cases（10 件 warm-up、100 件計入），單張 H20、MTP enabled 下達到 P50 3.407 秒、P95 8.114 秒。作者另報告 MTP On 相較 Off 的 HAT Decode TPS 在 concurrency 1/2/4/8 分別為 1.69×/1.52×/1.27×/1.19×；高 concurrency 下 P95 與 15 秒達成率不一定改善。",
+      "insights": [
+        "若 runtime 規則、工具 schema 或 prompt 會頻繁變更，應把執行環境版本化並納入訓練分布，而非只在單一固定配置上進行 SFT。",
+        "HAT 的三階段設計顯示，domain SFT 後可用 General OPD 恢復部分一般 instruction-following，再以多輪 simulator 中的 agentic RL 學習工具錯誤、Hook retry 與 Skill routing 的後果。",
+        "評估可演化 Agent 時，不能只測固定 Harness 的任務成功率；應分別檢驗真實業務品質、Harness 變體穩健性、工具與 prompt robustness、一般指令遵循及端到端延遲。"
+      ],
+      "limitations": "評測部分依賴 Harness-based Agent-as-a-Judge；雖以 482 筆人工標註資料校準，但論文未完整揭露 Judge 與人類一致性的具體數字。HSA 的變化範圍由作者設計，T3 含 LLM 生成的合成案例，未證明可涵蓋所有未來 Harness。RL、MTP 與部署結果多為單次或有限 replay，且延遲僅代表指定 H20、服務與低 concurrency 設定。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "可演化 Agent 與模組化 Prompt/Runtime 優化",
+        "LLM-as-a-Judge 與人類標註校準",
+        "工具使用、錯誤恢復與多輪 Agent RL"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15820",
+      "title": "QuantumPhaseNet: A Gauge-Covariant Geometric and Quantum-Spectral Theory of Semantic Concept Hierarchies with Prototype Validation of a Classical Quantum-Inspired Model",
+      "abstract": "We present QuantumPhaseNet, a gauge-covariant geometric and quantum-spectral extension of Transformer representations. Context-dependent semantic states are modeled as complex amplitudes; a covariant phase rate induces a semantic wavelength used as a proxy for conceptual scale; and low-frequency graph modes define a document-level discourse direction. The theoretical part establishes local gauge invariance, unitarity of the quantum block, boundedness and conditional stability of WavePhase Attention, and a calibratable hallucination-risk formulation. We also implemented a fully offline Validation Studio for the classical quantum-inspired pipeline in Section 14.1 and evaluated the five research questions in Section 16.1 on its built-in synthetic setting (n=240, observation noise 0.22, circuit noise 0.08, five seeds). RQ1 yielded a wavelength-hierarchy Spearman correlation of 0.852 versus 0.707 for the baseline, 87.3% direction accuracy, and AUC 0.953. RQ2 achieved discourse alignment 0.933 versus 0.589 and 41.2 versus 16.2 paragraphs before drift. RQ3 achieved AUROC 0.881 versus cosine 0.765 and phase-shuffle 0.536. RQ4 achieved error-detection AUROC 0.854 versus entropy 0.634, with Brier 0.150 and ECE 0.098. RQ5 did not show quantum advantage: target probability and end-to-end cost efficiency were 25.5% and 0.107, compared with 70.7% and 0.707 for the Chebyshev classical approximation. These results provide initial synthetic evidence for the classical quantum-inspired components, but not external validity or unconditional quantum speedup.",
+      "authors": [
+        "Kiyotaka Kasubuchi",
+        "Kazuo Fukiya"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-16T15:52:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15820v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15820",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 QuantumPhaseNet，將 Transformer 表徵擴展為具 gauge-covariant 幾何與 quantum-spectral 結構的框架。模型以 complex amplitudes 表示依賴上下文的 semantic states，透過 covariant phase rate 定義 semantic wavelength，作為概念尺度代理；並以 graph 的低頻模式建立文件層級 discourse direction。理論部分證明 local gauge invariance、quantum block 的 unitarity、WavePhase Attention 的 boundedness 與 conditional stability，並提出可校準的 hallucination-risk formulation。作者以完全離線的 Validation Studio，在內建 synthetic setting（n=240、observation noise 0.22、circuit noise 0.08、五個 seeds）評估五個研究問題。RQ1–RQ4 顯示初步改善，但 RQ5 未觀察到 quantum advantage。結果僅支持 classical quantum-inspired components 的初步 synthetic evidence，不代表 external validity 或無條件的 quantum speedup。",
+      "problem_statement": "論文認為標準 Transformer 的 inner-product similarity 雖具高表達力，卻不直接揭示 concept inclusion、不同語境間的 parallel transport、文件 discourse direction、evidence consistency 或生成軌跡的幾何偏離。既有 hierarchy、graph spectral、quantum-inspired 與 hallucination 方法通常分別處理這些問題，缺乏統一且可驗證的 operator framework。本文因此探討如何以 gauge-covariant 幾何與 spectral signals 建模概念階層、 discourse 穩定性及 hallucination risk，同時檢驗量子實作是否具有實際優勢。",
+      "proposed_solution": "QuantumPhaseNet 將語義表示視為 complex semantic bundle 上的 context-dependent states，以 unitary connection 定義 gauge-invariant 的 covariant phase rate 與 semantic wavelength，將 wavelength 作為概念尺度代理。它以多軸 wavelength 建立階層關係，透過 graph 或 connection Laplacian 的低頻模式估計 discourse direction，並把 phase coherence、wavelength compatibility、方向、幾何距離與 evidence support 融入 WavePhase Attention。頻譜選擇同時提供 quantum-executable 與 classical quantum-inspired 兩種實現；後者以 Chebyshev 或 Lanczos 近似。最後將幾何偏離、曲率、證據不足與不確定性整合為可校準的 hallucination risk，支援檢索、重生成或 abstention。",
+      "core_contributions": [
+        "建立 gauge-covariant semantic representation：以 complex semantic bundle、unitary connection、covariant phase rate 與 semantic wavelength 描述上下文語義尺度，並證明相關量的 local gauge invariance。",
+        "提出整合 wavelength hierarchy、graph/connection Laplacian 低頻 discourse direction、geodesic distance、phase coherence 與 evidential support 的 WavePhase Attention，以及對應的 classical quantum-inspired spectral selection。",
+        "提出由 directional、path、curvature、evidence deficiency 與 semantic uncertainty 組成的 hallucination risk score，並將 calibration 與 abstention 分開處理；同時以 Validation Studio 連接理論、演算法、評估指標與 falsification criteria。"
+      ],
+      "methodology": "框架先將 token embedding 與 positional representation 映射至局部 semantic manifold，並以 metric、complex semantic bundle 與 unitary connection 定義跨語境的狀態。沿閱讀或生成軌跡計算 covariant phase rate Ω，據此得到 semantic wavelength λ=2πc_s/(|Ω|+ε_ω)；跨點比較則使用包含 parallel transport 的 covariant coherence。模型另建立 semantic graph，以 Fréchet mean 與 logarithmic map 得到 tangent-space vectors，再用 graph Laplacian 或 connection Laplacian 的低頻 filter 估計 discourse direction。\\n\\n量子流程包括 amplitude encoding、external QFT、QPE、由方向／wavelength／evidence 等條件構成的 reversible oracle、amplitude amplification、uncomputation 與 inverse QFT；classical quantum-inspired 版本則以 eigendecomposition、Lanczos、Krylov 或 Chebyshev filter 近似 target projector。WavePhase Attention 將標準 attention logit 加入 covariant coherence、wavelength compatibility、direction alignment、geodesic distance、evidential support 與 causal/padding mask，並以 residual connection 注入 quantum-selected features。\\n\\nhallucination risk 由 directional、path、curvature、evidence deficiency 與 semantic uncertainty 加權組成，之後以 logistic calibration 或 isotonic regression 校準，並支援 retrieve、revise 或 abstain。評估設計包含 hierarchy 的 Spearman、direction accuracy、inclusion AUC；discourse alignment 與漂移前段落數；phase coherence 與 cosine、phase-shuffle 的 AUROC；risk 的 AUROC、Brier、ECE；以及 quantum simulation 與 Chebyshev 的 target probability 和端到端效率。",
+      "key_results": "作者報告的 Validation Studio 結果均來自同一個內建 synthetic generator，而非外部公開資料集。\\n\\n| 研究問題 | QuantumPhaseNet／量子模組結果 | baseline 或比較方法 | 指標 |\\n|---|---:|---:|---|\\n| RQ1 概念階層 | Spearman **0.852**；direction accuracy **87.3%**；inclusion AUC **0.953** | baseline Spearman **0.707** | hierarchy correlation、方向準確率、AUC |\\n| RQ2 discourse | alignment **0.933**；aligned-paragraph rate **95.4%**；漂移前 **41.2** paragraphs | alignment **0.589**；aligned rate **56.3%**；漂移前 **16.2** paragraphs | discourse alignment、topic-drift stability |\\n| RQ3 phase | AUROC **0.881**；Brier **0.154** | cosine AUROC **0.765**；phase-shuffle AUROC **0.536** | phase coherence discrimination、calibration |\\n| RQ4 hallucination risk | error-detection AUROC **0.854**；Brier **0.150**；ECE **0.098** | entropy AUROC **0.634** | error detection、calibration |\\n| RQ5 quantum selection | target-subspace probability **25.5%**；end-to-end cost efficiency **0.107** | Chebyshev：**70.7%**；**0.707** | target probability、端到端效率 |\\n\\n論文未報告在 WordNet、HyperLex、TruthfulQA、FEVER、FACTScore 或 LongFact/SAFE 等外部資料集上的具體結果，因此上述數字不能直接視為外部泛化證據。",
+      "insights": [
+        "若要將幾何或相位特徵用於 hallucination detection，應把它們視為可校準的風險分數，而非直接等同於正確率或錯誤機率；論文明確建議使用 Brier、ECE、AUROC 與 risk–coverage 評估。",
+        "低頻 discourse direction 不能單獨視為正確性訊號，因為重複的 misinformation 也可能形成低頻成分；實務部署應與 evidence verification、summary/instruction supervision 及人工審查結合。",
+        "量子術語本身不代表量子優勢。若進行 classical–quantum 比較，應把 state preparation、Hamiltonian/block encoding、QPE、oracle、noise、shots 與 readout 的端到端成本納入，而不能只比較 QFT gate complexity。"
+      ],
+      "limitations": "實驗僅使用內建 synthetic setting、240 個樣本與五個 seeds，未提供外部 benchmark 的結果，因此 external validity 尚未建立。幾何、connection、curvature 與語義對應具有非唯一性；低頻訊號可能放大錯誤資訊，risk 也不保證真實性。量子實作未顯示 advantage。未來需在 WordNet、HyperLex、TruthfulQA、FEVER、SAFE 等資料上獨立複現，並進行公平的端到端資源比較。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "semantic geometry and manifold learning",
+        "graph Fourier analysis and connection Laplacian",
+        "quantum-inspired spectral filtering",
+        "hallucination detection and calibration",
+        "retrieval-augmented generation"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15797",
+      "title": "KV-Rescue: Recovering Reasoning Language Model KV Eviction Loss via Stepwise Interleaving",
+      "abstract": "KV-cache eviction caps the memory cost of long reasoning traces but is inherently lossy because the model decodes from a partial view of its history. Under aggressive budgets, this not only lowers accuracy but can also cause runaway degeneration, where the model produces incoherent or repetitive tokens until reaching the length limit. We characterize much of this loss as an information gapf caused by missing context, rather than a capability gap caused by limited model capacity. An evicted 7B model and a full-context 1.5B model make complementary errors, and an oracle choice between their answers recovers 79% of the accuracy gap to the full-KV 7B model. Based on this observation, we propose KV-Rescue, a training-free inference framework that bridges the information gap introduced by KV eviction using a lightweight full-context helper. KV-Rescue interleaves reasoning steps from the two models into a shared trajectory. An online detector uses entropy and compressibility to terminate the generation of incoherent or repetitive base-model candidates early. Across five math benchmarks with Qwen2.5-Math 7B and 72B, KV-Rescue recovers an average of 87% of the accuracy lost to eviction at eviction budget B=64. A decode-cost analysis further shows that preventing runaway degeneration cuts base-model token generation by 43% on average.",
+      "authors": [
+        "Minsoo Cheong",
+        "Woosang Lim",
+        "Vincent-Daniel Yun",
+        "Sungjoo Yoo"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-16T15:23:25+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15797v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15797",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "KV-cache eviction 能限制長推理軌跡的記憶體成本，但由於模型只能從部分歷史解碼，因此本質上具有資訊損失。在激進的 eviction budget 下，除了準確率下降，還可能發生 runaway degeneration：模型持續生成不連貫或重複 token，直到達到長度上限。作者指出，許多損失源自缺失上下文造成的 information gap，而非模型容量不足造成的 capability gap。被 eviction 的 7B 模型與保留完整上下文的 1.5B 模型會犯互補錯誤，兩者答案的 oracle 選擇可恢復相對 full-KV 7B 模型準確率差距的 79%。因此作者提出免訓練的 KV-Rescue，利用輕量 full-context helper，逐步交錯兩個模型的推理步驟，並以 entropy 與 compressibility 線上偵測並提前終止不連貫或重複的 base candidates。在五個數學 benchmark、Qwen2.5-Math 7B 與 72B 上，B=64 時平均恢復 eviction 所造成準確率損失的 87%，並使 base-model token generation 平均減少 43%。",
+      "problem_statement": "長推理會使 KV cache 成為主要記憶體瓶頸，因此 KV eviction 以固定 budget 保留部分歷史；但被移除的 context 不能在後續解碼中存取，造成準確率下降。budget 足夠小時，模型還會進入不連貫生成或 repetition loop，持續輸出至長度上限。現有 Best-of-N 只從同一個有缺失上下文的 cache 狀態採樣，雖可增加候選，卻無法恢復被 eviction 的資訊。",
+      "proposed_solution": "作者提出 KV-Rescue，一個 training-free 的雙模型推理框架。它以大型但 KV-evicted 的 base model 保留主要推理能力，以小型 full-context helper 提供未被刪除的歷史資訊；兩者在每個 reasoning step 產生候選，透過 process reward model 選出最高分步驟，交錯形成共享 trajectory。核心創新有二：將不同 context views 的模型互補性從答案層級延伸至 stepwise reasoning，以及在 PRM 選擇前使用 entropy 與 gzip ratio 線上淘汰 base 的失控候選，避免無效長生成。",
+      "core_contributions": [
+        "將 KV eviction 導致的推理損失區分為由歷史上下文缺失造成的 information gap，以及由模型能力造成的 capability gap；實驗顯示被 eviction 的 7B 模型與 full-context 1.5B 模型具有互補錯誤。",
+        "提出免訓練的 KV-Rescue stepwise interleaving 框架，讓被 eviction 的大型 base model 與 full-context 輕量 helper 共同生成並交錯提交推理步驟，由 PRM 選擇最佳候選。",
+        "提出僅使用解碼期間既有統計量的線上 degeneration detector，以 token entropy 偵測 incoherent generation、以 gzip ratio 偵測 repetition loop，降低失控生成與解碼浪費。"
+      ],
+      "methodology": "KV-Rescue 使用 Qwen2.5-Math-7B-Instruct 或 72B-Instruct 作為採用 R-KV eviction 的 base model，使用 full-context Qwen2.5-Math-1.5B-Instruct 作為 helper，並以 Qwen2.5-Math-PRM-7B 對候選推理步驟評分。推理答案被切分為以「\\n\\n」分隔的 steps；每一步從 base 的 evicted cache 與 helper 的完整 context 各採樣 N 個 candidates，將最多 2N 個候選交給 PRM，選擇分數最高者加入共享 trajectory。若選中 base step，保留其 cache fork；若選中 helper step，base 重新編碼該步並套用 eviction，helper 則持續接收完整共享歷史。對 base candidates 進行線上早停：以最近 token 的 moving-average predictive entropy 超過 7 nats 偵測 incoherent generation；在寬度 800 的文字滑動視窗中，以 gzip ratio 低於 0.18 偵測 repetition loop。被中止的候選不參與 PRM 選擇，而 helper candidates 保證候選池不為空。實驗採 bf16、context cap 4096、temperature 0.8、top-p 0.95、top-k 20，評估 MATH500、AIME2024、AMC2023、GSM8K、OlympiadBench 的 pass@1，並比較 B=64、128、256、512、N=1 或 8，以及 full-KV 與 eviction-only Best-of-N。另以 SnapKV 重複 7B 實驗，並在 A100 SXM 上分析 KV memory、token generation、throughput 與 wall-clock cost。",
+      "key_results": "主要結果如下；準確率為 pass@1，表中數字來自論文 Table 2 與 Table 5。\\n\\n| 設定 | KV budget | 方法 | MATH500 | AIME24 | AMC23 | GSM8K | OlympiadBench |\\n|---|---:|---|---:|---:|---:|---:|---:|\\n| 7B, N=8 | 64 | eviction-only Best-of-N | 52.8 | 1.3 | 19.0 | 61.0 | 16.7 |\\n| 7B, N=8 | 64 | KV-Rescue | 82.2 | 12.0 | 60.5 | 94.8 | 40.6 |\\n| 7B, N=8 | 128 | eviction-only Best-of-N | 69.2 | 4.7 | 44.5 | 82.9 | 29.6 |\\n| 7B, N=8 | 128 | KV-Rescue | 83.2 | 14.0 | 62.0 | 95.9 | 40.9 |\\n| 72B, N=8 | 64 | eviction-only Best-of-N | 60.6 | 4.0 | 31.5 | 74.1 | 28.6 |\\n| 72B, N=8 | 64 | KV-Rescue | 82.6 | 15.3 | 61.0 | 95.2 | 43.4 |\\n\\n在 7B、MATH500、N=8、B=64 的消融中，full-KV、eviction-only、加入 interleaving、再加入 early exit 的準確率分別為 84.0%、52.8%、81.8%、82.2%；degeneration rate 分別為 2.4%、13.4%、2.8%、0.2%。KV-Rescue 在五個 benchmark 與兩種 base model 的 B=64 設定平均恢復 87% 的 eviction accuracy loss；論文未報告該平均值的逐 benchmark 細分。7B 的 base-model token generation 平均減少 43%。在 72B、MATH500、N=8、B=64、batch 64 時，KV-Rescue throughput 為 10.6 problems/min，eviction-only Best-of-N 為 3.2，full-KV 無法運行因 OOM；論文報告 KV-Rescue throughput 提升 3.3 倍。",
+      "insights": [
+        "若 KV 壓縮造成的主要問題是上下文不可見，而非模型推理能力不足，可透過較小但保留完整上下文的模型補足資訊；實務上可將此策略視為 KV compression 的外掛模組。",
+        "單一模型上的 Best-of-N 只能增加同一個缺失上下文狀態下的採樣，無法恢復已被 eviction 的資訊；引入具有不同上下文視圖的候選來源，可能比單純增加採樣數更有效。",
+        "部署時應同時監控生成品質與解碼成本。entropy 與 gzip compressibility 可作為低額外成本的早期停止訊號，尤其適合避免 repetition loop 或 incoherent output 導致的長度上限浪費。"
+      ],
+      "limitations": "研究主要集中於 Qwen2.5-Math 系列與五個數學 benchmark，且多數資料集只使用單次 run；對一般語言、長上下文 agent 任務及其他模型家族的泛化未被驗證。方法依賴 PRM、額外 helper 與手動 entropy/gzip thresholds，PRM 誤判、helper 成本及閾值跨任務穩定性仍需研究。論文也未評估較漸進的過度冗長推理失敗。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "KV-cache compression",
+        "test-time scaling 與 Best-of-N",
+        "process reward model",
+        "multi-model inference"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15727",
+      "title": "FirstDiff: One-Step Diffusion-Based Anomaly Detection for Multivariate Time Series via Initial Noise Prediction",
+      "abstract": "Diffusion models have recently shown strong potential for multivariate time-series anomaly detection by learning the distribution of normal data through iterative denoising. Existing diffusion-based approaches, however, typically perform anomaly detection after completing the reverse diffusion process, relying primarily on the final reconstructed signal and overlooking informative representations produced during denoising. This design incurs substantial computational cost and limits the use of intermediate diffusion information for anomaly detection.   In this paper, we propose FirstDiff, a diffusion-based anomaly detection framework based on the observation that the predicted diffusion noise at the initial reverse-diffusion evaluation already contains sufficient information for accurate anomaly detection. FirstDiff models the statistical distribution of predicted diffusion noise under normal behavior using validation data, enabling anomaly inference from a single denoising-network evaluation rather than completing the reverse diffusion trajectory.   To model complex temporal and inter-sensor dependencies, FirstDiff employs a Diffusion Transformer as the denoising backbone. Extensive experiments on five public benchmark datasets demonstrate that FirstDiff achieves state-of-the-art performance while reducing diffusion inference from the full reverse trajectory to a single denoising-network evaluation.",
+      "authors": [
+        "Ali Boudaghi",
+        "Alireza Nemati",
+        "Hadi Zare"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "stat.ML"
+      ],
+      "published": "2026-08-16T12:59:38+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15727v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15727",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "Diffusion models 近來在多變量時間序列異常偵測中展現潛力，能透過反覆去噪學習正常資料分布。然而，既有方法通常必須完成整個 reverse diffusion process，主要依賴最終重建訊號，忽略去噪過程中產生的中間表徵，因而造成顯著計算成本。本文提出 FirstDiff，一個基於 diffusion 的異常偵測框架。其核心觀察是：在初始 reverse-diffusion evaluation 中預測的 diffusion noise，已包含足夠的異常辨識資訊。FirstDiff 使用正常 validation data 建模預測噪聲的統計分布，測試時只需執行一次 denoising network evaluation，即可進行異常推論，而不必完成整條 reverse diffusion trajectory。為捕捉複雜的時間與感測器間依賴，方法採用 Diffusion Transformer 作為 denoising backbone。在五個公開 benchmark datasets 上的實驗顯示，FirstDiff 達到具競爭力的結果，並大幅降低 diffusion inference 成本。",
+      "problem_statement": "多變量時間序列異常偵測常依賴 prediction 或 reconstruction error；當異常接近正常資料流形，誤差可能不明顯。既有 diffusion-based 方法通常要完成 T-step reverse diffusion 才從最終重建訊號產生分數，忽略中間去噪表徵並承受高推論延遲。本文要驗證初始步驟的 predicted noise 是否已足以區分正常與異常行為。",
+      "proposed_solution": "FirstDiff 將初始 reverse-diffusion evaluation 的 predicted diffusion noise 視為異常表徵，而非僅把它當作生成重建的中間量。模型先以正常視窗訓練 DDPM denoiser，並由 DiT 建模跨時間與感測器的依賴；完成訓練後，利用正常 validation data 估計 predicted-noise 的平均值與 covariance。測試時只需對加噪視窗執行一次 DiT，計算其噪聲向量相對 reference distribution 的距離，再依閾值輸出異常結果。核心創新是以早期 score-like denoising information 取代完整 reverse trajectory，並可與 reconstruction score 或其他距離產生 hybrid detector。",
+      "core_contributions": [
+        "提出 FirstDiff，直接利用初始 reverse-diffusion evaluation 的 predicted diffusion noise 進行多變量時間序列異常偵測，將完整反向擴散簡化為單次 denoising-network evaluation。",
+        "以正常 validation windows 估計 predicted-noise 或 denoising-residual 的 Gaussian reference distribution，並研究 Euclidean、cosine 與 Mahalanobis distance 作為異常分數。",
+        "採用具有 global self-attention 的 Diffusion Transformer，同時建模視窗內的長期時間依賴與 inter-sensor interactions，並透過消融實驗分析不同表徵、距離及 hybrid inference 的效果。"
+      ],
+      "methodology": "資料先以 training-set statistics standardize，再切成長度 W=96 的 overlapping windows；training stride 為 64，validation/test stride 為 96，且訓練只使用正常資料。模型使用 DDPM forward process，依式 Xt=√ᾱtX0+√(1−ᾱt)ε 加入 Gaussian noise，並以標準 noise-prediction objective 最小化真實噪聲與預測噪聲的 squared error。denoising backbone 是由 6 個 Transformer blocks 組成的 DiT，hidden dimension 為 256、attention heads 為 8；輸入經 linear projection 與 sinusoidal positional encoding，並以 timestep embedding 和 AdaLN 調制，最後由 linear head 輸出各感測器的 predicted noise。訓練採 T=100、linear variance schedule、Adam、batch size 128、15 epochs。推論時在 initial reverse-diffusion evaluation 取得 ε̂(1)=εθ(XT,T)，並可計算 residual r(1)=ε−ε̂(1)。以正常 validation windows 的 timestamp-level vectors 估計 mean 與 covariance，建立 Gaussian reference distribution；對測試表徵計算 Euclidean、cosine 或 Mahalanobis distance，超過 threshold τ 即判為異常。論文亦評估完整 reconstruction 與 hybrid OR rule。資料集為 SMD、PSM、MSL、SWaT、SMAP，指標包括 Precision、Recall、F1-score 與 Average Detection Delay。",
+      "key_results": "主要結果如下；數值為論文 Table II–V 與 Table IV 所報告的結果。\n\n| 方法或變體 | SMD F1 | PSM F1 | MSL F1 | SWaT F1 | SMAP F1 | 平均 F1 |\n|---|---:|---:|---:|---:|---:|---:|\n| GAD | 81.91% | 93.83% | 88.30% | 86.46% | 88.60% | 87.82% |\n| ImDiffusion | 81.77% | 96.20% | 85.84% | 79.93% | 89.63% | 86.67% |\n| DiffAD | 63.58% | 95.71% | 90.61% | 52.10% | 95.38% | 79.48% |\n| FirstDiff, Mah(ε) | 81.48% | 97.26% | 93.01% | 96.66% | 96.28% | 92.94% |\n| FirstDiff Reconstruction | 90.53% | 96.36% | 88.41% | 89.47% | 76.85% | 88.32% |\n| FirstDiff, ε+Cos(ε) | 82.93% | 98.30% | 92.23% | 96.76% | 96.65% | 93.37% |\n\nFirstDiff 的 Mah(ε) 在 PSM、MSL、SWaT、SMAP 取得表中最高 F1，但 SMD 的 81.48% 略低於 GAD 的 81.91%。Average Detection Delay 分別為 SMD 35.90、PSM 26.17、MSL 65.36、SWaT 110.14、SMAP 142.06；其中 PSM 與 SWaT 為表中最低。單一視窗平均 inference time 為：FirstDiff one-step 1.25 ms、FirstDiff full-step 99.74 ms、ImDiffusion 204.55 ms、DiffAD 268.34 ms、GAD 372.91 ms。",
+      "insights": [
+        "在需要低延遲或高吞吐量的線上監控場景，可優先評估 diffusion denoiser 的早期 predicted noise，而不必執行完整生成軌跡；論文報告其平均每視窗推論時間約為 1.25 ms。",
+        "Mahalanobis distance 能在考量感測器維度間 covariance 的情況下衡量偏離程度；但其效果依資料集而異，實務部署仍應以正常 validation data 進行距離與閾值選擇。",
+        "predicted-noise score 與 reconstruction score 具有互補性。論文的 hybrid ablation 顯示，結合不同異常訊號可能提升 F1，但 OR rule 也可能引入額外誤報，因此應依應用的 precision/recall 需求評估。"
+      ],
+      "limitations": "論文主要在五個公開 benchmark datasets 上驗證，未提供跨資料集部署、非平穩環境或大規模線上場景的額外結果。Gaussian reference model 只是對正常 predicted-noise 分布的 tractable approximation，且閾值選擇與協方差估計的敏感度未被完整量化。作者提出的未來方向包括 alternative diffusion formulations、adaptive denoising-step selection，以及更有效的大規模 distribution modeling。",
+      "tags": [
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多變量時間序列異常偵測",
+        "Diffusion models 與 score function",
+        "Transformer 時序建模",
+        "Mahalanobis distance 與分布偏離偵測"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.15767",
+      "title": "TinyCast: Probabilistic Zero-Shot Forecasting with Computed Periodicity",
+      "abstract": "We introduce TinyCast, an attention-free zero-shot forecaster that emits a predictive distribution from 146,505 parameters, on the premise that at this size the periodic structure of a context is worth computing rather than learning. A zero-parameter spectral detector supplies the dominant periods, the context is folded on their phase, and a dilated convolutional encoder and a block-autoregressive quantile decoder model the rest. It is smaller than every zero-shot entry on the GIFT-Eval board whose parameter count can be established. On probabilistic accuracy it defines the size-accuracy frontier. Among zero-shot entries declaring no test-data leakage it is the only one below 1.4M parameters that emits a predictive distribution, and every entry scoring better carries at least that budget. On Chronos-ZS and fev-bench every neural model ahead of it carries at least 28 times its parameters. Because the mixing path is convolutions and matrix multiplications only, it exports to static INT8 and forecasts end to end on an embedded device without per-signal fitting.",
+      "authors": [
+        "Armin Steinhauser"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-16T14:40:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.15767v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.15767",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 TinyCast，一個具備 probabilistic forecasting 能力、無 attention 的 zero-shot forecaster，僅使用 146,505 個參數。其核心前提是：在極小模型規模下，context 的週期結構應透過計算取得，而非耗用參數學習。模型以零參數 spectral detector 從輸入偵測 dominant periods，依 phase folding context，再由 dilated convolutional encoder 與 block-autoregressive quantile decoder 建模其餘結構。TinyCast 小於 GIFT-Eval board 上所有參數量可確認的 zero-shot 模型，並在 probabilistic accuracy 上建立 size-accuracy frontier。在宣稱無 test-data leakage 的模型中，它是唯一低於 1.4M 參數且能輸出 predictive distribution 的模型。於 Chronos-ZS 與 fev-bench 中，所有領先的 neural models 至少使用其 28 倍參數。由於 mixing path 僅包含 convolutions 與 matrix multiplications，模型可匯出為 static INT8，並在 embedded device 上無需 per-signal fitting 地完成 forecasting。",
+      "problem_statement": "傳統 forecasting 多採 per-dataset 或 per-signal fitting，部署到大量異質裝置時需要收集資料、訓練、驗證與維護；大型 time-series foundation models 雖能 zero-shot，卻通常不適合記憶體、算力與能耗受限的 embedded hardware。更關鍵的是，極小模型往往只能輸出 point forecast，缺乏控制迴路與 alarm threshold 所需的不確定性資訊。論文因此探討：在不進行 per-signal fitting、且不依賴 test-data leakage 的條件下，能否以極少參數建立可輸出 predictive distribution 的通用 zero-shot forecaster。",
+      "proposed_solution": "作者提出 TinyCast，將可由輸入 context 直接計算的 periodic structure 從 learned computation 中移除。模型先以零參數 FFT-based detector 找出最多四個 dominant periods，再以 period-conditioned sinusoidal encoding、phase folding 與 phase binning 將週期資訊傳給網路；其餘模式由 10 層 dilated depthwise-separable causal convolution encoder 建模，decoder 則融合 pooled summary、phase readout 與 future-conv correction，並以 48-step block-autoregressive 方式輸出九個 quantiles。核心創新是 computed periodicity 與極小參數預算的結合，以及以僅支援常見 integer kernels 的 mixing path 實現 static INT8 embedded deployment。",
+      "core_contributions": [
+        "提出 TinyCast 架構，以零參數 spectral detector 計算 unseen series 的 dominant periodicity，並透過 phase folding 將週期結構交給小型模型使用。",
+        "在 146,505 個參數下同時輸出九個 nominal quantiles，於 GIFT-Eval、Chronos-ZS 與 fev-bench 展示小型 zero-shot probabilistic forecaster 的競爭力。",
+        "設計完全由 convolution、matrix multiplication、normalization 與 elementwise gate 組成的 mixing path，完成 static W8A8 部署並在 STM32H753 Cortex-M7 上執行。"
+      ],
+      "methodology": "TinyCast 對每個 univariate context 使用長度 L=2048 的 window，先以 per-window min-max normalization 映射至 [0,1]，並保存統計量做輸出反正規化。模型從去除 DC 成分的 context 計算一次 real-valued FFT，利用 Fisher significance test（α=0.05，跨 bins 做 Bonferroni correction）保留最多四個 local spectral peaks，將 peak bins 四捨五入為 integer periods；未通過檢定的 slot 設為零。每個 detected period 產生 sin/cos phase channels，另加入五個 recency channels，合計 13 個 deterministic positional features。數值通道與 positional encoding 經 Linear 14→D、D=64 投影後，通過 10 個 residual dilated causal convolution blocks；每層使用 kernel size 3、dilation 1 至 512 的 depthwise-separable convolution，receptive field 為 2047，並搭配 RMSNorm 與 SwiGLU，feed-forward 權重跨十層 tied。Decoder 以 pooled summary、每個 period 的 16-bin phase folding readout，以及 future-conv correction 組成每個 future position 的 query，再輸出九個 decile quantiles（0.1 至 0.9），每次平行預測 48-step block。超過 48 steps 時，以每個 block 的 median autoregressively feedback 至 context。訓練採四個 block 的 scheduled sampling，目標為九 quantile pinball loss 加上 weight λ=0.3 的 gated committing term；資料來自去除 benchmark overlap 的 GIFT-Eval-Pretrain、Chronos KernelSynth、四個 synthetic shards，並使用 frequency balancing、temporal/sign flips、downsampling 與 mixup。評估使用 GIFT-Eval 97 configurations、Chronos-ZS 27 tasks 與 fev-bench 100 tasks，指標包括 relative MASE、GMASE、WQL、MSIS，並比較 seasonal naive、zero-shot models 與 training-free statistical baselines。",
+      "key_results": "主要結果如下，數值越低越好；GIFT-Eval 的三項指標皆為相對 seasonal naive 的 aggregate ratio。\n\n| Benchmark／模型 | 參數量 | 相對 MASE／nGMASE | 相對 WQL／nWQL | 相對 MSIS／nMSIS |\n|---|---:|---:|---:|---:|\n| GIFT-Eval TinyCast host | 146,505 | 0.774 | 0.545 | 0.554 |\n| GIFT-Eval Reverso-Nano | 200K | 0.760 | 論文未報告（僅 point error 0.661） | 論文未報告（僅 interval score 2.035） |\n| GIFT-Eval TTM-R3 | 1.4M | 0.724 | 0.520 | 0.501 |\n| GIFT-Eval FlowState-9.1M | 9.1M | 0.726 | 0.502 | 0.563 |\n| Chronos-ZS TinyCast | 146,505 | 0.880 | 0.722 | 論文未報告 |\n| fev-bench TinyCast | 146,505 | 0.819 | 0.658 | 論文未報告 |\n| GIFT-Eval TinyCast static W8A8 | 146,505 | 0.790 | 0.553 | 論文未報告 |\n| GIFT-Eval TinyCast firmware profile | 146,505 | 0.833 | 0.581 | 論文未報告 |\n\n在 GIFT-Eval 上，TinyCast 的 detector-disabled retraining 為 0.7814 nGMASE 與 0.5483 nWQL；shipped recipe 的三次 seed 平均為 0.7743 與 0.5441。phase binning 相對其架構控制組改善 0.098 nGMASE。STM32H753 上一次 48-step core call 為 4.08 秒，INT8 weights 為 138.1 KiB，peak RAM occupancy 為 730.7 KiB。",
+      "insights": [
+        "對資源受限的 forecasting 應用，可將週期性等可由輸入直接計算的結構移出 learned parameters，以把有限容量留給 residual dynamics 與不規則結構。",
+        "若部署端只能支援固定記憶體與 INT8 kernels，dilated depthwise-separable convolutions 可在不使用 attention、FFT mixer 或 state-space scan 的情況下取得長 receptive field；但需接受重編碼完整 context 的成本。",
+        "評估小型 probabilistic model 時，不能只看 point accuracy；TinyCast 在參數量極低時仍輸出 quantiles，但 firmware profile 的 nWQL 從 host profile 的 0.545 惡化至 0.581，顯示量化與推論策略應在實際部署設定下單獨評估。"
+      ],
+      "limitations": "模型僅支援 univariate forecasting，不使用 covariates 或 cross-series structure；輸入超出 pretraining regime 時不會發出異常訊號。rounded Fourier-bin period 的解析度受 window／period 比例限制，min-max normalization 對極端值敏感，且每次 forecast 都須重編碼完整 2048-step context。消融實驗多在不同參數預算下進行，部分 benchmark 的資料 disjointness 亦未完全建立；模型只輸出 10% 至 90% quantiles，無法支援 95% 或 99% alarm thresholds。",
+      "tags": [
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "zero-shot time-series forecasting",
+        "probabilistic forecasting",
+        "TinyML and embedded inference"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Hallucination & Faithfulness]` [[[2608.15820] QuantumPhaseNet - A Gauge-Covariant Geometric and Quantum-Spectral Theory of Sem...|QuantumPhaseNet: A Gauge-Covariant Geometric and Q...]] (2026-08-16)
+
 - `[Agent Evaluation]` [[[2608.13476] MARC v1 - An Open-Source Multi-Agent Framework for Clinical AI Reasoning and Coo...|MARC v1: An Open-Source Multi-Agent Framework for ...]] (2026-08-13)
 
 - `[RAG Evaluation]` [[[2608.07370] LitTraceQA - A Benchmark for Multi-Stage Grounding and Verification in Scientifi...|LitTraceQA: A Benchmark for Multi-Stage Grounding ...]] (2026-08-07)

@@ -1,6 +1,6 @@
-# Long Horizon Reasoning
+# Tool Using Agents
 
-> Long Horizon Reasoning 相關研究的彙整頁面。
+> Tool Using Agents 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 long-horizon reasoning 相關關鍵字
+- 標題或摘要含有 tool-using agents 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Agent Evaluation]` [[[2608.15703] HyMem - Hierarchical Context Management for Long-Horizon Agents via Information ...|HyMem: Hierarchical Context Management for Long-Ho...]] (2026-08-16)
-
-- `[Benchmark]` [[[2608.05139] Toward Skill-Native LLMs - Skill Entropy for Benchmarking and Training Long-Hori...|Toward Skill-Native LLMs: Skill Entropy for Benchm...]] (2026-08-05)
 
 ## 延伸閱讀
 

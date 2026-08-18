@@ -1,6 +1,6 @@
-# Retrieval Augmented Generation
+# 科學計算代理（Scientific Agents）
 
-> Retrieval Augmented Generation 相關研究的彙整頁面。
+> 科學計算代理（Scientific Agents） 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 Retrieval-Augmented Generation 相關關鍵字
+- 標題或摘要含有 科學計算代理（scientific agents） 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Agent Evaluation]` [[[2608.15776] ALKEMIE Agent - an autonomous platform for computational materials design|ALKEMIE Agent: an autonomous platform for computat...]] (2026-08-16)
-
-- `[Hallucination & Faithfulness]` [[[2608.14446] Wyvern - An Agentic Framework for Generating Grounded Multimodal Reports|Wyvern: An Agentic Framework for Generating Ground...]] (2026-08-14)
 
 ## 延伸閱讀
 
