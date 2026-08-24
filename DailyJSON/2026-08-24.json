@@ -1,0 +1,537 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.21208",
+      "title": "Specification Portability Across LLM Development Agents: Cross-Agent Compatibility in Specification-Driven Software Migration",
+      "abstract": "This paper investigates cross-agent specification portability using Oracle-to-PostgreSQL migration as a controlled software transformation task. The study combines two experimental stages. First, a specification-first migration pipeline was evaluated on 1,006 PL/SQL files, of which 623 were successfully regenerated and 380 generated scripts executed successfully in PostgreSQL 16. Second, cross-agent experiments were conducted on a dataset of 1,802 Oracle scripts with corresponding PostgreSQL implementations using Amazon Kiro, Google Gemini, and GitHub Copilot, with Claude Code and Cursor included in the initial single-agent evaluation. Native and foreign specifications were assessed using Token F1, exact match, SQL syntax validity, AST exact match, AST mean similarity, and immediate runnability. The results show that specification size alone does not predict implementation quality and that cross-agent transfer can produce substantial agent-dependent degradation. The strongest replicated case occurred when Gemini directly consumed a Kiro-origin specification, producing a Token F1 of 0.035, SQL syntax validity of 2.33%, and AST mean similarity of 0.015. Rewriting substantially improved Gemini in the tested configuration, compression did not provide a universal benefit, and retrieval-augmented ingestion was the only common strategy represented on the per-agent Pareto frontiers of both Gemini and Copilot. The findings suggest that specifications in heterogeneous SDD workflows should not automatically be treated as agent-neutral artifacts and motivate explicit consideration of specification portability, agent-specific interpretation, and retrieval-based access in multi-agent software engineering.",
+      "authors": [
+        "Oleg Grynets",
+        "Oleksii Ilchuk",
+        "Dariia Zatulna",
+        "Vasyl Lyashkevych"
+      ],
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.LO"
+      ],
+      "published": "2026-08-21T15:21:40+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21208v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21208",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "本論文研究跨 agent 的 specification portability，探討在一個 LLM 開發環境中建立或組織的 specification，轉交另一個 agent 後，能否維持實作品質。作者以 Oracle-to-PostgreSQL migration 作為受控的 software transformation 任務，分兩階段進行實驗：第一階段在 1,006 個 PL/SQL 檔案上評估 specification-first migration pipeline，其中 623 個成功重新生成，380 個生成腳本可於 PostgreSQL 16 成功執行；第二階段使用 1,802 組 Oracle 腳本及其 PostgreSQL 實作，評估 Amazon Kiro、Google Gemini 與 GitHub Copilot 的 native 與 foreign specifications。研究採用 Token F1、exact match、SQL syntax validity、AST exact match、AST mean similarity 與 immediate runnability。結果顯示，specification 長度不足以預測實作品質，跨 agent 傳遞可能造成高度依賴 agent 的效能下降；Gemini 直接使用 Kiro-origin specification 的 replicated case 最差。Rewriting 可改善 Gemini，compression 沒有普遍效益，而 retrieval-augmented ingestion 是 Gemini 與 Copilot 兩者 Pareto frontier 的共同策略。",
+      "problem_statement": "論文要解決的是：一個 agent 產生的 operational specification，轉交異質 LLM development agent 後，是否仍能有效引導實作。既有 SDD 與 multi-agent 研究多聚焦於 specification 的用途、模型能力、協作流程或 retrieval，較少量化 specification 在不同 agent 間的可攜性。直接以規格或 prompt 生成程式，也難以區分內容品質、表示方式與 agent-specific interpretation 對結果的影響。",
+      "proposed_solution": "作者提出以 cross-agent specification portability 為核心的評估框架，將實作品質建模為 specification origin、implementation agent、specification-ingestion strategy 與 task/context conditions 的函數。研究保留同一 specification，改變消費它的 implementation agent，並比較 native 與 foreign specification。對 foreign specification，作者評估 direct ingestion、agent-specific rewriting、summarization/compression，以及 retrieval-augmented ingestion。核心創新不是提出一個宣稱普遍有效的新模型，而是把 specification 視為可能具有 agent-dependent operational interpretation 的中間知識工件，並以方向性的 compatibility 與多維品質指標衡量其跨 agent 效果。",
+      "core_contributions": [
+        "提出 specification portability 的明確研究問題與方向性 compatibility 定義，將 specification origin、implementation agent 與 ingestion strategy 納入分析。",
+        "在 Oracle-to-PostgreSQL migration 上結合 specification-first pipeline 與 cross-agent transfer 實驗，並以 lexical、syntactic、structural 與 operational 指標評估 native 和 foreign specifications。",
+        "比較 direct、rewritten、compressed 與 retrieval-augmented specification ingestion，指出 rewriting 的效益具有 agent dependence，且 RAG 是 Gemini 與 Copilot Pareto frontiers 的共同策略。"
+      ],
+      "methodology": "研究分為兩個階段。Stage 1 先對 Oracle PL/SQL 進行 preprocessing 與 database-object decomposition，將來源拆成可獨立處理的物件，以減少不相關 context，並允許失敗物件單獨 regeneration。agent loop 由 application layer、agent controller、LLM 與 MCP-based tools 協作，反覆提供 messages 與 tool schemas、執行工具呼叫並回傳結果，直到完成、無更多 tool call 或達到 iteration limit；初始實作評估 GPT-oss-120b 與 GPT-o4-mini，平均每次 iteration 約 2,000 tokens、約三次迭代。Stage 2 先建立 native single-agent baseline，再固定 specification artifact、替換 implementation agent，主要系統為 Kiro、Gemini/Antigravity 與 Copilot/Spec Kit，Claude Code 與 Cursor 僅納入初始 single-agent 評估。資料包含 1,802 組 Oracle scripts 及對應 PostgreSQL scripts。評估涵蓋 Token F1、exact match、sqlglot 判定的 SQL syntax validity、AST exact match、AST mean similarity，以及在實驗資料庫中無需人工修改即可執行的 immediate runnability。RAG 設定禁止 agent 直接讀取完整 specification，改由 retrieval tools 取得相關區塊。",
+      "key_results": "主要結果如下；百分比與數值均依論文所報告，未報告的交叉組合以「論文未報告」表示。\n\n| 實驗／組合 | Token F1 | Exact Match (%) | SQL Syntax Validity (%) | AST Exact Match (%) | AST Mean Similarity | Runnable (%) |\n|---|---:|---:|---:|---:|---:|---:|\n| Stage 1：1,006 個 PL/SQL 檔案成功重新生成 | — | — | — | — | — | 623/1,006 = 61.9% 重新生成成功 |\n| Stage 1：重新生成腳本可於 PostgreSQL 16 執行 | — | — | — | — | — | 380/623 = 61.0% |\n| Native Kiro baseline | 0.3652 | 0.33 | 33.74 | 0.33 | 0.2073 | 0.72 |\n| Native Copilot baseline | 0.75 | 13.15 | 43.51 | 12.76 | 0.2566 | 0 |\n| Native Gemini baseline | 0.73 | 13.32 | 45.54 | 12.98 | 0.69 | 2.22 |\n| Tuned Kiro | 0.56 | 12.04 | 57.8 | 12.98 | 0.40 | 14.76 |\n| Tuned Copilot | 0.73 | 12.76 | 73.03 | 12.65 | 0.55 | 17.48 |\n| Tuned Gemini | 0.70 | 11.99 | 60.16 | 18.68 | 0.67 | 28.75 |\n| Kiro-origin → Gemini（Table III） | 0.71 | 13.15 | 43.51 | 20.03 | 0.31 | 2.22 |\n| Gemini-origin → Kiro | 0.68 | 0.56 | 0 | 0 | 0.08 | 0.17 |\n| Copilot-origin → Kiro | 0.69 | 12.4 | 43.4 | 17.39 | 0.55 | 2.38 |\n| Copilot-origin → Gemini | 0.665 | 12.8 | 63 | 19.9 | 0.514 | 論文未報告 |\n| 複現的 Kiro-origin → Gemini case | 0.035 | — | 2.33 | — | 0.015 | 論文未報告 |\n\n作者另報告 Kiro specification 約 1,597 行、Gemini 約 193 行，但 specification size alone 無法解釋實作品質。Rewriting 在測試配置中大幅改善 Gemini；compression 沒有 universal benefit；RAG 未在所有指標上支配其他方法，但為 Gemini 與 Copilot 個別 Pareto frontiers 的唯一共同策略。",
+      "insights": [
+        "在 heterogeneous SDD workflow 中，不應假設 specification 是 agent-neutral；實務上應為不同 implementation agent 建立 portability smoke test 與 native/foreign quality baseline。",
+        "規格管理應區分穩定的語意內容與 agent-specific view；可保留共同 specification，再依 agent 以 rewriting 或選擇性 retrieval 提供實作所需區塊。",
+        "不能以 specification 長度或 lexical similarity 作為品質代理；部署 migration agent 時，應同時檢查 SQL syntax、AST 結構與實際執行結果，且將 immediate runnability 視為受測試 schema 限制的保守訊號。"
+      ],
+      "limitations": "研究主要系統化評估 Kiro、Gemini 與 Copilot，部分 agent 與交叉組合未執行，且 pricing constraints 限制了實驗範圍。LLM generation 具有 nondeterminism，僅部分異常結果被複現。Immediate runnability 是在空的 live database 與 generated stubs 上測試，作者明確指出它只是 lower bound。研究也未證明 RAG 普遍優於所有策略；未提供完整 adaptation 數據、統計顯著性或跨任務泛化結果。",
+      "tags": [
+        "agent-evaluation",
+        "rag-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "specification-driven development",
+        "multi-agent software engineering",
+        "Oracle-to-PostgreSQL migration",
+        "retrieval-augmented code generation",
+        "software transformation evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21252",
+      "title": "EnSI-RAG: Entity-Structure-Indexed Retrieval-Augmented Generation for Long-Document Question Answering",
+      "abstract": "Question answering (QA) over long, connected documents remains challenging because relevant evidence may span multiple entities and their relationships. Existing retrieval-augmented generation (RAG) methods typically index documents as raw chunks and retrieve them through embedding similarity. Their performance degrades when chunk boundaries separate entities from supporting evidence or when a question requires multi-hop reasoning across the corpus. We propose EnSI-RAG (Entity-Structure-Indexed Retrieval-Augmented Generation), a framework that constructs a query-independent, entity-centered index. Each record (e, t, k, v) represents an entity e, its type t, a semantic category k in {property, relation, aspect}, and a value v, while retaining links to the original source passages. At query time, these records serve as retrieval handles, and an LLM synthesizes the retrieved passages into the final answer. This design separates evidence localization from answer synthesis while preserving traceable source evidence. Across Loong and Oolong, EnSI-RAG achieves an average accuracy of 78.24. Relative to the published baseline scores used as references, this is 6.62 points higher, suggesting its effectiveness across these settings. The code is available at https://github.com/RamonMeng/EnSI-RAG.",
+      "authors": [
+        "Xuanyu Meng",
+        "Jiashuo Sun",
+        "Jash Rajesh Parekh",
+        "Jiawei Han"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.DB",
+        "cs.IR"
+      ],
+      "published": "2026-08-21T16:05:00+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21252v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21252",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "在長篇、彼此連結的文件上進行問答仍然具有挑戰性，因為相關證據可能分散於多個實體及其關係之間。現有 Retrieval-Augmented Generation（RAG）方法通常將文件切成原始 chunks，再以 embedding similarity 進行檢索；當 chunk 邊界將實體與支持證據分開，或問題需要跨語料庫進行 multi-hop reasoning 時，效能便會下降。本文提出 EnSI-RAG（Entity-Structure-Indexed Retrieval-Augmented Generation），建立與查詢無關、以實體為中心的索引。每筆記錄 ⟨e,t,k,v⟩ 表示實體、實體類型、屬於 property、relation 或 aspect 的語義類別，以及其值，並保留通往原始來源段落的連結。查詢時，這些記錄作為 retrieval handles，由 LLM 將取回的段落整合為最終答案。此設計將證據定位與答案生成分離，同時保留可追溯的來源證據。在 Loong 與 Oolong 上，EnSI-RAG 平均準確率為 78.24，較所採用的已發表 baseline 參考分數高 6.62 分，顯示其在不同設定下的有效性。",
+      "problem_statement": "論文處理長文件與多文件集合中的 QA，尤其是證據分散於不同實體、表格列、文件或關係鏈的情境。固定長度 chunk 容易切開實體及其支持證據，也可能將無關主題混在同一檢索單位；單純 lexical 或 dense similarity 因而只能找到局部相似內容，遺漏低詞彙重疊但語義必要的證據。大型 context window 亦無法保證模型可靠利用中間位置資訊或完成跨文件聚合與 multi-hop reasoning。",
+      "proposed_solution": "作者提出 EnSI-RAG，將文件先轉換為語義自洽、以單一主要實體為中心的 passages，再從每個 passage 擷取實體、類型、property、relation 與 aspect 等結構化資訊，建立與查詢無關的索引：[entity][entity type][property|relation|aspect:value] → {psg_id}。結構化記錄只負責提供檢索入口，不取代原始證據或承擔完整推理；檢索後仍回傳原始 passages，由 LLM 根據這些可追溯內容產生答案。其核心創新是以語義結構取代機械式 chunk 邊界，並在傳統 chunk-based RAG 與 fully structured QA 之間取得折衷。",
+      "core_contributions": [
+        "提出以主要實體為中心、具語義包含性的 passage representation，取代固定長度 chunk，降低證據碎片化與無關內容污染。",
+        "建立 query-independent entity-structure index，以 entity、entity type、property、relation、aspect 與 value 作為結構化 retrieval handles，並保留對原始 passages 的來源連結。",
+        "提出將結構化證據定位與 LLM 答案 synthesis 分離的統一 RAG 流程，使結構化記錄輔助檢索，而由原始文件證據支撐最終回答。"
+      ],
+      "methodology": "EnSI-RAG 分為 offline preprocessing 與 online QA。離線階段首先進行 Passage Construction：依文件結構與任務需求建立語義包含的 passage，保留來源文件、offset、標題、表頭、年份或引用等輕量脈絡，並配置穩定的 psg_id。接著進行 Information Extraction，對每個 passage 產生記錄 r=⟨e,t,M,psg_id⟩；M 由 ⟨c,k,v⟩ 欄位組成，其中 c 分為 property、relation、aspect，且每個欄位必須有局部 passage 證據支持。Index Entry Building 將欄位映射為 [e][t][c:k=v]→{psg_id}，可保留同一 key 下的重複、互補或矛盾 passages，必要時建立反向 relation entries。線上階段由 LLM 將問題轉成 retrieval plan H(q)，每個 hop 可指定 entity、type、category、field、value 或 target entity；以各欄位相容度的加權總和 score(h,x)=Σλₐsₐ(h,x) 排序 index keys，再聯集其 passage IDs、去重並可重新排序。多跳問題可使用前一 hop 發現的中間實體啟動下一 hop。最後，LLM 僅以問題、檢索到的 records 與原始 passages 生成答案。評估使用 Loong（177 題）與 Oolong-Synth（192 題）；Loong 採官方 average accuracy，Oolong 非數值題使用 LLM-as-a-judge，數值聚合題使用官方 deviation-based metric。",
+      "key_results": "主要結果如下（baseline 分數取自 SLIDERS 論文；Loong 子集可能不同，因此並非完全受控的 head-to-head 比較）：\n\n| 方法 | Oolong | Loong | 平均 |\n|---|---:|---:|---:|\n| RAG | 11.32 | 54.35 | 32.84 |\n| LongRAG | 22.00 | 59.10 | 40.55 |\n| GraphRAG | 22.00 | 61.28 | 41.64 |\n| BaseModel（GPT-4.1） | 45.56 | 76.74 | 61.15 |\n| DocETL | 49.00 | 75.03 | 62.02 |\n| RLM | 51.42 | 72.64 | 62.03 |\n| SLIDERS | 64.67 | 78.57 | 71.62 |\n| **EnSI-RAG** | **71.84** | **84.64** | **78.24** |\n\nEnSI-RAG 相較 SLIDERS 的平均分數高 6.62 分；Oolong 高 7.17 分，Loong 高 6.07 分。消融實驗顯示：Financial 題目採 row-level passage 得分 100.00，高於 table-level 的 91.50；property/aspect 使用 coarse labels 時，English Financial 由 92.00 升至 93.50、Paper 由 88.00 升至 91.50，但 Legal 由 71.25 降至 68.75。Financial 子集的 retrieval depth 以 Top-5 最佳（94.00），高於 Top-12（92.00）與 Top-15（92.50），但主要實驗仍統一採 Top-12。效率方面，平均每 query 的總成本為 163,146 input tokens、494.30 秒與 34.35 次 LLM calls，其中離線 passage construction 與 information extraction 佔 157,031 tokens、468.51 秒及 32.35 次 calls；線上 retrieval 與 generation 分別為 19.01 秒、6.73 秒。",
+      "insights": [
+        "在表格型或高度結構化文件中，應優先依語義單位（例如財務表格列）切分，而不是只依 token 長度切分；但 passage granularity 應透過同一資料子集的消融實驗決定。",
+        "索引可採取結構化 metadata 定位、原文 passage 驗證與生成的兩階段設計，避免抽取錯誤直接成為模型推理事實，並提升答案 provenance 與可審計性。",
+        "檢索數量與標籤粒度不一定越大越好：Financial 子集 Top-5 優於 Top-12/15，且 coarse labels 對 Financial、Paper 有益但傷害 Legal，顯示 domain-specific tuning 與控制上下文干擾十分重要。"
+      ],
+      "limitations": "論文的 baseline 多取自 SLIDERS，且 Loong 評估子集可能不同，故跨方法比較缺乏完全一致的受控性。每個 EnSI-RAG 設定僅執行一次，未提供標準差或統計顯著性。離線 preprocessing 成本很高，依賴 LLM 進行 passage construction 與 extraction；Oolong 僅評估 Oolong-Synth，未涵蓋 Oolong-Real。索引品質、實體消歧與抽取錯誤的獨立分析亦仍有限。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "長文件問答",
+        "Entity-centric retrieval",
+        "Multi-hop reasoning",
+        "Structured RAG",
+        "Evidence provenance",
+        "表格與多文件資訊聚合"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21230",
+      "title": "Utility Under Attack: Agent Memory Poisoning and the Limits of Content Screening and Provenance Ranking",
+      "abstract": "Persistent memory makes false information durable: once a false statement is stored, it can be retrieved into future sessions that match it. We measure the cost of this failure mode using plainly worded false assertions generated in a single pass, with no instruction, trigger, or retriever optimization. Poisoning 1.2% of a LongMemEval corpus reduces accuracy from 0.850 to 0.300. A four-stage write-time screening pipeline that reaches 0.832 recall on indirect prompt injection while flagging 1.5% of trigger-word-laden benign text rejects 0 of 360 poisoned memories. We argue this exposes a boundary of content-only screening: distinguishing a false assertion from a true one generally requires external grounding beyond the text itself.   We then evaluate provenance-weighted retrieval. The shipped weight is statistically indistinguishable from no defense (p=0.80), while a stronger weight recovers utility only by excluding untrusted content. In a mixed-provenance corpus where untrusted content is mostly benign, accuracy rises from 0.3167 to 0.7000; when the answer-bearing evidence itself arrives untrusted, evidence recall falls to zero and accuracy to 0.0417. Under the measured similarity regime, the additive provenance term has no usable setting: a weight strong enough to resist query-shaped poison is also strong enough to suppress legitimate untrusted evidence. We therefore argue for bounded occupancy constraints at retrieval rather than additive provenance penalties, and release the harnesses, corpora, and aggregate run reports.",
+      "authors": [
+        "Arulnidhi Karunanidhi"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-08-21T15:37:35+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21230v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21230",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "持久記憶使錯誤資訊具有延續性：一旦錯誤陳述被儲存，未來符合語意的工作階段便可能取回它。我們以單次生成、文字平實、沒有指令、trigger 或 retriever 最佳化的錯誤陳述，衡量此失效模式的成本。在 LongMemEval corpus 中僅污染 1.2%，準確率便由 0.850 降至 0.300。四階段 write-time screening pipeline 對 indirect prompt injection 的 recall 達 0.832，且只標記 1.5% 含 trigger word 的 benign text，卻拒絕了 360 個 poisoned memories 中的 0 個。作者認為，這揭示 content-only screening 的邊界：區分錯誤與正確陳述通常需要超越文本本身的 external grounding。接著評估 provenance-weighted retrieval。系統預設權重與無防禦設定無統計差異（p=0.80）；較強權重只能透過排除 untrusted content 恢復效用。在 untrusted content 主要為 benign 的 mixed-provenance corpus 中，準確率由 0.3167 升至 0.7000；但當 answer-bearing evidence 本身來自 untrusted channel 時，evidence recall 降至 0，準確率降至 0.0417。在測得的 similarity regime 下，additive provenance term 沒有可用設定，因此作者主張改用 bounded occupancy constraints。",
+      "problem_statement": "論文研究持久型 agent memory 的 false-fact poisoning：攻擊者只需寫入平實錯誤陳述，便可能在後續相關 session 中持續污染檢索結果。現有 prompt-injection 防禦主要偵測指令、角色操弄或外洩構造，無法直接判定沒有可見惡意 payload 的陳述是否為假。另一方面，provenance-weighted ranking 雖能降低 untrusted memory 的優先級，卻可能無法壓制 query-shaped poison，或因過度懲罰而排除真正有用的 untrusted evidence。",
+      "proposed_solution": "作者提出 utility-under-attack protocol，將既有 LongMemEval memory corpus 注入弱訊號 false assertions，並以 retained utility、poison context 占比及 poison 首位率評估記憶系統在受攻擊後仍保有多少價值。防禦框架分為 write path 的四階段 content screening，以及 read path 的 provenance-weighted ranking。實驗顯示前者對單純錯誤事實在結構上缺乏判別依據；後者的 shipped weight 太小而無效，提升後則形成近似 hard exclusion。作者因此提出將 provenance 從 additive penalty 改為 bounded occupancy constraint，在 context 中保留受控比例，而不是以 scalar weight 直接壓低所有 untrusted evidence；但該方案尚未實作或評估。",
+      "core_contributions": [
+        "提出 utility-under-attack 評估協定：在既有 LongMemEval corpus 中注入 false-fact poison，並以 retained utility、retrieval diagnostics 與 paired significance testing 衡量記憶系統受損程度。",
+        "以 360 筆實驗證明 write-time content screening 對沒有 instruction、trigger 或可見 payload 的 false-fact poisoning 結構性失明；即使 indirect prompt injection recall 為 0.832，仍拒絕 0/360 poisoned memories。",
+        "透過 provenance-ranking 的 margin analysis 證明 shipped weight 無效，而 corrected weight 的效用來自排除 untrusted content；mixed-provenance 實驗揭示其可能造成對合法 untrusted evidence 的 denial-of-service。"
+      ],
+      "methodology": "研究以 Aegis memory layer 為系統，分別測試 write path、clean retrieval 與 poisoning。Write path 將每筆內容依序通過四階段：輸入結構檢查、PII／credential 偵測、規則式 injection 偵測，以及對 untrusted、unknown、shared/global scope 或 Stage 3 flagged content 條件觸發的 LLM classifier；任一階段標記即拒絕或 flag。Screening benchmark 使用 direct injection、indirect injection、Dolly-15k、synthetic memory entries 與 NotInject 五個 corpus，對十種系統計算 precision、recall、F1、false positive rate、accuracy 與 latency，並進行 per-stage ablation。Memory benchmark 使用 LongMemEval_S 的 500 題與約 50 sessions／題，將每個 conversational round 作為 memory，在 top-k=15 取回後交給 reader，答案由官方 judge prompts 評分。Poisoning 實驗從 120 題產生 360 筆 false memories，約占 corpus 1.2%；每題三輪、重用問題關鍵語句、無 instruction 或 retrieval optimization，並標為 untrusted。比較 clean、無防禦、shipped provenance weights（wt=0.15、ws=0.60）及 corrected weights（wt=0.35、ws=0.45），使用 paired exact McNemar test，另測試 untrusted benign content 為主的 Corpus M 與 answer-bearing evidence 為 untrusted 的 Corpus N。",
+      "key_results": "| 評估情境 | 設定 | Accuracy | 其他結果 |\n|---|---|---:|---|\n| Clean LongMemEval_S | 500 題、plain semantic retrieval、top-k=15 | 0.860 | 類型最低為 multi-session 0.767 |\n| Clean current-build subsample | n=120 | 0.850／0.875 | 差異不顯著，McNemar p=0.45 |\n| Poisoned corpus | 360 筆 poison、約 1.2%、無防禦 | 0.300 | Utility retained 35%；poison context 20%；poison ranked #1 為 100% |\n| Poisoned + shipped trust weight | wt=0.15、ws=0.60 | 0.317 | Utility 37%；poison context 20%；poison #1 為 87%；p=0.80 |\n| Poisoned + corrected trust weight | wt=0.35、ws=0.45 | 0.475 | Utility 56%；poison context 8.8%；poison #1 為 2%；p=0.0015 |\n| Write-time screening against poison | 360 poisoned memories | 論文未報告 | 拒絕 0/360 |\n| Indirect prompt injection screening | Aegis pipeline | 論文未報告 | Recall 0.832；NotInject benign false positive rate 1.5% |\n| Corpus M | untrusted 內容約 94% 為 benign，且來自 non-evidence rounds | 0.3167→0.7000 | McNemar p=1.17×10^-10；untrusted context 6.56%→0% |\n| Corpus N | answer-bearing evidence 全部 untrusted、無 poison | 0.8583→0.0417 | evidence recall 99.17%→0%；120 題均無 evidence memory 存活；p=6.31×10^-30 |\n| Credential over-defense | 124,462 ingested rounds | 論文未報告 | 拒絕 109 筆（0.088%），無 answer-bearing session 受影響 |",
+      "insights": [
+        "對持久記憶系統不能只測 attack success rate；應同時測 clean utility、utility retained、poison 在 context 中的占比、首位率與 evidence recall，否則可能把系統失效或過度防禦誤判為安全。",
+        "對純粹 false assertions，write-time scanner 若沒有 external grounding 通常無法僅由文本判定真偽；實務上應將來源、時間、更新衝突、可驗證證據與 abstention／revalidation 納入記憶生命週期，而非只依賴 injection detector。",
+        "provenance additive penalty 必須先以 similarity margin 推導與校準；權重過小可能完全無效，過大則會把合法 untrusted evidence 一併排除。若採 bounded occupancy constraint，仍需搭配可靠且不可被提升或 laundering 的 origin binding，並以混合來源資料驗證。"
+      ],
+      "limitations": "研究只在單一 Aegis 系統、單一 embedding／retriever／reader 與 LongMemEval conversational personal-assistant domain 測試；poison 僅取 120 題，絕對準確率具有抽樣誤差。Corpus M 偏向移除 distractors，Corpus N 則是極端設定。作者提出的 bounded occupancy constraint 尚未實作或評估，也未測試 adaptive attack、其他 embedding similarity 分布、錯誤或可操弄的 trust label，以及 code、clinical、operational memory。",
+      "tags": [
+        "red-teaming",
+        "agent-evaluation",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agent memory poisoning",
+        "provenance-aware retrieval",
+        "utility-under-attack evaluation",
+        "indirect prompt injection",
+        "retrieval denial of service"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21265",
+      "title": "Memory Augmentation Unlocks Efficient Chain-of-Thought Reasoning",
+      "abstract": "Large language models often rely on Chain-of-Thought (CoT) reasoning to solve complex tasks, but verbose reasoning traces introduce substantial inference overhead. CoT compression shortens generation, yet aggressive compression may disrupt logical coherence and degrade performance. We formalize this trade-off as the \\textit{Context-Generation Substitution Law}, where explicit reasoning context substitutes for part of decode-time generation. Based on this principle, we propose \\textit{Memory-Augmented Compression}, a training-free framework that constructs reusable reasoning memories from historical traces and retrieves them as prefill-side scaffolds. Rather than using raw demonstrations, these memories summarize reusable reasoning patterns, key constraints, and critical operations to compensate for information lost during compression. Experiments show that Memory consistently improves prompt-based Chain-of-Draft (CoD) compression across mathematical reasoning, complex reasoning, and science question answering tasks, yielding accuracy gains of 21.4, 28.0, 29.5, and 6.61 points over CoD on GSM8K, MATH, BBH, and MMLU-Sci, while achieving a 1.14--1.49$\\times$ latency speedup over standard CoT. Memory is also compatible with token-level, reasoning-trace-level, and inference-state compression mechanisms. Further analyzes show that the gains come from relevant reasoning memories rather than simply increasing context length.",
+      "authors": [
+        "Simeng Zhang",
+        "Yilong Chen",
+        "Wenyuan Zhang",
+        "Zhenyu Zhang",
+        "Yao Chen",
+        "Junyuan Shang",
+        "Tingwen Liu"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-21T16:22:36+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21265v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21265",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型常依賴 Chain-of-Thought（CoT）推理處理複雜任務，但冗長推理軌跡會造成顯著的推論開銷。CoT compression 能縮短生成長度，然而過度壓縮可能破壞邏輯連貫性並降低效能。本文提出 Context-Generation Substitution Law，形式化說明明確推理上下文可替代部分解碼階段生成。基於此，作者提出免訓練的 Memory-Augmented Compression，從歷史推理軌跡建構可重用的 reasoning memories，並在 prefill 階段檢索與注入，作為壓縮推理的支架。這些 memory 不使用原始 demonstrations，而是摘要可重用的推理模式、關鍵約束與重要操作，以補償壓縮造成的資訊損失。實驗顯示，Memory 能提升 Chain-of-Draft（CoD）在 GSM8K、MATH、BBH 與 MMLU-Sci 上的準確率，並相較標準 CoT 實現 1.14–1.49 倍 latency speedup；同時也能與 token-level、reasoning-trace-level 及 inference-state compression 方法結合。分析指出，增益來自相關推理 memory，而非單純增加上下文長度。",
+      "problem_statement": "標準 CoT 透過逐 token 生成中間推理提升複雜任務表現，但長推理帶來解碼延遲、token 成本與服務負擔。現有 compression 方法主要從生成端刪除、跳過或壓縮推理資訊；壓縮過強時，可能遺失子目標、關鍵約束與邏輯依賴，導致 accuracy collapse。因此問題是：如何在不恢復冗長 autoregressive decoding 的前提下，保留短推理所需的支援資訊。",
+      "proposed_solution": "作者提出 training-free 的 Memory-Augmented Compression（MAC）框架，將部分原本需在 decode 階段逐步生成的推理支援，轉移至 prefill 階段。框架離線從驗證過的歷史解題軌跡建立 memory bank，將每筆資料轉換為包含問題類型、關鍵約束、子目標、解法策略與 critical operations 的 abstract reasoning memory；線上則依 reasoning tags 與 semantic similarity 檢索 top-k memory，序列化後與 system prompt、目前問題串接，再搭配 CoD 或其他 compression method 產生短推理與答案。核心創新是把相關的可重用推理結構，而非原始 few-shot 或完整 CoT，作為 prefill-side scaffold，以較低的平行化處理成本補償生成端遺失的資訊。",
+      "core_contributions": [
+        "提出 Context-Generation Substitution Law，以 prefill-side reasoning context、decode-side CoT 長度與效能損失描述上下文和生成之間的替代關係，並給出新增 memory 成本低於解碼節省時可獲得效率收益的條件。",
+        "提出免訓練的 Memory-Augmented Compression，從歷史驗證推理軌跡建立 abstract reasoning memories，透過 reasoning-tag 與 semantic retrieval 注入壓縮推理上下文。",
+        "在多個數學、複雜推理與科學問答資料集，以及 CoD、TokenSkip、RPC、Extra-CoT 等壓縮設定中驗證 plug-in 效果，並透過 memory representation、retrieval strategy、memory size 與 compression ratio 分析其作用與邊界。"
+      ],
+      "methodology": "MAC 採 offline–online 兩階段流程，且不更新 backbone 參數。離線階段輸入歷史 solved examples，保留正確、完整且可解析的 reasoning trace，依 Long-CoT、Short-CoT 或 Summary 格式建立 memory content，產生 reasoning tags 與其 embedding，形成 memory bank。線上階段先對 query 產生 tags 並建立 embedding，再從 memory bank 檢索 top-k 相關項目，依分數排序後序列化，與 system instruction 和 query 組成 memory-augmented prefill context，最後交由指定的 compression algorithm 生成 compressed reasoning 與 final answer。作者以 Context-Generation Substitution Law 建模成本：總目標包含 decode 長度、memory context 長度及 compression performance penalty；延遲近似為 prefill tokens 乘以 τpre 加上 decode tokens 乘以 τdec，當新增 memory 的 prefill 成本低於所節省的 decode 成本時即可獲得效率收益。實驗使用 LLaMA-3.1-8B、Qwen2.5-7B，另測試 API-based reasoning models，資料集包括 GSM8K、MATH、BBH、MMLU-Sci 與 AIME 2024。比較標準 CoT、CoD，以及 TokenSkip、RPC、Extra-CoT 等壓縮方法；指標包括 accuracy、prefill tokens、decode tokens、total tokens、model latency，部分實驗另計 query processing、retrieval 與 end-to-end latency。",
+      "key_results": "主要結果如下；延遲表中的主實驗 model latency 排除 retrieval，GSM8K 另提供 end-to-end 結果。\n\n| 資料集／設定 | 方法 | Accuracy | Prefill tokens | Decode tokens | Latency |\n|---|---:|---:|---:|---:|---:|\n| GSM8K／Qwen2.5-7B | CoT | 91.4% | 96.3 | 299.2 | 3742.5 ms（1.00×） |\n| GSM8K／Qwen2.5-7B | CoD | 67.9% | 112.3 | 51.1 | 666.6 ms（5.61×） |\n| GSM8K／Qwen2.5-7B | CoD + Memory | 89.3%（+21.4） | 1161.9 | 187.2 | 2515.4 ms（1.49×） |\n| MATH／Qwen2.5-7B | CoT | 72.8% | 105.9 | 569.3 | 5117.0 ms（1.00×） |\n| MATH／Qwen2.5-7B | CoD | 43.0% | 121.9 | 100.3 | 1119.5 ms（4.57×） |\n| MATH／Qwen2.5-7B | CoD + Memory | 71.0%（+28.0） | 1772.6 | 460.2 | 4489.6 ms（1.14×） |\n| BBH／Qwen2.5-7B | CoT | 60.8% | 134.0 | 320.9 | 4007.1 ms（1.00×） |\n| BBH／Qwen2.5-7B | CoD | 41.0% | 150.0 | 46.3 | 652.1 ms（6.14×） |\n| BBH／Qwen2.5-7B | CoD + Memory | 70.5%（+29.5） | 983.0 | 143.3 | 3148.5 ms（1.27×） |\n| MMLU-Sci／Qwen2.5-7B | CoT | 62.11% | 119.0 | 452.5 | 4821.0 ms（1.00×） |\n| MMLU-Sci／Qwen2.5-7B | CoD | 60.35% | 135.0 | 48.1 | 572.6 ms（8.42×） |\n| MMLU-Sci／Qwen2.5-7B | CoD + Memory | 66.96%（+6.61） | 1504.9 | 276.9 | 3423.2 ms（1.41×） |\n\n其他證據：在 GSM8K 納入 query tag、embedding 與 vector search 後，CoD+Memory 的 end-to-end latency 為 3198.5 ms，相較 CoT 的 3742.5 ms，speedup 為 1.17×。MATH-500／Qwen2.5-72B 上，CoD+Memory accuracy 為 78.20%，高於 CoT 的 77.00%，latency 為 13940.4 ms，較 CoT 的 22592.1 ms 快 1.62×。AIME 2024 上，Memory 相對 CoD 在 DeepSeek-V3.2、Qwen3.5-plus、o4-mini 的增益分別為 +6.67、+9.17、+4.17 個百分點。",
+      "insights": [
+        "若部署環境中 autoregressive decode 明顯慢於 prefill，可將可重用的推理結構移至輸入上下文；論文在 batch size 1 與 8 都觀察到 decode token 成本高於 prefill token 的不對稱性，但實際收益仍需量測自身服務系統。",
+        "memory 不宜無限制增加：論文顯示 k 增大會提高 prefill 成本，accuracy 先升後可能下降；因此實務上應以相關性、成本與任務難度共同選擇 top-k，而不是單純堆疊更多內容。",
+        "memory representation 的抽象程度很重要。論文在 AIME 2024 的消融中，Summary memory 達 61.67%，高於無 memory 的 55.00%，而 few-shot、Short-CoT 與 Long-CoT memory 分別為 46.67%、46.67% 與 43.33%；這支持優先保存問題結構、約束與關鍵操作，而非直接複製長示範。"
+      ],
+      "limitations": "論文指出，API-based models 缺乏一致介面，無法直接比較內部 prefill/decode latency；MAC 另有 query-tag generation、embedding、retrieval 與 memory prefilling 成本，短推理任務的優勢可能縮小。方法也依賴 memory bank 與 retrieval 品質，無關或含噪 memory 可能造成干擾；目前主要使用驗證過的歷史例子，對噪聲 memory 的 robustness 尚未充分評估。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Chain-of-Thought compression",
+        "retrieval-augmented reasoning",
+        "LLM inference efficiency",
+        "reasoning memory",
+        "prefill–decode latency trade-off"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21206",
+      "title": "No PUN Intended: Plausible Unknown Names for Person-Centred LLM Evaluation",
+      "abstract": "Person names are widely used as prompt variables in LLM evaluations of factuality, privacy leakage, bias and abstention, but when a name's evidential status is uncontrolled, measurements may conflate memorisation, retrieval, name priors and wrong-person attribution. We operationalise an unknown name as one with plausible First-Last form, no indexed full-name evidence, and no ambiguity signals under a documented validation run, and introduce PUN (Plausible Unknown Names), a protocol for constructing and validating such names, combining Wikidata-derived components, web-enabled LLM screening, and controlled search revalidation. We report acceptance rate, reproducibility, ablations, and a 204-participant human study, finding accepted names are more name-like than controls while participants recover person evidence in only 3% of cases. We release 300 names with comparison controls.",
+      "authors": [
+        "Dimitri Staufer",
+        "David Hartmann",
+        "Ibrahim Baroud"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-08-21T15:20:37+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21206v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21206",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "人名廣泛被用作 LLM 評測中的 prompt 變數，涵蓋 factuality、privacy leakage、bias 與 abstention。然而，若未控制人名的證據狀態，測量結果可能混淆 memorisation、retrieval、name priors，以及錯誤人物歸因。本文將 unknown name 操作化定義為：具備合理的 First-Last 形式、沒有可索引的完整姓名證據，且在有文件記錄的 validation run 中沒有歧義訊號。作者提出 PUN（Plausible Unknown Names）協定，結合 Wikidata 衍生的姓名元件、具備網路存取能力的 LLM 篩選，以及受控搜尋再驗證，以建構並驗證此類名稱。研究報告 acceptance rate、reproducibility、ablation 與一項 204 人的人類研究。結果顯示，通過驗證的名稱比控制組更具 name-like 特徵，而參與者僅在 3% 的情況下找回人物證據。作者釋出 300 個名稱及其比較控制組。",
+      "problem_statement": "現有人名型 LLM 評測常直接使用真實人物名、變體名或非名稱字串，未控制完整姓名是否具有公開證據、同名者、拼寫變體或著名人物吸引效應。因此，模型產生資訊、拒答或偏見時，難以區分 memorisation、retrieval、name-conditioned priors、錯誤人物混淆與 unsupported generation。非字串或畸形輸入雖能降低人物證據，卻犧牲了真實的人名形式。",
+      "proposed_solution": "作者提出 PUN（Plausible Unknown Names）協定，將 operational unknownness 定義為三項條件：候選字串是合理的兩組件 First Last 姓名；指定 validation run 找不到 exact full name 或設定的等價形式所對應的 indexed public person evidence；同時沒有近似拼寫、倒置順序、搜尋修正、著名姓名 attractor 或非人物指涉等 ambiguity signals。PUN 先從 Wikidata human entities 的 given-name 與 surname 元件組合候選，再進行格式篩選，接著以 web-enabled LLM 做廣泛 triage，最後以固定查詢模板與變體規則進行可稽核的 controlled web search。其核心創新是把姓名的證據狀態視為評測變數，並以具時間、來源與規則限制的驗證快照取代「不存在人物」的絕對宣稱。",
+      "core_contributions": [
+        "提出 operational unknownness 的明確定義，將 plausible full-name form、無 indexed exact-name evidence 與無 full-name-level ambiguity signals 納入同一評測條件。",
+        "提出可稽核的 PUN 三階段協定：Wikidata 元件生成、local format checks、web-enabled LLM triage 加 controlled web search revalidation，並報告 reproducibility 與 ablation。",
+        "釋出一組 300 個 operationally unknown 名稱、300 個 public-person comparison names，以及 3,600 個 famous-name distance controls，並以 204 人研究檢驗人類可恢復性。"
+      ],
+      "methodology": "候選生成使用 2026 年 5 月的 Wikidata dump：從 1,350 萬個 human entities 經姓名解析與出生地國家映射後，取得 417 萬筆 source pool；保留 8,404 個 given-name 元件與 30,576 個 surname 元件。作者組合兩個元件形成 First Last 字串，排除標題、suffix、非 Latin script、過長或重複形式，並要求元件出現在多筆來源記錄且具 native-language metadata；以 source-country 分層抽樣，並禁止同國重新組合。Web-facing validation 分兩階段：首先以 gpt-4.1-mini 執行「Who is {name}?」查詢，再由 gpt-5.2 adjudicator 將結果分類為 found、ambiguous、fail 或 no_info；LLM 僅作 triage，不作最終證據依據。只有 no_info 候選進入 controlled search，檢查 exact quoted/unquoted name、反轉順序、保留重音符號與 ASCII-folded 形式，以及有限的 spelling、vowel 與 phonetic variants；若結果標題、snippet、URL、knowledge panel 或頁面內容出現 person-like evidence，便判為 found 或 ambiguous。評估包含 acceptance yield、三次重跑的 end-to-end agreement、validator ablations、LSTM name model 的 bits per character（BPC）、14 個 tokenizer 的 fragments-per-character，以及 204 名參與者對姓名 plausibility、搜尋證據與 chatbot 結果的判斷。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---:|\n| 生成候選數 | 52,726 |\n| 通過 local format checks | 49,877（94.6%） |\n| Web-enabled LLM：ambiguous | 36,097（72.4%） |\n| Web-enabled LLM：found | 2,449（4.9%） |\n| Web-enabled LLM：fail | 9,550（19.1%） |\n| Web-enabled LLM：no_info | 1,781（3.6%） |\n| Controlled search：ambiguous | 1,372（77.0%，以 1,781 名 no_info 為分母） |\n| Controlled search：found | 108（6.1%） |\n| 最終 operationally unknown | 300（1,781 中 16.8%；全部候選中 0.6%） |\n| 重新執行的 end-to-end agreement | 75.0%；標準差 0.1 個百分點 |\n| Saved response 的 classifier-only agreement | 98.2% |\n| no_info 的十次 end-to-end agreement | 31.6% |\n| 三次 rerun 後仍為 no_info | 49/300 |\n| 十次 rerun 後仍為 no_info | 27/300 |\n| LSTM median BPC：PUN／public-person | 3.16／2.45 |\n| 人類認為 PUN 名稱是 plausible full name | 63.0% |\n| 人類搜尋 PUN 名稱選 no_info／found／ambiguous | 75.8%／3.0%／17.2% |\n| stable_no_info_10 的人類 no_info／found／ambiguous | 84.0%／2.5%／12.3% |\n| Exact quoted only 的接受數 | 1,115（比完整 validator 多 815） |\n| 移除 fuzzy/reordered variants 的接受數 | 942（比完整 validator 多 642） |\n\n作者據此指出：PUN 名稱在字元預測性與 tokenizer fragmentation 上比非名稱控制組更 name-like；但 human search 對其找回人物證據的比例很低，且主要分歧集中於近似名稱與其他 ambiguity boundary cases。",
+      "insights": [
+        "在 biography、privacy leakage、factuality 或 abstention 評測中，應將姓名的公開證據狀態明確分層，避免把真實人物證據與模型 hallucination 或 name prior 混為一談。",
+        "不能只使用 exact quoted search；本文 ablation 顯示，加入 reversed、ASCII-folded、拼寫與 phonetic variants 會大幅降低錯誤接受，說明近似名稱是重要混淆來源。",
+        "PUN 名稱不應被視為永久不存在的人，而應視為具時間、搜尋供應商、locale 與設定依賴性的 validation snapshot；正式實驗前應重新驗證，並將 stable_no_info 子集用於更保守的 negative control。"
+      ],
+      "limitations": "PUN 的 unknownness 依賴搜尋供應商、設定、locale 與時間，Hosted LLM 和搜尋索引也可能改變；無法證明現實中不存在該姓名或模型未見過它。資源限於 Latin-script、兩組件 First Last，Wikidata 來源亦不具全球人口代表性。姓名元件仍可能攜帶性別、文化、宗教、階級或族群聯想。未來應擴展至非 Latin script、不同命名制度，並量化 provider 與 locale sensitivity。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "person-name disambiguation",
+        "abstention evaluation",
+        "privacy leakage evaluation",
+        "name-conditioned bias",
+        "web evidence validation"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21305",
+      "title": "Re$^3$Cap: Retrieval-Guided Refinement for Image Captioning Enhancement via Reinforcement Learning",
+      "abstract": "Reinforcement Learning (RL) has demonstrated significant gains in image captioning, yet it is still limited in encouraging Large Vision-Language Models (LVLMs) to explore novel reasoning strategies. This limitation leads to a performance gap between RL and Supervised Fine-Tuning (SFT). In this paper, we argue that multi-modal retrieval can serve as an effective reasoning signal for caption refinement. Based on this insight, we present the Retrieval-Guided Refinement for Image Captioning (Re$^3$Cap), a retrieval-guided reasoning strategy that enhances image captioning without requiring additional annotations. Instantiated by Caption Refinement Suggester (CRS) and Caption Quality Assessor (CQA), this strategy identifies hallucinations and omissions in image captions, leading to more accurate and detailed descriptions. Extensive experiments demonstrate the superiority of our method in image captioning, even compared with Supervised Fine-Tuning. Especially, Re$^3$Cap outperforms GRPO with an average improvement of 8.64% in relation reasoning on the COCO-LN500 benchmark.",
+      "authors": [
+        "Haonan Jia",
+        "Shichao Dong",
+        "Zenghui Sun",
+        "Jiawen Zheng",
+        "Ziqi Miao",
+        "Gege Shi",
+        "Qiuyu Zhao",
+        "Jinsong Lan",
+        "Xiaoyong Zhu",
+        "Bo Zheng"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-21T17:07:41+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21305v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21305",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "Reinforcement Learning（RL）已在 image captioning 中帶來顯著提升，但仍難以促使 Large Vision-Language Models（LVLMs）探索新的推理策略，因而造成 RL 與 Supervised Fine-Tuning（SFT）之間的效能差距。本文主張，multi-modal retrieval 可作為有效的 caption refinement 推理訊號，並提出 Retrieval-Guided Refinement for Image Captioning（Re3Cap），在不需要額外人工標註的情況下改善影像描述。Re3Cap 由 Caption Refinement Suggester（CRS）與 Caption Quality Assessor（CQA）組成，用以辨識 caption 中的 hallucinations 與 omissions，產生更準確且詳細的描述。實驗顯示，Re3Cap 在多種 LVLM、資料集與 reward functions 上優於既有方法，甚至超越 SFT；在 COCO-LN500 的 relation reasoning 上，平均較 GRPO 提升 8.64%。",
+      "problem_statement": "現有 LVLM image captioning 容易產生 hallucinations，並遺漏細粒度視覺細節。傳統 RL 多以 CLIP、keyword 或 image-caption similarity 作為 reward，容易受 VLM compositional reasoning 限制而 reward hacking；且 RL 往往只在 base model 已產生的候選中選擇高 reward caption，缺乏新的推理策略與探索，因此表現可能落後 SFT。本文要解決的是：如何在不增加額外標註的情況下，擴展 caption 候選空間並同時減少錯誤與遺漏。",
+      "proposed_solution": "作者提出 Re3Cap，一個以 retrieval-guided refinement 為核心的 RL 框架。對每張影像先產生 initial captions，再以影像與 caption 分別查詢多模態資料庫，分析兩組 retrieval descriptions 的語意重疊與差異。CRS 從視覺相似影像的共同描述中找出應保留或加入的關鍵內容；CQA 比較影像檢索與文字檢索結果，辨識 caption hallucinations 與 omissions。這些 guidance 被注入 refinement prompt，使 LVLM 產生更準確、詳細且可能超出原本輸出分布的 refined captions，並以其 reward 進行 RL。訓練時移除 initial caption 與 guidance，使推論時僅需影像輸入。",
+      "core_contributions": [
+        "提出 retrieval-based reasoning strategy，利用影像檢索與 caption 檢索結果的語意差異，在不需額外標註下指出 caption 的 hallucinations 與 omissions。",
+        "提出由 Caption Refinement Suggester（CRS）與 Caption Quality Assessor（CQA）組成的 Re3Cap RL 框架，將檢索推理訊號注入 caption refinement。",
+        "在多種 LVLM、兩個評測基準及多種 reward functions 上驗證方法，並透過 max@k、元件消融、編碼器與超參數穩健性實驗分析其效果。"
+      ],
+      "methodology": "Re3Cap 使用資料集 D 中的 image-text pairs 建立檢索語料。給定影像 v，先以 OpenCLIP ViT-H/14 進行 image retrieval，取 top-K 結果；將其文字切成句子，以 SBERT（MPNet-base）計算句子相似度，建立 graph，並以 k-core 保留密集且一致的語意節點，形成 CRS 訊號。給定 LVLM 產生的 caption c，再以文字檢索取得 top-K 結果，採相同方式形成 caption graph。接著在影像與 caption retrieval 結果間建立 bipartite graph 並計算 k-core；共同內容表示正確性，caption k-core 減去共同內容表示 hallucinations，image k-core 減去共同內容表示 omissions。訓練時，每張影像取 M=5 個 initial captions，產生對應 guidance 與 refined captions，再用 reward function 評分並計算 group advantage。作者採用 decoupled PPO，以 behavior policy 修正由 refinement prompt 造成的 off-policy 分布差異，同時加入 proximal policy、clipping 與 reference-model KL penalty。訓練資料為 RefinedCaps 的 6.5K 張影像；檢索庫由 RefinedCaps 與 DenseFusion-1M 擴充而成，且與評測基準不重疊。設定 K=3、k=2、τ=0.7，訓練兩個 epochs。評估使用 COCO-LN500 與 DOCCI500，指標包括 objects F1、attributes F1，以及以 Qwen3 VQA accuracy 測量的 relations QA。",
+      "key_results": "主要作者實驗結果如下；表中數值為論文報告的分數。\n\n| 實驗設定 | COCO-LN500 Objects F1 | Attributes F1 | Relations QA | DOCCI500 Objects F1 | Attributes F1 | Relations QA |\n|---|---:|---:|---:|---:|---:|---:|\n| LLaVA-1.5-7B + CLIP GRPO | 66.66 | 53.15 | 22.58 | 61.77 | 53.62 | 18.42 |\n| LLaVA-1.5-7B + CLIP Re3Cap | 72.03 | 54.73 | 30.38 | 68.51 | 57.68 | 23.86 |\n| Qwen2-VL-7B + SC GRPO | 76.80 | 57.49 | 30.46 | 72.49 | 57.75 | 23.50 |\n| Qwen2-VL-7B + SC Re3Cap | 77.77 | 58.79 | 44.60 | 73.29 | 58.88 | 36.40 |\n| Qwen2-VL-7B + CIM SFT+CIM | 76.65 | 58.09 | 42.12 | 73.87 | 58.68 | 36.32 |\n| Qwen2-VL-7B + CIM Re3Cap | 78.18 | 59.28 | 44.19 | 73.92 | 58.99 | 40.15 |\n\n- 跨多個 base LVLM 與 reward functions 平均而言，Re3Cap 相對 GRPO 在 COCO-LN500 的 Relations QA 提升 8.64%，在 DOCCI500 提升 7.57%。\n- 在 Qwen2-VL-7B、CIM reward 的消融實驗中，GRPO 為 Objects/Attributes/Relations：75.80/58.22/38.71；僅 CRS 為 76.83/58.98/40.90；僅 CQA 為 77.14/59.04/42.69；兩者合併為 78.18/59.28/44.19。\n- 在 SC reward 下，GRPO 約需 192 GPU hours 收斂，Re3Cap 約需 216 GPU hours，增加 24 GPU hours，即約 12.5%。\n- max@k 分析顯示，CIM-RL 在 k=1 表現強，但隨 k 增加成長較慢並最終低於 base model；未訓練的 retrieval-guided strategy 隨較大 sampling budget 持續受益。",
+      "insights": [
+        "若任務需要提升視覺描述的 faithfulness，可將影像條件檢索與文字條件檢索的結果差異，轉化為可操作的保留、補充與移除訊號。",
+        "對 RL 系統而言，先以外部推理策略產生 refined candidates，再訓練模型直接輸出，可能比單純提高 reward selection efficiency 更能擴展輸出分布。",
+        "CRS 與 CQA 具有互補作用：前者聚焦於保留視覺相似樣本中的穩定語意，後者聚焦於檢查 caption 與影像檢索結果的不一致；實務部署仍應監控檢索庫的規模、品質與分布。"
+      ],
+      "limitations": "作者明確指出，方法效果依賴 retrieval set 的品質與規模；資料庫過小時，影像 caption 可能無法取得相關結果，方法可能退化為一般 RL。論文建議擴大檢索庫的規模與多樣性。另有資料集社會偏誤、annotation artifacts 與 sampling bias 等既有風險。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "retrieval-guided reinforcement learning",
+        "vision-language model image captioning",
+        "multimodal hallucination detection",
+        "caption refinement"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21203",
+      "title": "SENTRY: Deterministic, Intelligent Risk Assessment for IT Change Management",
+      "abstract": "Technology change management in large financial institutions depends on risk assessments that are accurate, consistent, and auditable. In practice, many institutions still rely on self-reported questionnaires. Those questionnaires are subjective, easy to game, and poor at separating routine changes from the ones that later trigger major incidents. This paper presents SENTRY, a risk assessment platform that replaces questionnaire-based scoring with a deterministic machine learning pipeline built from gradient-boosted decision trees (XGBoost) and hybrid retrieval-augmented generation (RAG). The system combines structured operational metadata, application dependency graphs, and historical incident records with a hybrid semantic and lexical search over historical change requests. The retrieval step captures the risk signal in unstructured change request text, then compresses that signal into a single scalar feature before model inference. That design keeps the model deterministic and preserves per-prediction explainability via SHAP values. Evaluated on enterprise-scale change data, SENTRY achieves a ROC AUC of 0.87 and 85% overall accuracy, and it detects high-risk changes at roughly 3.25 times the rate of the existing process. We close by examining the architectural trade-offs behind this design and what they imply for the use of machine learning in regulated change management.",
+      "authors": [
+        "Daniel Arulpragasam",
+        "Christer Henrysson",
+        "Ella Ly",
+        "Deepika Anbalagan",
+        "Leo Feng"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-21T15:18:21+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21203v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21203",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "大型金融機構的 Technology change management 需要準確、一致且可稽核的風險評估，但許多機構仍依賴由申請人自填的問卷。此類問卷具有主觀性、容易被操弄，且難以區分一般變更與後續引發重大事故的變更。本文提出 SENTRY，一個以 deterministic machine learning pipeline 取代問卷評分的風險評估平台。系統採用 gradient-boosted decision trees（XGBoost）與 hybrid retrieval-augmented generation（RAG），整合結構化營運 metadata、application dependency graphs、歷史 incident records，以及對歷史變更請求進行 semantic 與 lexical search 的結果。Retrieval 階段將非結構化變更文字中的風險訊號壓縮為單一 scalar feature，再交由模型推論，以維持 deterministic 特性，並透過 SHAP values 提供逐筆預測解釋。在企業規模變更資料上，SENTRY 的 ROC AUC 為 0.87、整體 accuracy 為 85%，辨識高風險變更的比例約為既有流程的 3.25 倍。",
+      "problem_statement": "論文要解決大型金融機構中 IT change risk assessment 不準確、不一致且難以稽核的問題。既有 self-reported questionnaire 依賴申請人提供資訊，具有主觀性，容易透過理解評分規則來降低表面風險，也未充分納入 downstream dependencies、incident history 與歷史相似變更等上下文，因此許多後續造成重大事故的變更仍被評為低風險。",
+      "proposed_solution": "作者提出 SENTRY，將 28 個結構化特徵與 hybrid RAG 產生的單一風險特徵輸入 XGBoost classifier。系統從歷史 change requests 的描述、implementation plans、test plans 與 backout plans 產生 embeddings，並結合 lexical search 進行 hybrid retrieval；再依相似變更的 incident severity 計算 deterministic risk score。核心創新是把非結構化文字的語意訊號壓縮成可解釋的 scalar feature，而非直接使用 embeddings 或讓 LLM 產生評分，因而兼顧 deterministic、auditability、SHAP explainability 與預測效能。",
+      "core_contributions": [
+        "提出面向 IT change management 的 SENTRY 平台，以 XGBoost 取代主觀的 questionnaire-based scoring，並輸出三層風險分類與逐筆 SHAP-style feature contributions。",
+        "設計 hybrid RAG 管線，結合 dense semantic search、lexical search 與 Reciprocal Rank Fusion，將歷史相似變更及其 incident outcomes 轉換為單一 deterministic hybrid_search_score。",
+        "在企業變更資料的 held-out test set 上驗證方法，報告 ROC AUC 0.87、85% overall accuracy，以及相較問卷流程由 20% 提升至 63% 的重大事故變更辨識率。"
+      ],
+      "methodology": "SENTRY 由前端、backend API、XGBoost 模型，以及 ITSM 結構化資料庫與 vector database 組成。模型使用 28 個已正規化至 [0,1] 且設有上限的特徵，涵蓋 application context、blast radius、incident history、相似變更與 change type。每筆請求將 short description、description、implementation plan、test plan 和 backout plan 串接後產生 dense embedding；同時以相同文字建立 lexical index。推論時分別取得 cosine similarity 的 top-k 鄰居與 full-text ranking 結果，預設 k=100，再以 Reciprocal Rank Fusion 合併，公式為 rrf_score=α/(60+semantic_rank)+β/(60+lexical_rank)，其中 α=0.4、β=0.6。僅對具有 incident 的鄰居依 incident priority 加權求和，形成 hybrid_search_score。訓練資料包含約 183 筆造成重大事故的正例；負例取自 minor incidents 與無事故變更，維持約 80/20 比例。資料採 stratified split，並以時間過濾避免 retrieval data leakage。Optuna 執行 60 組超參數搜尋，每組使用 5-fold stratified cross-validation，目標為正類 F1 並懲罰 precision-recall 差距。模型以 P≥0.90 判定 High，另以訓練期間選出的 threshold 區分 Medium 與 Low；評估採 ROC AUC、accuracy、precision、recall、F1 與 confusion matrix。",
+      "key_results": "| 評估項目 | SENTRY／結果 | 既有問卷流程 |\n|---|---:|---:|\n| ROC AUC | 0.87 | 論文未報告 |\n| Overall accuracy | 85% | 論文未報告 |\n| 重大事故變更辨識率（recall） | 63% | 20% |\n| 高／中風險 precision | 0.55 | 論文未報告 |\n| 高／中風險 recall | 0.63 | 論文未報告 |\n| 高／中風險 F1 | 0.59 | 論文未報告 |\n| 低風險 precision／recall／F1 | 0.92／0.89／0.91 | 論文未報告 |\n| held-out test set | 203 筆；TN=150、FP=18、FN=13、TP=22 | 論文未報告 |\n\n作者報告 SENTRY 辨識造成重大事故變更的比例為既有問卷流程的 3.25 倍。",
+      "insights": [
+        "在受監管環境中，可將 RAG 的 retrieval 能力限制為可重現的特徵工程步驟，避免直接依賴非 deterministic 的 LLM 評分。",
+        "對非結構化文字不一定要把高維 embeddings 直接輸入 tabular model；先以 incident-aware retrieval 壓縮為單一風險特徵，有助於保留結構化模型的可解釋性。",
+        "高風險偵測應同時檢視 recall 與 precision；論文中的 63% recall 與 0.55 precision 顯示，提升事故捕捉率會帶來額外人工審查負擔，因此模型較適合作為 human decision-support，而非自動核准工具。"
+      ],
+      "limitations": "論文指出正例僅約 183 筆，限制模型學習高風險細分類別的能力；模型使用固定歷史 snapshot，尚未實作自動 retraining，vector database 也需手動更新。隨技術環境變化，效能可能衰退；此外，特徵定義、正規化範圍與 thresholds 係針對單一金融機構校準，跨組織部署需重新抽取、校準與訓練。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "IT change risk assessment",
+        "deterministic machine learning",
+        "hybrid retrieval",
+        "SHAP explainability",
+        "operational incident prediction"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21249",
+      "title": "Benchmarking Patent Drafting from Inventor-Style Disclosures",
+      "abstract": "While recent large language models (LLMs) have achieved promising results on individual patent drafting tasks, they fundamentally fail to investigate the core challenge of real-world patent drafting: generating a complete and legally coherent patent application directly from early-stage invention materials. Prior work predominantly assumes later-stage, highly structured, or already legalistic inputs. However, real patenting workflows begin with informal, de-legalized disclosures authored by inventors. To bridge the gap, we introduce Dis2Pat, a disclosure-to-patent dataset that reflects realistic patenting workflows by requiring the generation of complete patent applications directly from inventor-style, de-legalized disclosures. Given the inherent difficulty of long-form, legally constrained patent drafting and the strong privacy requirements, we further propose a strong baseline named Patent-MAF. It is a multi-agent framework for locally deployable patent drafting. Benchmark results reveal that current LLMs exhibit limitations in patent drafting, while Patent-MAF provides a strong baseline that consistently outperforms evaluated open-source models and remains competitive with large closed-source models.",
+      "authors": [
+        "Lekang Jiang",
+        "Wenjun Sun",
+        "Stephan Goetz"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-21T16:00:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21249v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21249",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "近年大型語言模型（LLMs）在個別專利撰寫任務上展現良好成果，但未能處理真實世界專利流程的核心挑戰：從早期、非法律化的發明材料，直接產生完整且具法律連貫性的專利申請文件。既有研究多假設輸入已處於後期、高度結構化或法律化形式；然而實務上，專利流程通常始於發明人撰寫的非正式 disclosure。本文提出 Dis2Pat，一個模擬真實工作流程的 disclosure-to-patent 資料集，要求模型根據發明人風格、去法律化的 disclosure 與相關圖式，生成包含 claims 和完整 specification 的專利申請。鑑於長篇、法律約束撰寫的難度及專利資料的隱私要求，本文進一步提出 Patent-MAF，一個可在本地部署的 multi-agent 專利撰寫框架。實驗顯示，現有 LLMs 仍存在專利撰寫限制；Patent-MAF 持續優於受評估的 open-source models，並與大型 closed-source models 具競爭力。",
+      "problem_statement": "本文聚焦於從發明人早期、非正式且去法律化的 invention disclosure，生成完整專利申請，而非只生成 claims 或 specification。既有 benchmark 多以完整 specification、claims、專利草稿或科學論文為輸入，已避開從技術想法轉換為法律結構的關鍵難題；同時，多數資料集忽略圖式的多模態資訊，也未充分考量專利 disclosure 的機密性與本地部署需求。",
+      "proposed_solution": "作者提出 Dis2Pat 與 Patent-MAF。Dis2Pat 從 9,433 件 granted patents 建構 pseudo-disclosures，透過 LLM 萃取技術內容、移除專利法律語言與 claims 結構，並保留相關 figures，要求生成完整 patent application。Patent-MAF 採 domain-grounded multi-agent 分工：manager 將 disclosure 分別整理為 claim 與 specification drafting materials；專門 drafter agents 生成 claims 和 specification；polisher agent 統一術語、檢查 claims 與 specification 的一致性並改善法律風格。所有 agents 均以可本地部署的 open-source models 執行，以符合專利機密性要求。",
+      "core_contributions": [
+        "提出 Dis2Pat，將發明人風格、去法律化的文字 disclosure、相關 figures 與完整 patent application 配對，建立約 9.4K 筆的 disclosure-to-patent benchmark。",
+        "提出 Patent-MAF，以 manager、claims/specification drafter 與 polisher 的 domain-grounded multi-agent 分工，支援 open-source、local deployment 與多模態 specification drafting。",
+        "提供 text-only、text+image、open-source、closed-source、LoRA fine-tuning、ablation 與專家評估的系統性比較，驗證 Patent-MAF 在開源模型中的優勢及其與 GPT-5 的競爭力。"
+      ],
+      "methodology": "資料集以 PatentDesc 的專利 publication numbers 為來源，篩選具完整 abstract、claims、specification 與 figures，且 figures 不超過十張的 granted patents，隨機取樣 9,433 件，分為 8,490 件 training 與 943 件 test，並確認 patent family 不跨 train/test。每件專利以 GPT-5-mini 重寫為七部分 pseudo-disclosure：title、problem、core idea、how it works、novelty、benefits 與 optional variants；平均 disclosure 為 1,196.2 tokens，原專利為 11,207.4 tokens。Patent-MAF 的 manager 產生 claim-specific 與 specification-specific 材料；Qwen3-32B drafter 生成 claims，Qwen3-VL-32B drafter 根據文字與 figures 生成 specification，最後由 Qwen3-32B polisher 進行術語統一、跨段一致性與風格修訂。Claims 使用 LoRA fine-tuning；設定 rank 16、alpha 8、dropout 0.05、batch size 2、learning rate 5×10^-5，最多三 epochs，推論 temperature 0.3、最多生成 16,384 tokens。評估包含 BLEU、ROUGE、BERTScore、BERT-for-Patent similarity、DeepSeek-V3 LLM-as-a-judge，以及 60 個測試案例的專利專家 pairwise evaluation；另進行 manager、vision、fine-tuning 與 polisher ablation。",
+      "key_results": "主要結果如下；表中 Overall 為論文報告的 LLM-based content quality 分數。\n\n| 任務／設定 | 系統 | Overall | BERTScore | BERT-for-Patent | 其他重點 |\n|---|---|---:|---:|---:|---|\n| Specification，text-only | GPT-5 | 85.0 | 81.8 | 95.7 | 開源模型中 Qwen3-VL-72B 為 81.1 |\n| Specification，text+image | GPT-5 | 85.1 | 81.8 | 96.4 | figures 帶來小幅提升 |\n| Specification，text+image | Patent-MAF | **85.4** | **82.3** | 96.1 | 開源系統最佳，Overall 略高於 GPT-5 |\n| Specification，Patent-MAF w/o manager | Patent-MAF ablation | 83.4 | 81.6 | 94.1 | 相較完整系統下降 2.0 |\n| Specification，Patent-MAF w/o vision | Patent-MAF ablation | 83.4 | 81.6 | 93.6 | 相較完整系統下降 2.0 |\n| Specification，Patent-MAF w/o polisher | Patent-MAF ablation | 84.4 | 81.8 | 95.1 | Style 由 82.0 降至 80.9 |\n| Claims，text-only | GPT-5 | **91.1** | 83.8 | 95.9 | 整體品質最高 |\n| Claims，text-only | Patent-MAF | 86.7 | **88.3** | **96.4** | 開源系統最佳 |\n| Claims，Patent-MAF w/o manager | Ablation | 84.2 | 87.4 | 96.1 | 相較完整系統下降 2.5 |\n| Claims，Patent-MAF w/o fine-tuning | Ablation | 81.6 | 82.2 | 91.6 | 相較完整系統下降 5.1 |\n| Claims，Patent-MAF w/o polisher | Ablation | 80.1 | 87.5 | 96.2 | 相較完整系統下降 6.6 |\n\n專家 pairwise evaluation 顯示，Patent-MAF 在 completeness、clarity、legality、consistency 四項多數情況優於三個 open-source baselines；與 GPT-5 相比，GPT-5 在前三項較常獲偏好，consistency 則勢均力敵。LLM judge 與專家判斷的一致率為 completeness 82%、consistency 76%、clarity 68%、legality 62%；GLM-5.2 與 DeepSeek-V3 的偏好一致率約為 specification 85%、claims 82%。Patent-MAF 約使用 single-shot baseline 的 2.5 倍 token。",
+      "insights": [
+        "若應用於機密專利流程，應優先採用可本地部署的模型與模組化 pipeline，避免將 invention disclosure 傳送至外部 API。",
+        "Claims 與 specification 的最佳處理方式不同：claims 更受益於 task-specific fine-tuning，specification 則更受益於 figures、資訊結構化與跨段 consistency polishing。",
+        "評估專利生成不宜只依賴 BLEU 或 ROUGE；本文同時使用 domain embedding、LLM-as-a-judge 與專利專家 pairwise judgment，顯示法律品質、完整性與跨部分一致性需要多層評估。"
+      ],
+      "limitations": "Dis2Pat 以 granted patents 經 GPT-5-mini 重寫的 pseudo-disclosures 取代真實 inventor disclosures，可能無法反映實務中的不完整、多樣與模糊表達。研究主要評估英文專利，尚未涵蓋多語言或 EPO、CNIPA 等司法管轄區標準；Patent-MAF 亦增加約 2.5 倍 token 使用量。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "專利自然語言處理",
+        "長文本生成與法律文件生成",
+        "多模態文件理解",
+        "本地部署與隱私保護"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21357",
+      "title": "VIALS: A Benchmark for Visual Interpretation of Artifacts in the Life Sciences",
+      "abstract": "In professional life sciences workflows, scientists routinely interpret visual artifacts (gel blots, microscopy images, plasmid maps, flow cytometry plots, molecular structures, ...) to inform research decisions. We introduce VIALS, a visual question-answering benchmark with 161 such interpretation tasks, spanning the types of artifacts examined throughout experimental workflows in the biotech industry (rather than polished figures from publications and textbooks). While frontier vision-language models can now fluently describe natural images, we find that they are unable to accurately interpret these scientific images, reflecting limitations in domain knowledge and domain-specific visual reasoning capabilities. In contrast, scientists with relevant domain expertise find these visual interpretation tasks straightforward. AI that cannot similarly interpret such images will have limited utility in professional life sciences workflows, where such artifacts are central to how scientists reason, communicate, and make decisions.",
+      "authors": [
+        "Elaine Lau",
+        "Thanuka Udumulla",
+        "Lee Izhaki-Tavor",
+        "Francisco Guzmán",
+        "Nicholas Magazine",
+        "Jonas Mueller"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-21T17:59:26+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21357v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21357",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "在專業生命科學工作流程中，科學家經常解讀 visual artifacts，例如 gel blots、microscopy images、plasmid maps、flow cytometry plots 與 molecular structures，並據此作出研究決策。本文提出 VIALS，一個包含 161 項 interpretation tasks 的 visual question-answering benchmark，涵蓋 biotech industry 實驗流程中實際檢視的 artifact 類型，而非出版品或教科書中的精美圖表。研究發現，雖然 frontier vision-language models 已能流暢描述自然影像，卻無法準確解讀這些科學圖像，反映其 domain knowledge 與 domain-specific visual reasoning 能力仍有限。相較之下，具相關專業背景的科學家認為多數任務相當直接。若 AI 無法可靠解讀這類圖像，便難以在以 visual artifacts 為核心的專業生命科學研究、溝通與決策流程中發揮實際效用。",
+      "problem_statement": "論文要回答的是：VLM 能否準確解讀專業生命科學工作中常見的 visual artifacts，並擷取其中支援研究決策的證據。既有 benchmark 多以教科書、考試、論文圖表或單一 biomedical modality 為主，未充分涵蓋 biotech/pharma 實驗流程中的 messy artifacts。僅能流暢描述圖像也不足以保證模型能正確定位、讀值、比較空間關係並套用科學概念。",
+      "proposed_solution": "作者提出 VIALS benchmark，以 161 個 open-domain VQA 任務評估模型對專業生命科學 artifacts 的實際解讀能力。每項任務包含一或多張科學圖像、問題與短篇 ground-truth answer，問題要求模型同時擷取 visual evidence 並進行具科學意義的解釋。資料由具相關工作經驗的 PhD-level scientists 建構、獨立作答與多階段審查；評分採 semantic grading，而非 exact match。除 direct VLM 評估外，作者另測試具 code execution、crop、zoom、image transformation 與 measurement 能力的 tool-assisted agents，以區分直接視覺感知不足與後續科學解釋不足。",
+      "core_contributions": [
+        "提出 VIALS，將評測焦點從學術或教科書式 scientific VQA 擴展到 biotech/pharma 實驗流程中的專業 visual artifacts，涵蓋八類生命科學圖像與 161 個具工作情境的任務。",
+        "建立由 31 名具領域與產業經驗專家共同建構、獨立作答及多階段審查的品質控制流程，並以專家調查驗證任務的 professional relevance。",
+        "系統分析 frontier VLM 的失敗來源，並透過 tool-assisted agent 實驗揭示 perception gap 與 residual interpretation gap：工具可大幅改善表現，但仍伴隨高昂 token 成本及未解決的科學表示法理解問題。"
+      ],
+      "methodology": "VIALS 涵蓋 phylogenetics、flow cytometry、blotting、cell counting/quantification、plasmid maps、protein structure、molecular structure 及其他 artifact，共 161 題；各主要 domain 約占 12.4%–14.3%。資料來源包括未發表的真實實驗資料、以科學軟體 procedural generation 產生的 artifacts，以及 CC-BY open-access publications；資料特別強調專業工作中常見的 messy data。31 名具生命科學專業的 contributors 建構與審查任務，87% 具 doctoral-level training，74% 有超過六年產業研究經驗。每題由專家撰寫問題與答案，第二、第三位專家盲答並提供 justification，另有專家確認圖像真實性、問題可回答性及答案正確性；僅保留達成共識的任務。模型只接收圖像與問題，每題進行三次 rollout，temperature 為 1.0，結果以 Pass@1 平均 accuracy 報告，並補充 Pass@3 與 Pass^3。短答案由 GPT-5-mini 進行 LLM-as-a-judge semantic grading，對 4,685 個 model responses 與人類專家判定的 agreement 為 99.9%。失敗分析以七類錯誤分類，包括 visual quantification、feature selection、overlooked evidence、representation misinterpretation、quantitative reasoning、misapplied principle 與 fabricated finding。工具代理則在禁止網路的 Linux sandbox 中使用 Python、OCR、影像處理與數值工具反覆檢查圖像。",
+      "key_results": "主要結果如下：\n\n| 評估項目 | 結果 |\n|---|---:|\n| 最佳 direct VLM：GPT-5.6 Sol | 26.5% accuracy |\n| 最佳 direct VLM：Gemini 3.7 Flash | 26.5% accuracy |\n| GPT-5.6 Sol Pass^3 | 12.4% |\n| Gemini 3.7 Flash Pass^3 | 16.8% |\n| 最佳 domain accuracy：GPT-5.6 Sol／phylogenetics | 43.5% |\n| 最佳 domain accuracy：Muse Spark 1.2／plasmid maps | 38.1% |\n| 最佳 domain accuracy：Muse Spark 1.2／protein structure | 33.3% |\n| 最佳 domain accuracy：Kimi K3、Grok 4.6／flow cytometry | 33.3% |\n| 主要錯誤比例（前四類合計） | 各模型 83%–93% |\n| 最常見錯誤：visual quantification | 各模型 28.2%–41.8% |\n| 最佳工具代理：Claude Opus 5 + OpenCode | 65.8% |\n| GPT-5.6 Sol + Codex 相對 direct | 26.5% → 49.1%（+22.6 個百分點） |\n| Gemini 3.7 Flash + OpenCode 相對 direct | 26.5% → 60.7%（+34.2 個百分點） |\n| Kimi K3 + OpenCode 相對 direct | 20.9% → 64.2%（+43.3 個百分點） |\n| 工具代理 token 使用量增幅 | 10–432 倍 |\n\n專家調查顯示，VIALS 圖像被判定為 professional work 的比例為 63%，HLE 對照組為 22%；每週或每日遇到的比例為 33% 對 14%；具 commercial/economic value 的比例為 81% 對 66%。",
+      "insights": [
+        "若要將 VLM 用於生命科學決策，不能只看自然影像描述或整體語言流暢度，應加入對讀值、計數、gate、lane、結構接觸與空間關係的任務級驗證。",
+        "影像 crop、zoom、量測與程式化分析能顯著補救直接視覺推理錯誤，因此實務系統可設計可追溯的工具使用流程；但需同時評估 10–432 倍 token 增幅與成本效益。",
+        "VIALS 的 Pass^3 與 Pass@3 差距顯示一次答對不等於可靠。高風險工作應測試重複執行的一致性，並將模型不確定性、人工複核與專家審批納入部署標準。"
+      ],
+      "limitations": "資料集僅有 161 題，不能涵蓋生命科學全部 visual artifacts 與解讀活動；任務主要是相關 PhD 科學家可快速完成的相對直接情境，未涵蓋高度歧義與實驗噪聲下的複雜判斷。研究也未評估出版品、教科書圖表解讀，或解讀後如何調整研究計畫。作者表示將建立數百項私有新增任務，以支援後續 benchmark refresh 並降低 overfitting。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific visual question answering",
+        "vision-language model evaluation",
+        "biomedical image understanding",
+        "tool-assisted agents",
+        "professional life sciences AI"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.21209",
+      "title": "Personalized Privacy Control in LLMs via Attention Head Intervention",
+      "abstract": "The rise of agentic AI enables LLMs to access diverse user data, raising critical privacy concerns. Prior work on contextual privacy studies whether LLMs regulate information disclosure according to context-dependent norms. However, acceptable disclosure boundaries may vary across users even within the same context. To address this limitation, we introduce \\textit{personalized privacy}, which incorporates user-specific disclosure preferences into privacy control. We further present P3Bench~(\\textbf{P}ersonalized \\textbf{P}rivacy \\textbf{P}reservation \\textbf{Bench}mark), a novel benchmark extending contextual privacy policies with personalized disclosure policies. Experiments show that prompt-based policies fail to reliably enforce personalized privacy policies, with Qwen2.5-7B and Gemma3-4B showing average policy ignorance ratios of 51.25\\% and 74.28\\%, respectively. Finally, to address this problem, we propose \\textsc{Repair}, a robust inference-time attention head intervention method that adjusts disclosure behavior toward policy-consistent responses. Our method significantly improves adherence to user-specific privacy preferences by reducing cases where the model fails to follow the given policy.",
+      "authors": [
+        "Junseok Kim",
+        "Nakyeong Yang",
+        "Kyomin Jung"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-08-21T15:22:20+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.21209v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.21209",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "代理式 AI 的興起使大型語言模型（LLM）能存取多樣的使用者資料，也帶來嚴重的隱私風險。過去的 contextual privacy 研究主要檢驗模型是否依據情境相關規範調節資訊揭露；然而，即使處於相同情境，不同使用者可接受的揭露界線仍可能不同。本文提出 personalized privacy，將使用者特定的揭露偏好納入隱私控制，並提出 P3Bench（Personalized Privacy Preservation Benchmark），將 contextual privacy policies 擴充為 personalized disclosure policies。實驗顯示，單靠 prompt-based policies 無法可靠執行個人化隱私規則；Qwen2.5-7B 與 Gemma3-4B 的平均 policy ignorance ratio 分別為 51.25% 與 74.28%。為改善此問題，本文提出 REPAIR，一種 robust inference-time attention head intervention 方法，將模型揭露行為調整至更符合政策的回應，並顯著降低模型未遵循使用者隱私偏好的情況。",
+      "problem_statement": "本文處理 LLM agent 在執行任務、存取使用者資料時，無法依據個別使用者偏好控制資訊揭露的問題。既有 contextual privacy 只根據任務情境判定哪些資訊適合分享，未充分考慮同一情境下不同使用者的容忍度。作者實驗指出，將個人政策直接放入 prompt 仍會造成 over-refusal 與 over-sharing，模型的既有揭露先驗可能凌駕於新提供的使用者政策。",
+      "proposed_solution": "作者提出 personalized privacy 概念與 P3Bench，將情境中可揭露的欄位進一步依使用者偏好分為可存取與拒絕欄位。技術上提出 REPAIR：先以 linear probes 從 attention head activations 辨識 policy-conditioned disclosure state，再為 Disclosure、Policy-Refusal 與 Base-Refusal 建立狀態相關的介入表示。推論時透過多個選定 attention heads 的 majority voting 預測狀態，並採取 refusal patching 或 disclosure steering，無須重新訓練模型即可使輸出更符合個人政策。",
+      "core_contributions": [
+        "提出 personalized privacy 定義，將 contextual privacy 中的情境相關性與使用者特定揭露偏好結合。",
+        "建立 P3Bench：由 AirGapAgent-R 延伸而來，涵蓋四種語意政策、隨機欄位政策、26 個個人欄位與多種任務情境，用於評估個人化隱私控制。",
+        "提出 REPAIR inference-time attention head intervention，透過 policy-relevant head probing、狀態預測、拒答 patching 與揭露 steering，在不重新訓練模型下改善政策遵循。"
+      ],
+      "methodology": "P3Bench 延伸 AirGapAgent-R，使用 17 個 synthetic user profiles、26 個個人欄位、8 個情境與 3 個任務領域，建立四種政策：只允許姓名的 Privacy-Max、允許聯絡資訊的 Contact-Open、允許健康資訊的 Health-Open，以及允許偏好資訊的 Preference-Open；另測試隨機混合欄位政策。任務標註包含 Disclosure、Policy-Refusal、Base-Refusal 三種狀態，但可觀察行為統一為 ANSWER 或 REFUSE。REPAIR 先在 calibration set 中擷取最後輸入 token 的各層各 head activation，對每個 head 訓練 logistic-regression probe，以 AUROC 衡量其辨識 disclosure state 的能力，選取 top-k policy-relevant heads。接著對正確 gold output 的 forward pass 計算各狀態平均 activation：兩種拒答狀態直接建立 patching vectors；Disclosure 則以 Disclosure 平均表示減去兩種拒答平均表示，並作 L2 normalization，形成 steering direction。推論時先以選定 heads 的 probe 進行 majority voting，再於生成各步對選定 heads 套用 policy refusal、base refusal patch，或以係數 α 加上 disclosure direction。評估指標為 over-refusal（OR）、over-sharing（OS）及 Policy Error Distance（PED＝√(OR²＋OS²)），另以 PIR 衡量個人政策要求改變行為時模型仍維持無政策輸出的比例。比較方法包括 Direct Prompting、Zero-shot CoT、CAST 與 AdaSteer。",
+      "key_results": "主要結果如下；OR、OS 與 PED 均以百分比表示，數值越低越好。\n\n| 模型／政策 | 方法 | OR | OS | PED |\n|---|---:|---:|---:|---:|\n| Qwen2.5-3B／Privacy-Max | Direct Prompting | 67.06 | 23.65 | 71.11 |\n| Qwen2.5-3B／Privacy-Max | REPAIR | 4.71 | 4.87 | 6.78 |\n| Qwen2.5-7B／Privacy-Max | Direct Prompting | 74.12 | 2.35 | 74.16 |\n| Qwen2.5-7B／Privacy-Max | REPAIR | 32.94 | 1.45 | 32.97 |\n| Gemma3-4B／Privacy-Max | Direct Prompting | 5.88 | 34.89 | 35.38 |\n| Gemma3-4B／Privacy-Max | REPAIR | 5.88 | 9.77 | 11.40 |\n| Qwen2.5-3B／Contact-Open | Direct Prompting | 73.53 | 25.23 | 77.74 |\n| Qwen2.5-3B／Contact-Open | REPAIR | 34.45 | 3.97 | 34.68 |\n| Qwen2.5-7B／Contact-Open | Direct Prompting | 75.63 | 3.09 | 75.69 |\n| Qwen2.5-7B／Contact-Open | REPAIR | 18.91 | 1.76 | 18.99 |\n| Gemma3-4B／Contact-Open | Direct Prompting | 37.82 | 40.78 | 55.62 |\n| Gemma3-4B／Contact-Open | REPAIR | 6.72 | 3.76 | 7.70 |\n| Qwen2.5-3B／Health-Open | Direct Prompting | 57.82 | 10.61 | 58.79 |\n| Qwen2.5-3B／Health-Open | REPAIR | 30.92 | 10.03 | 32.51 |\n| Qwen2.5-7B／Health-Open | Direct Prompting | 41.51 | 6.77 | 42.06 |\n| Qwen2.5-7B／Health-Open | REPAIR | 26.55 | 7.79 | 27.67 |\n| Gemma3-4B／Health-Open | Direct Prompting | 15.97 | 37.37 | 40.64 |\n| Gemma3-4B／Health-Open | REPAIR | 13.78 | 14.04 | 19.67 |\n| Qwen2.5-3B／Preference-Open | Direct Prompting | 29.83 | 16.86 | 34.26 |\n| Qwen2.5-3B／Preference-Open | REPAIR | 13.87 | 9.07 | 16.57 |\n| Qwen2.5-7B／Preference-Open | Direct Prompting | 58.82 | 4.55 | 59.00 |\n| Qwen2.5-7B／Preference-Open | REPAIR | 23.95 | 4.97 | 24.46 |\n| Gemma3-4B／Preference-Open | Direct Prompting | 6.30 | 38.72 | 39.23 |\n| Gemma3-4B／Preference-Open | REPAIR | 9.66 | 10.25 | 14.08 |\n\n直接 prompting 的平均 PIR 為 Qwen2.5-7B 51.25%、Gemma3-4B 74.28%；Gemma3-4B 使用 REPAIR 後平均 PIR 為 37.94%。在隨機欄位政策上，REPAIR 於可存取欄位數為 4、8、16 時皆降低 OR、OS 與 PED。以 Qwen2.5-7B 比較 head 選擇方式時，AUROC-based selection 的 PED 在四種政策均低於 random selection；作者亦報告 REPAIR-G 在四種政策中的三種取得較低 PED。",
+      "insights": [
+        "實務上的隱私控制不應只依賴情境判斷或 prompt 指令，還需要明確表達並檢驗每位使用者的欄位級允許與拒絕偏好。",
+        "同時監測 over-refusal 與 over-sharing 很重要；只降低其中一項可能只是把模型推向過度拒答或過度揭露，PED 可作為整體錯誤的補充指標。",
+        "若採用模型內部介入方法，應先以可驗證的 probing 找出與政策狀態相關的稀疏 heads，再進行狀態自適應控制，而非對任意模組施加一致方向的 steering。"
+      ],
+      "limitations": "作者指出，P3Bench 涵蓋的 PII 欄位與情境仍有限，主要聚焦於結構化個人欄位，未充分涵蓋敏感經驗、人際情況等非結構化揭露。未來需擴展更廣泛的 PII 類別與更真實的互動情境，並處理難以用預定义欄位表示的開放式隱私偏好。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "contextual privacy",
+        "LLM agent privacy control",
+        "activation steering",
+        "mechanistic interpretability"
+      ],
+      "category": "Safety & Alignment"
+    }
+  }
+]

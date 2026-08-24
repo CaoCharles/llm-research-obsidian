@@ -1,6 +1,6 @@
-# Activation Steering
+# Llm Agent Privacy Control
 
-> Activation Steering 相關研究的彙整頁面。
+> Llm Agent Privacy Control 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 activation steering 相關關鍵字
+- 標題或摘要含有 LLM agent privacy control 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Safety & Alignment]` [[[2608.21209] Personalized Privacy Control in LLMs via Attention Head Intervention|Personalized Privacy Control in LLMs via Attention...]] (2026-08-21)
-
-- `[Hallucination & Faithfulness]` [[[2608.14465] You Only Pass Once - Answering and Abstaining Together in a Single Forward Pass ...|You Only Pass Once: Answering and Abstaining Toget...]] (2026-08-14)
 
 ## 延伸閱讀
 

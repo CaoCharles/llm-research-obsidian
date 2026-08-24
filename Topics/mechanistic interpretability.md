@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Safety & Alignment]` [[[2608.21209] Personalized Privacy Control in LLMs via Attention Head Intervention|Personalized Privacy Control in LLMs via Attention...]] (2026-08-21)
+
 - `[Safety & Alignment]` [[[2608.11171] From Interpretability to Control - Insights from Six Years of the TrustNLP Works...|From Interpretability to Control: Insights from Si...]] (2026-08-11)
 
 - `[Benchmark]` [[[2608.09638] Avalon-ToM-Bench - Evaluating Fine-Grained Theory of Mind via Asymmetric Game Me...|Avalon-ToM-Bench: Evaluating Fine-Grained Theory o...]] (2026-08-10)
