@@ -1,6 +1,6 @@
-# Test Time Adaptation
+# Over Refusal Evaluation
 
-> Test Time Adaptation 相關研究的彙整頁面。
+> Over Refusal Evaluation 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 test-time adaptation 相關關鍵字
+- 標題或摘要含有 over-refusal evaluation 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Safety & Alignment]` [[[2608.26008] A Self-Evolving Multi-Agent Framework Defense against LLM Jailbreak Attacks|A Self-Evolving Multi-Agent Framework Defense agai...]] (2026-08-26)
-
-- `[Agent Evaluation]` [[[2608.11191] Test-Time Self-Evolving GUI Visual Grounding via Reflection-Guided On-Policy Sel...|Test-Time Self-Evolving GUI Visual Grounding via R...]] (2026-08-11)
 
 ## 延伸閱讀
 

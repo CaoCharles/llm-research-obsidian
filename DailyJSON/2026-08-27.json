@@ -1,0 +1,604 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.26091",
+      "title": "PlanSightRAG: A Visual-First Multimodal RAG for Automating Question Answering and Compliance Checking for Civil Standard Plans",
+      "abstract": "Civil infrastructure compliance checking has long relied on engineers manually reading legacy 2D plans; however, OCR-based automation strips away the geometry and layout essential for interpreting these plans. We present a Visual-First Multimodal Retrieval-Augmented Generation (RAG) framework called PlanSightRAG. It indexes and reasons directly over plan imagery, integrates a ColNomic-3B multi-vector retrieval, an agentic Planner-Retriever-Auditor-Synthesizer, and MaxSim heatmaps as an evidence trail. We introduce a 4,056-pair benchmark from five state Departments of Transportation (DOT) standard plans (1,898 pages). PlanSightRAG achieves 91.47% Recall@5 on zero-shot retrieval, while on a held-out Michigan DOT corpus, it achieves 91.40%. On synthetic, parametrically-generated compliance drawings, our Qwen2.5-VL-72B pipeline reaches 100% verdict accuracy only when supplied a pre-resolved rule threshold, a controlled ceiling that a non-VLM OCR baseline already reaches at 76.4%. Finally, we demonstrate autonomous visual rule-grounding by extracting numeric limits directly from a specification corpus without any human-supplied rules.",
+      "authors": [
+        "Nabaraj Subedi",
+        "Shuvo Dip Datta",
+        "Ahmed Abdelaty",
+        "Shivanand Venkanna Sheshappanavar"
+      ],
+      "categories": [
+        "cs.IR",
+        "cs.CL",
+        "cs.CV"
+      ],
+      "published": "2026-08-26T17:54:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26091v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26091",
+      "score": 27
+    },
+    "analysis": {
+      "abstract_zh": "民用基礎設施的合規檢查長期依賴工程師人工閱讀傳統 2D 圖紙；然而，以 OCR 為核心的自動化會移除解讀圖紙所需的幾何與版面資訊。本文提出 Visual-First Multimodal Retrieval-Augmented Generation（RAG）框架 PlanSightRAG，直接對圖紙影像建立索引並進行推理，整合 ColNomic-3B multi-vector retrieval、Agentic Planner–Retriever–Auditor–Synthesizer，以及作為證據軌跡的 MaxSim heatmap。作者建立涵蓋五個州 Department of Transportation（DOT）、1,898 頁圖紙的 4,056 對 benchmark。ColNomic-3B 在 zero-shot retrieval 達到 91.47% Recall@5，於保留的 Michigan DOT corpus 達 91.40%。在合成、參數化生成的合規圖紙上，Qwen2.5-VL-72B 只有在提供預先解決的規則 threshold 時達到 100% verdict accuracy；此外，系統展示了從 specification corpus 直接擷取數值限制、無需人工提供規則的 visual rule-grounding。",
+      "problem_statement": "論文處理 civil standard plans 的問答與合規檢查問題。傳統工程師人工檢查耗時、昂貴，且多頁圖紙中的幾何關係、版面配置、符號與跨視圖參照難以擴展。OCR-based RAG 將圖紙線性化為文字 token，會破壞空間與幾何語義；一般 VLM 又缺乏大規模檢索、可靠證據定位及跨圖紙合規推理能力。",
+      "proposed_solution": "作者提出 PlanSightRAG，一個 visual-first multimodal RAG 框架，直接將標準圖紙頁面或高解析度 tiles 編碼為 multi-vector patch embeddings，透過 ColNomic-3B 與 late-interaction MaxSim 保留局部版面及空間資訊。系統以 Planner–Retriever–Auditor–Synthesizer 分工處理複雜合規查詢：Planner 拆解驗證步驟，Retriever 為各步驟找標準圖紙，Auditor 進行視覺檢查，Synthesizer 彙整結論。MaxSim heatmaps 與區域證據提供可追溯的視覺 grounding；系統亦示範從規格文件自行擷取數值門檻，再進行 rule-grounded auditing。",
+      "core_contributions": [
+        "建立涵蓋五個州 DOT、1,898 頁與 4,056 對問答的 visual benchmark，並另以 93 對 Michigan DOT 查驗跨機構 zero-shot transfer。",
+        "提出以 ColNomic-3B multi-vector late-interaction retrieval 為核心的 visual-first RAG，結合 MaxSim heatmap 與區域證據，避免 OCR 線性化造成的幾何與版面資訊遺失。",
+        "提出 Planner–Retriever–Auditor–Synthesizer agentic compliance pipeline，並展示無人工提供規則時，從 specification corpus 擷取數值限制並進行 visual rule-grounding。"
+      ],
+      "methodology": "資料處理上，作者將五個州 DOT 的標準圖紙去除近似修訂版本後，得到 1,898 頁；主要索引以 200 DPI rasterization 建立。另以 400 DPI 將頁面切成 1024×1024、256 像素重疊的 tiles，作為解析度 ablation。每頁或 tile 由 ColNomic-3B 產生 dynamic-resolution、32×32 patch grid 的 multi-vector embeddings，並保存 plan ID、頁碼、標題、類別及 tile bounding box 等 metadata。查詢編碼為 token vectors，使用 ColBERT-style MaxSim：每個 query token 與頁面 patch 取最大內積後加總排序；可選擇 VLM cross-encoder re-ranking 與 BM25 metadata fusion。前五頁影像交由 Qwen2.5-VL-7B、Qwen2.5-VL-72B 或 InternVL-2.5-8B 回答。合規任務則由 Qwen2.5-VL-72B 執行單次或 agentic auditing，輸出 pass、fail、unclear 等結構化結果。評估包括 Recall@5 與由 Qwen2.5-VL-72B 擔任 judge 的 Judge Accuracy，另使用合成參數化圖紙測試合規 verdict，以及以 Recall@5、TPR、FNR、TNR、precision、F1 和 Cohen’s kappa 評估違規偵測。",
+      "key_results": "| 評估項目 | 方法／資料集 | 結果 |\n|---|---|---:|\n| 五-DOT page-disjoint retrieval | ColNomic-3B，424 對測試集 | Recall@5 **92.69%** |\n| 五-DOT benchmark headline retrieval | ColNomic-3B，4,056 對 | Recall@5 **91.47%** |\n| Michigan DOT zero-shot transfer | ColNomic-3B，93 對、298 頁 | Recall@5 **91.40%** |\n| OCR 文字基線 | BGE-M3 + OCR，424 對測試集 | Recall@5 **36.79%** |\n| OCR+BM25 案例基線 | WYDOT 查詢案例 | Recall@5 **58.02%** |\n| VisionRAG Pyramid 案例基線 | WYDOT 查詢案例 | Recall@5 **45.99%** |\n| ColPali zero-shot | 五-DOT page-disjoint 測試集 | Recall@5 **76.89%** |\n| 人工整理 WYDOT anchor set | 78 對 | Recall@5 **91.03%**；Judge Accuracy **80.77%** |\n| 合成 compliance drawings | Qwen2.5-VL-72B，預先提供 rule threshold | Verdict Accuracy **100%** |\n| 合成 compliance drawings | non-VLM OCR baseline | Verdict Accuracy **76.4%** |\n| 規則 corpus retrieval | 1,913 個候選項 | Recall@5 **100%** |\n| all-PASS 合規測試 | 8 個查詢 | Accuracy **100%**；僅反映避免誤判為不合規 |\n| 合成 FAIL sensitivity | 24 個 FAIL 查詢 | TPR **79.17%**；FNR **20.83%** |\n| FAIL：dimension mutation | 8 個查詢 | TPR **87.5%** |\n| FAIL：note omission | 8 個查詢 | TPR **87.5%** |\n| FAIL：symbol/component swap | 8 個查詢 | TPR **62.5%** |\n| 部署延遲 | 1,898 頁、單張 80GB GPU | Retrieval p50 約 **0.10 秒**；agentic audit 平均 **60.9 秒／query** |\n\n作者明確指出，MaxSim heatmap 的真正 grounding IoU 尚未被有效評估：16-query pilot 的 ground-truth box 曾以 predicted boxes 初始化，因此不能視為有效的 IoU 結果。",
+      "insights": [
+        "對工程圖紙 RAG，檢索表徵本身應保留 patch-level 空間資訊；僅增加 OCR 或文字 reranking 未必能恢復幾何關係。",
+        "Recall@5 很高不代表端到端問答可靠；人工 WYDOT 集合的 retrieval 為 91.03%，但 Judge Accuracy 僅 80.77%，顯示圖紙中的數值—元件綁定與跨視圖推理仍是瓶頸。",
+        "合規系統應分開評估通過判定與違規偵測；本文 all-PASS 測試達 100%，但 FAIL sensitivity 僅 79.17%，尤其 symbol/component swap 僅 62.5%，因此部署時需要明確的反例與 abstention 評估。"
+      ],
+      "limitations": "合規主結果部分依賴預先提供的規則 threshold；all-PASS 測試不能衡量違規敏感度。FAIL sensitivity 僅以 24 個合成查詢測試，且符號替換容易漏判。MaxSim grounding 的有效 IoU 尚未完成：16-query pilot 的 ground-truth boxes 曾由預測框初始化。Agentic audit 平均 60.9 秒，成本與延遲仍高；作者將違規圖紙大型語料與更可靠的人工 grounding 標註列為後續工作。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "visual document retrieval",
+        "multimodal document question answering",
+        "engineering drawing understanding",
+        "compliance checking",
+        "visual grounding"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.25986",
+      "title": "Multi-Granularity Context-Enhanced RAG over Multimodal Knowledge Graphs",
+      "abstract": "Retrieval-augmented generation (RAG) is widely used to mitigate hallucination issues in large language models (LLMs) and multimodal large language models (MLLMs). In particular, knowledge graph (KG)-based RAG leverages structured knowledge to provide (M)LLMs with high-quality external information. Building on these works, recent studies have explored multimodal knowledge graphs (MMKGs) as knowledge bases for GraphRAG. This enables Graph RAG to integrate knowledge across multiple modalities, thereby further enhancing its performance. However, existing MMKG-based RAG methods generally follow a common pipeline in which different modalities are largely processed independently before being fusion. As a result, textual context is only used to a limited extent during visual information extraction and subsequent multimodal knowledge fusion. This brings a semantic gap between images and text which limits the multimodal GraphRAG performance. To address this issue, we propose a novel framework for constructing a Context-Enhanced MMKG (CEMMKG) to better support multimodal GraphRAG. The proposed CEMMKG enriches each image with complementary textual context at both local and global scopes. Local context goes beyond the surrounding text by incorporating sentences that are semantically related to the image, while global context provides a summary of the entire passage. We further introduce a multi-granularity design for the local context, allowing it to capture semantically relevant information at different levels of detail. Extensive experiments on the selected vision-centric dataset validate that CEMMKG is effective in leveraging contextual information to improve MMKG-based RAG performance. Moreover, its effectiveness across different MMKG-based RAG methods demonstrates its broad applicability.",
+      "authors": [
+        "Zongyu Wu",
+        "Yilong Wang",
+        "Xiaochen Wang",
+        "Minhua Lin",
+        "Zhichao Xu",
+        "Fenglong Ma",
+        "Xiang Zhang",
+        "Suhang Wang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-26T16:38:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.25986v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.25986",
+      "score": 24
+    },
+    "analysis": {
+      "abstract_zh": "Retrieval-Augmented Generation（RAG）廣泛用於減少 Large Language Models（LLMs）與 Multimodal Large Language Models（MLLMs）的幻覺問題；其中，基於 Knowledge Graph（KG）的 RAG 可提供結構化外部知識。近期研究進一步以 Multimodal Knowledge Graphs（MMKGs）支援 GraphRAG，使系統能整合多種模態。然而，現有 MMKG-RAG 通常先獨立處理不同模態，再進行融合，視覺資訊擷取與跨模態知識融合僅使用有限的文字脈絡，造成影像與文字間的語義落差。本文提出 Context-Enhanced MMKG（CEMMKG）建構框架，在 local 與 global 層級為影像加入互補文字脈絡。Local context 不僅包含鄰近文字，也納入語義相關句子；global context 則提供全文摘要，並進一步以多粒度 local context 捕捉不同細節層次。VisionHeavy 資料集實驗顯示，CEMMKG 能改善 MMKG-based RAG，且可整合至不同方法。",
+      "problem_statement": "論文聚焦於 document-derived、node-based MMKG 的建構問題。現有方法多將文字與視覺內容分開轉換成圖，再於後期融合；影像處理通常只使用位置上鄰近的文字片段，未能找出文件其他位置明確討論該影像的句子。這可能造成視覺知識擷取不完整、跨模態對齊效果不佳與影像—文字語義落差。論文因此探討應選取哪些文字、採用何種粒度，以及如何在 MMKG 建構不同階段有效使用脈絡。",
+      "proposed_solution": "作者提出 Context-Enhanced MMKG（CEMMKG），為文件中的每個視覺元素建立多粒度文字脈絡。Local context 同時保留影像前後的 surrounding text，並從提及該影像 identifier 的句子建立三種替代粒度：reference sentence、reference paragraph 與 reference paragraph summary。Global context 則使用文件原始 abstract；若無 abstract，改以 LLM 產生全文 summary。核心創新是將脈絡設計與使用階段分離：Image2Graph 同時輸入完整 local 與 global context，協助 MLLM 產生更完整的視覺實體與關係；modality fusion 僅使用 local context，作為影像實體與文字實體對齊的補充證據。",
+      "core_contributions": [
+        "提出 CEMMKG，多系統化定義視覺元素的 local 與 global textual context，並比較 reference sentence、paragraph 與 paragraph summary 等 local 粒度。",
+        "提出 multi-stage context utilization：在 Image2Graph 階段使用完整 local/global context，在 modality fusion 階段使用聚焦的 local context，以分別支援視覺知識擷取與跨模態實體對齊。",
+        "在 MMLongBench-Doc 的 VisionHeavy 子集上驗證方法，並將 CEMMKG 整合至 MMGraphRAG 與 RAG-Anything，顯示其跨不同 MMKG-based RAG 方法的適用性。"
+      ],
+      "methodology": "輸入為多模態文件 D，先以 MinerU 擷取有序段落、句子及視覺元素，並從 caption 取得如 Figure 3 或 Table 2 的 identifier。對每個影像 Ii，建立 reference set Ri，收集全文中提及其 identifier 的句子。Local context 固定包含影像鄰近 text chunks，並在 reference sentence、reference paragraph、reference paragraph summary 三者中擇一；global context 使用原始 abstract，無 abstract 時由 LLM 摘要全文。為避免長脈絡降低模型利用率，作者限制 reference sites、分別設定 reference 與 global context 的長度上限，且 fusion 階段使用較少 reference。接著以 Image2Graph 模組計算 Gv_i=fv(Ii,Ci)，在該階段輸入完整 eCi={cLi,cG}；再將文字圖 Gt、所有視覺圖與 local contexts 一併送入既有 fusion 流程，由 LLM 判定候選實體對應關係。實驗使用 MMLongBench-Doc 的 VisionHeavy 子集，共 106 題；80.2% 可回答問題需要視覺資訊，43.2% 依賴跨頁資訊。比較 Direct Inference、MMGraphRAG 與 RAG-Anything，指標為 strict full-credit accuracy 與官方 soft accuracy。",
+      "key_results": "主要結果如下；表中數值為 strict full-credit accuracy / official soft accuracy（%）。\n\n| 方法 | 額外 local context | global context | Overall |\n|---|---|---|---:|\n| Direct Inference | – | – | 11.32 / 11.32 |\n| MMGraphRAG | – | – | 23.58 / 24.17 |\n| CEMMKG + MMGraphRAG | Reference Paragraph | Doc-level | 22.64 / 22.64 |\n| CEMMKG + MMGraphRAG | Reference Paragraph Summary | Doc-level | 31.13 / 32.82 |\n| CEMMKG + MMGraphRAG | Reference Sentence | Doc-level | **34.91 / 36.84** |\n| RAG-Anything | – | – | 28.89 / 36.18 |\n| CEMMKG + RAG-Anything | Reference Paragraph | – | 28.89 / 34.49 |\n| CEMMKG + RAG-Anything | Reference Paragraph Summary | – | 31.11 / 33.13 |\n| CEMMKG + RAG-Anything | Reference Sentence | – | **35.56 / 41.12** |\n\n在 MMGraphRAG 上，Reference Sentence 配合文件層級 context 整體最佳；相較 MMGraphRAG，strict accuracy 提升 11.33 個百分點，soft accuracy 提升 12.67 個百分點。完整 reference paragraph 反而低於原始 MMGraphRAG。視覺類型方面，reference sentence 使 Figure soft accuracy 由 6.25% 提升至 24.70%；reference paragraph summary 的 Table soft accuracy 為 26.46%，高於 MMGraphRAG 的 22.46%。Misc soft accuracy 則由 34.15% 提升至 54.01%。",
+      "insights": [
+        "實務上不應以「加入更多文字」直接取代脈絡選擇；實驗顯示完整 reference paragraph 可能因冗餘或弱相關內容而降低效能，應依任務採用適當資訊密度。",
+        "對長文件中的圖表，應以明確 mention 或語義關聯尋找跨頁描述，而非只擷取位置鄰近文字；這有助於補足影像的語義背景與文字對齊證據。",
+        "不同建構階段需要不同脈絡：視覺描述可使用 local 加 global 的廣泛資訊，實體融合則應使用較短且聚焦的 local context，以降低長上下文干擾。"
+      ],
+      "limitations": "研究只在 MMLongBench-Doc 的 VisionHeavy 子集、共 106 題上驗證，資料類型與視覺需求具有選擇性，泛化到其他文件與領域仍未由本文證明。實驗主要回報下游 QA accuracy，未提供 MMKG 的實體、關係或對齊品質指標，也未量化額外摘要與脈絡處理成本。",
+      "tags": [
+        "rag-evaluation",
+        "hallucination",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Multimodal GraphRAG",
+        "Context selection for long-document QA",
+        "Document-derived multimodal knowledge graphs",
+        "Cross-modal entity alignment"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.25992",
+      "title": "ProgRouter: Online Progress-Guided Orchestration for Multi-Agent LLM Workflows under Quality-Cost Tradeoffs",
+      "abstract": "Multi-agent large language model (LLM) workflows have emerged as a powerful paradigm for solving complex, open-ended tasks through collaborative reasoning among specialized LLM agents, but they incur substantial operating costs due to repeated LLM invocations and long-horizon context accumulation. Existing cascade routing methods make one-shot, query-level decisions and cannot adapt to the dynamic, state-dependent nature of multi-step workflows, in which the right LLM at each step depends on evolving task progress, remaining task difficulty, and cost-efficiency requirements. We present ProgRouter, an online progress-guided routing framework that adaptively selects LLM agents across workflow steps to preserve task-solving quality while adhering to time and cost budgets. ProgRouter introduces a multi-view task progress scorer that combines coarse workflow outcome regimes with fine-grained signals on subtask completion, progress trends, and workflow state quality. Then, a dual-path task progress predictor and an adaptive meta-gating mechanism estimate the progress gain for each candidate routed LLM. ProgRouter makes online step-wise routing decisions that balance progress gain, task time budgets, and long-term operating cost efficiency. Experiments on HumanEval Plus, MBPP, MATH-500, and ASQA, spanning agentic code generation, mathematical reasoning, and retrieval-augmented long-form question answering, demonstrate that ProgRouter reduces the operating cost relative to key baselines while maintaining strong task-solving performance.",
+      "authors": [
+        "Somgyuan Li",
+        "Ahmed M. Abdelmoniem",
+        "Shiqiang Wang"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-08-26T16:42:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.25992v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.25992",
+      "score": 21
+    },
+    "analysis": {
+      "abstract_zh": "多代理 LLM 工作流透過專業化 agent 的協作推理處理複雜、開放式任務，但反覆呼叫 LLM 與累積長期上下文會造成高昂的 token、計算、能源與延遲成本。既有 cascade routing 多在查詢層級做一次性決策，無法因應多步工作流中隨任務進度、剩餘難度與成本要求變化的路由需求。本文提出 ProgRouter，一個線上、由進度引導的 orchestration framework，在各工作流步驟自適應選擇 LLM agent，以維持解題品質並遵守時間與成本預算。方法結合多視角任務進度評分器、結構化與語意雙路徑進度預測器，以及 adaptive meta-gating，估計候選 LLM 的進度增益，再聯合考量進度缺口、任務時間預算與長期成本效率進行路由。在 HumanEval Plus、MBPP、MATH-500 與 ASQA 上，ProgRouter 相較關鍵 baseline 降低 operating cost，同時維持良好任務表現。",
+      "problem_statement": "論文處理多代理 LLM 工作流中的線上、逐步模型選擇問題。現有 cascade routing 多採查詢層級的一次性決策，無法根據中間 workflow state、已完成子任務、剩餘難度與協作需求動態調整。若始終使用強模型，可能過早耗盡成本；若過度保守，則可能因能力不足造成停滯與品質不可逆下降。因此需要在未知未來步驟下，同時滿足每任務時間／成本預算及長期平均成本限制。",
+      "proposed_solution": "作者提出 ProgRouter，讓 coordinator 維持包含目標、進度、推理痕跡與 agent 輸出的 ledger，並在每次 worker role 已確定後，從該角色可用的 model zoo 中選擇 LLM。核心包括多視角進度評分器、結構化與語意雙路徑 progress-gain predictor，以及 adaptive meta-gating。路由分數同時納入剩餘進度缺口、預測進度增益、任務時間／成本預算與 virtual cost queue；另以 ε-greedy 線上探索收集實際進度增益並週期性更新預測器，逐步由探索轉向利用。",
+      "core_contributions": [
+        "提出適用於多代理、多步工作流的 online step-wise LLM routing formulation，將任務品質、每任務時間／成本預算與長期平均 operating cost 納入同一約束最佳化問題。",
+        "提出結合 coarse outcome regime、subtask completion、progress trend 與 state quality 的 multi-view task progress scorer，提供比稀疏最終結果更密集的中間監督訊號。",
+        "提出 structured／semantic dual-path progress predictor 與 adaptive meta-gating，並結合 progress-gap-aware scoring、budget penalty、virtual cost queue 與 ε-greedy online learning。"
+      ],
+      "methodology": "工作流由 coordinator C、預定義 worker roles R 與可供各角色選擇的異質 LLM 集合 M 組成；每次 dispatch 依目前狀態 st 與角色 rt 選擇 mt，產生下一狀態。多視角 scorer 將狀態映射至 g(st)∈[0,1]，結合四種資訊：invalid、recoverable、partial success、complete 四類 outcome regime 的 base score；子任務／約束完成比例；最近步驟的進度趨勢；以及狀態轉移的語意與結構品質。預測器對每個候選 LLM 估計進度增益 ŷt：structured path 使用進度、完成狀態、趨勢與 dispatch history 等 tabular features，由 tree-based regressor 預測；semantic path 將 coordinator 產生的狀態摘要以輕量 sentence embedding 編碼，再由另一 regressor 預測；meta-learner 自適應整合兩者。路由分數為 V(1−g(st))ŷt−Qw(E(mt)−Ē)−cΓtΓ(mt)−cEtE(mt)，其中 Qw 透過 virtual queue 控制長期平均成本，cΓt 與 cEt 隨累積預算消耗增加。每步以 argmax 選擇模型；以 ε 機率探索，執行後用 g(st+1)−g(st) 作為訓練目標。評估涵蓋 HumanEval Plus、MBPP、MATH-500 的 pass rate，以及 ASQA 的 citation precision，並量測 GPU energy（Joule）與 workflow time。",
+      "key_results": "主要結果如下；表中僅列出論文報告且符合長期平均能源限制的 ProgRouter 與代表性 baseline 數據。\n\n| 資料集（Ē） | 方法 | 品質 | Energy (J) | Time (s) |\n|---|---|---:|---:|---:|\n| HumanEval Plus (4800 J) | ProgRouter | Pass 93.0% | 4796 | 13.7 |\n|  | MasRouter | Pass 90.9% | 4483 | 13.2 |\n|  | CASCADIA | Pass 84.8% | 4658 | 16.6 |\n| MBPP (4500 J) | ProgRouter | Pass 79.4% | 3376 | 10.3 |\n|  | MasRouter | Pass 67.8% | 3700 | 11.5 |\n|  | CASCADIA | Pass 78.5% | 3857 | 13.3 |\n| MATH-500 (7000 J) | ProgRouter | Pass 84.3% | 6112 | 19.0 |\n|  | CASCADIA | Pass 87.8% | 6875 | 24.6 |\n|  | MasRouter | Pass 73.6% | 8294（違反 Ē） | 24.0 |\n| ASQA (19000 J) | ProgRouter | Citation precision 92.1% | 18373 | 61.6 |\n|  | MasRouter | Citation precision 89.8% | 16368 | 55.3 |\n|  | CASCADIA | Citation precision 89.8% | 27857（違反 Ē） | 82.1 |\n\nHumanEval Plus 上，移除 predictor 後 pass rate 由 93.0% 降至 89.0%；完整雙路徑加 meta-learner 的離線 progress prediction MAE 為 0.0720，優於 structured-only 的 0.0967、semantic-only 的 0.0788 與平均融合的 0.0843。",
+      "insights": [
+        "實務部署多代理工作流時，模型路由不宜只在請求開始時決定；可依中間狀態與子任務完成度，在每個 agent dispatch step 重新選擇模型。",
+        "成本控制應同時處理單一任務預算與跨任務長期平均偏差；論文中的 per-task budget penalty 與 virtual queue 可作為服務層策略設計參考。",
+        "進度訊號本身不足以支援穩健路由：論文消融顯示，若只做貪婪 progress-per-cost 選擇，HumanEval Plus 僅達 17.7% pass 且耗能 7797 J，因此應聯合考量剩餘進度缺口、預算消耗與未來成本後果。"
+      ],
+      "limitations": "評估僅涵蓋 HumanEval Plus、MBPP、MATH-500 與 ASQA，尚未驗證 web navigation、tool-augmented QA 等其他 agentic setting。multi-view progress scorer 仍需依領域指定 observable milestones 與 outcome regimes；如何完全端到端地自動學習進度表示，留待未來研究。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-agent LLM orchestration",
+        "online constrained optimization",
+        "LLM routing",
+        "quality-cost tradeoff",
+        "retrieval-augmented question answering"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26004",
+      "title": "AsymSpec: Context-Asymmetric Speculative Decoding for Agentic LLMs",
+      "abstract": "Agentic LLM pipelines face escalating inference costs as context accumulates across retrieval, tool use, and multi-turn interactions. To control latency, deployments routinely compress inputs, but this degrades task accuracy. Speculative decoding (SD) accelerates generation losslessly, yet it assumes the drafter and verifier share an identical context, preventing SD from resolving the accuracy-overhead trade-off. We propose AsymSpec, an asymmetric speculative decoding framework that breaks this symmetry: a lightweight drafter reads the full input while the large verifier operates on the compressed view. The drafter steers the verifier via a contrastive $δ$-fusion of logits, modulated by a divergence-aware acceptance gate that preserves verification stability and high draft acceptance rates. Evaluated across four agentic capabilities and two end-to-end agent benchmarks, AsymSpec reaches $\\approx 90\\%$ of full-context accuracy on average, delivering $1.3$--$1.7\\times$ throughput speedups at $0.2$--$0.3\\times$ the compute cost on isolated text capabilities. These results show that asymmetric context access yields substantial gains precisely when compression discards critical reasoning signals.",
+      "authors": [
+        "Sheng Liang",
+        "Yongyue Zhang",
+        "Nathanael Brian",
+        "Hang Lv",
+        "Hao Wang",
+        "Chen Zhang",
+        "Yong Liu"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-26T16:50:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26004v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26004",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "Agentic LLM pipeline 會因 retrieval、tool use 與 multi-turn interaction 累積 context，導致 inference cost 與 latency 上升。部署通常壓縮 input 以控制成本，但會損害 task accuracy。Speculative decoding（SD）雖能 losslessly 加速 generation，卻要求 drafter 與 verifier 使用相同 context，因此無法同時處理 accuracy 與 overhead 的取捨。作者提出 AsymSpec：lightweight drafter 讀取 full input，而大型 verifier 僅處理 compressed view；再透過 contrastive δ-fusion logits，以及 divergence-aware Context-Divergence Acceptance（CDA）gate，引導 verifier 並維持穩定驗證與較高 draft acceptance rate。在四項 agentic capabilities 與兩個 end-to-end agent benchmarks 上，平均達到約 full-context accuracy 的 90%，孤立文字能力可取得 1.3–1.7 倍 throughput，compute cost 為 0.2–0.3 倍。",
+      "problem_statement": "論文處理 agentic LLM 中 context 隨 retrieval、工具輸出、對話歷史與記憶持續增長，造成大型 verifier 的 inference latency 與 compute cost 過高。context compression 可降低成本，卻會刪除多跳推理、工具 schema 等關鍵細節。既有 standard SD 要求 drafter 與 verifier 讀取相同 input，只能加速固定 target distribution，無法由 full-context drafter 協助 compressed verifier 恢復遺失資訊。",
+      "proposed_solution": "作者提出 AsymSpec，明確解除 SD 的 context symmetry：large verifier 僅讀取 compressed context，以取得主要 latency 與 compute 節省；lightweight drafter 則讀取 full context，負責提取壓縮所丟失的訊息。方法以同一 drafter 在 full 與 compressed views 的 logits 差值 δ=a−b，消除 model-specific、context-independent preferences，形成 context-gain signal，並將其融合至 verifier logits。另提出 parameter-free 的 CDA gate，以 full/compressed drafter distributions 的 Jensen–Shannon divergence 動態調整接受門檻，在 divergence 較大處允許更寬鬆的 draft acceptance。框架亦可延伸至 vision-language drafter 與 text-only verifier 的 cross-modal 設定。",
+      "core_contributions": [
+        "提出 AsymSpec context-asymmetric speculative decoding，讓 full-context lightweight drafter 引導只讀 compressed context 的 large verifier，在低 verifier 成本下恢復接近 full-context 的準確率。",
+        "提出同模型跨 context 的 contrastive δ-fusion（a−b），用 logits 差值隔離 full context 帶來的資訊增益；消融結果顯示其優於 raw augmented logits 與 SCD-style 的 δ 建構。",
+        "提出不需 per-dataset tuning 的 Context-Divergence Acceptance（CDA）gate，根據 JSD 動態調整 draft acceptance threshold，並展示其可用於文字、agent loop 與 cross-modal vision-language 設定。"
+      ],
+      "methodology": "令大型 verifier L、輕量 drafter S，輸入包含 full prompt x_full，以及由 black-box compressor 產生的 x_comp。每個 speculation step 中，S 先以 x_full 與既有輸出 y 產生 logits a，並 draft K 個 tokens；接著 S 以 x_comp、y 與 drafts 產生相同位置的 logits b，L 則以 compressed view 平行驗證 drafts，得到 logits t。對每個位置計算 δ_i=a_i−b_i，並計算 D_i=JSD(softmax(a_i)||softmax(b_i))。CDA 有效門檻為 γ_eff(i)=γexp(−D_i)；因 JSD 上界為 ln 2，γ_eff 位於 [γ/2,γ]。若 verifier 對 draft token 的機率高於 γ_eff(i) 乘以 base drafter 機率，便接受該 token；首次拒絕時，改輸出 argmax(t_i+βδ_i)，若全部接受則輸出 verifier 的下一 token。主要設定為 Qwen3-32B verifier、Qwen3-4B text drafter，multimodal 使用 Qwen3-VL-2B，greedy decoding、K=2、β=1.0、γ=0.5。評估涵蓋 LongBench 多跳 QA、MultiChallenge、API-Bank、MathVista，以及 GAIA、SimpleQA agent loops；指標包括官方 task accuracy、wall-clock token throughput speedup 與相對 full-context Ceiling 的 prefill FLOPs。",
+      "key_results": "主要結果如下；表中數字皆為論文報告值。\n\n| 設定／方法 | 主要準確率結果 | Speedup | FLOPs |\n|---|---|---:|---:|\n| LongBench Floor | hotpotQA 49.4、2WikiMQA 52.8、MuSiQue 32.7 | — | — |\n| LongBench Ceiling | 64.9、76.5、55.0 | — | — |\n| LongBench AsymSpec | 64.0、66.8、48.4 | — | — |\n| MultiChallenge Floor / Ceiling / AsymSpec | 23.4 / 26.4 / 23.5 | — | — |\n| API-Bank Floor / Ceiling / AsymSpec | 57.7 / 66.1 / 63.5 | — | — |\n| 三項文字能力 AsymSpec | 可達 full-context 的 87–99%；平均閉合 Floor–Ceiling gap 的 59–94% | 1.45× | 0.23× |\n| MathVista Floor / SD / AsymSpec | 44.5 / 43.8 / 53.9 overall；VL drafter alone 60.5 | 論文未報告與文字 Ceiling 的比較 | 論文未報告 |\n| GAIA Floor / Ceiling / AsymSpec（4B） | 19.4 / 20.0 / 24.2 | 1.41× | 0.78× |\n| SimpleQA Floor / Ceiling / AsymSpec | 63.0 / 66.0 / 65.0 | 1.38× | 0.80× |\n| LongBench 機制消融：Floor、CDA、raw-aug、SCD-style、AsymSpec | 45.0、52.8、56.9、48.0、59.7 F1 | 論文未報告 | 論文未報告 |\n| LongBench truncation 500 / 1500 / 3000 / 6000 / 12000 tokens | AsymSpec F1 為 52.5 / 53.7 / 55.5 / 59.2 / 63.9 | 論文未報告 | 論文未報告 |\n\n作者另報告 text benchmarks 的 throughput speedup 為 1.3–1.7×、compute 約為 0.2–0.3×；acceptance rate 在多數設定為 0.78–0.92。",
+      "insights": [
+        "若 compression 會刪除關鍵 reasoning signals，可把 full-context 存取配置給較小模型、把昂貴 verifier 限制在 compressed view；這提供不同於「全模型全 context」與「全模型壓縮 context」的新部署 operating point。",
+        "應依 compression-induced Floor–Ceiling gap 評估是否導入 AsymSpec：論文中 MultiChallenge 壓縮近乎無損，改善僅為 23.4 至 23.5；LongBench 壓縮越嚴重，恢復幅度越大。",
+        "實際部署需同時追蹤 accuracy、acceptance rate、throughput 與 FLOPs；論文顯示 FLOPs 降幅不會線性轉化為 latency，且需取得 verifier logits，因此較適合可控的 open-weight serving stack，而非僅提供文字輸出的 proprietary API。"
+      ],
+      "limitations": "方法受 compressed view 保留資訊與 drafter capacity 限制，論文指出 0.6B 以下 drafter 難以可靠提取 context-gain signal，實務最低門檻約為 1.7B。cross-modal 效果受 caption/OCR 品質與 text-only verifier 無法直接理解 pixels 所限。cross-family δ-fusion 需 vocabulary alignment；方法也依賴 verifier logits，且目前實驗聚焦 deterministic greedy decoding（τ=0），隨機 sampling 的 CDA 延伸仍屬未來工作。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "speculative decoding",
+        "context compression",
+        "long-context inference",
+        "tool-augmented agents",
+        "cross-modal reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26008",
+      "title": "A Self-Evolving Multi-Agent Framework Defense against LLM Jailbreak Attacks",
+      "abstract": "Large language models (LLMs) remain vulnerable to jailbreak attacks that exploit techniques such as role-playing, obfuscation, code transformation, and multi-step indirection to elicit harmful outputs. As jailbreak strategies keep emerging, defenses have proliferated in an ongoing cat-and-mouse game, yet most remain static: their safety behavior is fixed at deployment, so they cannot accumulate defensive experience or adapt to unseen strategies. We propose a self-evolving test-time defense built around a persistent, cross-interaction rule memory: when an attack succeeds, the framework abstracts that failure into a method-level rule capturing the structural attack wrapper rather than the harmful topic, and reuses it against future inputs. Because rules are method-level, one induced rule generalizes across an entire attack family, and the label space expands as novel wrappers appear. The mechanism operates entirely through external memory and prompting, with no parameter updates, and applies to both open-weight and black-box API models. We realize it as four cooperating modules, but the contribution is the memory-based adaptation mechanism, not the module decomposition. Across four black-box jailbreak families and multiple models, our method substantially reduces attack success rates while preserving benign utility, remains robust under an adaptive composite-wrapper attack, and does not increase over-refusal as the memory grows.",
+      "authors": [
+        "Tongyan Hu",
+        "Bryan Hooi"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.CL"
+      ],
+      "published": "2026-08-26T16:52:06+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26008v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26008",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）仍容易受到 jailbreak attacks 影響；攻擊者可利用 role-playing、obfuscation、code transformation 與 multi-step indirection 等技巧誘導模型產生有害輸出。既有防禦多為 static mechanisms，部署後安全行為固定，無法累積防禦經驗或適應未見策略。本文提出以 persistent、跨互動 rule memory 為核心的 self-evolving test-time defense：當攻擊成功時，系統將失敗抽象為描述結構性 attack wrapper 的 method-level rule，而非記憶有害主題，並套用於後續輸入。單一規則可泛化至整個攻擊家族，且遇到新 wrapper 時可擴展 label space。方法僅透過 external memory 與 prompting 運作，不更新模型參數，適用於 open-weight 與 black-box API models。實驗顯示，它能降低四類 black-box jailbreak 的 attack success rate、維持 benign utility，抵抗 adaptive composite-wrapper attack，且 memory 增長不會增加 over-refusal。",
+      "problem_statement": "論文處理 LLM 在 sequential interactions 中持續遭遇新型 jailbreak 的防禦問題。static alignment、固定 system prompt、safety classifier 與部分 white-box decoding 方法，部署後不會根據失敗累積知識，對未見、obfuscated 或 compositional wrapper 泛化有限；既有 self-reflection 多只修改當前或短期 context，multi-agent 防禦也通常逐次獨立處理。因此系統難以把一次攻擊失敗轉化為跨互動可重用的防禦經驗。",
+      "proposed_solution": "作者提出 self-evolving multi-agent framework，以 persistent external rule memory 取代參數更新。系統將成功 jailbreak 的結構性 wrapper 抽象成 method-level rule，包含攻擊 label、wrapper pattern 與 refusal constraint；後續輸入先被分類，再只觸發最相關規則，避免把全部記憶注入 prompt。Policy decision agent 依風險選擇 ALLOW、SOFT_REFUSE 或 HARD_REFUSE，response generation agent 依此產生輸出；violation detector 發現新失敗後，由 reflection agent 歸納新規則並去重、更新記憶。作者強調核心創新是跨互動的 selective persistent memory mechanism，而非四個 agent 的特定拆分。",
+      "core_contributions": [
+        "提出 persistent、cross-interaction rule memory，將觀察到的 jailbreak failure 轉化為不需參數更新的 method-level 防禦規則。",
+        "設計 dynamic rule-triggering 與自動擴展的 attack-label space，使規則依結構性 wrapper 選擇性套用，並泛化至同一攻擊家族。",
+        "在四類 black-box jailbreak、多個 open-weight 與 API 模型上驗證降低 ASR、維持 benign utility，並以 ablation 顯示 triggering、enforcement 與 reflection 的互補必要性。"
+      ],
+      "methodology": "問題設定中，固定參數模型 fθ 接收由 jailbreak transformation J 產生的 adversarial prompt；外部記憶 Rt 初始為空，並隨互動串流更新。每一步先由 attack-pattern classifier ϕ 將輸入標為 benign、既有 method-level label 或 other；benign 輸入不觸發規則，也不導致學習。接著進行 rule matching，先以 label 精確匹配，再用 LLM relevance fallback，最後用 lexical keyword overlap fallback，最多擷取 K=2 條規則。Policy operator 將結果映射為 ALLOW、SOFT_REFUSE 或 HARD_REFUSE，衝突優先序為 hard-refuse、soft-refuse、allow；generation agent 將動態 safety instruction 注入模型。輸出後，violation detector 由同一個 in-system model 以 1–10 harmfulness rubric 判定，分數達 τ=7 即視為違規；若輸入非 benign，reflection agent 以輸入與輸出歸納 method-level rule，update operator 進行 semantic deduplication，並設定每 label 容量 C=4。實驗採 AdvBench 520 個 harmful-behavior prompts，測試 DeepInception、CodeChameleon、ReNeLLM、FlipAttack，模型包括 Qwen2.5-7B、Llama3.1-8B 與 Gemini-3-Flash-Preview；採 cold-start online protocol，依固定順序串流，僅使用先前失敗學得的規則。指標包括 rejection-based ASR（ASR-rej）、外部 GPT-4o-mini judge 的 ASR（ASR-gpt，主要指標）、MMLU 與 GSM8K utility，以及 XSTest over-refusal。",
+      "key_results": "以下數值為論文 Table 1；ASR 欄格式為 **ASR-rej / ASR-gpt**，越低越好。\\n\\n| 攻擊方法 | 模型 | No Defense | AutoDefense | Ours |\\n|---|---|---:|---:|---:|\\n| DeepInception | Qwen2.5-7B | 78.0 / 14.6 | 20.5 / 8.3 | **4.1 / 3.5** |\\n| DeepInception | Llama3.1-8B | 77.1 / 28.0 | 45.0 / 18.2 | **3.8 / 3.1** |\\n| DeepInception | Gemini-3-Flash-Preview | 60.0 / 25.7 | 15.4 / 5.1 | **1.1 / 0.1** |\\n| CodeChameleon | Qwen2.5-7B | 98.0 / 57.0 | 45.1 / 18.3 | **4.5 / 1.4** |\\n| CodeChameleon | Llama3.1-8B | 97.1 / 58.0 | 42.7 / 15.6 | **3.4 / 1.9** |\\n| CodeChameleon | Gemini-3-Flash-Preview | 24.0 / 5.1 | 7.0 / 3.3 | **1.1 / 0.8** |\\n| ReNeLLM | Qwen2.5-7B | 97.0 / 27.0 | 42.5 / 10.2 | **2.5 / 1.1** |\\n| ReNeLLM | Llama3.1-8B | 75.0 / 20.7 | 38.0 / 9.5 | **11.5 / 0.8** |\\n| ReNeLLM | Gemini-3-Flash-Preview | 74.0 / 28.5 | 8.5 / 4.0 | **1.0 / 0.1** |\\n| FlipAttack | Qwen2.5-7B | 96.0 / 30.4 | 44.5 / 18.0 | **1.0 / 0.4** |\\n| FlipAttack | Llama3.1-8B | 99.1 / 45.0 | 48.2 / 16.8 | **1.2 / 0.2** |\\n| FlipAttack | Gemini-3-Flash-Preview | 17.0 / 10.3 | 18.0 / 8.5 | **0.1 / 0.1** |\\n\\nUtility 方面，論文報告 Ours 的 MMLU 為 Qwen 66.8、Llama 61.7、Gemini 94.2；GSM8K 為 Qwen 70.1、Llama 83.5、Gemini 95.0。作者稱效能約在未防禦模型兩個百分點內。Qwen2.5-7B 的 XSTest over-refusal 從空記憶 3.6% 增至累積四類攻擊後 9.6%。穩態每次約三次 LLM calls，call overhead 3.07×、latency 1.43×。對 adaptive composite-wrapper attack 的具體數值，論文未報告。",
+      "insights": [
+        "實務部署可將防禦失敗事件結構化保存為攻擊方法規則，而非只保存原始惡意內容；這有助於跨主題重用並降低敏感資料記憶。",
+        "規則採 selective retrieval 而非全量注入，是控制 prompt 干擾與 benign utility 損失的重要設計；實作時應同步監控 classifier 誤判與 over-refusal。",
+        "自我演化防禦必須搭配獨立評估信號、去重與容量限制；本文使用 in-system judge 學習、外部 GPT-4o-mini 評估，但長期記憶的衝突管理仍需額外治理。"
+      ],
+      "limitations": "評估僅涵蓋四種 prompt-level black-box jailbreak 與一種 adaptive composite-wrapper attack，未涵蓋完整攻擊範圍、多輪或 agentic settings。系統尚無明確 rule pruning 與 conflict resolution，長期記憶的效率和一致性未解決。classifier 與 violation detector 均為 prompted LLM，可能產生判斷錯誤與 over-refusal；XSTest 顯示累積記憶後為 9.6%。",
+      "tags": [
+        "safety",
+        "alignment",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM jailbreak defense",
+        "test-time adaptation",
+        "persistent external memory",
+        "multi-agent safety",
+        "over-refusal evaluation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26105",
+      "title": "VBVR-Pro: A Scalable and Verifiable Suite for Native Visual Reasoning",
+      "abstract": "Native visual reasoning treats visual generation as the medium of reasoning itself: visual states (i.e. images and videos) are not merely inputs to be understood or outputs to be rendered, but first-class substrates for problem solving beyond language. Yet progress remains bottlenecked by the lack of scalable training tasks, reliable feedback, and controlled comparisons across generative substrates. In this work, we introduce VBVR-Pro, a closed-loop testbed that makes native visual reasoning through generation trainable, verifiable, optimizable, and experimentally controllable. 1) Task scaling. VBVR-Pro turns visual reasoning into a controlled task space of 300 procedurally generated tasks. Models trained on VBVR-Pro show strong transfer beyond the proposed suite across seven external visual reasoning benchmarks such as RISE-Video, MME-CoF-Pro, and BabyVision. 2) Verifiable rewards. VBVR-Pro provides verifiable reward scorers for task-grounded evaluation. Through a systematic study of leading MLLMs as judges, we identify recurring failure modes of the prevalent VLM-as-a-judge paradigm. In contrast, the proposed scorers are grounded in deterministic, task-specific rules, achieve fine-grained alignment with human judgments. Importantly, they serve as reliable reward signals for large-scale multi-task reinforcement learning and demonstrate stronger post-RL performance across visual reasoning tasks. 3) Mechanism study. VBVR-Pro enables controlled modality studies across more than 30 image, video, and interleaved generators. Our analysis shows that video generation remains strongest for tasks requiring persistent spatiotemporal state tracking, while interleaved generation provides a compute-efficient alternative. Critically, ablations and probing suggest the presence of vision-native trajectories that are crucial to visual reasoning. We release all data, models, scorers, and code.",
+      "authors": [
+        "Junxiang Xu",
+        "Ruisi Wang",
+        "Fanyi Pu",
+        "Maijunxian Wang",
+        "Ran Ji",
+        "Tongxi Zhou",
+        "Chenyang Gu",
+        "Jing Zuo",
+        "Hongcan Xiao",
+        "Yimeng Geng",
+        "Wanqi Yin",
+        "Wei Chen",
+        "Oscar Qian",
+        "Zhengan Yan",
+        "Ziqi Huang",
+        "Haiwen Diao",
+        "Liang Pan",
+        "Bo Li",
+        "Xiangyu Fan",
+        "Dezhi Luo",
+        "Fengyuan Yu",
+        "Zehong Zhao",
+        "Qingying Gao",
+        "Tinghui Zhu",
+        "Yilan Zhang",
+        "Jingqi Tong",
+        "Pinyuan Feng",
+        "Zhengze Jiang",
+        "Letian Wang",
+        "Ziyu Guo",
+        "Renrui Zhang",
+        "Jieneng Chen",
+        "Sonia Joseph",
+        "Constantin Venhoff",
+        "Saman Motamed",
+        "Mengyue Yang",
+        "Chandra Sripada",
+        "Alan Yuille",
+        "Philip Torr",
+        "Lvmin Zhang",
+        "Vikash Kumar",
+        "Daniel Khashabi",
+        "Nikolaus Kriegeskorte",
+        "Raphaël Millière",
+        "Vincent C. Müller",
+        "Anyi Rao",
+        "Quan Wang",
+        "Ziwei Liu",
+        "Dahua Lin",
+        "Lei Yang",
+        "Hokin Deng",
+        "Zhongang Cai"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG",
+        "cs.MM",
+        "cs.RO"
+      ],
+      "published": "2026-08-26T17:59:51+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26105v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26105",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "Native visual reasoning 將 visual generation 視為推理本身的媒介：影像與影片不只是待理解的輸入或待渲染的輸出，而是超越語言、用於解題的第一級 substrate。本研究提出 VBVR-Pro，一個 closed-loop testbed，使透過生成進行的 native visual reasoning 具備可訓練、可驗證、可最佳化與可控制實驗的條件。首先，VBVR-Pro 以程序生成建立涵蓋 300 個任務的受控 task space；在其上訓練的模型能轉移至七個外部 visual reasoning benchmarks。其次，系統提供以任務規則為基礎的 verifiable reward scorers，研究顯示其比 VLM-as-a-judge 更精確、便宜且可重現，並可作為 multi-task reinforcement learning 的 reward。最後，作者比較超過 30 個 image、video 與 interleaved generators，發現 video 對持續時空狀態追蹤較強，而 interleaved generation 具計算效率；消融與 probing 進一步支持 vision-native trajectories 是視覺推理的重要 substrate。所有資料、模型、scorers 與程式碼均公開。",
+      "problem_statement": "Native visual reasoning 涉及空間變換、物體持續性、時間連續性與動態互動，但既有資源多偏向一次性 evaluation，缺乏可大規模訓練的多樣任務、可靠且可重現的 feedback，以及在相同任務分布下比較 image、video 與 interleaved generators 的控制實驗。VLM-as-a-judge 對精確計數、細粒度空間關係、時間一致性與規則遵循可能誤判、昂貴且不穩定，難以直接支援 reinforcement learning。",
+      "proposed_solution": "作者提出 VBVR-Pro closed-loop suite，由三部分組成：其一，建立 300 個 procedurally generated tasks，涵蓋 perception、spatiality、transformation、abstraction 與 knowledge，並從同一底層問題產生對齊的 image、video 與 interleaved representations；其二，為 benchmark 的 100 個測試任務設計 task-specific verifiable reward scorers，利用結構化語義擷取與確定性規則檢查輸出；其三，以統一任務分布與 scorer 比較超過 30 個不同生成模型，並透過 counterfactual、ablation、middle-state intervention 與 transfer study 分析視覺狀態是否真正參與推理。",
+      "core_contributions": [
+        "建立包含 300 個程序生成任務的 VBVR-Pro-Dataset，從同一底層問題提供 image、video 與 interleaved 多模態表示，並設置 SFT、RL、ID 與 OOD split。",
+        "為 VBVR-Pro-Bench 的 100 個任務提供以語義擷取、任務規則與約束檢查為基礎的 deterministic verifiable reward scorers；實驗顯示其在人類偏好一致性、成本與重複性上優於 VLM-as-a-judge。",
+        "在統一任務分布下比較超過 30 個 image、video 與 interleaved generators，並以 transfer、counterfactual、ablation 與 middle-state intervention 支持 vision-native trajectories 對推理具有關鍵作用。"
+      ],
+      "methodology": "資料集由 300 個任務生成器構成，其中 150 個由 VBVR 修訂、150 個新設計。每個 generator 以結構化參數空間隨機取樣，例如網格大小、物體數量、布局、外觀與難度；程序 solver 計算正確解，並保存 seed、問題規格、完整解答與關鍵屬性。資料分為 250 個任務供訓練，另保留 50 個 out-of-domain 任務；VBVR-Pro-Bench 含 50 個 in-domain 與 50 個 out-of-domain 任務，並有 50 個 in-domain 任務的 RL training set。輸出包含 Last-Frame、Key-Frame 與 Multi-Frame image regimes，以及 video 與 interleaved text-image 格式。Scorer 使用 HSV segmentation、contour detection、OCR、跨幀 trajectory tracking 等方法擷取顏色、形狀、位置、數量與事件，再以任務專屬的加權和或 constraint gates 聚合分數。評估包括 overall、ID/OOD、五類能力分數、與人類偏好的 per-vote agreement，以及 Spearman ρ 和 Pearson r。作者也將九個 open-source models 在 512×512 上訓練一個 epoch，影片模型使用 Rank-32 LoRA、16 fps，並進行外部 benchmark transfer、nearest-neighbor、same-prompt visual counterfactual、Chain-of-Step、消融與中間視覺狀態干預分析。",
+      "key_results": "| 實驗面向 | 主要結果 |\n|---|---|\n| 任務與資料規模 | 300 個任務；3,471,558 張影像、1,300,500 部影片；SFT 1,250,000、RL 50,000、測試 500 個樣本（論文表 1） |\n| 任務切分 | 250 個任務用於訓練，50 個任務作 OOD 評估；Bench 含 100 個任務 |\n| VLM judge 重複性 | 相同影片再次評估時，GLM-4.6V-Flash 有 54.6% 樣本改分，Gemini-3.1-Pro 為 92.8%；verifiable scorer 為 0% |\n| 人類一致性 | 作者 scorer 的 per-vote agreement 超過 0.60；GPT-5.5 為 0.54、Gemini-3.1-Pro 為 0.52；human ceiling 為 0.77 |\n| Model-level alignment | scorer 與人類偏好：ID Spearman ρ=0.95、Pearson r≥0.95；OOD ρ=1.00、r=0.95 |\n| 訓練效益 | 九個模型平均 overall gain 為 0.290；ID 平均提升 +0.401，OOD 平均提升 +0.179 |\n| 最佳開源模型 | VBVR-Pro-Wan2.2-I2V-A14B overall 0.670（ID）與 0.636（OOD）；VBVR-Pro-SenseNova-U1 為 0.638（ID）與 0.464（OOD） |\n| 跨任務轉移 | 七個外部 benchmark 均呈現一致增益，摘要稱常超過 20 個百分點；各 benchmark 的完整逐項數字在提供內容中未報告 |\n| 任務難度 | 新設計任務中 46.7% 被判定需 multi-step reasoning，修訂任務為 6.7%；新任務在 150 對中有 113 對被判定需要更深推理 |\n| 模態結論 | video 對 persistent spatiotemporal state tracking 最強；interleaved generation 是較具 compute efficiency 的替代方案；論文未提供統一的成本數字比較 |",
+      "insights": [
+        "若生成輸出需要精確計數、路徑合法性、事件順序或場景保真度，應優先採用可解釋的 task-specific deterministic scorer，而不是只依賴通用 VLM judge。",
+        "訓練資料的 task coverage 可能比單一任務的大量 instance scaling 更重要；實務上可用程序生成覆蓋不同推理機制，再以 OOD task split 檢驗是否真正學到可轉移能力。",
+        "模態選擇應依推理需求而定：持續時空追蹤適合 video，許多熟悉任務可用稀疏的 interleaved visual states 取得較佳效率；評估時不應只比較最終答案，也應檢查中間視覺狀態與過程約束。"
+      ],
+      "limitations": "論文的 scorer 依賴每個任務的人工設計規則、權重與視覺擷取流程，擴展到未預先定義的新任務仍需額外工程。interleaved 中間文字由 Gemini-3.1-Pro-Preview 生成，可能引入模型依賴。人類研究每個任務抽樣一個 instance、涵蓋八個影片模型；且最強訓練模型仍低於人類水準。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "native visual reasoning",
+        "程序生成資料集",
+        "verifiable reward modeling",
+        "多模態生成模型",
+        "multi-task reinforcement learning",
+        "vision-native trajectories"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26036",
+      "title": "Trace Integrity for LLM Data Agents: A Vision for Auditable Structured Reasoning in Real-World Systems",
+      "abstract": "Answer accuracy is an insufficient reliability signal for LLM data agents. In structured-data tasks, a benchmark-correct answer can be produced by an invalid trace. This paper introduces Trace Integrity, a deployment reliability criterion for evaluating whether the computation recorded behind an answer is explicit, executable, schema-valid, operator-faithful, replayable, answer-consistent, and auditable. We identify the Structure Gap as the deployment failure mode that makes Trace Integrity necessary: natural-language reasoning and free-form rationales do not reliably specify the operator-level programs required by real-world systems. We operationalize Trace Integrity with execution contracts, structured artifacts that bind user intent to schema elements, operator plans, assumptions, executable queries, verification status, and final-answer linkage. We also introduce CAIT (Correct Answer / Invalid Trace) Rate, which measures how often answer-only evaluation counts computationally unsupported outputs as successes. In an empirical demonstration on BIRD Mini-Dev, Direct SQL, Operation Summary + SQL, and Contract-First SQL achieve answer accuracies of 20%, 22%, and 24%, while their Trace Integrity Pass Rates are 39%, 43%, and 40% and their CAIT Rates remain high at 55%, 59.1%, and 45.8%, showing that answer accuracy, trace validity, and silent-failure risk are distinct evaluation signals. Real-world LLM data agents should, therefore, be evaluated not only by whether their outputs match a reference answer, but by whether those outputs are backed by auditable computation.",
+      "authors": [
+        "Srimonti Dutta",
+        "Akshata Kishore Moharir"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-26T17:15:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26036v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26036",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "答案準確率不足以作為 LLM data agents 的可靠性訊號。在結構化資料任務中，即使答案與 benchmark 參考答案一致，背後也可能是無效的 computation trace。本文提出 Trace Integrity，作為部署可靠性標準，檢驗記錄的計算是否 explicit、executable、schema-valid、operator-faithful、replayable、answer-consistent 且 auditable。作者指出 Structure Gap 是其必要性的根源：自然語言推理與自由形式 rationale 無法穩定指定真實系統所需的 operator-level program。本文以 execution contracts 將 user intent、schema elements、operator plans、assumptions、executable queries、verification status 與 final-answer linkage 綁定，並提出 CAIT (Correct Answer / Invalid Trace) Rate，量化 answer-only evaluation 將計算上不受支持的輸出計為成功的頻率。在 BIRD Mini-Dev 示範中，三種方法的答案準確率為 20%–24%，Trace Integrity Pass Rate 為 39%–43%，CAIT Rate 為 45.8%–59.1%，顯示三者是不同評估訊號。",
+      "problem_statement": "論文處理 LLM data agents 在結構化資料任務中的 silent failure：系統可能以錯誤的 filter、join、aggregation、time window 或 grouping key 得到正確或看似合理的答案。現有 answer-only evaluation 只比較最終結果，execution success 也只能表示 query 能執行，無法證明計算符合使用者意圖；自然語言 rationale 同樣不可執行且未必忠實描述實際 computation，因此缺少可檢查、可重播、可稽核的 trace-level reliability criterion。",
+      "proposed_solution": "作者提出 Trace Integrity，將答案背後的 computation trace 視為一級評估對象。Trace 必須 explicit、executable、schema-valid、operator-faithful、replayable、answer-consistent 與 auditable。為使標準可部署，作者設計 execution contract，結構化記錄 user intent、schema bindings、filters、joins、grouping、metric、operator plan、assumptions、query、verification status 及答案連結；並提出 Isolation Principle，預設先根據問題、schema、metadata 與 policy context 規劃，再接觸 value-level data。最後以 CAIT Rate 衡量正確答案中由無效 trace 支持的比例，揭露 answer-only evaluation 隱藏的可靠性風險。",
+      "core_contributions": [
+        "提出 Trace Integrity 作為 LLM data agents 的部署可靠性標準，將 computation trace 的可明確化、可執行、schema validity、operator faithfulness、可重播、答案一致性與可稽核性納入評估。",
+        "提出 execution contract 與 Isolation Principle，將使用者意圖、schema 綁定、操作計畫、假設、查詢及驗證狀態轉化為可驗證、可儲存與可供人工審查的結構化 artifact。",
+        "提出 CAIT Rate，並在 100 個 BIRD Mini-Dev examples 上展示正確答案可能由無效 trace 支持，量化 answer-only evaluation 所隱藏的 computationally unsupported successes。"
+      ],
+      "methodology": "論文沒有提出特定的新模型架構；proof-of-concept 使用 Claude Haiku 4.5、temperature 0.0，並比較三種 prompting condition：Direct SQL 直接由問題與 schema 生成 SQL；Operation Summary + SQL 先產生簡潔的操作摘要再生成 SQL；Contract-First SQL 先輸出 execution contract，再生成 SQL。實驗取 BIRD Mini-Dev 的 100 個 examples；每題執行 gold SQL 取得 reference result，將 generated SQL 在相同 database 上執行，並把 generated trace 與 normalized gold trace 比較。評估指標包括 Answer Accuracy（generated result 與 gold result 的 row-set 是否相同）、Execution Success（SQL 是否成功執行）、Trace Integrity Pass Rate（trace 是否 executable、schema-valid 且無 critical operator mismatch）、Answer-Trace Consistency，以及 CAIT Rate = N(correct∩invalid) / N(correct)。validator 以 deterministic operator-level checks 判定 critical failure，涵蓋錯誤或缺失 aggregation、filter、join、join path、grouping key、sort/limit、schema reference、不可執行 SQL、answer-trace mismatch，以及 Contract-First 的 contract-query mismatch。作者也說明該檢查器偏向可稽核規則，可能過度標記無法證明等價的合法 SQL rewrite。",
+      "key_results": "主要結果如下；百分比皆為論文報告數值。\n\n| 方法 | Answer Accuracy | Execution Success | Trace Integrity Pass Rate | Answer-Trace Consistency | CAIT Rate |\n|---|---:|---:|---:|---:|---:|\n| Direct SQL | 20.0% | 84.0% | 39.0% | 84.0% | 55.0% |\n| Operation Summary + SQL | 22.0% | 83.0% | 43.0% | 67.0% | 59.1% |\n| Contract-First SQL | 24.0% | 82.0% | 40.0% | 82.0% | 45.8% |\n\n在 300 個 method-example predictions 中，共有 51 個 query 無法執行，占 17.0%。CAIT 案例數方面，Direct SQL 為 11、Operation Summary + SQL 為 13、Contract-First SQL 為 11。Contract-First SQL 的答案準確率最高且 CAIT Rate 最低，但 Trace Integrity Pass Rate 不是最高；Operation Summary + SQL 的 Trace Integrity Pass Rate 最高，卻有最高 CAIT Rate。結果支持作者的主張：答案準確率、trace validity 與 silent-failure risk 並不等同。",
+      "insights": [
+        "實務部署不應只追蹤 answer accuracy 或 execution success；應同步保存 contract、實際 query、schema bindings、執行快照與答案連結，並將 Trace Integrity 作為放行或升級人工審查的條件。",
+        "可把 critical mismatch 分類為缺失 filter、錯誤 join、aggregation、grouping、schema reference 或 answer-trace mismatch，將每次失敗轉化為 regression test，而非只記錄一個錯誤答案。",
+        "執行 contract 應記錄計畫與實際 query 的一致性；若因 profiling、outlier detection 等任務必須先存取資料值，也應記錄存取理由、權限範圍及計畫變更，以維持可稽核性。"
+      ],
+      "limitations": "研究是 vision 加上 scoped proof-of-concept，僅使用 100 個 stratified BIRD Mini-Dev examples、單一 Claude Haiku 4.5 與固定設定，不能據此建立模型或 prompting 的穩定排名。validator 以 deterministic structural checks 為主，非完整 semantic-equivalence checking，可能過度標記合法 SQL rewrite；論文未報告更大規模、多模型或真實企業資料上的結果。",
+      "tags": [
+        "faithfulness",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Text-to-SQL 評估",
+        "可稽核 AI agents",
+        "結構化推理與程式驗證",
+        "資料治理與 schema drift"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26013",
+      "title": "VISA: Agentic Self-Evolving Data Synthesis for Multimodal Instruction Following",
+      "abstract": "Multimodal instruction-following models require training data that is accurate, diverse, verifiable, and challenging. Existing synthesis pipelines typically follow a one-pass generate-and-filter paradigm, discarding feedback from failed samples, verifier outcomes, and target-model errors. We present VISA (Visual Instruction Synthesis Agent), an agentic framework that reformulates multimodal instruction synthesis as a self-evolving loop. At each round, VISA analyzes an image to filter incompatible constraints and discover new verifiable ones, samples diversity- and difficulty-aware constraint sets from persistent memory, generates candidate instructions, and verifies the resulting samples with executable tools and structured large language model judges. Failed samples trigger diagnostic-guided recovery, while accepted samples are probed against the target model to estimate difficulty. The resulting verifier signals and target-model failure profiles are written back to memory, allowing subsequent rounds to adaptively expand the constraint space, reduce template repetition, and focus on unresolved model weaknesses. The same verifier contracts further provide reward signals for reinforcement learning without a separately trained reward model. Experiments on MM-IFEval show that VISA consistently improves multimodal instruction following over strong baselines, while preserving general multimodal capability across seven public benchmarks.",
+      "authors": [
+        "Min Zeng",
+        "Guanxin Tan",
+        "Libin Cen",
+        "Yawei Wen",
+        "Rui Hu",
+        "Liuyang Bian",
+        "Xiaolong Chen",
+        "Xiaoxin Chen"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-26T16:55:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26013v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26013",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "多模態 instruction-following 模型需要準確、多樣、可驗證且具挑戰性的訓練資料。現有合成流程多採用一次性的 generate-and-filter 範式，未充分利用失敗樣本、verifier 結果與 target model 錯誤所提供的回饋。本文提出 VISA（Visual Instruction Synthesis Agent），將多模態 instruction synthesis 重構為 self-evolving loop。每一輪中，VISA 分析影像以篩除不相容 constraints，並發掘新的可驗證 constraints；接著從 persistent memory 中依據 diversity 與 difficulty 取樣 constraint sets、生成候選 instructions，再透過 executable tools 與結構化 LLM judges 驗證樣本。失敗樣本會觸發 diagnostic-guided recovery，通過的樣本則接受 target model probing 以估計難度。verifier signals 與 target-model failure profiles 會回寫 memory，使後續輪次能擴展 constraint space、減少模板重複，並聚焦模型尚未解決的弱點。同一套 verifier contracts 也可直接提供 reinforcement learning 的 reward signals，無須另外訓練 reward model。MM-IFEval 實驗顯示，VISA 能提升多模態 instruction following，同時維持七個公開 benchmark 上的整體多模態能力。",
+      "problem_statement": "本文要解決多模態 instruction-following 訓練資料合成缺乏適應性的問題。既有方法通常以模板或 prompt 一次生成、篩選並加入資料集；失敗樣本、verifier 診斷、重複模板，以及 target model 尚未掌握的能力，往往只在局部使用或直接丟棄。因此，合成器不會根據歷史結果更新狀態，也難以持續擴大可驗證的 constraint 類型、降低資料同質化，或針對當前模型弱點產生更有效的監督訊號。",
+      "proposed_solution": "作者提出 VISA（Visual Instruction Synthesis Agent），把影像條件式 constraint satisfaction 建模為包含 Perception、Planning & Execution、Reflection 與 Memory Update 的閉環 self-evolving synthesis。Perception 篩選與影像相容的 constraints，並可提出經 sandbox 驗證的新 constraint types；Planning 依 coverage 與 target-model difficulty 從 persistent memory 取樣，再以 instruction embedding pool 選擇最不相似的候選。Reflection 使用 code verifier 與結構化 LLM judge 進行雙軌驗證，失敗時依診斷資訊有限度修復。通過樣本則以 target model probing 估計難度，所有結果回寫 memory，並可將 verifier pass rate 直接用作 RL reward。",
+      "core_contributions": [
+        "提出 VISA self-evolving multimodal instruction synthesis framework，以 Perception、Planning & Execution、Reflection、Memory Update 四階段把靜態 generate-and-filter 流程轉為持續回饋的閉環合成。",
+        "提出統一的 verification and recovery framework，支援動態 constraint-verifier binding、sandbox 驗證、diagnostic-guided bounded repair，以及針對 target model 的 difficulty probing。",
+        "證明 persistent memory 與 verifier-derived reward 的實用性：registry 從 76 個 seed constraint types 擴展至 310 個，並可在無 separately trained reward model 下支援 RL。"
+      ],
+      "methodology": "VISA 將資料表示為 (I,Q,R,C,v)：I 為影像、Q 為影像條件 instruction、R 為對應 response、C 為 constraint set、v 為綁定的 code-based verifier 或 structured LLM judge。首先，Perception 分析影像，從 registry T 篩出可由場景支持的 subset，並提出新 constraint type；每個新類型須搭配候選 verifier，通過 sandbox test 後才加入 registry。其次，Planning 依 memory 中的 coverage signal 降低已充分覆蓋類型的權重，依 difficulty signal 提高 target model 較常失敗類型的權重，取樣彼此相容且可驗證的 constraints。每張影像先生成 k=4 個候選 instructions，再以 embedding pool 計算候選與既有 instruction 最近鄰的距離，採 greedy diversity selection 選擇距離最遠者，之後生成 response。Reflection 對每項 constraint 驗證：word count、keyword、format 等使用 executable code tools，語義及視覺 grounding constraints 使用 LLM judges；失敗時依診斷選擇局部修改、instruction rewrite 或 constraint simplification，達到修復預算仍無改善便丟棄。通過樣本再由 target model 產生答案，使用同一 constraint set 評估並計算 difficulty score。Memory 保存樣本、verifier handles、instruction embeddings、constraint difficulty/failure profiles 與新類型。訓練包含 SFT 與 RL；RL reward 為各 constraint 的平均 pass rate。資料約 15k（分析統計為 15,668）樣本，使用 Qwen3.5-27B 作 synthesis agent、Qwen3.5-4B 作 target model，並以 MM-IFEval 的 C-Level、P-Level 及平均分數評估 instruction following，另以七個公開 benchmark 評估一般多模態能力。",
+      "key_results": "主要結果如下；數值皆為論文報告值。\n\n| 方法（Qwen3.5-4B） | C-Level | P-Level | Avg. |\n|---|---:|---:|---:|\n| Base | 62.7 | 55.0 | 60.8 |\n| MM-IFInstruct-23k | 65.7 | 46.0 | 60.8 |\n| MM-IFDPO-23k | 65.0 | 52.0 | 61.7 |\n| VISA-SFT-15k | 67.2 | 54.0 | 63.9 |\n| VISA-RL-15k | 66.9 | 59.0 | 64.9 |\n\n消融實驗：Static Pipeline 的平均分為 60.2；加入 Reflection 後為 61.2；再加入 Memory 後為 63.1；完整 VISA 為 63.9。VISA-SFT-15k 的平均分高於 Qwen3.5-9B 的 63.0；VISA-RL-15k 的 P-Level 為 59.0，接近 Qwen3.5-9B 的 60.0。\n\n一般多模態能力方面，Qwen3.5-4B 基礎模型在七個 benchmark 的平均為 70.5，VISA-SFT-15k 為 71.0，VISA-RL-15k 為 72.9；RL 相較基礎模型在七項中的五項提升，MathVista 從 78.8 提升至 87.9。論文未報告與人類標註者在所有驗證決策上的完整一致性，只報告抽樣人工稽核的約 95% agreement。",
+      "insights": [
+        "若要建立高品質多模態 instruction-following 資料，應保存失敗診斷、constraint-level failure rate 與 verifier metadata，而非只保留通過樣本；這些狀態可直接用於下一輪資料規劃。",
+        "可將資料多樣性拆成 constraint 組合層與 instruction 表面形式層：前者用 coverage/difficulty 權重控制，後者用 embedding pool 進行遠鄰選擇，以降低近重複模板。",
+        "在可明確檢查的任務中，與其另訓 reward model，不妨先建立可測試的 verifier contracts，將 constraint pass rate 作為可追蹤、可解釋的 RL reward；但視覺與語義判斷仍需注意 LLM judge 的可靠性。"
+      ],
+      "limitations": "VISA 的主要限制是合成成本高於一次性 pipeline；state updates、迭代修復與 target-aware probing 都會增加額外開銷，論文報告平均每個 accepted sample 約 20 秒。其資料也可能繼承來源影像或 synthesis model 的偏見、不安全關聯與隱私內容；現有驗證與 reflection 並非完整的 safety 或 fairness filter。",
+      "tags": [
+        "alignment",
+        "llm-as-judge",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態 instruction following",
+        "self-evolving data synthesis",
+        "verifiable rewards",
+        "constraint verification",
+        "reinforcement learning with verifiable rewards"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26005",
+      "title": "VoiceMem: Streaming Dual-Brain Memory for Real-Time Interaction",
+      "abstract": "Conversational systems, such as duplex speech language models (SLMs), still lack a streaming, accurate, and empathetic memory system as their soul. We introduce VoiceMem, a simple memory architecture with a parallel informational left brain, an emotional right brain, and streaming memory I/O mechanisms. We further build a complete pipeline for memory-aware SLM training, long-horizon evaluation, and decoupled deployment with interchangeable memory backends. Experiments and real-world deployment show three advantages: i) Accuracy: under top-5 retrieval, the left brain outperforms classical systems such as Mem0 at top-200 by nearly 30 points; ii) Emotional & Personal: the right brain, with short- and long-horizon affective attribution and dual-node persona modeling, achieves state-of-the-art performance across three persona benchmarks and improves the aggregate score by 4.29 points over the previous best system; and iii) Real-Time & Cheap: VoiceMem completes retrieval in 134 ms, well within standard VAD latency, adding no extra conversational delay while maintaining high accuracy and low cost. These results show that VoiceMem provides a practical memory foundation for real-time, personalized, and emotionally aware speech interaction.",
+      "authors": [
+        "Zhifei Xie",
+        "Jiaqi Lang",
+        "Ze An",
+        "Yifan Zhao",
+        "Dongchao Yang",
+        "Kai Li",
+        "Ziyang Ma",
+        "Mingbao Lin",
+        "Chunyan Miao",
+        "Shuicheng Yan"
+      ],
+      "categories": [
+        "eess.AS",
+        "cs.AI",
+        "cs.IR",
+        "cs.MM",
+        "cs.SD"
+      ],
+      "published": "2026-08-26T16:50:05+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26005v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26005",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "VoiceMem 是為即時互動設計的 streaming dual-brain memory 系統，旨在補足 duplex speech language models（SLMs）在串流、準確與具同理心記憶上的不足。系統由平行的 informational left brain 與 emotional right brain 組成，並提供 streaming memory I/O。作者同時建立 memory-aware SLM training、long-horizon evaluation，以及可替換 memory backend 的解耦部署流程。實驗顯示：在 top-5 retrieval 下，left brain 相較於 Mem0 的 top-200 設定提升近 30 個百分點；right brain 透過短期與長期 affective attribution 及 dual-node persona modeling，在三個 persona benchmarks 達到最佳表現，整體較先前最佳系統高 1.89 分；retrieval latency 為 134 ms，低於常見 VAD 延遲，未增加額外對話延遲，同時維持高準確率與低成本。",
+      "problem_statement": "論文聚焦於即時語音對話系統缺乏長期、準確且具情緒理解能力的記憶。現有方法多以資訊檢索為中心，難以同時建模事實、persona、情緒及其對應對象；常見 top-100 輸出超出 speech model 的上下文預算，而 2–3 秒檢索延遲也不符合即時對話的 100–200 ms 額外延遲需求。此外，記憶演算法與語音模型快速演進，緊耦合架構不利於替換 backend 與持續更新。",
+      "proposed_solution": "作者提出 VoiceMem streaming dual-brain memory framework。Informational left brain 以 schema–entity 兩層索引組織事實記憶，透過一跳鄰接擴展與 query-driven cluster emergence，提高候選集合的語義密度，使 top-5 retrieval 仍能維持覆蓋率。Emotional right brain 分離 independent persona nodes 與 cross-entity affect nodes，分別表示穩定人格特徵及針對特定人物、事件或概念的情緒，並以 short- and long-horizon attribution 持續更新。系統另以四階段 streaming query 將匹配、圖擴展、搜尋與 context 建構隱藏在使用者停頓期間；上層路由與下層 memory engine 解耦，支援可替換 backend。",
+      "core_contributions": [
+        "提出平行 informational left brain 與 emotional right brain，分別維護事實關係及 persona-affective attribution，並以 cross-brain links 聯結兩者。",
+        "提出 schema–entity dense indexing、query-driven cluster emergence 與四階段 streaming retrieval，使 top-5 memory retrieval 在 134 ms 內完成，並降低 memory token 使用量。",
+        "建立從 memory-world construction、black-box online on-policy distillation 到 human curation 的 CHATMEM-400K 與 CHATMEM-BENCH 流程，並以解耦上層路由與下層 engine 驗證跨 backend 可轉移性。"
+      ],
+      "methodology": "VoiceMem 的記憶狀態由 left graph、right graph 與 cross-brain associations 組成。輸入語音先經 streaming ASR、entity/schema identification、emotion recognition、voiceprint extraction 與 embedding extraction。左腦以 schema 進行粗粒度路由、以 entity 定位具體人物或概念，並維護強弱一跳關聯；候選記憶只從匹配及鄰近 entity 的索引中搜尋。cluster emergence 根據查詢集合與啟動 entity 的 Jaccard-like coherence 分數篩選子圖，再由 LLM judge 評估 relevance、importance、completeness，決定是否提升為新 cluster。右腦包含 independent nodes 與綁定左腦 entity 的 cross-entity nodes；短期 attribution 保存當下情緒、目標與原因，session 結束後以長期 consolidation 歸納穩定傾向。檢索分為 listening/speech tail、anticipation、searching 四階段，最後合併兩腦結果。更新在 turn 後非同步執行 ADD、UPDATE、DELETE 或 KEEP。訓練方面，作者建立 synthetic memory worlds，透過 SLM-verified black-box online on-policy distillation、human curation 與 validation 產生 CHATMEM-400K 及 CHATMEM-BENCH。評估涵蓋 LoCoMo、LongMemEval、Memora、ES-MemEval、PersonaMem、PersonaLens，以及含 316 題、53 小時音訊的 ChatMem-Bench；主要指標為 LLM-judge score，並比較 retrieval budget、memory tokens、latency、ablation 與 backend transfer。",
+      "key_results": "| 評估面向 | VoiceMem | 主要比較結果 |\n|---|---:|---|\n| 事實記憶平均分（Table 1） | 76.39 | Mem0 52.27；Full-Context 60.49；較 Mem0 高 24.12 分 |\n| Persona 平均分（GPT-4o-mini，Table 2） | 74.16 | MemOS 72.27；較前一最佳系統高 1.89 分 |\n| Persona 平均分（VoiceMem fine-tuned，Table 2） | 76.56 | VoiceMem 未微調版本 74.16 |\n| ChatMem-Bench 平均分（Table 3） | 68.73 | Mem0 48.64；Full-Context 45.96 |\n| ChatMem-Bench（fine-tuned，Table 3） | 66.96 | VoiceMem 未微調版本 68.73 |\n| LoCoMo 的 accuracy / memory tokens / retrieval latency | 91.2 / 430 / 134 ms | EverMemOS 為 83.13 分、1,899 tokens；VoiceMem 少 4.4 倍 tokens |\n| LoCoMo，K=5 的 schema routing 消融 | 91.2 | 移除 schema routing 下降 4.53 分；移除整個 upper-level index 在 K=5 下降 9.9 分 |\n| 四資料集消融：移除 right brain | 論文未提供單一總分 | LoCoMo、ES-MemEval、ChatMem-Bench、Memora 分別下降 6.3、4.3、5.4、4.4 分 |\n| LoCoMo backend transfer 平均提升 | +22.73 分 | Mem0 +29.52、Zep +22.92、LangMem +15.76；加入 VoiceMem 後平均 83.00 分 |\n| ChatMem-Bench 音訊能力 | 論文未報告單一整體音訊增益 | VoiceMem 在 14 類別中的 11 類領先；三個 acoustic categories 達 45.16–53.84，文字系統為 3.23–26.92 |\n\n註：論文摘要頁的 persona aggregate improvement 寫為 1.89 分；使用者提供的摘要文字寫為 4.29 分，本文依表 2 與正文採用 1.89 分。",
+      "insights": [
+        "若語音模型的上下文預算嚴格受限，優先提升候選集合的語義密度可能比單純擴大 top-K 更有效；論文中 K=5 已接近較大 K 的表現。",
+        "資訊記憶與情緒／persona 記憶可採不同資料結構與更新週期：前者重視關聯式檢索，後者需區分穩定人格與情境情緒，避免將短期反應直接視為長期特質。",
+        "即時系統可將 ASR、entity matching、圖擴展與部分檢索工作前移至使用者說話及停頓期間；同時將上層路由與 backend 解耦，有助於在不重寫核心架構的情況下比較不同 memory engine。"
+      ],
+      "limitations": "論文未在本文詳述 CHATMEM-BENCH 的完整建構與標註流程，並表示將另發 technical report；其資料包含 synthetic memory worlds 與 human curation，外部真實使用者分布的驗證範圍未充分報告。主要結果依賴 LLM judge，且 134 ms 是 retrieval latency，論文未完整報告端到端語音互動延遲、錯誤率、隱私治理或長期部署成本。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "即時語音對話與 duplex SLM",
+        "長期個人化記憶",
+        "情緒感知與 persona modeling",
+        "多模態音訊記憶",
+        "可替換 memory backend"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.26094",
+      "title": "MyoMechanix: Biomechanically-Grounded Compositional Skilled Activity Understanding and Coaching",
+      "abstract": "Existing action quality assessment (AQA) datasets and methods rely primarily on visual inputs such as RGB and pose, overlooking physiological dynamics such as muscle mechanics and often modeling actions as monolithic patterns. These limitations hinder fine-grained, biomechanically grounded feedback. We introduce MyoMechanix, a multimodal ecosystem for weight-loaded actions that aligns motion with muscle activity. Expert-annotated, it contains 7,500+ samples of 20 actions from 38 subjects, with synchronized multiview RGB video, 3D pose, sEMG, and additional physiological signals, forming the largest multimodal AQA benchmark to date. We further construct the Fitness Knowledge Graph (FKG), which organizes expert annotations into structured relationships among actions, phases, key steps, errors, and corrective feedback, enabling compositional scoring and interpretable assessment. Building on these representations, we develop CUBIST (Compositional Ontological Reasoning Engine), which performs decomposition-analysis-recomposition for fine-grained error attribution and feedback generation. We also establish MyoMechanix-AQA, MyoMechanix-VideoQA, and a novel MyoMechanix-Video2EMG task. Experiments show that multimodal sensing and structured representations improve performance, interpretability, and error attribution, with CUBIST achieving state-of-the-art results; VideoQA enhances language-grounded action understanding; and Video2EMG suggests video-based alternatives to costly EMG sensing. MyoMechanix advances skilled activity understanding toward biomechanically grounded, multimodal, and compositional reasoning for Physical AI applications in fitness, rehabilitation, healthcare, and machine learning. Project page: https://haoyin116.github.io/MyoMechanix/",
+      "authors": [
+        "Hao Yin",
+        "Paritosh Parmar",
+        "Lijun Gu",
+        "Lin Xu",
+        "Tianxiao Guo",
+        "Xiujin Liu",
+        "Tianyou Zheng",
+        "Yang Zhang",
+        "Weiwei Fu"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.ET",
+        "cs.HC",
+        "cs.LG"
+      ],
+      "published": "2026-08-26T17:56:33+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.26094v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.26094",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "現有 Action Quality Assessment（AQA）資料集與方法主要依賴 RGB、姿態等視覺輸入，忽略肌肉力學等生理動態，且通常將動作視為不可分解的整體模式，因此難以提供細粒度、具生物力學依據的回饋。作者提出 MyoMechanix：面向負重動作、將動作與肌肉活動對齊的多模態生態系統。資料集包含來自 38 名受試者、20 種動作的 7,500 多個樣本，具同步多視角 RGB、3D 姿態、sEMG、心率與呼吸等訊號，並由專家標註。作者建構 Fitness Knowledge Graph（FKG），連結動作、階段、關鍵步驟、錯誤與修正回饋；提出 CUBIST，透過分解—分析—重組進行錯誤歸因與回饋生成，並建立 MyoMechanix-AQA、VideoQA 與 Video2EMG 任務。",
+      "problem_statement": "論文旨在解決負重健身動作的細粒度品質評估、錯誤診斷與教練式回饋問題。既有 AQA 多依賴 RGB 與姿態，無法觀察肌肉啟動、疲勞及協調策略等內在生理狀態；資料集常來自網路影片，品質、技能層級與標註結構有限，且多以單一總分描述動作，缺乏階段、關鍵步驟、錯誤及修正建議的可解釋中間推理。",
+      "proposed_solution": "作者提出 MyoMechanix 多模態生態系統，透過同步多視角影片、3D 姿態、sEMG、心率與呼吸訊號，建立外部運動與內部肌肉活動的對齊資料。其核心表示是 Fitness Knowledge Graph（FKG），將動作組織為準備、向心與離心等階段，並連結 action key steps（AK）、error types（ET）與 feedback（FB）。在此基礎上，CUBIST（Compositional Ontological Reasoning Engine）採用分解—分析—重組流程，進行組件層級評估、錯誤歸因、懲罰式組合評分與回饋生成。",
+      "core_contributions": [
+        "建立面向負重健身動作的 MyoMechanix 多模態 benchmark，整合同步五個視角／來源的 RGB、3D 姿態、16 通道 sEMG、心率與呼吸訊號，並涵蓋 20 種動作、38 名受試者與 7,512 個樣本。",
+        "提出 Fitness Knowledge Graph（FKG），以 action、phase、action key step、error type 與 feedback 的結構化關係取代僅有總分的標註，支援細粒度、規則化與可解釋的評估。",
+        "提出 CUBIST compositional reasoning framework，以及 MyoMechanix-AQA、MyoMechanix-VideoQA 與 Video2EMG 三類任務，將動作品質評估延伸至錯誤診斷、語言回饋與視覺到肌電的跨模態推估。"
+      ],
+      "methodology": "資料收集聚焦 20 種負重複合健身動作，涵蓋上、下肢、肩膀、膝部與髖部等高負荷或具受傷風險的部位；共有 38 名受試者、7,512 個樣本及超過 40 小時多模態錄製，包含三種能力層級。視覺資料由四台同步 ZCAM E2M4 相機以 4K、120 FPS 錄製，另加入 OnePlus 7 手機視角，以 1080P、60 FPS 模擬一般使用情境；系統亦提供 3D 姿態。生理資料包括 16 通道 sEMG，取樣率 2 KHz，並記錄心率與呼吸率；sEMG 與 MoCap 進行硬體層級同步。標註由多名健身專家完成，FKG 將動作分成階段與有序 AK，並連結 ET 與 FB。作者採用依生物力學影響設定錯誤權重的 penalty-based protocol，將錯誤累積為可解釋的組合分數。CUBIST 分三階段運作：先由動作感知進行專家路由與結構分解，再以多模態模組分析各組件，最後重組為分數、錯誤定位與修正回饋。基準任務包括 AQA、VideoQA 與從影片推估連續肌肉活動的 Video2EMG。提供文字中提及使用 AQA、VideoQA 與 Video2EMG 的實驗比較，但具體模型架構、資料切分、評估指標與完整數值未在所提供內容中報告。",
+      "key_results": "| 任務／比較 | 論文可確認的結果 | 具體數據 |\n|---|---|---|\n| MyoMechanix-AQA | 多模態感測與結構化表示提升效能、可解釋性與錯誤歸因；CUBIST 達到 state-of-the-art | 論文未報告 |\n| VideoQA | 有助於 vision-language models 進行語言導向、細粒度動作理解 | 論文未報告 |\n| Video2EMG | 從影片估計肌肉啟動模式取得具潛力的結果，顯示影片可能成為昂貴 EMG 感測的替代方案 | 論文未報告 |\n| 資料集規模 | 20 種動作、38 名受試者、7,512 個樣本、超過 40 小時錄製；含 5 個視角／來源、3D 姿態、sEMG 與其他生理訊號 | 7,512；20；38；>40 小時；sEMG 16 通道、2 KHz |\n\n上述結論僅整理所提供論文文字；摘要與頁面內容沒有提供各 baseline 的具體分數、提升幅度、統計顯著性或 Video2EMG 的誤差數值。",
+      "insights": [
+        "若要建立可操作的 AI 教練，應把總分拆解為階段、關鍵步驟、錯誤類型與修正建議，讓模型輸出能直接對應教學行動。",
+        "在姿態相似但肌肉控制可能不同的動作中，sEMG 等生理訊號可作為視覺訊號的互補監測來源；實務部署時可先以多模態資料訓練，再研究僅用手機影片的推估方案。",
+        "負重訓練具有器材遮擋、關節負荷與較高受傷風險，評測設計不應只測動作分類或單一分數，也應檢驗階段定位、錯誤歸因、回饋可執行性與跨模態一致性。"
+      ],
+      "limitations": "論文明確指出 MyoMechanix 仍具挑戰性且有相當改進空間。所提供內容未交代完整資料切分、專家間一致性、受試者跨域泛化、負重與族群分布、CUBIST 詳細架構及各項實驗數值；因此尚不能據此判斷臨床安全性或影片取代 EMG 的實際可靠度。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Action Quality Assessment",
+        "Biomechanical Human Motion Understanding",
+        "sEMG與跨模態學習",
+        "Vision-Language VideoQA",
+        "AI健身與復健教練"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  }
+]
