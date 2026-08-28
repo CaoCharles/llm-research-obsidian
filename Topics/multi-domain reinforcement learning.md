@@ -1,6 +1,6 @@
-# Cross Domain Transfer
+# Multi Domain Reinforcement Learning
 
-> Cross Domain Transfer 相關研究的彙整頁面。
+> Multi Domain Reinforcement Learning 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 cross-domain transfer 相關關鍵字
+- 標題或摘要含有 multi-domain reinforcement learning 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Benchmark]` [[[2608.27409] Consolidating RLVR Capabilities Across Domains - A Deep Dive into Fusion Paradig...|Consolidating RLVR Capabilities Across Domains: A ...]] (2026-08-27)
-
-- `[Hallucination & Faithfulness]` [[[2608.14465] You Only Pass Once - Answering and Abstaining Together in a Single Forward Pass ...|You Only Pass Once: Answering and Abstaining Toget...]] (2026-08-14)
 
 ## 延伸閱讀
 

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2608.27454] WikiSkill - Compiling Agent Experience into Persistent Knowledge for Skill Evolu...|WikiSkill: Compiling Agent Experience into Persist...]] (2026-08-27)
+
 - `[Agent Evaluation]` [[[2608.11095] Why Does CLAUDE.md Keep Growing Catastrophic Remembering in Agentic Coding|Why Does CLAUDE.md Keep Growing? Catastrophic Reme...]] (2026-08-11)
 
 ## 延伸閱讀
