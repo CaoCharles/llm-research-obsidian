@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Benchmark]` [[[2608.27429] Mechanistic Reaction Prediction via Discrete Flow Matching on Graph-Structured E...|Mechanistic Reaction Prediction via Discrete Flow ...]] (2026-08-27)
+
 - `[Safety & Alignment]` [[[2608.21209] Personalized Privacy Control in LLMs via Attention Head Intervention|Personalized Privacy Control in LLMs via Attention...]] (2026-08-21)
 
 - `[Safety & Alignment]` [[[2608.11171] From Interpretability to Control - Insights from Six Years of the TrustNLP Works...|From Interpretability to Control: Insights from Si...]] (2026-08-11)
