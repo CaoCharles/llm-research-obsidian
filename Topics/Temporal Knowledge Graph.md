@@ -1,6 +1,6 @@
-# Text To Sql 評估
+# Temporal Knowledge Graph
 
-> Text To Sql 評估 相關研究的彙整頁面。
+> Temporal Knowledge Graph 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 Text-to-SQL 評估 相關關鍵字
+- 標題或摘要含有 Temporal Knowledge Graph 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Benchmark]` [[[2608.27391] CorporateBench - Large-Scale Q&A Benchmarking with Temporal Knowledge Bases|CorporateBench: Large-Scale Q&A Benchmarking with ...]] (2026-08-27)
-
-- `[Agent Evaluation]` [[[2608.26036] Trace Integrity for LLM Data Agents - A Vision for Auditable Structured Reasonin...|Trace Integrity for LLM Data Agents: A Vision for ...]] (2026-08-26)
 
 ## 延伸閱讀
 

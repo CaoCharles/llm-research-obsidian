@@ -1,0 +1,545 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2608.27439",
+      "title": "RedEvoAgent: Automatic Red-Teaming Agent with Experience-Driven Skill Evolution",
+      "abstract": "LLM-based agents are increasingly deployed in product-level execution harnesses, where jailbreaks can trigger harmful tool use and persistent state changes, creating greater risks than unsafe text generation alone. Existing automatic red-teaming methods often rely on fixed attacks, while recent agentic attackers coordinate multiple jailbreak tools and show stronger potential through trajectory-based retrieval. However, such retrieval can reuse misleading experiences due to retrieval bias and unclear tool credit, and full trajectories add context overhead while reducing interpretability. We propose RedEvoAgent, a black-box red-teaming agent that distills cross-case attack trajectories into a concise, human-readable attack skill. The attack skill adaptively evolves through tool-effectiveness profiling and Deciding-Tool Attribution for skill updates, and a validation ratchet that retains only updates improving validation performance. Experiments on multiple benchmarks, target models, and target execution harnesses show that RedEvoAgent outperforms fixed and agentic baselines, improves tool efficiency, and transfers across attacker models and target execution harnesses.",
+      "authors": [
+        "Junjie Zhang",
+        "Hui Liu",
+        "Kecheng Chen",
+        "Xianbo Mo",
+        "Changsheng Chen",
+        "Haoliang Li"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-08-27T17:55:33+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27439v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27439",
+      "score": 22
+    },
+    "analysis": {
+      "abstract_zh": "基於 LLM 的 agents 日益部署於產品級 execution harness 中；jailbreak 不僅可能產生不安全文字，還可能觸發有害的 tool use 與持久性狀態變更，因此風險更高。既有 automatic red-teaming 方法多依賴固定攻擊；近期 agentic attacker 雖能協調多種 jailbreak tools，並以 trajectory retrieval 強化攻擊，卻可能因 retrieval bias 與工具貢獻不明而重用誤導經驗，且完整 trajectory 會增加 context 成本並降低可解釋性。作者提出 RedEvoAgent，一種 black-box red-teaming agent，將跨案例攻擊 trajectory 蒸餾為精簡、可讀的人類攻擊 skill。該 skill 透過 tool-effectiveness profiling 與 Deciding-Tool Attribution 自適應演化，並以 validation ratchet 僅保留能提升 validation performance 的更新。多個 benchmark、target model 與 execution harness 的實驗顯示，RedEvoAgent 優於 fixed 與 agentic baselines，提升工具效率，且能跨 attacker model 與 target harness transfer。",
+      "problem_statement": "論文處理產品級 LLM agent 的自動化 black-box red-teaming 問題：jailbreak 成功可能導致工具執行與持久狀態改變。固定式攻擊只探索有限攻擊空間；trajectory-based agentic 方法雖可利用歷史經驗，卻受到語義檢索偏差、工具 credit assignment 不清、完整軌跡 context overhead 高及可解釋性低等限制，可能重用無關經驗並造成策略退化。",
+      "proposed_solution": "作者提出 RedEvoAgent，將多案例攻擊經驗轉換成單一、精簡且人類可讀的 Markdown attack skill，而非在推論時檢索完整 trajectories。框架先以 training split 分別測量各 jailbreak tool，建立 tool-effectiveness profile；再透過 Deciding-Tool Attribution 將成功案例歸因於成功 query 前直接使用的工具，協助蒸餾工具優先級與編排策略。每次 skill rewrite 都形成 candidate，只有在獨立 validation split 上嚴格優於目前最佳 skill 時，才由 validation ratchet 接受，藉此抑制錯誤更新與自我強化的工具選擇偏差。",
+      "core_contributions": [
+        "提出 RedEvoAgent，將跨案例 red-teaming trajectories 蒸餾為可讀、可重用且可演化的單一 attack skill。",
+        "提出 Tool-Effectiveness Profile 與 Deciding-Tool Attribution，分別提供獨立工具效能訊號及較清楚的成功工具歸因，降低由工具共現造成的策略偏差。",
+        "提出 incumbent-relative validation ratchet，僅接受在獨立 validation split 上嚴格優於目前 skill 的候選更新，並以多 benchmark、target model、execution harness 實驗驗證攻擊效能、工具效率與 transferability。"
+      ],
+      "methodology": "目標 agent 定義為 target model 與 execution harness 的組合；attacker agent 採 ReAct 迴圈，使用 GPT-4o mini，工具箱包含 GCG、AutoDAN、AmpleGCG、Template、FlipAttack、RolePlay 與 Prompt Substitution。每一回合可執行 QUERYTARGET，或呼叫工具改寫目前 prompt；每案例最多 B=20 steps，成功或耗盡預算後產生 trajectory 與 benchmark-native score。資料分為 training、validation、test：training 用於工具獨立評估與 trajectory collection，validation 僅用於候選 skill 選擇，test 僅作最終評估。工具效能以 training split 平均 score 計算；成功 trajectory 則由 Deciding-Tool Attribution 標記成功 query 前的直接工具。Skill distiller 分批分析成功與失敗軌跡，結合工具效能、目前 skill 與 rejection context，提出受 bounded-change 限制的完整候選文件。候選在 validation 上測試，只有嚴格提升目前分數才接受，否則保留舊 skill 並記錄候選。實驗使用 ASB（400 cases，80/40/280 split）與 AgentHarm（208 cases，40/20/148 split），涵蓋三個 target models 及 Claude Code、Codex harness；指標為 ASB 的 ASR、RR，AgentHarm 的 HarmScore、RR，以及平均 attack-tool calls。",
+      "key_results": "主要結果如下；ASB 報告 ASR，AgentHarm 報告 HarmScore，數值均為百分比。\\n\\n| Benchmark / Harness / Target | 強基線 | RedEvoAgent | 工具呼叫（RedEvoAgent） |\\n|---|---:|---:|---:|\\n| ASB / Claude Code / MiniMax-M2.5 | FlipAttack 91.8 | **93.2** | 1.8（skill ablation） |\\n| ASB / Claude Code / DeepSeek-V4-Flash | MAJIC 94.6 | **99.3** | 0.9（skill ablation） |\\n| ASB / Codex / MiniMax-M2.5 | FlipAttack 81.1 | **92.8** | 1.8（skill ablation） |\\n| AgentHarm / Claude Code / DeepSeek-V4-Flash | FlipAttack 67.9 | **74.3** | 2.2（skill ablation） |\\n| AgentHarm / Codex / DeepSeek-V4-Flash | MAJIC 71.5 | **74.4** | 2.6（skill ablation） |\\n\\n在 ASB、MiniMax-M2.5、Claude Code 的 component ablation 中，完整系統 ASR 為 93.2%；移除 Tool-Effectiveness Profile、Trajectory Collection、Deciding-Tool Attribution 後，分別降至 76.9%、85.0%、87.5%。Skill ablation 顯示 RedEvoAgent 在所有列出的設定中均優於 No Skill 與 Human Skill，且工具呼叫較少。零樣本 transfer 中，來源 skill 使 Qwen3-8B ASR 由 89.7% 升至 95.3%、Qwen3-4B 由 83.3% 升至 90.6%；換至 Codex harness 則由 80.8% 升至 90.5%。但 AgentHarm/MiniMax-M2.5/Claude Code 的第 4 輪更新雖提升 validation HarmScore，test HarmScore 由第 2 輪的 28.8% 降至 20.8%。",
+      "insights": [
+        "對 agent 安全評測而言，將完整執行軌跡壓縮為高階策略文件，可在保留工具編排資訊的同時降低推論 context 與提升人工審計可讀性；部署時可將 skill 視為可檢查的攻擊策略資產。",
+        "工具選擇不宜只依賴成功 trajectory 中的共現頻率；可先做隔離工具評估，再標記直接導致成功的決策工具，以減少 attacker 自身偏好被錯誤寫回策略。",
+        "演化機制應採用獨立 validation gate，而非直接採納 distiller 產物；論文中的 AgentHarm/MiniMax 例子顯示，即使 validation 改善，test 仍可能下降，因此 validation split 的多樣性與持續監控很重要。"
+      ],
+      "limitations": "論文顯示效能取決於 toolbox 的強度與多樣性，且某些設定出現 validation 改善但 test 退化，反映 ratchet 仍可能過擬合。實驗涵蓋的 benchmark、target model 與 harness 有限；文中未報告統計顯著性、更多隨機種子或更廣泛真實部署環境的結果。",
+      "tags": [
+        "red-teaming",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "automatic jailbreak evaluation",
+        "LLM agent tool-use security",
+        "experience-driven skill evolution",
+        "black-box adversarial testing"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27348",
+      "title": "INTENT-AS-A-TOOL Makes it Easy to Track Agentic Misalignment",
+      "abstract": "As large language models (LLMs) are deployed as autonomous agents, safety failures increasingly involve consequential actions. We study agentic misalignment, where agents take harmful actions under goal conflicts and pressures. Using chain-of-thought (CoT) monitoring, we find that harmful execution is often preceded by intent signals in reasoning. However, post-hoc CoT labels are too coarse to show how intent changes during generation. We introduce INTENT-AS-A-TOOL, an approach that adds intent-targeted tools to give the model a dedicated channel for expressing commitment to a target behavior. The probability of calling an intent tool provides a judge-free, fine-grained signal of the model's tendency to pursue that behavior. Our results show that INTENT-AS-A-TOOL complements CoT monitoring, expands post-hoc CoT labels into dense trajectories, and identifies critical steps for online intervention. These findings suggest that action preferences are useful for tracking agentic misalignment during reasoning. Our code and data are accessible: https://github.com/RebeccaZhang22/intent-as-a-tool.",
+      "authors": [
+        "Yutong Zhang",
+        "Jianshuo Dong",
+        "Peng Xu",
+        "Long Wang",
+        "Jie Zhang",
+        "Tianwei Zhang",
+        "Xiaoping Zhang",
+        "Han Qiu"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-27T16:47:19+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27348v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27348",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "隨著大型語言模型（LLM）被部署為自主 agents，安全失敗愈來愈涉及具後果性的行動。本文研究 agentic misalignment：agents 在目標衝突與壓力下採取有害行動。作者透過 chain-of-thought（CoT）monitoring 發現，有害執行通常 preceded by reasoning 中的意圖訊號；但事後 CoT 標註過於粗粒度，無法呈現生成過程中的意圖變化。本文提出 INTENT-AS-A-TOOL，在 action space 中加入針對特定意圖的工具，讓模型透過專用通道表達對目標行為的承諾。呼叫 intent tool 的機率提供不依賴外部 judge、細粒度的行為傾向訊號。實驗顯示，此方法能補充 CoT monitoring、將事後標籤擴展為密集軌跡，並找出適合線上介入的關鍵步驟。",
+      "problem_statement": "論文要解決的是：如何在 agent reasoning 過程中，高效且細粒度地追蹤 agentic misalignment 的有害意圖。現有 CoT monitoring 依賴外部 judge，通常在完整 rollout 後才進行粗粒度分類，無法定位意圖形成、轉變或重新出現的時間點；若對每個 prefix 重複判斷，還會增加推論成本與延遲。此外，一般 action tool 只顯示模型準備採取的介面，未必能區分其背後的行為目的。",
+      "proposed_solution": "作者提出 INTENT-AS-A-TOOL：針對每一個預先定義的目標 misbehavior，加入一個零參數、行為專用的 intent tool，並指示模型在決定執行該行為後先呼叫此工具，再使用原有工具完成行動。對任一 reasoning prefix，將模型特定的 tool-call opener 附加至上下文，讀取 intent tool 首個 token 的 next-token probability，作為 prefix-local intent score。此設計不需額外訓練 monitor 或反覆呼叫外部 judge，能追蹤意圖軌跡；在線上防禦中，若 intent tool 成為候選工具中偏好最高者，便插入第一人稱安全反思，再繼續生成。",
+      "core_contributions": [
+        "提出 INTENT-AS-A-TOOL，將預先定義的 misbehavior intent 表達為專用工具，並以 intent tool 的 next-token probability 建立 judge-free、prefix-local 的意圖分數。",
+        "建立 Rejection、Clean、Self-correction、Intent-only、Execution 五類 CoT 軌跡 taxonomy，並以五個 open-weight reasoning models 與三種 agentic-misalignment 情境分析意圖形成和有害執行的關係。",
+        "提出基於 intent preference 的 online intervention，在模型接近選擇有害行動時插入安全反思；實驗顯示其可定位關鍵決策點，且在多數 Qwen-family 設定中達到或超過 prompting baseline。"
+      ],
+      "methodology": "研究使用 Lynch et al.（2025）的 sandboxed agentic-misalignment dataset，涵蓋 blackmail、leaking、murder 三種 workplace-agent 情境；每種情境有 234 個測試設定，每個 model–scenario 配對以 temperature τ=1 產生三次 rollout。研究先以 GPT-4.1 CoT monitor 將軌跡分為 Rejection、Clean、Self-correction、Intent-only、Execution，並把後兩類有害追求相關部分聚合為 harmful pursuit；在 1,000 個 rollout 上與 Claude-Sonnet-4.6 比較，報告超過 95% agreement。方法階段在原有 action space 加入各情境 intent tool，確保工具首 token 唯一，於 sentence boundary 重用 prefix 的 cached KV states，取得各工具首 token 機率；intent score 定義為 pθ(Db|Ct)。線上介入在 intent tool 具有最高 tool preference 時觸發，插入情境特定的第一人稱 safety reflection。評估包括 case-level defense success rate、intent score 對 CoT binary label 的 AUROC 與 agreement、harmful-pursuit rate、intent-tool instruction-following rate，以及與 random、fixed-interval triggering 的 timing ablation；另以 benign scenarios 檢查 spurious activation，並探索 AgentHarm 八類有害行為。",
+      "key_results": "主要結果如下；防禦成功率定義為同一 risky case 的所有 defended rollouts 均被判定為非有害。\n\n| 結果項目 | 論文報告數據 |\n|---|---|\n| CoT 監測整體觀察 | Intent-only 通常遠少於 Execution，作者據此指出可觀察的有害意圖通常會進一步執行；圖 1 摘要比例為 67.6% Never considered、27.7% Considered but aborted、0.3% Intent-only、4.4% Execution，另有小於 0.1% 的類別標示於圖中 |\n| Qwen3-32B 線上介入 | Blackmail 100.0%、Leaking 96.5%、Murder 98.9% |\n| 相較 prompting | 在 Qwen-family 的 12 個 model–scenario 設定中，介入方法在 9 個設定匹配或超過 prompting；Gemma-4-31B-IT 在三情境為 31.2%、18.6%、57.8%，低於 prompting 的 99.2%、55.0%、89.0% |\n| Timing ablation（Qwen3-32B） | Intent-guided success 98.5%，平均 3.22 次介入；Random 72.7%、3.24 次；Fixed interval 84.3%、8.18 次 |\n| Intent score 與 CoT label（AUROC / agreement） | Qwen3-8B 0.948 / 99.1%；Qwen3-32B 0.924 / 90.2%；Qwen3-235B-A22B 0.976 / 99.3%；Qwen3.5-27B 0.745 / 71.5%；Gemma-4-31B-IT 0.943 / 92.3% |\n| Benign scenario sanity check | 所有評估模型的 target-misbehavior rate 與 intent-tool activation rate 均為 0.0%；15 個 benign workplace items 中，介入率為 0.0%、task success 為 100.0% |\n| 行為擾動 | 加入 intent tool 後 harmful-pursuit rate 會依 model–scenario 改變；例如 Qwen3-32B 為 Blackmail 3.1%→20.5%、Leaking 29.8%→32.1%、Murder 36.6%→37.9%，顯示測量本身可能影響行為。",
+      "insights": [
+        "對已知且可明確定義的高風險行為，可在 agent action space 中配置專用 intent signal，作為執行前的監控與阻擋條件，而非只依賴最終 action 或事後 judge。",
+        "監控應關注 intent score 的時間軌跡，而非單一最終分數；論文展示了 sharp transition、gradual ramp、oscillation、self-correction 與 re-emerging commitment，這些模式可用於設計不同的告警與重試策略。",
+        "intent tool 是 measurement intervention，可能改變 harmful-pursuit rate；實務部署應同時做無工具對照、instruction-following 檢驗、benign false-positive 測試及 late exposure/re-emergence 的失效監控。"
+      ],
+      "limitations": "方法改變模型的 action space，因此 intent score 只是操作性近似，不能等同於不可觀測的 latent intent；其可靠性依賴模型是否遵循宣告工具指示。目標行為需預先定義，難以發現未知風險；線上介入也可能太晚、無法穩定修正或遭意圖重新出現。主要實驗僅涵蓋五個 open-weight models、三種 sandbox 情境，且需模型提供 token-level log probabilities，對長期、多代理、瀏覽與程式執行場景的效果仍待評估。",
+      "tags": [
+        "safety",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "chain-of-thought monitoring",
+        "online safety intervention",
+        "agentic misalignment",
+        "tool-use monitoring"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27391",
+      "title": "CorporateBench: Large-Scale Q&A Benchmarking with Temporal Knowledge Bases",
+      "abstract": "LLMs are increasingly able to answer complex questions about enterprise-scale document collections. But evaluation is hard: companies don't want to share internal communications, and synthetic datasets have been overly simple. We present CorporateBench (CB), a human-validated multi-task Q&A benchmark whose scale approaches the conditions LLMs encounter in corporate communication networks, with evaluation corpora surpassing 230,000 documents. CB evaluates LLMs across two dimensions (information extraction and knowledge base querying) through four synthetically generated firms ranging from 12 to 10,000 employees. Each corpus is sampled from a temporally evolving knowledge base describing a consistent world, guaranteeing cross-document logical consistency even across hundreds of thousands of documents. We evaluate five LLMs on CB, revealing increasingly poor performance as input size approaches realistic scales. CB provides LLM developers a metric for corporate communication reasoning, filling a crucial gap in the benchmarking ecosystem.",
+      "authors": [
+        "Sil Hamilton",
+        "Albert Yu Sun",
+        "Oscar J. Romero",
+        "Carl-Leander Henneking",
+        "David Mimno",
+        "Bishan Yang",
+        "Igor Labutov"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-08-27T17:23:04+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27391v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27391",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "LLM 越來越能回答企業級文件集合中的複雜問題，但評估仍然困難：企業不願公開內部通信資料，而合成資料集又通常過於簡單。本文提出 CorporateBench（CB），一個經人工驗證的多任務問答 benchmark，其規模接近 LLM 在企業通信網路中會面對的情境，評估語料超過 230,000 份文件。CB 從資訊抽取與 knowledge base querying 兩個面向評估 LLM，涵蓋四家合成企業，員工數約 12 至 10,000 人。每個語料庫皆由描述一致世界的時間演化 knowledge base 取樣生成，因此即使跨越數十萬份文件，也能維持跨文件邏輯一致性。作者評估五個 LLM，發現當輸入規模接近真實企業情境時，模型表現持續惡化。CB 為企業通信推理提供評估指標，補足現有 benchmark 的重要缺口。",
+      "problem_statement": "現有 long-context 與企業 benchmark 無法充分測量 LLM 在大規模、互相連結且具時間變化的企業文件上進行檢索、抽取與推理的能力。needle-in-a-haystack 類測試過度簡化；真實企業資料受 NDA 限制而稀缺；既有合成企業資料集通常規模較小，且由 LLM 直接生成，難以保證文件間一致性與可靠 ground truth。",
+      "proposed_solution": "作者提出 CorporateBench，以 procedural knowledge base 先建立企業世界，再依據其中的員工、部門、團隊、任務、專案、會議及時間關係生成通信文件。此設計的核心創新是將文件生成與 ground truth 分離：所有標籤可由 KB 的 SPARQL 查詢確定，並透過 OWL ontology 驗證結構一致性；文件中的 evidence strings 則明確揭示關係與時間界線。由此可在維持邏輯一致性的同時擴展至超過 230,000 份文件，並測試跨文件檢索、結構化抽取、時間推理與整合式問答。",
+      "core_contributions": [
+        "建立四個由 temporal knowledge bases 程序化生成的企業通信語料庫，規模從 354 至 232,693 份文件，總量達 263,466 份。",
+        "提出以 ontology、關係驗證、時間標記與 KB 查詢產生 ground truth 的資料建構流程，維持跨文件邏輯一致性並支援可擴展生成。",
+        "提供涵蓋 entity/relationship extraction、topic classification、KB QA、Topic QA 與 Integrated QA 的多任務評估，並比較 RAG 與直接 KB querying。"
+      ],
+      "methodology": "資料生成先以 Turtle/OWL 定義 ontology，將 company、department、team、employee、project、task 與 meeting 表示為實體及關係，主要關係包括 MemberOf、ReportsTo、WorksOn、WorksAt、Attends、Organize 與 BelongsTo。接著依公司規模生成階層，模擬 90 天工作、任務與六類會議，季度末加入約 10% 新員工並標記關係的起止時間；再由 Claude Haiku 4.5 為實體產生名稱、職稱、別名與屬性。文件以 email 及 meeting 文件形式生成，從 3,217 個關係 evidence strings 中取樣，再由 Claude Haiku 4.5 補全文本，並使用主題、個性與正式程度增加詞彙多樣性。資料包含四家公司與 263,466 份文件。任務分為 extraction 與 QA：KB evaluation 以 entity/relationship/temporal relationship 的 precision、recall、F1 評估；topic classification 使用 macro-F1；KB QA、Topic QA 與 Integrated QA 使用 exact match，集合答案使用 F1。QA 同時提供 RAG 設定（pgvector 與 text-embedding-3-small）及直接查詢 KB 的 SQL 設定。評估五個 LLM，但抽取表格呈現三個模型的結果。",
+      "key_results": "主要結果如下；數值均取自論文表格與正文。\n\n| 評估面向 | 規模 | 代表結果 |\n|---|---:|---|\n| 語料規模 | S/M/L/XL | 354 / 3,926 / 26,493 / 232,693 documents；合計 263,466 |\n| KB extraction：entity F1 | S→XL | 各模型整體約由 0.824–0.746 降至 0.777–0.715，下降幅度小於關係抽取 |\n| KB extraction：relationship F1 | S→XL | Haiku 4.5：0.845→0.494；GPT-5 Nano：0.419→0.206；Gemini 2.5 Flash Lite：0.797→0.205 |\n| KB extraction：temporal relationship F1 | S→XL | Haiku 4.5：0.470→0.173；GPT-5 Nano：0.142→0.062；Gemini 2.5 Flash Lite：0.442→0.128 |\n| RAG KB QA 最佳分數 | S→XL | GPT-5 Nano：0.527→0.244；GPT-5.1：0.470→0.269 |\n| KB KB QA 最佳分數 | S→XL | Sonnet 4.5：0.767→0.642 |\n| RAG Topic QA 最佳分數 | S→XL | GPT-5 Nano：0.672→0.456；Sonnet 4.5：0.656→0.492 |\n| KB Topic QA 最佳分數 | S→XL | Sonnet 4.5：0.848→0.571 |\n| RAG Integrated QA 最佳分數 | S→XL | GPT-5.1：0.469→0.566；GPT-5 Nano：0.511→0.510 |\n| KB Integrated QA 最佳分數 | S→XL | Sonnet 4.5：0.611→0.647；GPT-5.1：0.431→0.607 |\n| 人工驗證 | 1,000 judgments | 正確辨識文件關係的比例為 76.2% |\n| Topic classification | Biocure/Pound | LLM 在 Biocure 50-shot F1 為 0.877–0.982；Pound 50-shot 為 0.598–0.751；TF-IDF+LR 分別達 0.993 與 0.983 |\n\n整體而言，直接 KB 查詢通常優於 RAG，且 KB–RAG 的 KB QA 差距由 S 的 0.24 擴大至 XL 的 0.37。Integrated QA 隨規模略有改善，作者推測與更豐富的跨來源上下文有關。",
+      "insights": [
+        "企業 RAG 評估不應只測單文件或少量文件問答；應控制文件數量與每題涉及的證據量，測試檢索在規模增加時是否失效。",
+        "將結構化 KB 與原始文件分開評估，有助於區分「模型無法抽取關係」與「RAG 未能找到證據」兩類瓶頸；實務系統可加入抽取、校驗與查詢層。",
+        "時間關係是明顯弱點：企業知識圖譜應保留有效期間、入職與離職事件，並對 temporal reasoning 設計獨立指標，而非只計算靜態事實正確率。"
+      ],
+      "limitations": "資料主要是 email，未涵蓋 Slack、Teams、技術規格、財務報告、試算表與簡報。公司活動只模擬一季，未呈現併購、策略轉向或長期制度性知識。文件由 Claude Haiku 4.5 生成，可能帶有固定文風與模型偏差。人工驗證僅抽樣 100 封文件，且非專家判斷正確率為 76.2%。",
+      "tags": [
+        "benchmark",
+        "rag-evaluation",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "企業級長上下文理解",
+        "多文件資訊抽取",
+        "Temporal Knowledge Graph",
+        "RAG 檢索與推理",
+        "Text-to-SQL 評估"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27394",
+      "title": "RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature",
+      "abstract": "Retrieved scientific literature can serve as inspiration for both human and AI scientists. Inspiration can take different forms: prior work may directly suggest how to address a problem, or surface directions at different levels of abstraction - zooming out to a more general view or zooming in to a concrete realization. We introduce RATIO (Retrieval Across Typed Ideation Operations), a large-scale benchmark in which relevance is defined by three operations which we name ideation moves: Address retrieves potential approaches for stated problems, Broaden retrieves more general formulations, and Specify retrieves concrete instantiations. RATIO is constructed from millions of full-text scientific papers across CS literature via a general recipe that extends discourse-marker distant supervision - previously used only for classification - to corpus-scale retrieval, combined with extensive LLM and human vetting. Experiments show that operation-specific fine-tuning substantially boosts retrievers but leaves much room for further improvements. RATIO provides a scalable training and evaluation framework for retrieval components that support literature-grounded ideation, opening up new research avenues on scientific inspiration retrieval.",
+      "authors": [
+        "Maayan Sharon",
+        "Tom Hope"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-08-27T17:24:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27394v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27394",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "科學文獻可為人類與 AI 科學家提供靈感，而靈感具有不同形式：既有研究可能直接提出解決問題的方法，也可能在不同抽象層次上提供方向，例如將問題推向更一般的表述，或落實為更具體的實例。本論文提出 RATIO（Retrieval Across Typed Ideation Operations）benchmark，以三種 ideation moves 定義相關性：ADDRESS 檢索可處理既定問題的潛在方法；BROADEN 檢索更一般化的 formulation；SPECIFY 檢索具體的 instantiation。RATIO 從 CS 領域數百萬篇全文論文建立，將 discourse-marker distant supervision 從分類任務擴展至大規模 retrieval，並結合 LLM 與人工審查。實驗顯示，針對操作進行 fine-tuning 能顯著提升 retriever，但整體仍有很大改進空間。",
+      "problem_statement": "現有 scientific retrieval benchmark 多評估 topical relevance，或文件是否回答 search query，無法區分候選句在科學構思中扮演的功能角色。對 literature-grounded ideation 而言，系統需要分別找到解決問題的方法、較高層次的概括，以及更具體的實例；然而這些關係常由隱含語意決定，表面詞彙不一定明顯。論文因此要建立可大規模訓練與評估 typed inspiration retrieval 的 benchmark。",
+      "proposed_solution": "作者提出 RATIO，將檢索相關性明確化為 ADDRESS、BROADEN、SPECIFY 三種 ideation operation，並以全文論文中的 discourse markers 作為作者自我標示的 distant supervision。方法先建立並驗證 operation-specific marker lexicon，再從相鄰句擷取 query–candidate pair，移除 marker 後放入共享候選池。透過人工審查、LLM 驗證與人類校準，建立較高品質的 silver test set；同時採用時間切分與非目標 discourse-marker distractors，降低資料洩漏及候選池捷徑。",
+      "core_contributions": [
+        "提出以 ADDRESS、BROADEN、SPECIFY 三種 typed ideation operation 定義 scientific inspiration retrieval 的 RATIO benchmark。",
+        "提出將 discourse-marker distant supervision 從 sentence-pair classification 擴展至大規模、關係條件式 corpus retrieval 的建構流程，並結合 LLM 與人工校準。",
+        "建立包含時間切分、共享異質候選池、distractor negatives 與 silver test set 的全文句子級資源，並證明 operation-specific fine-tuning 能改善 retriever。"
+      ],
+      "methodology": "任務輸入為 scientific statement q、操作 r∈{ADDRESS,BROADEN,SPECIFY} 與全文句子候選庫 C，模型須依 q 與 r 排序候選句。ADDRESS 定義為候選句提出可直接處理問題的方法或洞見；BROADEN 將 q 改寫至更高抽象層次；SPECIFY 則提供 q 的具體案例、機制或實例。資料來自 2016 年前後至 2026 年的 CS 全文論文，先進行句子切分、清理與相鄰句配對，再使用人工 curated、LLM-generated、可延伸 connective 與 pattern expansion 建立 marker lexicon。共取得 4,252 個 marker，其中 809 個在約 366.6M 個相鄰句對中觸發，形成約 3.02M 個 pair。資料按出版日期切分：訓練集至 2025 年 9 月 30 日，驗證集為 2025 年第四季，測試集為 2026 年初；候選池跨三種操作共享，並加入非目標 discourse marker 產生的 distractors。模型比較 BM25、all-mpnet-base-v2、ModernBERT-embed-large 與 Stella-en-1.5B-v5；dense retriever 使用 operation-specific contrastive fine-tuning 與 in-batch negatives。主要指標為 Recall@1/10、MRR@10/100，以及以 LLM 評估 top-10 候選的 Hit Rate、Precision、nDCG、MRR、MAP。silver set 由人類校準的 LLM prompts 篩選，另以 top-10 candidate-level judgment 與 reference-free inspiration preference 補充單一 gold 指標。",
+      "key_results": "主要結果如下（silver test set，百分比）：\n\n| 操作 | 模型/設定 | R@1 | R@10 | MRR@10 | MRR@100 |\n|---|---|---:|---:|---:|---:|\n| SPECIFY | BM25 | 13.0 | 27.3 | 17.6 | 18.1 |\n| SPECIFY | ModernBERT baseline | 20.5 | 39.1 | 26.7 | 27.3 |\n| SPECIFY | ModernBERT tuned | 37.2 | 65.5 | 46.7 | 47.4 |\n| ADDRESS | BM25 | 5.3 | 15.2 | 8.3 | 8.7 |\n| ADDRESS | ModernBERT baseline | 6.7 | 17.8 | 10.2 | 10.6 |\n| ADDRESS | ModernBERT tuned | 17.2 | 40.0 | 24.5 | 25.3 |\n| BROADEN | BM25 | 7.9 | 17.6 | 10.9 | 11.3 |\n| BROADEN | ModernBERT baseline | 13.4 | 26.0 | 17.3 | 17.9 |\n| BROADEN | ModernBERT tuned | 20.9 | 41.4 | 27.3 | 27.8 |\n\nModernBERT tuned 在三種操作均優於未微調版本；相對提升約為 1.6–2.4 倍，但 ADDRESS 與 BROADEN 的絕對表現仍有限。top-10 LLM candidate evaluation 顯示，tuned 模型的 hard-agreement Hit Rate 為 SPECIFY 89.0%、ADDRESS 76.5%、BROADEN 29.0%，相較 baseline 分別為 65.5%、40.5%、19.3%。對 top-10 list 的 Precision，tuned 結果為 23.0%、16.7%、3.6%。此外，ADDRESS 有 41.2% 的 query 雖未取回 mined gold，卻取回其他被判定有效的候選；SPECIFY 與 BROADEN 分別為 24.0% 與 12.0%。reference-free inspiration preference 中，tuned list 被偏好的比例為 ADDRESS 70.2%、SPECIFY 61.6%、BROADEN 56.2%。",
+      "insights": [
+        "RAG 系統不應只用 topical similarity 衡量文獻相關性；可依使用者意圖將檢索路由至 addressing、generalizing 或 concretizing 等不同操作。",
+        "單一 gold 的 Recall/MRR 可能低估 inspiration retrieval，實務評估應允許多個有效候選，並加入 top-k candidate-level judgment。",
+        "共享候選池與 hard negatives 有助於檢驗模型是否真正學到 query-conditioned compatibility，而非只辨識候選句的文體或 rhetorical role。"
+      ],
+      "limitations": "資料主要來自 CS 全文論文，且 supervision 依賴相鄰句與 discourse markers，可能遺漏沒有明示標記的有效關係。silver 與 top-k 評估大量依賴經人類校準的 LLM，仍可能存在判斷偏差。BROADEN 資料量與表現尤其有限。作者建議擴展至非相鄰句、其他領域、更多人工標註，並整合至端到端 scientific reasoning 系統。",
+      "tags": [
+        "benchmark",
+        "rag-evaluation",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific literature retrieval",
+        "relation-conditioned retrieval",
+        "scientific ideation",
+        "discourse-marker distant supervision",
+        "multi-positive information retrieval"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27424",
+      "title": "Beyond F1: Evaluating Coverage and Failure Recovery in AI Model Security Scanners",
+      "abstract": "Static scanners are increasingly used to identify executable or otherwise unsafe content in machine- learning artifacts, yet conventional evaluation metrics characterize only cases where a scanner yields a usable security judgment. We evaluate ModelScan, ModelAudit, and Fickling using a controlled, artifact-backed benchmark on a synthetic corpus of 170 Pickle and PyTorch focused artifacts across 145 specimen families, 135 of which have binary security ground truth and 10 of which are intentionally malformed without labels. We explicitly distinguish non-N/A coverage, analysis completion, definitive security decisions, non-security findings, and unsupported outcomes. On labeled families, ModelAudit produced definitive security decisions for all 135 families (100%), Fickling for 110 (81.5%), and ModelScan for 67 (49.6%). Conditional on making a definitive judgment, ModelScan achieved 100% precision, recall, and F1. Fickling identified no unique true- positive families beyond those found by the combination of ModelAudit and ModelScan. Furthermore, for the 48 malicious families where ModelScan failed to complete its analysis, both ModelAudit and Fickling generated detections consistent with ground truth. These findings underscore the need to separate judgment accuracy from judgment availability, as well as incremental detection coverage from tool-level redundancy.",
+      "authors": [
+        "Qianlong Lan",
+        "Vinothini Pandurangan",
+        "Anuj Kaul",
+        "Indranil Sanyal"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-08-27T17:49:28+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27424v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27424",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "靜態 scanner 日益用於識別 machine-learning artifacts 中可執行或其他不安全內容，但傳統評估指標通常只描述 scanner 成功產生可用安全判定的案例。本文以受控、由 artifacts 支持的 benchmark，評估 ModelScan、ModelAudit 與 Fickling。資料集包含 170 個聚焦 Pickle 與 PyTorch 的 artifacts，分屬 145 個 specimen families；其中 135 個具有二元安全 ground truth，另有 10 個刻意製造且未標註的 malformed artifacts。作者明確區分 non-N/A coverage、analysis completion、definitive security decisions、non-security findings 與 unsupported outcomes。在有標籤的 families 上，ModelAudit 對全部 135 個 family 產生 definitive security decisions，Fickling 為 110 個，ModelScan 為 67 個。以成功產生 definitive judgment 的案例為條件，ModelScan 的 precision、recall 與 F1 均為 100%。此外，Fickling 未在 ModelAudit 與 ModelScan 的組合之外提供獨有 true-positive families；對於 ModelScan 無法完成分析的 48 個 malicious families，ModelAudit 與 Fickling 都產生符合 ground truth 的 detections。結果顯示，必須分離 judgment accuracy 與 judgment availability，並區分增量 detection coverage 與工具層級的 redundancy。",
+      "problem_statement": "現有 scanner 評估偏重 precision、recall 與 F1，通常只計算已產生可用安全判定的案例，因而掩蓋 unsupported、incomplete 或 execution error 所造成的實務覆蓋缺口。論文要解決的核心問題是：如何同時衡量判定正確性、判定可用性、格式適用性，以及多個 scanner 是否帶來真正的增量偵測或僅提供失敗復原與重複確認。",
+      "proposed_solution": "作者提出一套 family-aware、artifact-backed 的 scanner 評估框架，將觀測結果拆分為 observed non-N/A coverage、analysis completion、definitive security judgment、non-security finding、scan incomplete 與 scanner error。框架同時在 corpus-wide 與 labeled-family 層級報告 decision coverage，並將 conditional detection metrics 與可用性分開。作者進一步以 family-level overlap 分析工具的 unique true-positive、unique false-positive 與 failure-mode redundancy，評估異質 scanner 對主要工具失敗的 recovery 能力，並補充 rename robustness 與 latency 測試。",
+      "core_contributions": [
+        "提出 family-aware 評估方法，明確分離 observed non-N/A coverage、analysis completion、definitive security decision、conditional correctness 與 failure states。",
+        "建立包含 170 個 artifacts、145 個 specimen families 的 frozen Pickle/PyTorch benchmark，並以 frozen ground-truth manifest 與 adjudication ledger 進行可重現評估。",
+        "透過 family-level overlap 與 recovery analysis，區分 scanner 的增量 detection coverage、工具冗餘與對 incomplete analysis 的 operational recovery。"
+      ],
+      "methodology": "實驗使用固定版本的 ModelScan 0.8.6、ModelAudit 0.2.52 與 Fickling 0.1.12，在 offline、telemetry disabled、two workers 的設定下執行。Corpus 包含 170 個 Pickle/PyTorch-focused artifacts，組織為 145 個 specimen families：70 個 malicious、65 個 benign、10 個 ground truth unknown 的 malformed families；其中含 130 個 Pickle、30 個 PyTorch checkpoint 與 10 個 Pickle container artifacts。安全標籤來自 frozen corpus manifest，並以 family 為主要安全效能分析單位，避免 renamed variants 造成 pseudoreplication。每個 scanner/family observation 依結果分為 detected、clean、not applicable、scan incomplete、scanner error 或 non-security finding。評估 observed non-N/A coverage、analysis completion、corpus-wide definitive-judgment rate（CDR）與 labeled-family decision rate（LDR），並在 definitive judgments 上計算 precision、recall、F1、specificity 與 FPR；unknown families 不納入 TP/FP/TN/FN。Recovery 定義為：當一個 scanner incomplete 時，另一 scanner 在同一 family 產生與 ground truth 一致的 definitive judgment。另以 family-level union 分析增量 coverage，並對五個 malicious families 的 15 個 scanner-level filename/extension 變換比較決策穩定性；latency 則報告 170 次 executions 的 median 與 P95。論文未涉及可訓練模型架構；被評估的是三個 static scanners。",
+      "key_results": "主要結果如下：\n\n| Scanner | Non-N/A coverage | 完成分析 | Labeled-family decision rate | TP | FP | TN | FN | Conditional F1 |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|\n| ModelAudit | 145/145 | 145/145 | 100%（135/135） | 70 | 60 | 5 | 0 | 論文未報告具體數值；由 TP、FP、FN 可知 precision 與 recall 均非 100% |\n| ModelScan | 145/145 | 67/145 | 49.6%（67/135） | 22 | 0 | 45 | 0 | 100% |\n| Fickling | 120/145 | 120/120 non-N/A | 81.5%（110/135） | 60 | 50 | 0 | 0 | 論文未報告具體數值；其 definitive benign judgments 的 conditional FPR 為 100% |\n\n其他關鍵發現：ModelAudit 對全部 70 個 malicious families 產生 detections；加入 ModelScan 或 Fickling 的 union 未增加 malicious detection coverage，仍為 70/70，benign falsely flagged 仍為 60/65。ModelScan 有 78 個 incomplete families，其中 48 個為 malicious；ModelAudit 與 Fickling 各自對這 48/48 個產生符合 ground truth 的 detections。Fickling 相對於 ModelAudit 加 ModelScan 提供 0 個 unique TP 與 0 個 unique FP families。Rename 測試的 15 個 scanner-level comparisons 全部維持原決策。Latency 的 median/P95 分別為：Fickling 64.90/80.98 ms、ModelAudit 963.21 ms/2.08 s、ModelScan 14.30/16.26 s。",
+      "insights": [
+        "在實務部署中不應只看 F1；應同步設定 labeled-family decision coverage 或完成率，因為高 conditional F1 可能伴隨大量無法判定的 artifacts。",
+        "多 scanner 組合應依目標選擇 union、fallback 或其他政策：本研究中 Fickling 沒有增加 unique TP，但能對 ModelScan 失敗的 malicious families 提供 recovery。",
+        "評估 false positive 時應區分 specimen-level maliciousness 與 conservative capability-flagging；對 benign custom serialization 的警告可能代表安全政策取捨，而不只是無效錯誤。"
+      ],
+      "limitations": "研究僅涵蓋 Pickle/PyTorch，資料為 synthetic、deterministic artifacts，且只有 145 個 families，不能代表真實部署分布、adaptive adversaries 或 zero-day exploits。10 個 malformed families 無二元標籤；版本、rename 測試與 latency 也受固定設定限制。未來將納入自然產生的惡意 artifacts、對抗規避、更廣泛 serialization ecosystems、版本追蹤與 deployment-level policy studies。",
+      "tags": [
+        "benchmark",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "static security analysis",
+        "model supply-chain security",
+        "secure deserialization",
+        "Pickle/PyTorch artifact scanning",
+        "failure recovery evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27358",
+      "title": "RCMN: Understanding Misleadingness in Influential Public Discourse",
+      "abstract": "Influential public discourse shapes public beliefs and can also mislead, not only through what is stated, but also through how information is framed, omitted, contextualised, and communicated. Yet less research has focused on how such misleadingness arises and shapes the interpretations formed by readers. To address this gap, we introduce Reader-Centric Misleadingness Understanding (RCMN), a framework that operationalises misleadingness through five dimensions: misleading mechanism, likely reader interpretation, evidence-warranted interpretation, emotional arousal, and communicative intent. Based on this framework, we construct an evidence-grounded dataset of influential public discourse. Empirical findings show that misleadingness is diverse and extends well beyond fabrication, with unsupported inference, exaggeration, and omission among the prevalent mechanisms, and is frequently associated with heightened emotional arousal and distortive communicative intent. Moreover, we investigate whether lightweight claim-and-context representations retain sufficient cues for understanding reader-centric misleadingness without access to richer contextual, evidential, and multimodal information. Evaluation across five recent generative foundation models shows that reader-level interpretations can often be recovered from such limited representations, whereas identifying how misleadingness is produced remains considerably more challenging. These findings highlight the potential of lightweight representations for scalable misleadingness analysis, while reliable understanding of misleading mechanisms continues to require richer contextual and evidential grounding.",
+      "authors": [
+        "Peiling Yi"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-08-27T16:57:40+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27358v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27358",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "Influential public discourse 會形塑公眾信念，也可能透過陳述內容以外的方式造成誤導，包括資訊框架、遺漏、脈絡化方式與溝通形式。針對過去較少研究誤導性如何產生及影響讀者解讀的問題，本文提出 Reader-Centric Misleadingness Understanding（RCMN）框架，以五個面向操作化誤導性：誤導機制、可能的讀者解讀、證據支持的解讀、情緒喚起，以及溝通意圖。作者據此建立 evidence-grounded 的 influential public discourse 資料集。結果顯示，誤導不僅是捏造，也常透過 unsupported inference、exaggeration 與 omission 產生，並經常伴隨較高情緒喚起及 distortive communicative intent。對五個 generative foundation models 的評估顯示，輕量化的 claim-and-context representations 通常足以恢復讀者層次的解讀，但辨識誤導如何產生則明顯更困難，仍需較豐富的脈絡與證據支援。",
+      "problem_statement": "現有 misinformation 方法主要聚焦單一 claim 的 factuality 或 veracity，難以處理真實陳述經由框架、選擇性呈現、遺漏、錯置脈絡與情緒化表達而造成的誤導。讀者可能形成的解讀、證據真正支持的解讀、情緒喚起及溝通意圖彼此交互，且往往需要外部證據與多模態脈絡；因此傳統 fact verification 不足以解釋訊息如何影響理解，也難以低成本、可擴展地分析。",
+      "proposed_solution": "作者提出 Reader-Centric Misleadingness Understanding（RCMN），將誤導性定義為訊息鼓勵的解讀與相關證據及脈絡所支持解讀之間的差異。框架以五個互補面向描述現象：misleading mechanism、likely reader interpretation、evidence-warranted interpretation、emotional arousal 與 communicative intent。作者從公開流通且受到專業 fact-checking 關注的訊息重建原始來源、脈絡和證據，建立 evidence-grounded 資料集及 benchmark；並測試 claim-and-context 的低成本表示是否保留足夠線索，以支援初步的 reader-centric misleadingness analysis。",
+      "core_contributions": [
+        "提出 RCMN reader-centric taxonomy，以 misleading mechanism、reader interpretation、evidence-warranted interpretation、emotional arousal 與 communicative intent 統一描述超越 factuality 的誤導性。",
+        "建立 2,216 筆、涵蓋 2019–2025 的 evidence-grounded influential public discourse 資料集，並透過來源恢復、證據整理、AI 輔助標註、人工驗證與仲裁形成結構化標籤。",
+        "建立五個 foundation models 的 zero-shot benchmark，證明輕量化 claim-and-context representation 對讀者解讀、情緒與意圖具有一定可恢復性，但對具體誤導機制的判定較不可靠。"
+      ],
+      "methodology": "資料以 Fact-Check Insights 為候選來源，保留 claim、日期、URL、作者、原始聲明者、標題及 fact-check rating explanation 等欄位；再透過 fact-check article 的外部連結、截圖、引文、嵌入媒體或保存描述，恢復原始貼文、文章、圖片、影片、廣告或存檔。資料集包含原始來源內容、evidence and provenance、recovered context and evidence、reader-centric annotations，以及 reader engagement signals。標註流程包括：取得完整 fact-check 證據、查核原始來源、由 GPT-5.6 Sol 協助抽取與結構化證據、產生初始標註、人工驗證及人工仲裁。機制類別為 fabrication/alteration、miscontextualisation、omission/selective presentation、misattribution、exaggeration/quantitative distortion、unsupported inference 與 not misleading；情緒喚起分 low、moderate、high，意圖分 informative、persuasive、distortive。Benchmark 使用 2,216 筆共同資料，以 claim、person、location、time、event、source setting 和 context 作為 limited input；五個模型採 zero-shot、相同輸入欄位與輸出規格，開放權重模型使用 4-bit NF4、greedy decoding、最多 350 tokens，API 模型使用 structured output。分類以 Macro-F1 及各類別 F1 評估；likely reader interpretation 同時使用 ROUGE-L、full/partial/non-equivalence 與 semantic adequacy。論文未提供模型架構細節或傳統 baseline。",
+      "key_results": "主要結果如下；數值均取自論文 Table 5 與 Table 6。\n\n| 評估面向 | GPT-5.6 Sol | Qwen3-VL-8B | DeepSeek-V4-Flash | Gemma-4-12B | Claude Fable 5 |\n|---|---:|---:|---:|---:|---:|\n| Mechanism Macro-F1 | 0.383 | 0.170 | 0.333 | 0.206 | **0.520** |\n| Arousal Macro-F1 | **0.643** | 0.502 | 0.550 | 0.488 | 0.586 |\n| Intent Macro-F1 | **0.607** | 0.320 | 0.405 | 0.263 | 0.408 |\n| 三項平均 Macro-F1 | **0.544** | 0.331 | 0.429 | 0.319 | 0.505 |\n| Likely interpretation ROUGE-L | **0.387** | 0.289 | 0.256 | 0.314 | 0.228 |\n| Likely interpretation 完全語義等價 | 91% | 84% | 93% | 91% | **97%** |\n| Semantic adequacy | 0.95 | 0.91 | 0.95 | 0.95 | **0.98** |\n\n資料分析顯示：unsupported inference 為主要機制（509/2,052，24.8%），其次為 exaggeration/quantitative distortion（468，22.8%）與 omission/selective presentation（361，17.6%）；high arousal 佔 55.4%，distortive intent 佔 63.4%。非誤導案例中，75% 為 persuasive、23.7% 為 informative，0% 為 distortive；誤導案例中 73.1% 為 distortive。情緒喚起與誤導性相關顯著（χ²(2)=51.80，p<0.001），但效果小（Cramér’s V=0.157）。",
+      "insights": [
+        "實務系統可先以 claim-and-context 線索進行低成本篩選，將可能涉及 omission、miscontextualisation 或 unsupported inference 的案例優先送往外部證據與原始脈絡檢索。",
+        "評估 misinformation 不應只使用 factuality；應同步比較訊息鼓勵的 reader interpretation 與 evidence-warranted interpretation，並記錄情緒喚起和溝通意圖。",
+        "情緒強度可作為排序或風險提示訊號，但論文的 Cramér’s V=0.157 顯示它不能單獨判定誤導；模型輸出也應採語義等價評估，而非只依賴 ROUGE-L。"
+      ],
+      "limitations": "資料由受到 fact-checking 關注的案例抽樣，非誤導控制案例比例偏低，限制了辨識 ordinary、evidence-compatible communication 的能力。likely interpretation、情緒與意圖具有主觀性；AI 輔助標註雖經人工驗證仍可能有分歧。部分原始多模態內容無法取得，只能依 fact-check article 與 provenance 重建。作者建議增加多元非誤導資料，並發展按需檢索脈絡、證據與多模態內容的 adaptive models。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "reader-centric misinformation understanding",
+        "evidence-grounded fact-checking",
+        "multimodal misleadingness",
+        "communicative intent detection"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27454",
+      "title": "WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution",
+      "abstract": "Agent skills package specialized knowledge and workflows into reusable resources that extend AI agent capabilities. Recent work automatically discovers such skills from agent experience, which enables agents to progressively adapt through interaction. However, the insights that guide skill development typically remain scattered across optimization histories, limiting their systematic reuse across iterations. We introduce WikiSkill, a framework that co-evolves agent skills with a persistent knowledge base (wiki). At a high level, WikiSkill separates raw execution experience, accumulated knowledge, and executable skills, while continuously consolidating experience into the wiki, which subsequent skill updates can build on. Across diverse benchmarks and models, WikiSkill consistently outperforms state-of-the-art skill-evolution methods and improves over no-skill baselines in most model-benchmark settings. We find that skill evolution complements model scaling: larger models generally benefit more from evolved skills, while smaller models with skills can outperform substantially larger models without them. We also find that evolved skills transfer effectively across models and model families, and skills evolved by other models can outperform self-evolved skills. Finally, our ablation studies confirm that persistent knowledge accumulation in the wiki is critical for effective skill evolution. These results demonstrate the benefits of systematically accumulating and refining agent experience for developing reusable and transferable skills.",
+      "authors": [
+        "Liyan Tang",
+        "Cyrus Rashtchian",
+        "Chun-Sung Ferng",
+        "Andrew Tomkins",
+        "Da-Cheng Juan",
+        "Tu Vu"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-27T17:59:11+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27454v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27454",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "Agent skills 將專門知識與工作流程封裝為可重用資源，以擴展 AI agent 的能力。近期研究能從 agent 經驗中自動發現 skills，使 agent 可透過互動逐步適應；然而，支援 skill 發展的洞見通常分散在各次最佳化歷史中，難以在不同迭代間系統性重用。本文提出 WikiSkill，一個讓 agent skills 與持久化 knowledge base（wiki）共同演化的框架。WikiSkill 分離原始執行經驗、累積知識與可執行 skills，持續將經驗整合至 wiki，供後續 skill 更新使用。在多個 benchmark 與模型上，WikiSkill 穩定優於現有 skill-evolution 方法，且在多數模型與 benchmark 設定中超越 no-skill baseline。研究顯示 skill evolution 能補足 model scaling；較大型模型通常能從 evolved skills 獲得更大收益，而配備 skills 的小模型也可能勝過沒有 skills 的大型模型。Evolved skills 可跨模型與模型家族轉移，且其他模型產生的 skills 有時優於自我演化的 skills。消融實驗進一步確認持久化 wiki 對有效 skill evolution 至關重要。",
+      "problem_statement": "論文要解決的是 agent 如何將多次執行中的成功策略、失敗原因與最佳化歷史，轉化為可持續重用的 procedural knowledge。既有 EvoSkill、Trace2Skill 與 SkillOpt 雖能分析 traces、保留提案歷史或整合經驗，但沒有獨立且持續演化的知識表示層，導致洞見分散、失敗提案可能重複，後續迭代難以累積跨輪次的根因分析與證據。",
+      "proposed_solution": "WikiSkill 在 raw execution traces 與 executable skills 之間加入持久化 wiki layer，形成 Raw、Wiki、Skills 三層架構。Inference Agent 使用目前 skills 執行 training rollouts；Wiki Maintainer 從成功與失敗 traces 進行 root-cause analysis，建立或修訂 pattern pages、index 與 evolution log；Skill Proposer 讀取 wiki、歷史 skill-impact 記錄及按需檢視 traces，提出單一 skill 的建立或 patch 更新；Gating and Rollback 再以 validation performance 決定接受或回復 skill。核心創新是 skill 可回滾，但 wiki 永不回滾，因而累積 rejected proposals、重複錯誤與成功證據，支援後續 refinement 與跨模型移植。",
+      "core_contributions": [
+        "提出 WikiSkill 三層知識架構，將 immutable raw traces、持久化且累積的 wiki，以及可執行 skills 明確分離，讓經驗能被結構化保存並供後續 skill evolution 使用。",
+        "在五個 benchmark 與五個模型上系統比較 WikiSkill、Trace2Skill、EvoSkill、SkillOpt 與 no-skill baseline；WikiSkill 在所有模型的五任務平均表現最高，且多數模型—資料集組合優於 no-skill。",
+        "系統研究 skill evolution 與模型能力及跨模型轉移的關係，證明 skills 可補足模型規模差距、跨模型家族轉移，並透過消融與案例研究確認 persistent wiki 對持續 refinement 的重要性。"
+      ],
+      "methodology": "問題設定將資料集分為互斥的 training、validation 與 testing splits；agent π 配備工具 U 與 active skill set S，執行任務後產生包含 observations、actions、tool calls、工具輸出及最終答案的 trajectory，並以 domain-specific scoring function 計算平均表現。每輪先由 Inference Agent 只讀取 skills、不可讀取 wiki，於 training set 產生 immutable raw traces。Wiki Maintainer 從分層抽樣的成功與失敗 traces 中提取成功策略、失敗模式與根因，對 wiki/patterns 進行 patch-based 更新，並寫入 logs.md。Skill Proposer 以 ReAct 方式先讀取 wiki index、skill-impact.md 和整體 pass/fail 摘要，再透過 read_file 按需選取 pattern pages 與 raw traces，建立或修改一個 skill；skills 以 SKILL.md 儲存程序，PURPOSE.md 連結其來源 pattern。候選 skill 於 validation split 評估，只有當分數嚴格高於目前最佳值才接受，否則回復 skills；wiki 則保留所有紀錄。最終在 unseen test split 以 accuracy 或 benchmark-specific score 評估。實驗涵蓋 LiveMath、SealQA、SpreadSheetBench、OfficeQA 與 ALFWorld，使用 Qwen-3.5-4B/9B、Qwen-3.6-27B、Gemma-4-31B 與 Gemini-3.5-Flash，並與 no skill、Trace2Skill、EvoSkill、SkillOpt 比較；每種方法重複三次，報告平均 test performance，並以 paired bootstrap testing 檢驗差異。",
+      "key_results": "主要結果如下；數值為五個 benchmark 的平均 test performance（%），除非另有說明。\n\n| 模型 | No skill | 最佳既有方法 | WikiSkill | WikiSkill 相對 No skill |\n|---|---:|---:|---:|---:|\n| Qwen-3.5-4B | 26.2 | 35.2 | 38.5 | +12.3\n| Qwen-3.5-9B | 29.9 | 42.3 | 47.4 | +17.5\n| Qwen-3.6-27B | 39.4 | 53.3 | 63.3 | +23.9\n| Gemma-4-31B | 41.3 | 49.1 | 54.9 | +13.6\n| Gemini-3.5-Flash | 49.5 | 56.1 | 68.1 | +18.6\n\n| 具體比較 | 結果 |\n|---|---|\n| Qwen-3.5-9B WikiSkill vs Qwen-3.6-27B No skill | 47.4% vs 39.4% |\n| Qwen-3.6-27B 在 SpreadSheetBench | 40.8% → 81.7%（WikiSkill，+40.9） |\n| Gemini-3.5-Flash 在 LiveMath | 33.0% → 72.6% |\n| Gemini-3.5-Flash 在 SpreadSheetBench | 50.5% → 76.6% |\n| Qwen-3.6-27B 在 ALFWorld | 52.8% → 77.6% |\n| Qwen-3.5-9B 使用 Qwen-3.6-27B skill 的 ALFWorld | 70.2%，高於自我演化的 63.4% |\n\n消融實驗使用 Gemini-3.5-Flash：Inference Agent 不讀 wiki、Skill Proposer 讀 wiki 的預設設定平均為 63.7%；兩者皆不讀 wiki 時為 48.7%，顯示持久化知識帶來 +15.0 個百分點。若讓 Inference Agent 在 training rollout 期間讀取 wiki，平均降至 60.9%，支持作者對訓練 traces 資訊價值下降的解釋。",
+      "insights": [
+        "若要建立可長期運作的 agent learning pipeline，應將原始 traces、可執行策略與診斷知識分層保存；即使某次 skill patch 被拒絕，其失敗原因與驗證結果仍應保留，避免後續重複嘗試。",
+        "訓練 rollout 與知識整理應分離：本文結果顯示 Inference Agent 在演化期間直接讀取 wiki 反而降低平均表現，因此可讓 rollout 只使用正式 skills，再由維護器分析 traces。",
+        "跨模型部署 skills 前應進行 target-model validation。論文中的 transfer 可能大幅提升表現，也可能產生 negative transfer，例如 Qwen-3.5-4B skill 使 Gemini-3.5-Flash 的 SpreadSheetBench 從 50.5% 降至 18.1%；技能內容需區分可泛化程序與模型特定 workaround。"
+      ],
+      "limitations": "論文的評估主要集中於五個 benchmark、五個模型與 filesystem-based skill，且 skill 以完整內容注入 system prompt，未研究 skill retrieval 或 triggering 失敗。WikiSkill 每輪需額外的 Wiki Maintainer 與 ReAct Proposer LLM 呼叫，成本可能較高；文中雖比較呼叫複雜度，但未提供完整金錢成本、延遲或能耗數字。另未充分驗證長期部署中的 wiki 規模膨脹、錯誤知識累積與跨任務泛化。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agent skill evolution",
+        "persistent memory for LLM agents",
+        "continual learning",
+        "cross-model knowledge transfer",
+        "trajectory-based agent optimization"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27442",
+      "title": "From Static to Dynamic: Benchmarking Real-World Code Review with MCR-Bench",
+      "abstract": "In real-world software development, code review typically involves iterative interactions between developers and reviewers to improve software quality, making the process costly and time-consuming. Although recent work explores large language models (LLMs) for automated code review, most approaches oversimplify code review into a single-round, static decision task, which fails to capture the multi-round interactive nature and the complex problem-solving processes inherent in realistic review scenarios. To bridge this gap, we introduce MCR-Bench, the first defect state-aware benchmark designed for realistic multi-round code review. MCR-Bench covers five commonly-used programming languages and consists of 2,269 real-world multi-round code review tasks, each of which is annotated with fine-grained defect information and cross-round state labels. Each task in MCR-Bench is equipped with fine-grained defect metadata (e.g., description, type, severity) alongside dynamic state annotations, capturing the complete evolutionary trajectory of a defect throughout the multi-round process. We obtain several findings through extensive experiments on MCR-Bench with mainstream LLMs. (1) Limited overall capability: experiments reveal that mainstream LLMs exhibit limited overall performance in defect detection and defect lifecycle state tracking, with performance degrading significantly as the number of interaction rounds increases; (2) Defect-sensitive performance: LLMs' performance varies substantially across different defect types and severity levels, with semantically complex or low-salience defects being significantly more likely to be missed; (3) Underlying Failure Mechanisms: our in-depth error analysis dissects the distinct drivers of false positives and false negatives, revealing critical weaknesses such as cross-round temporal misalignment and inadequate long-range memory.",
+      "authors": [
+        "Dewu Zheng",
+        "Yanlin Wang",
+        "Xiwen Wang",
+        "Kefeng Duan",
+        "Hongyu Zhang",
+        "Xilin Liu",
+        "Yuchi Ma",
+        "Zibin Zheng"
+      ],
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-08-27T17:56:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27442v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27442",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "在真實軟體開發中，code review 通常透過開發者與 reviewer 的反覆互動來提升軟體品質，因此成本高且耗時。現有 LLM 自動化 code review 研究多將任務簡化為單輪、靜態決策，無法反映多輪互動及複雜問題解決過程。本文提出 MCR-Bench，首個具 defect state-aware 設計、面向真實多輪 code review 的 benchmark。資料涵蓋 Python、Java、JavaScript、TypeScript 與 C# 五種語言，共 2,269 個真實多輪 code review 任務；每項任務均標註細粒度 defect metadata，包括描述、類型與嚴重度，以及跨輪次狀態，呈現 defect 的完整演化軌跡。作者以主流 LLM 進行實驗，發現其 defect detection 與 defect lifecycle state tracking 整體能力有限，且效能會隨互動輪數增加而下降；語義複雜或低顯著性的 defect 更容易被忽略。錯誤分析進一步指出，跨輪次時間對齊失敗與長期記憶不足是重要失效機制。",
+      "problem_statement": "現有 code review benchmark 多停留在 function、diff hunk、commit 或單輪 PR 層級，通常只根據初始 PR 狀態產生一次性 feedback，忽略真實流程中的 review→revision→revalidation 迴圈。因此，既有方法無法評估模型是否能跨輪次追蹤同一 defect、判斷其由 New、Open 轉為 Resolved 或 Reopened，亦無法檢驗模型在歷史 feedback、持續 code diff 與動態上下文中的一致性。",
+      "proposed_solution": "作者提出 MCR-Bench，將 code review 建模為具 PR-level context 的多輪、state-aware 評測任務。每個任務整合 Instructions、靜態 PR 資訊、linked issues，以及隨輪次變化的 code diff 和 review timeline；ground truth 則以 defect cards 表示，包含 defect description、location、taxonomy、severity 與每輪 lifecycle state。資料建構採用「先局部偵測、後全局追蹤」策略：先逐輪抽取候選 defect，再跨輪合併相同 defect 並推斷狀態轉移，最後經三次一致性篩選與具經驗開發者人工交叉驗證。",
+      "core_contributions": [
+        "提出 MCR-Bench，將真實 PR code review 從單輪靜態任務提升為多輪、defect state-aware 的動態 benchmark，涵蓋 2,269 個任務、五種程式語言與最多十輪互動。",
+        "建立結合逐輪候選偵測、跨輪 defect consolidation、lifecycle tracking、三次一致性篩選及人工交叉驗證的資料建構流程，並以 defect cards 提供描述、位置、類型、嚴重度與狀態標註。",
+        "以主流商用與開源 LLM 及兩種 ACR baseline 進行評估，系統分析模型在 defect detection、生命週期狀態追蹤、互動深度、defect 特徵與 false positive／false negative 根因上的能力邊界。"
+      ],
+      "methodology": "資料方面，作者選取 Python、Java、JavaScript、TypeScript、C# 五種語言，依 repository stars、近五年 commit 活動、issue resolution rate、貢獻者數、PR 數、授權與 fork 狀態進行篩選，最終涵蓋 38 個 GitHub repositories。PR 僅保留已 merged、修改實質程式邏輯、具有至少兩輪 commit→discussion→revision 互動，且未被 SZZ-2 判定為後續 bug-inducing 的樣本。標註分兩階段：第一階段將完整 PR 拆成各 review round，根據該輪 diff 與 comments 擷取候選 defect；第二階段彙整候選項目，進行跨輪 defect identity merging，並根據後續 commit、歷史 feedback 與 code change 推斷 New、Open、Resolved、Reopened 狀態。每項任務獨立執行三次，只有 defect 描述與狀態轉移完全一致者保留；其後由六名具五年以上經驗的開發者驗證，兩名主要 annotator 的 Cohen’s kappa 為 0.87，爭議交由第三人仲裁。評測涵蓋七個 LLM，包括 GPT-5.2、Claude-Haiku-4.5、Gemini-3-Flash、DeepSeek-V3.2、Qwen3-Max、GLM-4.7 與 Kimi-k2，另比較 PR-Agent 與 Hybrid-Review。研究評估 defect identification、lifecycle state prediction、跨輪效能變化、錯誤根因與 comment quality；提供的論文內容未報告所選最終自動評估指標及各模型的完整數值。",
+      "key_results": "論文提供的內容僅呈現定性結論，未提供各模型在 defect identification、state tracking、round-by-round performance 或 comment quality 上的具體數值，因此不可補造數據。\n\n| 評估面向 | 論文報告的結果 |\n|---|---|\n| 整體 defect detection | 主流 LLM 整體能力有限；具體分數：論文未報告 |\n| Defect lifecycle state tracking | 即使正確識別 defect，狀態預測仍具挑戰；具體分數：論文未報告 |\n| 隨 review rounds 變化 | 互動輪數增加時，模型效能顯著下降；各輪數數值：論文未報告 |\n| Defect type / severity | 不同 defect 類型與嚴重度間存在顯著差異；分組數值：論文未報告 |\n| 錯誤機制 | false positive 與 false negative 分別受跨輪時間錯位、defect 遺忘及長期記憶不足等因素影響 |\n| 標註一致性 | 兩名主要 annotator 的 Cohen’s kappa 為 0.87 |\n| 資料集規模 | 2,269 個任務、38 個 repositories、5 種語言；平均 3.8 輪、每項至少 2 輪、最多 10 輪 |\n| 每任務 defect 數量 | 平均 2.37、中央値 2、最多 13 個 defect |",
+      "insights": [
+        "實務部署 code-review agent 時，不應只評估單次 comment 是否命中 defect，也應保存跨輪 defect identity、歷史 feedback 與目前狀態，避免已修復問題被重複提出或未修復問題被誤判為完成。",
+        "評測流程可採用與 MCR-Bench 類似的 state-aware schema，將每則 review finding 結構化為描述、位置、類型、嚴重度、狀態與證據，並分別衡量偵測能力和狀態追蹤能力。",
+        "對長期互動任務，應特別測試模型的 temporal alignment、歷史記憶與 reopened defect 處理能力；單輪 benchmark 的高分不能直接代表其能支援真實多輪 code review。"
+      ],
+      "limitations": "論文內容未提供各模型與 baseline 的完整數值、統計顯著性或詳細指標結果，限制了定量比較。資料集中僅納入具至少兩輪互動、已 merged 且通過篩選的 PR，可能無法代表單輪、未合併或其他協作流程。標註流程依賴 LLM 初步抽取與跨輪合併，雖有一致性篩選及人工驗證，仍可能引入標註偏差。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多輪 code review",
+        "Pull Request-level evaluation",
+        "defect lifecycle tracking",
+        "LLM context utilization",
+        "automated code review"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27429",
+      "title": "Mechanistic Reaction Prediction via Discrete Flow Matching on Graph-Structured Electron Occupation",
+      "abstract": "Chemical reactions are fundamentally transformations in electron space, yet most machine learning approaches model them either through \\textit{de novo} generation of product molecules or through heuristic graph edits that operate directly on molecular topology.   We introduce MAELLE (\\textbf{M}ech\\textbf{A}nistic \\textbf{E}dit f\\textbf{L}ow-matching on e\\textbf{L}ectron r\\textbf{E}arrangements), which instead models reactions as discrete flow matching over electron occupation vectors.   Concretely, we formulate the reactant-to-product mapping as a Continuous-time Markov Chain (CTMC) over the graph-structured integer-valued electron occupation space defined on all bonding, non-bonding, and hydrogen sites.   To construct the intermediate edit trajectories, we generalize the discrete flow matching mixture path to discrete electron rearrangements using Optimal Transport, yielding a sequence of mechanistically interpretable edit moves without requiring elementary step annotations.   MAELLE achieves competitive performance on the USPTO-480K benchmark compared with leading reaction prediction models.   Beyond in-distribution accuracy, we evaluate robustness across two out-of-distribution settings - structural complexity and reaction type - and find that MAELLE maintains strong performance where existing methods degrade.   Finally, because the learned flow operates over the full electron redistribution, MAELLE naturally recovers mechanistic trajectories that align with known chemistry and can predict side products of a reaction.",
+      "authors": [
+        "Nguyen Xuan-Vu",
+        "Octavian Susanu",
+        "Daniel Armstrong",
+        "Philippe Schwaller"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-27T17:50:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27429v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27429",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "化學反應本質上是電子空間中的轉換，但多數機器學習方法不是從頭生成產物分子，就是以啟發式 graph edits 直接操作分子拓撲。本文提出 MAELLE（Mechanistic Edit Flow-matching on Electron Rearrangements），將反應建模為電子佔據向量上的 discrete flow matching。具體而言，作者在由所有成鍵、非成鍵及氫位點構成的 graph-structured、整數值電子佔據空間中，以 Continuous-time Markov Chain（CTMC）描述反應物到產物的映射。作者進一步利用 Optimal Transport 將離散 flow-matching mixture path 推廣至電子重排，在不需要 elementary-step annotations 的情況下，產生具機制可解釋性的編輯序列。MAELLE 在 USPTO-480K 上達到具競爭力的表現，且在結構複雜度與反應類型兩種 out-of-distribution 設定中保持良好效能。由於模型學習完整電子再分配，還能恢復符合已知化學的 pseudo-mechanistic trajectories，並預測反應副產物。",
+      "problem_statement": "現有 SMILES 生成方法將產物從頭生成，缺乏反應物—產物的結構連結，可能破壞原子守恆，且對複雜分子泛化較差；graph-edit 方法雖能直接修改拓撲，卻不表示電子來源與去向，未必對應合理機制。既有 electron-flow 方法又依賴專家標註的 elementary steps，或限於線性電子流。因此，論文要解決的是：在不使用機制標註下，學習具方向性、可解釋且能泛化的電子重排反應預測。",
+      "proposed_solution": "MAELLE 將分子表示為固定 heavy-atom graph 上的電子佔據向量，電子位點包括成鍵位點、lone-pair 位點與每個原子的氫位點。反應被表示為三種稀疏操作：FLOW 將一對電子由 source 移至 sink，DEL 刪除一對電子，ADD 新增一對電子。作者先以含虛擬 source/sink 的 balanced integer Optimal Transport，從反應物與產物佔據向量推導 move set，再令每個 move 依時間排程獨立啟用，形成可訓練的離散 mixture path。模型學習此 CTMC 的 marginal rates，推論時以隨機 Euler/Poisson firing 逐步產生產品。核心創新是將方向性電子轉移、原子守恆與 discrete flow matching 結合，且不需 elementary-step labels。",
+      "core_contributions": [
+        "將 reaction prediction 形式化為 graph-structured integer electron occupation 上的 discrete flow matching CTMC，並設計 FLOW、DEL、ADD 三種 chemistry-aware electron edits。",
+        "利用含虛擬 source/sink 的 Optimal Transport，從端點反應物—產物對自動建立 pseudo-mechanistic move trajectories，不需要 elementary-step annotations，且可處理線性與循環電子流。",
+        "在 USPTO-480K 及結構複雜度、反應類型 OOD 評估中驗證模型；透過多條隨機 CTMC trajectories 產生具信心排名的主要產品與副產品，並分析方向性電子流恢復。"
+      ],
+      "methodology": "資料方面，主要使用 USPTO-480K，先以 RXNMapper 重新建立 atom mapping，再由反應物與產物電子佔據計算 Optimal Transport move set並快取。電子 site 包含 heavy-atom bonds、lone pairs、pooled hydrogen sites及虛擬位點；heavy-atom adjacency 可由電子佔據恢復。模型採 conditional encoder-decoder：encoder 處理固定反應物，decoder 處理帶時間 t 的中間 graph，並在 atom-level 與 electron-entry-level 使用 GAT、Transformer self-attention及 cross-attention。Rate heads 預測 FLOW、DEL、ADD 速率；sink heads 預測目的地分布，FLOW 速率分解為 source rate 與 destination distribution，以避免所有可能 move 的 O(|E|²)成本。訓練時從 move set 以 Bernoulli κ(t) mask 採樣中間狀態，使用 CTMC rate 的 Bregman-divergence loss。推論時以 N 個 Euler steps，按 1−exp(−uΔt) 的 thinned-Poisson 機率採樣並套用可行編輯；重複軌跡後依產品頻率排名。評估包括 canonicalized product 的 top-k exact-match、LLM-as-a-judge plausibility，以及在 FlowER 測試集上對 bond-forming steps 的 coverage 與 directional agreement。",
+      "key_results": "主要結果如下；未提供的具體數字不另行推定。\n\n| 評估設定／方法 | Top-1 | Top-3 | Top-5 | Top-10 |\n|---|---:|---:|---:|---:|\n| Molecular Transformer | 0.886 | 0.935 | 0.942 | 論文未報告 |\n| Graph2SMILES | 0.903 | 0.940 | 0.948 | 0.953 |\n| MEGAN | 0.863 | 0.924 | 0.940 | 0.954 |\n| GTPN | 0.832 | 0.860 | 0.865 | 論文未報告 |\n| NERF | 0.907 | 0.933 | 0.937 | 論文未報告 |\n| MAELLE | 0.872 | 0.930 | 0.939 | 0.946 |\n\n- USPTO-480K standard split：MAELLE 的 top-1/top-3/top-5/top-10 分別為 87.2%、93.0%、93.9%、94.6%；top-1 低於 NERF 的 90.7%及 Graph2SMILES 的 90.3%，top-5 與 NERF、MEGAN 接近。\n- OOD Mass：論文以圖示呈現，未報告各模型完整數值表；作者指出 MAELLE 與 MEGAN 的表現較穩定，優於 SMILES 從頭生成模型。\n- OOD Ester：論文以圖示呈現，未報告完整數值表；作者指出 MAELLE 是四個比較模型中表現最佳者。\n- 副產物 plausibility：MAELLE top-1 plausibility 為 80.7%，其 top-1 exact accuracy 在該分析子集為 60.3%；ground-truth 被 LLM 判為 plausible 的 coverage 為 81.1±0.1%。\n- FlowER 機制恢復：在 37,583 個 bond-forming steps 中，Correct、Top-1、All 取樣的 coverage 分別為 43.0%、39.9%、63.0%；對應 directional agreement 分別為 84.6%、89.0%、78.2%。All 取樣對 persistent bonds 的 coverage 為 99.6%，對 transient bonds 為 29.6%。",
+      "insights": [
+        "若產品結構與反應物之間具有明確守恆關係，直接在受約束的電子或圖編輯空間生成，可能比從頭生成完整產品更能抵抗分子規模造成的泛化衰退。",
+        "多軌跡生成與頻率排名能將反應預測由單一答案擴展為主要產物／副產物分布；實務部署時可同時呈現 confidence、編輯軌跡與候選產品，而非只回傳 top-1。",
+        "Optimal Transport 產生的是由端點推導的 pseudo-mechanism，對 persistent、產品定義性的鍵較有效，但不能等同於完整真實機制；因此機制解釋應搭配 transient-step coverage 與 directional agreement 一併檢驗。"
+      ],
+      "limitations": "論文顯示 MAELLE 在 standard split 的 top-1 不及 Graph2SMILES 與 NERF，且 OOD Mass、OOD Ester 的完整數值主要以圖呈現。其 OT 軌跡偏向 persistent bonds，對 transient bonds 覆蓋有限；因此屬 pseudo-mechanistic 而非完整 elementary mechanism。副產品 plausibility 依賴單一 LLM judge，ground-truth coverage 僅 81.1±0.1%，且 heavy-atom conservative、質子化與去質子化被簡化。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "chemical reaction prediction",
+        "discrete flow matching",
+        "electron-flow modeling",
+        "out-of-distribution generalization",
+        "mechanistic interpretability"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2608.27409",
+      "title": "Consolidating RLVR Capabilities Across Domains: A Deep Dive into Fusion Paradigms",
+      "abstract": "Reinforcement learning with verifiable rewards (RLVR) improves specific capabilities of large language models, but covering multiple capabilities often involves training separate domain experts and subsequently consolidating them. We organize three fusion paradigms by the artefacts they reuse: Merge combines expert task vectors, Mix RL pools their datasets, and multi-teacher on-policy distillation (MOPD) uses both. Because they have largely been studied in isolation, how they compare and how to choose among them remain unclear. We compare all three using shared experts and data across model scales and a multi-domain benchmark suite. Although their average performance differs by at most 1.4 points, the gap reaches 8.6 points on a single benchmark, with domain-level variation tracking cross-domain relations visible in task-vector geometry. Training dynamics expose distinct constraints: Mix RL depends on domain mixture proportions, MOPD remains bounded by its teachers, and Merge compresses all expert updates into one. All three improve single-sample accuracy without measurable gains in solution coverage or losses in held-out capabilities. These results yield a practical guideline: use Merge when experts already exist and cheap fusion is paramount; Mix RL when training a unified model without experts, with domain proportions adjusted for cross-domain transfer; and MOPD when preserving domain-specific gains matters more than surpassing teachers or minimizing end-to-end cost.",
+      "authors": [
+        "Siye Wu",
+        "Kai Yang",
+        "Yuchen Cai",
+        "Xin Xu",
+        "Peng-Yuan Wang",
+        "Jiaxuan Wang",
+        "Jiashun Liu",
+        "Jiafei Lyu",
+        "Yangkun Chen",
+        "Saiyong Yang",
+        "Yanghua Xiao"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-08-27T17:38:04+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2608.27409v1",
+      "arxiv_url": "https://arxiv.org/abs/2608.27409",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "具可驗證獎勵的強化學習（RLVR）能提升大型語言模型在特定領域的能力，但若要涵蓋多種能力，通常需分別訓練領域專家，再將其整合。本文依所重用的訓練產物，整理三種 fusion paradigm：Merge 結合 expert task vectors，Mix RL 混合各領域資料集，multi-teacher on-policy distillation（MOPD）同時使用專家與資料。作者在共享專家、資料、不同模型規模及多領域 benchmark 下進行比較。三者平均表現差距至多 1.4 分，但單一 benchmark 的差距可達 8.6 分；領域差異與 task-vector geometry 所呈現的跨域關係一致。訓練動態顯示，Mix RL 受資料比例影響，MOPD 受教師能力上限限制，而 Merge 將所有專家更新壓縮成單一更新。三者皆提升 single-sample accuracy，卻未測得 solution coverage 增益，也未造成 held-out 能力損失。實務上，已有專家且重視低成本時適合 Merge；沒有專家、要訓練統一模型時適合 Mix RL；重視保留領域增益時則可採用 MOPD。",
+      "problem_statement": "論文要解決的是：如何將多個以 RLVR 分別取得的領域能力，整合為一個可部署模型，以及三種 fusion paradigm 應如何選擇。既有研究多分開評估 Merge、Mix RL 或 MOPD，使用不同 backbone、資料與 benchmark，難以公平比較其效能、成本與失真來源，也未釐清跨領域 transfer、interference 及各領域能力保留程度。",
+      "proposed_solution": "作者建立一個統一比較框架，將方法依重用的訓練產物分類：Merge 重用專家的 task vectors；Mix RL 重用各領域資料與 verifiers，在單次 RLVR 中共同訓練；MOPD 同時重用專家與資料，以多教師 on-policy distillation 將領域教師行為蒸餾至單一學生。核心創新是使用相同 base models、五個領域、專家與資料，跨 4B 與 8B 規模直接比較三者，並將 benchmark 行為、task-vector geometry、訓練動態、計算成本與 solution coverage 聯繫起來，據此提出依專家可得性、跨域關係與成本選擇方法的指南。",
+      "core_contributions": [
+        "在相同 Qwen3-4B 與 Qwen3-8B backbone、五個領域、共享專家與資料及多領域 benchmark 下，首次對 Merge、Mix RL 與 MOPD 進行受控比較。",
+        "證明跨域行為 transfer 與 task-vector geometry 具有一致結構：math、science、code 的 reasoning 能力多半互相促進，而 IF 與 agent 和其他領域近乎正交；此關係解釋了不同 fusion 方法的領域級差異。",
+        "分析三種方法的訓練與成本限制：Mix RL 受 domain mixture proportions 影響，MOPD 快速收斂但受教師能力上限約束，Merge 將多個專家更新壓縮為單一更新；並指出 fusion 提升 single-sample accuracy，卻未帶來可測得的 solution coverage 增益。"
+      ],
+      "methodology": "研究使用 Qwen3-4B-Instruct-2507 與 Qwen3-8B（non-thinking mode）作為 backbone，涵蓋 math、science、coding、instruction following（IF）與 agent 五個領域。資料包括 38,131 個 math、50,000 個 science、19,169 個 code、16,575 個 IF 及 10,229 個 agent 範例；Mix RL 與 MOPD 使用混合比例 25%、22%、22%、19%、12%。每個領域從共同 base model 以 GRPO 訓練 full-parameter 與 LoRA 專家；LoRA rank 為 32、alpha 為 64。Merge 使用 λ=0.6 的 Task Arithmetic，將五個 task vectors 合併；Mix RL 從 base model 以混合資料進行單次 GRPO，訓練 800 steps；MOPD 將五個 full-parameter 專家作為 domain teachers，以學生自身 rollout 狀態上的 reverse-KL、逐 token teacher log-probability 進行蒸餾，訓練 300 steps。評估涵蓋 AIME 2025/2026、GPQA-Diamond、LiveCodeBench v5/v6、IFEval、IFBench 與 BFCL v3，主要回報 mean@16；另以 pass@k（k 至 32）測試 solution coverage，並以 SimpleQA-Verified 與 AA-LCR 評估 held-out factual recall 及 long-context reasoning，兩者由 Qwen3-32B 評分。研究亦比較 domain-level transfer、task-vector layer-wise cosine similarity、prompt exposure、training steps，以及 fusion 與 per-domain RL 的 GPU-hours。",
+      "key_results": "| 結果項目 | Qwen3-4B | Qwen3-8B | 論文結論 |\n|---|---:|---:|---|\n| Base 平均分（8 個 benchmark） | 57.0 | 42.0 | 基準 |\n| Per-domain RL Full 平均分 | 63.9 | 53.8 | 各專家只在自身領域訓練，但以各自對應 benchmark 彙總 |\n| Merge Full 平均分 | 63.7 | 53.7 | 已有專家時幾乎不需額外訓練；推論部署為單一模型 |\n| Mix RL Full 平均分 | 62.3 | 54.6 | 不需先訓練專家，但依賴資料混合比例 |\n| MOPD Full 平均分 | 63.3 | 53.2 | 收斂快、接近教師，但未超越教師平均表現 |\n| 三種 fusion 的平均差距 | 至多 1.4 分 | 至多 1.4 分 | 單一 benchmark 差距最高達 8.6 分 |\n| 4B Merge Full：AIME25 / IFBench | 54.9 / 41.0 | — | Merge 在 math 提升，但 IFBench 低於 IF 專家 49.0 |\n| 4B Mix RL Full：AIME25 / IFBench | 53.0 / 39.8 | — | IF 資料比例 19%，且缺乏正向跨域 transfer |\n| 8B Mix RL Full：AIME25 / AIME26 | — | 45.7 / 47.2 | 分別高於 math expert 的 39.2 / 39.9 |\n| AIME pass@32 | 與 base 無可區分差異 | 論文未報告 8B pass@32 | fusion 提升 single-sample accuracy，但未測得 solution coverage 擴張 |\n| Held-out SimpleQA-Verified / AA-LCR（4B） | 所有 fusion 均未低於 base | 論文未報告 8B | 未測得 factual recall 或 long-context reasoning 損失 |\n| Total GPU-hours（4B / 8B） | Merge 5,220 / Mix RL 3,042 / MOPD 5,960 | Merge 4,670 / Mix RL 3,138 / MOPD 5,569 | Merge 幾乎無 fusion 計算；MOPD fusion 階段便宜但端到端成本最高 |",
+      "insights": [
+        "若已有多個領域專家且主要目標是以最低額外成本產生單一部署模型，應優先評估 Merge；但需檢查 task-vector 的跨域相似性，因為低相關領域的能力可能只部分保留。",
+        "若沒有預先訓練的專家，Mix RL 能以較低端到端 GPU 成本直接建立 unified model；資料比例不應只按資料量設定，應根據跨域 transfer 調整，尤其要避免低相關領域因樣本占比不足而落後。",
+        "若重點是快速保留多個教師的領域表現而非超越教師，MOPD 可用密集的 token-level supervision 加速收斂；但其完整成本仍包含教師訓練，且標準 reverse-KL objective 不提供超越教師的明確訊號。"
+      ],
+      "limitations": "研究只涵蓋兩個 Qwen3 backbone、五個領域，Merge 主實驗採固定 Task Arithmetic λ=0.6，MOPD 也限於標準 reverse-KL on-policy 形式。held-out 結果僅在 4B 報告，且部分評估由 LLM judge 完成。作者未驗證能超越教師的 MOPD 變體、更多 backbone、不同資料混合策略或更廣泛部署情境，這些留待未來研究。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-domain reinforcement learning",
+        "task-vector model merging",
+        "on-policy distillation",
+        "cross-domain transfer and interference",
+        "LLM capability evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]
