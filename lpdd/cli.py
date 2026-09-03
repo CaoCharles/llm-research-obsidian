@@ -25,6 +25,7 @@ from filter import calculate_score, load_keywords, get_top_papers, filter_papers
 from analyzer import analyze_papers
 from writer import write_from_json, write_daily_from_json
 from exporter import export_to_excel, parse_date_range
+from usage_log import append_usage_log, estimate_cost, summarize_usage
 
 
 def load_config(config_path: str = None) -> dict:
@@ -497,6 +498,7 @@ def cmd_digest(args) -> None:
     model = args.model or config["openai"]["model"]
     max_tokens = args.max_tokens or config["openai"]["max_tokens"]
 
+    usage_records: list = []
     processed = analyze_papers(
         papers=top_papers,
         client=client,
@@ -504,7 +506,20 @@ def cmd_digest(args) -> None:
         max_tokens=max_tokens,
         verbose=True,
         strict=args.strict_analysis,
+        usage_sink=usage_records,
     )
+
+    usage = summarize_usage(usage_records)
+    cost = estimate_cost(usage, config.get("pricing"))
+    if usage_records:
+        append_usage_log(
+            log_path=Path("UsageLog") / "usage_log.csv",
+            date=date,
+            model=model,
+            papers_analyzed=len(usage_records),
+            usage=usage,
+            cost=cost,
+        )
 
     items = []
     for paper, analysis in processed:
@@ -579,6 +594,9 @@ def cmd_digest(args) -> None:
         "json_path": str(out_path) if out_path else None,
         "written": written if args.write else None,
         "model": model,
+        "usage": usage,
+        "estimated_cost_usd": cost["cost_usd"],
+        "estimated_cost_twd": cost["cost_twd"],
     }
     output_json(result)
 

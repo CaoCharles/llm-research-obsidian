@@ -69,7 +69,7 @@ jobs:
 
       - name: Commit and push automation output
         run: |
-          git add -- Daily DailyJSON Papers Topics
+          git add -- Daily DailyJSON Papers Topics UsageLog
           if git diff --cached --quiet; then
             echo "No new digest content to push."
             exit 0

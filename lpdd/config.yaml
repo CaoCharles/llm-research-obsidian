@@ -18,6 +18,14 @@ openai:
   # GPT-5 的上限同時包含推理與可見輸出 token。
   max_tokens: 8000
 
+# 費用追蹤設定（選填）
+# 從 platform.openai.com → Settings → Billing 查詢 gpt-5.6-luna 的實際單價後填入，
+# 系統才會在 UsageLog/usage_log.csv 換算預估費用；不填也會照樣記錄 token 用量。
+pricing:
+  input_per_1m_usd: 0   # 每 100 萬 input token 的美金價格
+  output_per_1m_usd: 0  # 每 100 萬 output token 的美金價格（含 reasoning token）
+  usd_to_twd: 32         # 美金兌台幣概算匯率，僅供參考，可自行調整
+
 # Obsidian 設定
 obsidian:
   vault_path: /Users/caocharles/Library/CloudStorage/OneDrive-個人/GitHub/claude_test/llm-paper-obsidian
