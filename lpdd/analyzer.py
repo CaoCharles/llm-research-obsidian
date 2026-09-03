@@ -217,6 +217,7 @@ def analyze_paper(
     max_retries: int = 2,
     strict: bool = False,
     full_text: str = "",
+    usage_sink: Optional[list] = None,
 ) -> AnalysisResult:
     """使用 OpenAI GPT 分析論文（含重試機制）"""
     if client is None:
@@ -266,6 +267,23 @@ def analyze_paper(
                 request["reasoning_effort"] = "low"
 
             response = client.chat.completions.create(**request)
+
+            # A response object means OpenAI already billed this call, even if
+            # validation below rejects the content and triggers a retry.
+            usage = getattr(response, "usage", None)
+            if usage is not None and usage_sink is not None:
+                reasoning_tokens = getattr(
+                    getattr(usage, "completion_tokens_details", None),
+                    "reasoning_tokens",
+                    None,
+                )
+                usage_sink.append({
+                    "arxiv_id": paper.arxiv_id,
+                    "prompt_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+                    "completion_tokens": getattr(usage, "completion_tokens", 0) or 0,
+                    "reasoning_tokens": reasoning_tokens or 0,
+                    "total_tokens": getattr(usage, "total_tokens", 0) or 0,
+                })
 
             choice = response.choices[0]
             message = choice.message
@@ -344,6 +362,7 @@ def analyze_papers(
     verbose: bool = True,
     strict: bool = False,
     use_full_text: bool = True,
+    usage_sink: Optional[list] = None,
 ) -> list[tuple[Paper, AnalysisResult]]:
     """批次分析多篇論文"""
     results = []
@@ -371,6 +390,7 @@ def analyze_papers(
             max_tokens,
             strict=strict,
             full_text=full_text,
+            usage_sink=usage_sink,
         )
         results.append((paper, analysis))
         
