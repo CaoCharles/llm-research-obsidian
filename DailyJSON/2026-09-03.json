@@ -1,0 +1,540 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2609.02805",
+      "title": "Large Language Models (LLMs) for Telecom Root Cause Analysis (RCA): A Structured Reasoning Framework for Evidence-Grounded Diagnosis",
+      "abstract": "Root cause analysis (RCA) is a critical task in telecom network operations, but diagnosing performance degradations in modern 5G and emerging 6G networks remains challenging due to complex cross-layer dependencies. While large language models (LLMs) offer promising capabilities for reasoning and knowledge integration, directly applying vanilla LLMs to telecom RCA often leads to hallucination, unstable reasoning, and poor alignment with structured network evidence. This work first reviews the evolution of telecom RCA from rule-based and machine learning (ML) approaches to emerging LLM-enabled techniques, and provides an overview of recent paradigms, including structured reasoning, retrieval-augmented knowledge grounding, agentic orchestration, and verifiable reasoning. Building upon these insights, we propose a structured reasoning framework for LLM-enabled telecom RCA that aligns diagnostic reasoning with telecom-specific evidence and domain knowledge. The proposed approach first organizes heterogeneous network telemetry into canonical contexts, and then enforces decision-path reasoning during diagnosis, and finally generates evidence-grounded explanations for reliable fault identification. Experimental results on two 5G RCA datasets, TeleLogs and TelecomTS, demonstrate that the proposed framework consistently improves diagnostic accuracy and decision consistency compared with baseline techniques. These cross-dataset results highlight the importance of structured reasoning design for practical LLM-based RCA systems in next-generation telecom networks.",
+      "authors": [
+        "Hao Zhou",
+        "Mandar Kulkarni",
+        "Hao Chen",
+        "Yan Xin",
+        "Charlie",
+        "Zhang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-02T16:43:22+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02805v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02805",
+      "score": 25
+    },
+    "analysis": {
+      "abstract_zh": "根因分析（RCA）是電信網路營運的關鍵任務，但現代 5G 與新興 6G 網路具有跨無線、傳輸與核心層的複雜依賴，使效能劣化診斷相當困難。大型語言模型（LLM）具備推理與知識整合潛力，但直接使用 vanilla LLM 進行電信 RCA，容易產生 hallucination、不穩定推理，以及與結構化網路證據對齊不佳的問題。本文回顧電信 RCA 從 rule-based、machine learning 到 LLM-enabled 方法的演進，並討論 structured reasoning、retrieval-augmented knowledge grounding、agentic orchestration 與 verifiable reasoning 等範式。在此基礎上，作者提出結構化推理框架，先將異質 network telemetry 組織成 canonical contexts，再於診斷時強制執行 decision-path reasoning，最後產生 evidence-grounded explanations。TeleLogs 與 TelecomTS 兩個 5G RCA 資料集的實驗顯示，該方法相較基線能提升診斷準確度與決策一致性。",
+      "problem_statement": "論文聚焦於 5G／6G 電信網路的 RCA。傳統 rule-based 方法依賴人工維護的告警模式與 KPI 閾值，難以隨場景擴展；ML 方法主要學習 telemetry 的統計模式，通常輸出標籤而缺乏可追溯診斷路徑，且面對未見故障或分布變化時受限。Vanilla LLM 雖能整合跨層資料並產生解釋，卻可能依賴表面相關性、產生 hallucination，並對相似證據採取不一致的推理流程。",
+      "proposed_solution": "作者提出 SEKA-FT（Structured Evidence- and Knowledge-Aligned Fine-Tuning），將 RCA 從 input-to-label prediction 重新表述為 evidence-to-path-to-decision 的結構化推理問題。框架包含三項核心設計：將 user-plane KPI、control-plane events、topology relationships 與 configuration parameters 正規化為 canonical context blocks；以 CoT-enabled decision path 執行分階段診斷檢查，逐步排除缺乏證據支持的假設；將 evidence- and knowledge-anchored explanations 納入 supervision target，使最終 root-cause label、診斷路徑與可觀測指標共同學習。其創新在於以統一 fine-tuning 目標耦合結構化證據、中間檢查、假設精煉、最終決策與可追溯解釋，而非只監督分類標籤。",
+      "core_contributions": [
+        "系統回顧電信 RCA 從 rule-based、ML 到 LLM-enabled 方法的演進，並整理 CoT、RAG、agentic orchestration 與 RLVR 等增強可靠性的技術範式。",
+        "提出 SEKA-FT，將 canonical context、CoT-enabled decision path、evidence-grounded explanation 與 root-cause decision 整合於 evidence-to-path-to-decision 的 fine-tuning supervision 結構。",
+        "在 TeleLogs 與 TelecomTS 上進行跨資料集驗證；SEKA-FT 分別取得 0.942／0.937 與 0.647／0.615 的 Accuracy／Macro-F1，並顯著優於所比較基線。"
+      ],
+      "methodology": "SEKA-FT 的輸入先經 canonical context structuring，將異質資料整理為 Bottleneck Snapshot、UE Global State、Trajectory-Level Events 與 Serving Cell Engineering Parameters 等固定語意區塊，並保留 serving-cell metrics、neighbor-cell relations、mobility indicators 等欄位，移除非必要雜訊。接著模型依決策路徑產生中間檢查，例如 Maximum UE speed 是否超過 40 km/h、average Scheduled RBs 是否低於 160、handover count 是否顯示不穩定，以及 UE-to-serving-cell distance 是否涉及 overshooting；正向檢查可直接支持相應原因，負向檢查則剪枝候選。第二階段依檢查結果與電信 domain knowledge 進行 hypothesis refinement，最後輸出 root-cause label 與 evidence-grounded explanation。訓練採 token-level causal language-modeling loss，mask prompt tokens，使用 Qwen2.5-1.5B-Instruct，並以 LoRA 微調最後四個 Transformer blocks；設定包括 learning rate 1e-5、12 epochs、batch size 2、最大序列長度 2048、bf16 與 AdamW。比較方法包括 ICL、LSTM、Vanilla SFT、SFT + Structured Input、SFT + Explanation，另測試 Qwen2.5-7B-Instruct 與 Qwen3-32B。評估指標為 Accuracy、Macro-F1 與 decision-path consistency；結果取十次不同 random seeds 的平均及 95% confidence interval，並使用 McNemar’s test、paired permutation test 與 Holm–Bonferroni 校正。",
+      "key_results": "論文報告的主要結果如下；數值為平均值 ± 95% confidence interval：\n\n| 方法 | TeleLogs Accuracy | TeleLogs Macro-F1 | TelecomTS Accuracy | TelecomTS Macro-F1 |\n|---|---:|---:|---:|---:|\n| ICL 1.5B | 0.021 ± 0.004 | 0.018 ± 0.003 | 0.033 ± 0.006 | 0.031 ± 0.005 |\n| ICL 7B | 0.053 ± 0.006 | 0.043 ± 0.005 | 0.041 ± 0.005 | 0.028 ± 0.003 |\n| ICL 32B | 0.126 ± 0.010 | 0.109 ± 0.009 | 0.061 ± 0.005 | 0.053 ± 0.004 |\n| LSTM | 0.132 ± 0.012 | 0.090 ± 0.011 | 0.115 ± 0.010 | 0.080 ± 0.010 |\n| Vanilla SFT | 0.007 ± 0.003 | 0.013 ± 0.004 | 0.050 ± 0.021 | 0.052 ± 0.016 |\n| SFT + Structured Input | 0.256 ± 0.018 | 0.234 ± 0.016 | 0.132 ± 0.009 | 0.138 ± 0.009 |\n| SFT + Explanation | 0.030 ± 0.005 | 0.020 ± 0.004 | 0.047 ± 0.008 | 0.041 ± 0.008 |\n| **SEKA-FT** | **0.942 ± 0.006** | **0.937 ± 0.007** | **0.647 ± 0.004** | **0.615 ± 0.005** |\n\nSEKA-FT 在兩個資料集相較 SFT + Structured Input 的 Accuracy 與 Macro-F1 改善均達統計顯著，論文報告 p < 0.001。ICL 中模型由 1.5B 擴展至 32B 仍維持低絕對效能。TeleLogs 上，SEKA-FT 的四項代表性 decision checks 接近完美一致；但論文未提供其逐項具體數字。",
+      "insights": [
+        "實務部署不應只把原始 KPI、logs 與工程參數直接串接至 LLM；先建立固定語意欄位與 canonical context，有助於降低輸入表徵不一致。",
+        "RCA 評測應同時檢查最終 root-cause label 與中間 decision path，並要求每個診斷結論連結到可觀測指標，以提升可追溯性並辨識 hallucination。",
+        "單純增加模型規模或加入 explanation supervision 未必足夠；本文結果顯示，結構化 evidence alignment 與分階段假設剪枝對此任務更關鍵。"
+      ],
+      "limitations": "評估主要涵蓋 TeleLogs 與 TelecomTS 的 5G RAN／observability 情境；論文尚未提供 core、transport、多域故障、真實營運商事件或未見故障的結果。SEKA-FT 的解釋由標籤、deterministic checks 與 domain-rule templates 自動建構，解釋品質及與真實因果的獨立驗證仍未充分報告。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "電信網路根因分析",
+        "結構化推理與 Chain-of-Thought",
+        "可驗證診斷與網路自動化"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02783",
+      "title": "EarlyEval: Cheaper Agent Evaluation via Early Outcome Prediction",
+      "abstract": "Evaluating LLM agents is essential for guiding their development, yet it has grown prohibitively expensive: a single pass of a frontier model over an agentic benchmark can cost hundreds to thousands of dollars, a price paid repeatedly across iterative development cycles. Prior efforts, centered on benchmark distillation, reduce the number of evaluation tasks but leave the cost of executing each retained task untouched. In this work, we introduce early outcome prediction, a complementary axis of efficiency that instead cuts cost within each task. Our key insight is that an agent's final outcome is often evident from its intermediate behavior well before execution completes. We instantiate this idea in EarlyEval, a lightweight framework that trains a pair of LightGBM success and failure classifiers over behavioral, textual, and reference-solution features, and halts an agent run the moment either classifier crosses a calibrated confidence threshold, adding negligible per-step overhead. Across three benchmarks, SWE-bench Verified, TerminalBench, and Toolathlon, EarlyEval can eliminate 13%-26% of agent steps and up to 44.1% input tokens and 29.4% output tokens at 89%-97% prediction accuracy, while perturbing per-agent resolve rates by only one to two percentage points on average.",
+      "authors": [
+        "Yuling Shi",
+        "Zhensu Sun",
+        "Junsen Dong",
+        "Chengcheng Wan",
+        "David Lo",
+        "Xiaodong Gu"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-02T16:15:18+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02783v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02783",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "評估 LLM agents 對其開發至關重要，但成本已高到難以負擔：frontier model 在 agent benchmark 上單次執行可能花費數百至數千美元，且會在反覆開發週期中重複支付。既有方法主要透過 benchmark distillation 減少評估任務數量，卻未降低保留任務的單次執行成本。本文提出 early outcome prediction，作為另一個效率維度，直接削減每項任務內的執行成本。核心觀察是：agent 的最終結果通常可由中間行為在執行完成前預測。作者實作 EarlyEval，以 behavioral、textual 與 reference-solution features 訓練一對 LightGBM success／failure classifiers，當任一分類器跨過校準信心門檻時即停止 agent run，且每步額外成本極低。在 SWE-bench Verified、TerminalBench 與 Toolathlon 上，EarlyEval 在 89%–97% prediction accuracy 下，可減少 13%–26% agent steps，最多降低 44.1% input tokens 與 29.4% output tokens；每個 agent 的 resolve rate 平均僅改變一至兩個百分點。",
+      "problem_statement": "LLM agent benchmark 需要多步互動、工具呼叫與不斷增長的上下文，因此單次評估成本可達數百至數千美元；在 prompt、scaffold 或模型反覆迭代時，成本尤其突出。既有 benchmark distillation 只減少任務數量，未處理每個保留任務的 rollout 成本。本文要解決的是：能否根據部分 trajectory，在 agent 完成前可靠推斷最終 success／failure，並降低執行步數與 token 消耗，同時維持 resolve rate 與 agent ranking 的評估忠實度。",
+      "proposed_solution": "作者提出 EarlyEval，一種在單一 benchmark task 內進行 early outcome prediction 的 plug-and-play framework。它從歷史上已完成且具 outcome labels 的 agent trajectories 建立 prefix-level 訓練資料，並以 behavioral、textual 及可選的 reference-solution features，訓練分離的 LightGBM success predictor 與 failure predictor。線上執行時，每一步重新抽取部分 trajectory features，經 Platt scaling 得到兩個 calibrated confidences；只要任一信心值達到預設 threshold，便立即停止 rollout 並記錄預測結果，否則繼續執行。核心創新是把 evaluation efficiency 從減少任務數量擴展到縮短每項任務，並以 dual-threshold 控制成本與 fidelity 的 trade-off。",
+      "core_contributions": [
+        "提出 early outcome prediction，將 agent evaluation 的效率改善從 benchmark-level task selection 擴展到 task-level rollout early stopping，與 benchmark distillation 互補。",
+        "提出 EarlyEval framework，以兩個 LightGBM success／failure classifiers、豐富的 behavioral／textual／reference-solution features，以及 calibrated dual-threshold halting rule 實現低額外開銷的逐步預測。",
+        "在 SWE-bench Verified、TerminalBench 與 Toolathlon 上採用 leave-one-agent-out protocol，證明可降低 steps 與 token 消耗，同時大致維持 per-agent resolve rates 與 leaderboard rankings。"
+      ],
+      "methodology": "問題形式化為：agent 在 task 上產生 trajectory τ=(e1,…,eT)，完整執行後得到 binary outcome y；EarlyEval 在 k<T 時根據 prefix τ:k 預測 y，必要時提早終止。離線階段收集目標 benchmark 上多個 agent 的完整、具標籤 trajectories，將每條長度 T 的 trajectory 展開為 prefixes，長度不足 10 steps 者丟棄；prefix instances 以 1/(T+1) 加權，避免長 trajectory 主導訓練。特徵分三類：behavioral features 包含活動計數、最近一步、事件時間、工作模式、錯誤與測試狀態；textual features 對 task prompt、action history／recent action、environment feedback／recent feedback 分別以 TF-IDF、word unigram/bigram、SVD 向量化；SWE-bench Verified 另加入 gold descriptors 及 prefix–gold overlap，無 reference solution 的 TerminalBench 與 Toolathlon 則移除該類特徵。模型是兩個 agent-agnostic LightGBM gradient-boosted tree ensembles，分別學習 success 與 failure；採 leave-one-agent-out，並按 trajectory（且按 task 分割）避免洩漏。 validation split 用於 early stopping 與 Platt scaling，將原始分數轉為 calibrated probabilities。線上每步同時評估 p+ 與 p−，若 p+≥s 或 p−≥f 即停止。指標包括 halted accuracy、各 predictor precision、coverage、ΔSteps、ΔToken in/out、每-agent ΔPass@1、平均絕對偏差 Δ|Pass@1|、Spearman ranking correlation ρ 與 ΔRank。",
+      "key_results": "作者在三個 benchmark、超過 21,000 條 outcome-labeled trajectories 上評估；主要結果如下：\n\n| Benchmark／設定 | Threshold | 主要 EarlyEval 設定 | Steps 減少 | Input tokens 減少 | Output tokens 減少 | Prediction accuracy／Δ\\|Pass@1\\| |\n|---|---:|---|---:|---:|---:|---:|\n| SWE-bench Verified | 0.95 | Dual | 26.0% | 32.7% | 28.7% | 95.0%／1.1 pp |\n| TerminalBench（no same model） | 0.90 | Dual | 25.4% | 42.7% | 27.9% | 論文未在表 III 的 Dual 欄報告 accuracy／2.1 pp |\n| TerminalBench（no same scaffold） | 0.85 | Dual | 17.7% | 29.2% | 17.4% | 論文未在表 III 的 Dual 欄報告 accuracy／2.0 pp |\n| Toolathlon | 0.90 | Failure-only | 23.0% | 44.1% | 29.4% | 論文未報告 Dual accuracy／0.9 pp |\n\n在 SWE-bench Verified，threshold 0.95 時約 34.8% trajectories 被提前停止，success predictor precision 為 93.9%，failure predictor precision 為 96.7%；agent ranking 的 Spearman ρ=0.991，81% agents 維持完全相同名次。Toolathlon 的 failure predictor precision 為 96.6%，TerminalBench 在 no-same-model 與 no-same-scaffold 設定分別達 89.4% 與 91.8%；ranking ρ 分別為 0.959 與 0.994。降低 threshold 可增加節省但提高失真，例如 SWE-bench 從 0.95 降至 0.75 時，steps 減少由 26.0% 增至 63.4%，Δ|Pass@1| 由 1.1% 增至 4.1%。",
+      "insights": [
+        "若團隊在固定 benchmark 上反覆比較 agent 版本，可先以歷史完成 trajectories 訓練 outcome predictor，將 EarlyEval 作為開發迭代期的低成本篩選工具；正式、可引用的 benchmark 分數仍應完整執行。",
+        "threshold 應依用途校準：論文結果顯示較高 threshold 具有較佳 fidelity、較低 threshold 則節省更多；可先設定可接受的 Δ|Pass@1| 上限，再選擇最低可行門檻。",
+        "不同 predictor 的可靠度與 scaffold shift 並不一致：failure predictor 在三個 benchmark 較穩健，而 TerminalBench 中未見過 scaffold 會削弱 success prediction，因此部署前應按 benchmark、scaffold 與 predictor 分別驗證。"
+      ],
+      "limitations": "EarlyEval 需要目標 benchmark 既有大量完整且具 outcome labels 的 trajectories；新 benchmark 在尚無歷史資料時無法直接使用。reference-solution features 只適用於提供 gold solution 的 benchmark。方法會造成約 1–2 個百分點的 resolve-rate 偏差，因此不應取代正式完整評估；此外，未提供的後續結果中，論文未報告更廣泛 benchmark、跨時間分布漂移或真實貨幣成本的完整驗證。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agentic benchmark efficiency",
+        "early stopping for LLM agents",
+        "leaderboard fidelity",
+        "trajectory-based outcome prediction"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02745",
+      "title": "Incremental Pooled LLM Evaluation for Cost-Effective Retrieval Model Selection",
+      "abstract": "Selecting a retrieval model for a production RAG system requires reliable comparative evaluation, but obtaining relevance judgments at scale is expensive and difficult to repeat as new candidate systems arrive. We study pooled LLM evaluation, in which an LLM judges the union of documents retrieved by the current set of candidate systems, and the pool is then expanded incrementally as new systems are introduced by judging only the new documents they contribute. These judgments are reused to evaluate all systems on a common basis. We validate this approach on four retrieval benchmarks with 11 systems spanning dense, sparse, and hybrid configurations, and deploy it to compare 62 retrieval configurations for a financial news QA system. Pooled LLM rankings correlate strongly with gold-standard evaluation across datasets, and 97% of pairwise system orderings are preserved once bootstrap uncertainty in the qrels is taken into account. In production, document overlap yields 65-80% judgment reuse and up to 4.9x lower evaluation cost, allowing teams to benchmark new retrieval candidates without re-judging previously assessed documents. These results suggest pooled LLM evaluation is a practical and cost-effective workflow for incremental retrieval model selection in deployed systems.",
+      "authors": [
+        "Max Nelson",
+        "Hanoz Bhathena",
+        "Aviral Joshi",
+        "Saket Sharma"
+      ],
+      "categories": [
+        "cs.IR",
+        "cs.CL"
+      ],
+      "published": "2026-09-02T15:47:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02745v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02745",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "在 production RAG 系統中選擇 retrieval model，需要可靠的比較評估；然而，大規模取得 relevance judgments 成本高昂，且新候選系統加入後難以重複執行。本文研究 pooled LLM evaluation：由 LLM 評估目前候選系統所檢索文件的聯集；當新系統加入時，只評估其新增文件，並重用既有 judgments，以共同基準計算所有系統的 IR 指標。作者在四個 retrieval benchmarks、涵蓋 dense、sparse 與 hybrid 的 11 個系統上驗證方法，並在 financial news QA 系統中比較 62 種 retrieval configurations。Pooled LLM rankings 與 gold-standard evaluation 高度相關；納入 qrels 的 bootstrap uncertainty 後，97% 的 pairwise system orderings 得以保留。Production 實驗因文件重疊達到 65–80% judgment reuse，評估成本最高降低 4.9 倍，顯示此方法適合 deployed systems 的增量式 retrieval model selection。",
+      "problem_statement": "Production RAG 需要反覆比較新的 embedding、dense、sparse 或 hybrid retrieval systems，但傳統 human relevance judgments 成本高、速度慢，難以隨候選系統增加而重建。逐一評估 N 個系統需對 queries×top-k 文件重複判斷，即使不同系統檢索到大量相同文件也無法有效重用；傳統 TREC pooling 又可能把新系統帶來的未判斷文件視為不相關，造成 pool bias。",
+      "proposed_solution": "作者提出 incremental pooled LLM evaluation。先對所有候選系統檢索結果的文件聯集進行一次 LLM relevance judging，再以共享 judgments 計算每個系統的標準 IR metrics。新系統加入時，只判斷其檢索結果中尚未存在於 pool 的 (query, document) pairs，既有標註完全重用。核心創新在於將 pooling、LLM-as-judge 與增量式 pool growth 結合，以文件重疊降低成本，同時透過判斷新文件避免傳統 pooling 對新穎 retrieval behavior 的系統性懲罰，並以 bootstrap uncertainty 與 permutation tests 檢驗排名可靠性。",
+      "core_contributions": [
+        "提出可隨候選 retrieval systems 增加而擴張的 incremental pooled LLM evaluation workflow，只判斷新系統貢獻的文件並重用既有 qrels。",
+        "在四個公開 retrieval benchmarks 上，以 system-level rank correlation、pairwise agreement、bootstrap uncertainty 與 pool-growth permutation tests 驗證排名可靠性；nDCG@10 的 Spearman ρ 為 0.69–0.95。",
+        "在 financial news QA production system 中以 pooled judging 評估 62 種配置，達到 79.6% judgment reuse 與 4.9× cost reduction，並直接支援 production retrieval model selection。"
+      ],
+      "methodology": "方法以每個 query 從 11 個 retrieval systems 取得 top-100 documents，形成文件聯集 P(q)。對每個唯一的 (q,d) pair 使用 GPT-4.1（temperature 0）獨立判斷，採 3-point graded relevance：0 為不相關、1 為部分相關、2 為高度相關；輸出 JSON，並要求不超過兩行的 reasoning。系統評估時，僅取該系統排名清單中的共享 judgments，計算 P@k、Recall@k、nDCG@k 與 MAP，並與 published human qrels 比較。實驗涵蓋 FiQA、TREC-COVID、Natural Questions 與 FinRAGBench-V；retrieval configuration 包含五個 embedding model families 的 dense、hybrid（dense+sparse 的 reciprocal rank fusion）及 BM25 sparse baseline，支援文本、表格與圖形描述的 layout-aware 處理。作者另以 Claude Sonnet 4.6 檢驗 cross-judge agreement，使用 10,000 次 query bootstrap 估計 pairwise swap probability，並以 500 個隨機系統加入順序測試 pool expansion 的排名反轉。成本以 pooled unique pairs 對比獨立評估的 N×Q×K judgments，reuse rate 為節省比例。",
+      "key_results": "主要結果如下（數據均來自論文）：\n\n| 結果項目 | 數據 |\n|---|---:|\n| 四個資料集 nDCG@10 的 Spearman ρ | 0.691–0.945（論文摘要概括為 0.69–0.95） |\n| 四資料集 nDCG@10 pairwise agreement | FiQA 89%、TREC-COVID 78%、NQ 91%、FinRAGBench-V 89% |\n| nDCG@10 disagreements 落在 qrels bootstrap noise 內 | 20/27，74% |\n| 四個 metrics（BEIR 三資料集）disagreements 落在 noise 內 | 74/112，66% |\n| 四個公開 benchmark 的獨立 judgments | 1,907,400 |\n| 四個公開 benchmark 的 pooled unique judgments | 650,421 |\n| 公開 benchmark judgment reuse | 66%（約節省 1,256,979 次） |\n| Production 評估配置數 | 62 |\n| Production pool / 若獨立評估 judgments | 766,350 / 3,765,643 |\n| Production judgment reuse 與成本降低 | 79.6%；4.9× |\n| Production GPT-4.1 judging 成本 | 約 800 美元 |\n| Production MAP@100 最佳系統 | hybrid-emb3-large-768：0.461 |\n| Production 選定系統 | hybrid-emb3-large-256：MAP 0.459，並綜合 latency 與 embedding cost 選用 |\n| 兩 judge 在 TREC-COVID 的 nDCG@10 ranking correlation | ρ=0.89 |\n\n",
+      "insights": [
+        "若團隊會持續加入 embedding 或 query variants，可先以 3–5 個系統建立基礎 pool，之後只評估新系統帶來的 unique (query, document) pairs，以降低重複成本。",
+        "模型選擇應同時查看 ranking margin 與 bootstrap uncertainty；當系統差距小於約 0.001 nDCG 時，論文證據顯示 qrels 與 pooled labels 都可能無法可靠區分，不宜過度解讀名次。",
+        "LLM relevance labels 的絕對分數可能存在資料集與 metrics 的 calibration bias，因此較適合用於相對排序與候選篩選；若要作跨資料集或跨評估活動的絕對品質比較，仍需 human qrels 校準。"
+      ],
+      "limitations": "研究主要依賴單一 GPT-4.1 judge；Claude Sonnet 4.6 的完整重判只涵蓋 TREC-COVID。系統範圍限於 single-stage dense、sparse 與 hybrid retrievers，未測試 reranker 或 cross-encoder。macro-averaged rankings 的 pool-growth invariance 只有經驗支持；近乎並列的系統仍可能反轉。",
+      "tags": [
+        "llm-as-judge",
+        "rag-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "incremental information retrieval evaluation",
+        "test collection pooling",
+        "retrieval model selection",
+        "LLM relevance judgment",
+        "bootstrap uncertainty"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02750",
+      "title": "Bilevel Coordinated Reflection: A Game-Theoretic Approach to Multi-Agent LLM Systems",
+      "abstract": "Multi-agent LLM systems commonly use an orchestrator to decompose a task for a team of workers and then improve through textual reflection. Despite strong empirical results, these systems lack a unified account of coordination, memory improvement, and the role of external verification. We model orchestrator-worker interaction as a bilevel coordination game: under bounded coupling, the workers' local-update game is an approximate potential game whose equilibrium slack is controlled by decomposition quality. We then analyse reflection as stochastic movement over semantic memory states. For free-form reflection, we derive a finite-time upper bound, prove worst-case tightness, and give a positive lower bound under a falsifiable persistent-harm condition. We further prove an information-theoretic impossibility result: no gate that observes only the generated transcript can improve uniformly over text-indistinguishable environments, whereas an environment-grounded gate can. Motivated by this separation, we introduce Stochastic Reflective Memory Ascent (SRMA), which accepts a candidate memory only after a grounded evaluation risk strictly decreases. Under calibration and non-degenerate corrective mass, SRMA converges exactly, geometrically or polynomially; matching constructions show that both rate regimes are order-tight. We also provide confidence gating for stochastic evaluation and re-anchoring guarantees for piecewise-stationary environments. Experiments instantiate these objects with environment-grounded metrics and test the predicted coordination and drift laws. On 500 SWE-bench instances, the complete Kimi-based system resolves 72.2% versus a 70.8% public mini-SWE-agent reference. Code: https://github.com/YihangChen9/Bilevel-Coordinated-Reflection",
+      "authors": [
+        "Yihang Chen",
+        "Yuxiang Chen",
+        "Yuxuan Huang",
+        "Meng Fang",
+        "Weilin Luo",
+        "Jun Wang"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-02T15:50:10+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02750v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02750",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "多智能體 LLM 系統通常由 orchestrator 將任務分解，交由多個 worker 協作，並透過文字 reflection 改進。然而，現有系統缺乏對 coordination、memory improvement 與 external verification 的統一解釋。本文將 orchestrator–worker 互動建模為 bilevel coordination game：在 bounded coupling 下，worker 的 local-update game 是 approximate potential game，其 equilibrium slack 受 decomposition quality 控制。作者進一步把 reflection 視為 semantic memory states 上的隨機移動，推導 free-form reflection 的有限時間上界、證明最壞情況緊性，並在可反駁的 persistent-harm 條件下給出正的誤差下界。本文也證明僅觀察 transcript 的 gate 無法在文字不可區分環境中一致改善結果，而 environment-grounded gate 可以。基於此提出 Stochastic Reflective Memory Ascent（SRMA），只有在 grounded evaluation risk 嚴格下降時才接受候選 memory；在 calibration 與 corrective mass 條件下，SRMA 以幾何或多項式速率精確收斂，並提供 confidence gating 與 piecewise-stationary environment 的 re-anchoring 保證。",
+      "problem_statement": "現有 multi-agent LLM 系統多以程序性方式描述 orchestrator、worker、共享記憶與反思流程，卻缺乏統一的協調與收斂分析。論文聚焦三個問題：decomposition quality 如何影響 worker coordination；unconditional reflection 何時因有害內容而產生誤差下限；以及為何僅依賴文字的 critic 可能無法取代 external verifier。",
+      "proposed_solution": "作者提出 bilevel coordinated reflection framework：orchestrator 作為較慢時間尺度的 leader，負責任務分解與 strategy memory；workers 作為較快時間尺度的 followers，透過 execution memory 與 ηc-better responses 協作。在 bounded coupling 下，worker 子博弈具有以 global utility 為 potential 的 approximate potential 結構。對 reflection，作者區分 free-form、text-only gating 與 verifier-gated 更新，並提出 SRMA：使用固定 evaluation protocol 和 grounded verifier 比較目前及候選 memory 的 risk，只有 risk 嚴格下降才提交。此設計將資訊可得性、記憶單調改善、隨機評估信心控制及環境變動後重新錨定整合於同一框架。",
+      "core_contributions": [
+        "建立 bilevel coordination game，證明 bounded coupling 下 worker follower subgame 是 approximate potential game，且 equilibrium slack ηc≤2dmaxκ，將 decomposition quality 與協調誤差連結。",
+        "對 free-form reflection 建立 finite-time drift upper bound、worst-case tightness 與 persistent harmful commitment 下的 universal lower bound，刻畫 unconditional memory update 的誤差 floor。",
+        "提出 text-indistinguishable environments 下的 self-gating impossibility theorem，並提出 verifier-grounded 的 SRMA；證明其在 calibration 與 corrective-mass 條件下以 order-tight 的 geometric 或 polynomial rate 收斂，另提供 confidence gating 與 re-anchoring 保證。"
+      ],
+      "methodology": "理論上，任務由 orchestrator 分解為 τ=(τ1,…,τN)，worker 產生局部解 xi，global utility 由局部 utility 與 interaction terms ψij 組成。假設 worker action set 有限，且 coupling magnitude 以 κ、有耦合鄰居最大數以 dmax 表示，作者證明 follower game 是 approximate potential game，slack ηc≤2dmaxκ；反覆執行 ηc-better responses 可有限步到達 ηc-approximate Nash equilibrium。記憶分析將 execution memory 與 strategy memory 視為離散 semantic states，使用 sub-optimality V 的 conditional drift 分析 free-form reflection：上界由 corrective drift γ 與 residual error load ν 決定，並給出 worst-case tightness 及 persistent harmful commitment 下界。資訊理論部分構造兩個 text-indistinguishable environments，使同一 reflection 在不同環境中分別有益或有害，證明 self-contained gate 無法一致改善。SRMA 以固定 deterministic evaluation protocol gi、grounded verifier V 及 risk R 作為準則；候選 memory 僅在 R 嚴格下降時接受。假設 acceptance probability 至少為 c1Rβ、接受後期望 risk decrement 至少為 c2R，得到 β=0 時 geometric、β>0 時 polynomial convergence。隨機評估則以 Hoeffding confidence interval gating。實驗使用 Resource Contest、具 exact BFS verifier 的 Overcooked，以及以 repository test harness 驗證的 500 個 SWE-bench instances，指標包括 reward、regret、delivery score、verifier risk、harmful/helpful acceptance rate、切換時間與 resolved rate。",
+      "key_results": "| 實驗／系統 | 主要結果 |\n|---|---|\n| SWE-bench：Bilevel SRMA（Kimi K2.5） | 72.2%（361/500） resolved |\n| SWE-bench：Free-form MA（Kimi K2.5） | 58.4% resolved；與 SRMA 為 matched backbone 與 budget 的 controlled comparison |\n| SWE-bench：public mini-SWE-agent reference（Kimi K2.5） | 70.8% resolved；論文明確指出此為 external public reference，非 controlled ablation |\n| SWE-bench：Bilevel SRMA vs mini-SWE v2（DeepSeek） | 71.4% vs 68.2% |\n| Overcooked：Grounded SRMA | 三個 layout 分數分別為 320±20、280±20、260±20，均為比較方法最高 |\n| Overcooked：Grounded SRMA 相對 text-only self-gate | 三個 layout 分數提升 14.3%、27.3%、30.0% |\n| Resource Contest：SRMA | 達 oracle reward 的 98.5%–99.5%；平均 regret 由 4.33 降至 1.70，降低 60.8% |\n| Gate acceptance：Grounded SRMA | harmful proposals 接受率 6.2±1.8%，helpful proposals 接受率 85.4±3.6%，final risk 0.14±0.03 |\n| Gate acceptance：Self-gate | harmful 34.5±4.2%，helpful 72.8±5.1%，final risk 0.28±0.08 |\n| Stochastic verifier | one-shot false acceptance 28.4±5.2%；固定 K=5 降至 6.8±1.5%；adaptive gate 為 7.1±1.8% |\n| Drift prediction | 估計 β=0.52±0.04；held-out trajectory Pearson r=0.94、RMSE=0.032 |\n| Piecewise-stationary RC | re-anchoring 偵測變化時間 1.2±0.4 rounds、切換時間 2.5±0.6、post-shift regret 12.6±2.8；相較 grounded stale-anchor，switch time 降 67.9%、regret 降 67.0% |",
+      "insights": [
+        "若反思內容的正確性取決於隱藏環境狀態、執行結果或 repository 測試，實務上應優先導入 environment-grounded verifier，而非只增加 text-only critic 的模型能力。",
+        "共享 memory 不應無條件累積；可採用固定評估流程比較目前與候選記憶的 risk，僅提交嚴格改善的候選，以降低有害反思造成的漂移。",
+        "多智能體分解應同時考量局部效用與 worker 間 coupling；降低互相依賴的介面與共享約束，可能比單純增加 worker 數量更有助於協調。"
+      ],
+      "limitations": "保證依賴 bounded coupling、有限 action sets、verifier calibration 與 non-degenerate corrective mass，未必適用於開放式 agent 任務。實驗中的 drift 參數只在觀測軌跡上驗證；不完整測試套件只能保證 verifier risk 單調下降，不能保證真實任務效用。re-anchoring 也未提供一般 switching-regret bound；SWE-bench 的 72.2% 僅與 public reference 比較，且多智能體流程有額外 token 成本。",
+      "tags": [
+        "agent-evaluation",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-agent LLM coordination",
+        "verifier-grounded reflection",
+        "memory optimization",
+        "potential games",
+        "stochastic drift analysis"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02786",
+      "title": "SafeEvolve: Harness-Policy Co-Evolution from Agent Experience for Safety Alignment",
+      "abstract": "The performance of LLM-based agents is jointly shaped by the base model and the harness used when interacting with the environment. This exposes them to safety risks in both harmful final responses and multi-step execution trajectories. Existing safety alignment mechanisms often rely on either external harness updates or policy optimization, yet applying either paradigm in isolation fails to bridge runtime control with intrinsic safety. We propose SafeEvolve, an experience-driven self-evolving framework for agent safety alignment. SafeEvolve leverages safety experience from completed on-policy trajectories to drive a continual loop of harness-policy co-evolution. On the harness side, SafeEvolve converts trajectory-level safety evidence into bounded, component-level updates across safety prompt and hierarchical skills, yielding auditable and reversible harness artifacts. On the policy side, SafeEvolve follows a two-stage SFT-RL paradigm, where harness-use SFT bootstraps the policy to actively leverage evolved harness artifacts, and harness-augmented RL further shapes autonomous safety behaviors during multi-step exploration via verifier-decomposed rewards. Through harness-policy co-evolution, SafeEvolve converts safety experience into an evolved runtime harness and improved policy behavior. Experiments on agentic safety benchmarks show that SafeEvolve achieves a stronger safety-utility tradeoff than existing baselines. For Qwen3.5-4B, SafeEvolve achieves a $3\\times$ ASR reduction on AgentDojo while improving benign utility from 59.79% to 61.86%.",
+      "authors": [
+        "Qinghua Mao",
+        "Wanying Qu",
+        "Dadi Guo",
+        "Leitao Yuan",
+        "Qingyu Liu",
+        "Yu Li",
+        "Guanxu Chen",
+        "Yanwei Fu",
+        "Xi Lin",
+        "Xia Hu",
+        "Dongrui Liu"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-09-02T16:19:54+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02786v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02786",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "LLM agent 的效能由 base model 與其執行環境中的 harness 共同決定，因此安全風險不僅存在於有害的最終回覆，也存在於多步執行軌跡。現有安全 alignment 方法通常只依賴外部 harness 更新或 policy optimization，單獨採用任一方式都難以結合 runtime control 與 intrinsic safety。本文提出 SafeEvolve，一個由 agent experience 驅動的 self-evolving safety alignment framework。它利用已完成的 on-policy trajectories，持續推動 harness-policy co-evolution：將軌跡層級安全證據轉換為安全 prompt 與階層式 skills 的受限、可稽核、可回復更新；並透過兩階段 SFT-RL，先訓練 policy 使用演化後的 harness，再藉由 verifier-decomposed rewards 在多步探索中形成自主安全行為。實驗顯示，SafeEvolve 在 agentic safety benchmarks 上取得較佳 safety-utility trade-off。以 Qwen3.5-4B 為例，AgentDojo 的 ASR 由 2.37% 降至 0.79%，benign utility 則由 59.79% 升至 61.86%。",
+      "problem_statement": "LLM agent 在工具呼叫、規劃、記憶與環境互動的多步軌跡中，可能遭遇 harmful query、environment prompt injection、unsafe tool use 等風險。僅更新 harness 時，弱 policy 可能無法可靠遵循外部規則；僅更新 policy 時，固定 harness 難以因應新失敗模式，且安全能力較難跨模型轉移。因此，問題是如何將執行經驗同時轉化為可控的 runtime 防護與可內化的 policy 安全行為。",
+      "proposed_solution": "SafeEvolve 建立以完成的 on-policy trajectory 為共同證據的持續 co-evolution loop。第一階段是 observability-driven harness evolution：分析風險、定位失敗原因，針對單一 safety prompt 或 hierarchical skill 進行 bounded mutation，並以 paired evaluation、safety/utility/execution-quality gate 驗證，保留版本、證據與 rollback metadata。第二階段是 harness-augmented policy optimization：先以通過 verifier 的軌跡進行 harness-use SFT，使 policy 學會使用檢索到的 skills；再在相同 evolved harness 下進行 RL，透過依任務類型分解的 safety-utility reward 內化拒絕、忽略注入及安全恢復等行為。",
+      "core_contributions": [
+        "提出 SafeEvolve，將 completed on-policy trajectories 作為 harness refinement 與 policy optimization 的共同安全經驗，形成持續的 harness-policy co-evolution loop。",
+        "提出受限且可稽核的 harness evolution：把軌跡安全證據歸因至單一 prompt 或 skill component，透過 paired accept-reject gate、版本化證據與 rollback metadata 控制更新。",
+        "提出 harness-use SFT 加 harness-augmented RL 的兩階段 policy alignment，並以依任務類型分解的 verifier reward 同時訓練安全與工具任務效用。"
+      ],
+      "methodology": "研究將多步 tool-use episode 表示為 user instruction、環境觀察與 agent action/tool call 組成的 trajectory，威脅模型包含 malicious-query 與 environment-injection。Harness 形式化為 instructions、tools、skills、permission/action policies、instruction-priority/information-flow constraints 及 rendering/execution controller；實作中主要演化 safety prompt 與 hierarchical SkillBank，後者包含 general、task-specific、common-mistake skills。每輪先以目前 policy-harness pair rollout，依 scenario、attack type、tool family 與失敗 bucket 彙整證據；proposer 僅修改一個 component，候選版本須在相同內部 panel 上相較 parent 提升至少 δ，且不得使 safety、clean utility 或 execution quality 退化，通過後才版本化保存。Policy optimization 使用 evolved prompt 與 episode-level retrieved skills。SFT 僅對 assistant response 和 tool-call turns 訓練；RL 每個 task 取 8 條 rollout、以 group-relative advantage 和 clipped policy objective 更新，並加入 reference-policy KL。clean task reward 為 utility，malicious query reward 為 safety，environment injection reward 結合 utility、safety 與乘積項。實驗使用 Qwen3.5-4B、Qwen3-4B-Instruct-2507，200 rollout steps、每批 32 tasks、每 task 8 rollouts。AgentDojo/AgentDyn 評估 utility、attack utility、ASR；AgentHarm 評估 harmful score、refusal、benign score。",
+      "key_results": "主要結果如下（數值為論文表格所報告的百分比；AgentDojo 與 AgentDyn 的 ASR 越低越好，utility 越高越好）。\n\n| Backbone/方法 | AgentDojo Utility | AgentDojo U-Attack | AgentDojo ASR | AgentDyn Utility | AgentDyn U-Attack | AgentDyn ASR | AgentHarm Harmful | Refusal | Benign |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| Qwen3.5-4B Base | 59.79 | 60.04 | 2.37 | 15.00 | 15.45 | 6.88 | 56.45 | 28.98 | 83.09 |\n| Qwen3.5-4B SafeEvolve | 61.86 | 56.77 | 0.79 | 15.00 | 15.09 | 4.51 | 12.27 | 83.83 | 71.31 |\n| Qwen3-4B Base | 44.33 | 35.91 | 13.38 | 20.00 | 21.38 | 19.60 | 34.96 | 7.39 | 43.57 |\n| Qwen3-4B SafeEvolve | 60.82 | 52.05 | 2.42 | 25.00 | 15.14 | 4.87 | 15.47 | 71.93 | 63.43 |\n\n作者另報告：Qwen3.5-4B 在 AgentDojo 的 ASR 由 2.37% 降至 0.79%，benign utility 由 59.79% 升至 61.86%；AgentHarm harmful score 由 56.45 降至 12.27，refusal 由 28.98% 升至 83.83%。Held-out Agent Security Bench 中，SafeEvolve 在 DPI、IPI、PoT Backdoor 的 ASR 分別為 71.92%、0.50%、2.50%；對應 refusal rate 為 14.17%、21.25%、27.50%。",
+      "insights": [
+        "實務部署可將安全規則拆成可檢索、可版本控制的 task-specific 與 common-mistake skills，而非只依賴一段全域 safety prompt；論文的 frozen-policy ablation 顯示 evolved skills 通常比單一 prompt 更能改善多步執行安全。",
+        "安全更新應採同任務 paired evaluation、不可退化 gate 與完整 rollback provenance；論文的 online update 結果顯示，局部線上演化雖可能改善個別指標，卻會使其他 benchmark 的 ASR、utility 或 refusal 惡化。",
+        "評估 agent safety 時不應只檢查最終答案，應記錄中間 tool call、是否遵循注入、是否停止或恢復，以及 benign task completion；這正是 verifier-decomposed reward 與 AgentDojo/AgentDyn 類 trajectory-level 指標的價值。"
+      ],
+      "limitations": "論文指出目前演化仍受固定搜尋與更新排程限制，尚非真正的 meta-level recursive self-improvement；線上 harness 更新也出現跨指標退化。安全能力的跨模型轉移依賴目標 policy，弱模型可能無法執行 evolved guidance。作者建議未來進行長期多世代評估、開放式 red-teaming，並使用不可演化安全錨點、獨立 verifier、最壞情況安全下限、回復機制與人工監督。",
+      "tags": [
+        "prompt-injection",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agentic safety alignment",
+        "harness evolution",
+        "tool-use safety",
+        "reinforcement learning from verifier feedback",
+        "indirect prompt injection"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02774",
+      "title": "CodePoisonRAG: Knowledge Poisoning Attacks on Retrieval-Augmented Code Generation",
+      "abstract": "Retrieval-Augmented Code Generation (RACG) improves LLM-based software development by retrieving external code artifacts, documentation, and patches, and incorporating them into the generation context. This reliance on external knowledge introduces a critical trust boundary: poisoned artifacts can influence generated code without modifying the underlying LLM. Prior work shows that selecting existing vulnerable examples can increase the general vulnerability rate of RACG outputs, but leaves open whether a black-box attacker can construct a single task-matched artifact that propagates an attacker-selected weakness. We introduce CodePoisonRAG, a targeted upstream knowledge-poisoning framework that transforms benign fixed-code entries into poisoned artifacts. Its attack chain combines CWE-specific Vulnerability Injection, which embeds a selected source-to-sink flow while retaining task alignment, with Semantic Mislabeling, which adds false safety claims without repairing the vulnerable behavior. The attacker has no access to the victim's deployed knowledge base, retriever, re-ranker, generator, prompt, or defense mechanism and injects at most one artifact per anticipated programming task. We construct 85 poisoned artifacts covering ten CWE classes across Java and C, yielding an aggregate corpus-poisoning ratio of 0.7%. Across three generators, all 85 artifacts appear among the Top-3 results for their corresponding queries, and CodePoisonRAG achieves attack success rates between 0.80 and 0.93. Against CodeGuarder, which injects vulnerability-specific security knowledge into the generation context, the attack retains success rates between 0.40 and 0.71. These results show that RACG poisoning extends beyond the incidental propagation of existing vulnerabilities to the targeted construction and propagation of attacker-selected weaknesses.",
+      "authors": [
+        "Varun Gadey",
+        "Ziad Marey",
+        "Alexandra Dmitrienko"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.LG"
+      ],
+      "published": "2026-09-02T16:11:01+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02774v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02774",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "Retrieval-Augmented Code Generation（RACG）透過檢索外部程式碼、文件與修補程式來提升 LLM 軟體開發能力，但也形成新的信任邊界：被投毒的知識條目可能在不修改 LLM 的情況下影響生成程式碼。過去研究主要選取既有漏洞範例，提升 RACG 輸出的整體漏洞率，尚未回答黑箱攻擊者能否建構單一、符合任務的條目，以傳播指定弱點。本文提出 CodePoisonRAG，將良性修補程式轉換為投毒條目，結合 CWE-specific Vulnerability Injection 與 Semantic Mislabeling：前者嵌入指定的 source-to-sink 流，後者加入虛假的安全聲明但不修復漏洞。攻擊者不需存取受害者知識庫、retriever、re-ranker、generator、prompt 或防禦機制，每個預期任務最多注入一個條目。作者建立涵蓋 Java 與 C、十種 CWE 的 85 個投毒條目，總投毒比例為 0.7%。三個生成器中，全部條目均進入對應查詢的 Top-3，未防禦時攻擊成功率為 0.80–0.93；面對 CodeGuarder 時仍達 0.40–0.71，顯示 RACG 投毒可針對性地建構並傳播攻擊者選定的弱點。",
+      "problem_statement": "論文關注 RACG 對外部知識庫的依賴所引入的供應鏈信任風險。既有研究可藉由選取語料庫中已存在的漏洞範例，提高生成程式的整體漏洞率，但無法同時控制預期功能、漏洞類別與任務匹配度；不匹配的範例可能無法被檢索或模仿。因此，尚缺乏一種黑箱、低投毒比例、每個任務僅使用單一條目，且能使生成結果產生指定 CWE 的攻擊方法。",
+      "proposed_solution": "作者提出 CodePoisonRAG，一種針對 RACG 的 upstream targeted knowledge-poisoning framework。攻擊者先針對預期的良性程式設計任務選擇相容 CWE，再將原本安全的 fixed-code entry 修改為保留原功能、API、識別字與結構的漏洞版本。其核心攻擊鏈包含兩階段：Vulnerability Injection 修改 source–passthrough–sink 資料流，植入指定 CWE；Semantic Mislabeling 則在註解或文件加入「已完成安全處理」等虛假聲明，讓條目看似安全並提高對安全導向查詢的語義匹配。此設計同時追求檢索成功與漏洞傳播，且不依賴受害 RACG 系統的內部資訊。",
+      "core_contributions": [
+        "提出黑箱 upstream RACG 投毒威脅模型：攻擊者不存取受害者知識庫、retriever、re-ranker、generator、prompt 或防禦機制，且每個預期任務最多注入一個條目。",
+        "設計由 CWE-specific Vulnerability Injection 與 Semantic Mislabeling 組成的程式碼攻擊鏈，在維持任務對齊的同時植入指定 source-to-sink 漏洞並加入虛假安全聲明。",
+        "建立涵蓋 Java、C 與十種 CWE 的 85 個投毒資料，並在三個開放權重生成器及 CodeGuarder 防禦下驗證檢索與端到端攻擊效果。"
+      ],
+      "methodology": "RACG 流程由外部知識庫、dense retriever、可選的 re-ranker 與 LLM generator 組成。作者以 12,053 個 ReposVul fixed-code entries 建立良性檢索池，另製作 85 個 function-level poisoned snippets，包含 65 個 Java 與 20 個 C 條目，涵蓋 CWE-20、22、78、79、89、94、119、120、502、918。每個攻擊樣本從任務匹配的良性條目出發，先選擇可在既有資料流中實現的 CWE，再以 source→passthrough→sink 形式替換或修改安全操作，例如以 filename.trim() 取代路徑限制、以 sprintf 取代 snprintf，最後加入 CWE-specific 的虛假安全註解。資料庫使用 jina-embeddings-v3、1,024 維向量與 FAISS exact cosine search，候選結果再由 jina-reranker-v2-base-multilingual 重排序。生成器為 Qwen 3.5 9B、Code Llama 13B 與 DeepSeek-Coder-V2 16B，採 temperature 0 的 greedy decoding；另以 GLM-5.1 作為獨立 LLM judge，依 CWE-specific source-to-sink 規則檢查主要程式碼區塊。評估指標包括 Retrieval Success Rate（RSR）、需同時滿足檢索與漏洞生成的 Attack Success Rate（ASR）、不要求投毒條目被檢索的 Target Weakness Rate（TWR），以及 CodeBLEU。實驗比較 non-defense、benign counterpart 與 CodeGuarder 防禦情境。",
+      "key_results": "| 情境／指標 | 結果 |\n|---|---:|\n| 投毒資料規模 | 85／12,138，總投毒比例 0.700% |\n| Non-defense：RSR | 85/85（100%） |\n| Non-defense：ASR | 79/85（0.93） |\n| Non-defense：各生成器 ASR 範圍 | 0.80–0.93 |\n| CodeGuarder：RSR | 84/85（論文表 II） |\n| CodeGuarder：ASR | 60/85（0.71） |\n| CodeGuarder：各生成器 ASR 範圍 | 0.40–0.71 |\n| 防禦下最低 CWE-level ASR | CWE-78：2/5（0.40） |\n| 防禦下最高 CWE-level ASR | CWE-79：9/10（0.90） |\n| Non-defense 中最低 CWE-level ASR | CWE-502：5/10（0.50） |\n\n論文另指出，三個生成器中 85 個投毒條目均出現在對應查詢的 Top-3；但提供內容未列出各生成器逐項 ASR、TWR、CodeBLEU 或完整 ablation 數字。",
+      "insights": [
+        "RACG 的安全邊界不只在模型與 prompt，也包括資料匯入、公共程式碼來源、版本更新與知識庫建立流程；實務上應對外部條目進行來源驗證、漏洞掃描與人工抽查。",
+        "僅依賴語義檢索或 re-ranking 不能保證安全，因為任務對齊的漏洞條目可同時具備高相關性與惡意資料流；部署時應加入 taint analysis、SAST、依賴檢查與生成後安全驗證。",
+        "安全知識注入如 CodeGuarder 能降低但不能消除攻擊成功率，表示防禦不應只在 prompt 中宣告安全規則，還需要對檢索內容做隔離、可信度標註、衝突檢測與最小權限式上下文組裝。"
+      ],
+      "limitations": "研究僅評估 85 個人工或 LLM 輔助構造的 function-level snippets、兩種語言、三個生成器與特定 retriever/reranker 設定；未提供更廣泛商用模型、不同檢索架構、真實公共來源滲透率或完整 TWR、CodeBLEU 數據。輸出漏洞判定主要依賴 GLM-5.1 LLM judge，可能存在評估偏差；論文也未展示完整防禦比較與實際部署成本。",
+      "tags": [
+        "rag-evaluation",
+        "red-teaming",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "RAG knowledge-base poisoning",
+        "retrieval-augmented code generation security",
+        "software supply-chain attacks",
+        "CWE vulnerability propagation",
+        "secure code generation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02730",
+      "title": "CORAL: An LLM-Native Harness for Production Recommender Systems",
+      "abstract": "Production recommender systems shape what billions of people see, and sustaining their performance requires continual optimization: as content, user behavior, and upstream models shift, the choices governing retrieval, ranking, and serving must be revisited. Traditionally, human engineers test such changes through online experiments--a slow, reactive process limited by engineering effort, leaving parts of the system unrevised as conditions change. Although large language models have been applied to ranking, user modeling, and offline model development, few systems place an agent in a continual closed loop that acts on a live recommender and learns from the measured effects of its decisions. We present CORAL (Constraint-Optimized Recommender via an Agentic Loop), an LLM-native harness that closes this loop: each cycle, the agent observes operating signals, reasons over a memory of past decisions and outcomes, and invokes tools--including a numerical optimizer that keeps changes within a fixed operating budget--to reconfigure the recommender, with measured outcomes informing the next cycle. We formulate this as a partially observed, non-stationary, constrained optimization problem in which the policy improves in context, without parameter updates, from its prior actions. Across two large-scale social platforms, evaluated with A/B experiments, the same harness improves engagement at no additional serving cost on one and reduces serving cost without degrading engagement on the other, spanning the engagement-efficiency frontier. Performance improves as the loop iterates, suggesting that a single agentic loop can automate continual optimization work traditionally performed by human algorithm engineers under explicit guardrails.",
+      "authors": [
+        "Muhammad Rafay Azhar",
+        "Yuhang Zhou",
+        "Gilbert Jiang",
+        "Yuchen Wang",
+        "Rahul Sharma",
+        "Matthew DeSousa",
+        "Jiayi Liu",
+        "Xin Guo",
+        "Lizhu Zhang",
+        "Xiangjun Fan"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-02T15:40:36+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02730v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02730",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "生產環境中的推薦系統影響數十億使用者所接觸的內容；隨著內容、使用者行為與上游模型持續變化，檢索、排序與服務設定必須不斷重新最佳化。傳統上由工程師透過 online experiments 測試變更，速度慢且受人力限制。CORAL（Constraint-Optimized Recommender via an Agentic Loop）是一個 LLM-native harness，讓 agent 持續閉環操作 live recommender：每個週期觀察運行訊號，利用過往決策與結果的 memory 進行推理，並呼叫包含 numerical optimizer 的工具，在固定 operating budget 內重新配置系統。部署後的量測結果會回饋至下一週期。作者將問題形式化為 partially observed、non-stationary、constrained optimization；policy 不需參數更新，即可依自身歷史行動的效果進行 in-context 改進。兩個大型社交平台的 A/B experiments 顯示，一個部署在不增加 serving cost 下提升 engagement，另一個在 engagement 不下降下降低 serving cost，涵蓋 engagement–efficiency frontier。",
+      "problem_statement": "生產推薦系統由 retrieval、ranking 與 serving 等多階段元件組成，許多資源配置與政策仍依賴工程師反覆提出假設、開發及執行 online experiments。現有流程每次只探索設計空間的一小部分，週期慢、成本高且偏向在發生回歸後才反應，導致部分設定長期不被更新，在內容、行為與上游模型漂移時偏離最佳點。論文因此要解決 live recommender 的持續、受約束、自動化最佳化問題。",
+      "proposed_solution": "作者提出 CORAL，一個包圍通用 LLM 的 agentic harness，而非讓 LLM 直接處理每次推薦請求。其核心是固定週期的 closed loop：agent 觀察推薦系統訊號，從 persistent memory 取回過去的觀察、評估、決策與歸因結果，分析後提出各 control unit 的有限調整，再由 deterministic constrained optimizer 將提案投影至 budget-feasible configuration，並透過 guardrails 驗證後部署到 live recommender。完整週期以 A/B measurement 取得效果，再寫回 memory。創新在於把 LLM 的異質訊號推理與記憶能力，和數值可行性、邊界變更及安全控制結合，使 policy 不需 retraining 也能依歷史結果 in context 適應非平穩環境。",
+      "core_contributions": [
+        "將 live recommender 的持續 agent-driven optimization 形式化為 partially observed、non-stationary、constrained optimization，並讓 LLM policy 透過自身行動結果進行 in-context refinement。",
+        "提出 CORAL harness，整合 persistent memory、LLM reasoning、deterministic analysis／attribution 工具、constrained optimizer、guardrails 與固定 cadence 的 closed loop。",
+        "在兩個大型社交平台以 A/B experiments 驗證同一 harness：一個案例提升 engagement（包括 low-signal 與新使用者），另一個降低 serving cost 且 engagement 未顯著下降。"
+      ],
+      "methodology": "論文將每個週期的系統設定表示為 s，業務目標為 J_t(s)，成本為 c_t(s)，並要求 c_t(s)≤B；agent policy π 依觀察 o_t 與 memory M_t 產生 s_t，目標是最小化相對於每週期最佳可行設定的 cumulative shortfall。控制面由三類 memory 組成：observation store 保存各單元原始統計及變化，assessment store 保存 LLM 的文字化綜合判斷，decision store 保存歷史設定及其歸因結果。工具包括 analysis、retrieval、attribution、constrained optimizer 與 apply configuration。流程固定為 Observe、Reason and recall、Optimize and deploy、Measure effect、Update memory，避免由模型自行控制流程。部署週期 k=3 天，memory horizon m=3 cycles；每個設定維持完整週期，再以前後期間比較及 A/B experiment 量測效果。第一個案例將 retrieval sources 視為 control units，以 bounded continuous multiplier 分配固定 retrieval budget，指標為 video-viewing sessions 與 watch time。第二個案例將 user segments 視為 control units，從 ordered discrete treatment menu 分配 serving compute budget，觀察 engagement 與 serving cost。論文亦估算每週期約 8–10 次 LLM calls、每次約 1,500–2,000 input tokens 與 2,500 output tokens，但 pipeline 未記錄實際 token usage。",
+      "key_results": "| 部署／輪次 | 評估方式 | 主要結果 |\n|---|---|---|\n| Retrieval-budget，R1 | A/B experiment；zero-shot proposal | Watch time **+0.13%**；sessions **neutral** |\n| Retrieval-budget，R2 | A/B experiment | Watch time **neutral**；sessions **neutral** |\n| Retrieval-budget，R3／全體使用者 | A/B experiment，數百萬使用者 | Video-viewing sessions **+0.16%**；total watch time **+0.15%**；無額外 serving cost |\n| Retrieval-budget，最大市場 | A/B experiment | Sessions **+0.77%** |\n| Retrieval-budget，新加入且 low-signal 使用者 | A/B experiment | Video-viewing sessions **+0.23%** |\n| Serving-capacity，第一輪 | A/B experiment，數百萬使用者 | 大幅降低 serving cost，節省數百萬美元 annualized capacity expenditure；engagement **論文未報告具體變化數字** |\n| Serving-capacity，第二輪 | A/B experiment | 在 engagement statistically unchanged 下，將 savings 較第一輪再增加 **44%** |\n| 推理成本 | 作者估算 | 每個部署的 end-to-end inference cost 約為數十美元；實際 token usage **論文未報告** |\n\n作者指出第二輪 retrieval 配置曾過度修正，因此結果並非每輪單調改善；整體而言，決策效果隨 loop 迭代而改善。",
+      "insights": [
+        "若將 LLM 限定於異質訊號的判斷與提案，並把 budget feasibility 交給 deterministic optimizer，可降低語言模型產生數值不合法配置的風險。",
+        "對生產 agent 應保存觀察、文字評估、歷史決策及歸因結果，讓每次部署的實際效果成為下一週期的決策依據，而非僅定期重新執行相同 prompt。",
+        "針對 low-signal 或新使用者採用分段配置，而非只學習全體使用者的 global allocation，有助於處理聚合指標可能掩蓋的族群差異；但仍應以線上實驗驗證各分段的因果效果。"
+      ],
+      "limitations": "論文指出目前仍需 human supervision，guardrails 尚待強化以降低人工監督。兩個案例都集中於推薦資源的 constrained allocation，尚未驗證 retrieval 或 ranking logic 等不同類型控制桿。此外，A/B experiments 雖能量測真實效果，成本高且依賴特定生產環境；部署前的標準化 agent-optimization 評估方法仍未建立。",
+      "tags": [
+        "agent-evaluation",
+        "alignment",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "生產推薦系統最佳化",
+        "LLM agent memory 與 tool use",
+        "受約束線上最佳化",
+        "A/B 實驗與因果歸因",
+        "人類監督與 autonomous guardrails"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02737",
+      "title": "Language Models Can Control Their Own Attention",
+      "abstract": "Language models spend most of their attention on a small fraction of context, yet they read the entire KV cache to find the few tokens that matter. If the user asks about a previous detail in a 1M-token conversation, global attention layers must scan the full context to generate each token of the reply. A prominent approach mitigates this cost by pre-selecting relevant tokens via lightweight proxy scores, but this extrinsic scoring still incurs O(N) per step. We take an intrinsic approach motivated by the simple question: wouldn't the model already know which parts of the context are relevant? To this end, we introduce Declarative Attention (DA), a protocol that elicits the model to declare where it needs to attend within its chain-of-thought, partitioning generation into three modes: <global> (full context), <focus> (a specific region), and <local> (recent output only). The inference engine parses these declarations like tool calls and skips most of the KV cache read. Under zero-shot evaluation across 15 long-context tasks, DA on off-the-shelf models (Gemma-4-31B, Qwen-3.6-27B) significantly reduces total attended tokens during decoding (52.0%, 31.1%) with modest accuracy drops (1.27pp, 2.75pp) that shrink with model scale. DA unlocks a new axis of sparse attention, with further potential under training-based methods that future work can explore.",
+      "authors": [
+        "Namgyu Ho",
+        "Huzama Ahmad",
+        "Woosung Koh",
+        "Se-Young Yun",
+        "Tal Schuster",
+        "Cicero Nogueira dos Santos"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-09-02T15:43:38+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02737v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02737",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "Language Models 在長上下文中通常只將大部分注意力集中於少數 token，卻仍須讀取完整 KV cache 才能找出相關內容。例如，在 1M-token 對話中查詢早期細節時，每個回答 token 都可能觸發全域 context 掃描。既有方法以輕量 proxy score 預先選取相關 token，但此 extrinsic scoring 每步仍需 O(N) 掃描。本文提出 intrinsic 的 Declarative Attention（DA），要求模型在 chain-of-thought 中宣告其注意範圍，並分為 <global>（完整 context）、<focus>（指定區域）與 <local>（僅近期輸出）三種模式。推理引擎將宣告解析為類似 tool call 的控制訊號，跳過大部分 KV cache 讀取。在 15 個長上下文任務的 zero-shot 評估中，Gemma-4-31B 與 Qwen-3.6-27B 分別降低 52.0% 與 31.1% 的 decoding attended tokens，準確率僅下降 1.27 與 2.75 個百分點。結果顯示 DA 提供了新的 sparse attention 軸線，未來仍可透過訓練進一步改善。",
+      "problem_statement": "長上下文 decoding 的主要瓶頸之一是每一步都讀取完整 KV cache，即使真正影響輸出的 token 只占少數。固定 recency 或歷史 attention heuristic 難以預測 query-dependent 的相關內容；較新的 proxy scorer 雖能近似選取 mask，卻仍須每步對 O(N) context 進行掃描，無法完全消除選取成本。論文因此探討能否讓模型直接表達自身的注意範圍。",
+      "proposed_solution": "作者提出 Declarative Attention（DA）protocol，將模型生成切分為注意範圍穩定的連續 reasoning spans，並以可解析標籤宣告模式。<global> 保留所有 context segment，用於導航與尋找相關區域；<focus magic_chunks=\"K\"> 僅保留指定 magic chunk，用於擷取具體事實；<local> 不讀取 context，只依賴問題、既有輸出與已擷取資訊進行推理。推理引擎中的 DA state machine 監看標籤轉換，動態重寫 KV-cache block table，讓 attention kernel 跳過未宣告的區塊。核心創新是把 attention selection 從外部 scorer 移至模型生成的控制協定，從而取消每步額外的 O(N) 選取掃描。",
+      "core_contributions": [
+        "提出不需額外 scorer 或參數更新的 Declarative Attention protocol，讓 off-the-shelf language models 以可解析生成標籤控制自身的 context 可見範圍。",
+        "設計 global、focus、local 三模式、magic-chunk context delivery，以及可整合 vLLM 的 block-aligned KV-cache masking state machine，將模型宣告直接轉換為推理遮罩。",
+        "在 15 個長上下文來源與六個模型上展示 zero-shot 的 cost-accuracy trade-off；大型模型可維持接近 Vanilla 的準確率，同時大幅降低 decoding attended tokens。"
+      ],
+      "methodology": "實驗使用 Gemma-4-{31B,12B,E4B}、Qwen-3.6-27B 與 Qwen-3.5-{9B,4B}，主要比較 Gemma-4-31B 和 Qwen-3.6-27B；模型支援的輸入上限通常為 256K token，Gemma-4-E4B 為 128K。長文本以約 2,048 token 為目標切成 magic chunks，分割優先使用段落、換行、句末、子句與詞邊界；每個 segment 透過模擬 tool-use transcript 呈現，並保留完整、無損的文本分割。DA state machine 預設處於 global；解析到 focus 開啟標籤的結尾即只保留指定 chunk，local 則遮蔽所有 context segment，結束標籤後回到 global。遮罩以 vLLM 的 16–32 token block 為單位，透過 attention metadata hook 重寫 KV block table，未修改 FlashAttention kernel 或 scheduler；DA 僅作用於 global attention layers，不處理 sliding-window 或 Gated DeltaNet 等固定成本層。評估涵蓋 RULER、LongBench v1/v2、LooGLE 與 ZeroSCROLLS 的 15 個來源，最多每來源抽取 128 個樣本。比較 Vanilla、DA-no-mask（相同 DA prompt 但完整 causal attention）與 DA。準確率以 Gemini-3-Flash 產生 rubric，再由 thinking-enabled Qwen-3.5-4B 進行 binary LLM-as-a-judge 評分；效率以每回答 decoding 期間累計 attended KV positions 衡量，另以 MFU 40%、MBU 70% 的 roofline 分析估算 wall-clock time。",
+      "key_results": "主要結果如下（表中平均值為 15 個來源等權平均）：\n\n| 模型與方法 | 準確率 | 每回答 attended tokens | 相對 Vanilla 的 token 變化 | 相對 Vanilla 的準確率變化 |\n|---|---:|---:|---:|---:|\n| Gemma-4-31B Vanilla | 87.01% | 13.43M | — | — |\n| Gemma-4-31B DA-no-mask | 87.01% | 22.31M | +66.2% | 0.00pp |\n| Gemma-4-31B DA | 85.74% | 6.45M | -52.0% | -1.27pp |\n| Qwen-3.6-27B Vanilla | 85.31% | 22.54M | — | — |\n| Qwen-3.6-27B DA-no-mask | 84.62% | 29.02M | +28.8% | -0.69pp |\n| Qwen-3.6-27B DA | 82.56% | 15.52M | -31.1% | -2.75pp |\n\n其他論文報告結果包括：Gemma 上 DA 相對 DA-no-mask 減少 71.1% attended tokens，Qwen 減少 46.5%；DA 在 Gemma 的單跨度與多跨度任務分別節省 54.8% 與 48.5%，Qwen 分別節省 29.7% 與 32.6%。Gemma 上 DA 在 15 個任務中的 7 個達到或超過 Vanilla，Qwen 則為 5 個；最明顯的單任務提升是 Gemma 的 longdep_qa（+3.1pp）與 Qwen 的 code_repo（+5.6pp）。Gemma 的 roofline 估計 decoding wall-clock 為 Vanilla 的 0.71 倍，Qwen 為 0.77 倍；這是理論估計而非實測時間。",
+      "insights": [
+        "在長上下文 RAG 或 agent tool-use 系統中，可將文件段落、對話輪次或工具回應作為可尋址 segment，讓模型先導航、再聚焦擷取、最後以 local mode 推理，降低反覆讀取整個 context 的成本。",
+        "評估長上下文系統時，不能只看準確率；應同時記錄 per-step KV 讀取、生成步數、模式分布與終止率，因為 DA 可能以較長輸出換取較低的每步注意力成本。",
+        "模型能力與 protocol adherence 密切相關；部署前應監測標籤可解析率、focus chunk 有效率與多跨度任務表現，並考慮以訓練或 constrained decoding 強化控制格式，而非直接假設 zero-shot DA 對小模型可靠。"
+      ],
+      "limitations": "DA 目前依賴模型遵循標籤語法、正確追蹤 chunk 邊界並在 focus 中擷取足夠資訊；小模型的 protocol adherence 與準確率明顯較差。多跨度推理、長文本切割破壞證據及輸出長度增加仍會造成失效。wall-clock 結果是採用固定 MFU/MBU 的 roofline 估計，非實際端到端測量，且未涵蓋 prefill。作者指出未來可透過 protocol-specific training、自然語義邊界與 thinking mode 支援改善。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "long-context inference",
+        "sparse attention",
+        "KV-cache optimization",
+        "tool-use prompting",
+        "LLM-as-a-judge"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02861",
+      "title": "Towards Trustworthy Autonomous Robots: An Explainable AI-Based Decision Framework",
+      "abstract": "Autonomous robots powered by deep learning face a fundamental auditability challenge: when incidents occur, investigators cannot reconstruct why the system made specific decisions. This paper presents TRACE (Transparent Reasoning Architecture for Credible Execution), a decision framework that ensures every autonomous action can be traced back to sensor evidence through documented causal chains. The framework organizes decision-making into four auditable layers: Semantic Perception for evidence-grounded entity recognition, Belief Reasoning for probabilistic state estimation with causal graphs, Action Synthesis for constraint-aware planning with counterfactual documentation, and Execution Verification for compliance monitoring. TRACE is model-agnostic yet designed to integrate learning-based perception modules (CNNs, transformers) while preserving decision-level auditability. We evaluate the framework using three objective metrics: Evidence Traceability (sensor-to-decision linkage), Decision Reconstructability (post-hoc analysis capability), and Temporal Continuity (audit trail completeness). Experimental evaluation on warehouse robot navigation demonstrates that TRACE achieves 98.6% evidence traceability, 99.0% temporal continuity, and 98.1% decision reconstructability across 500 simulated decision cycles. Post-hoc methods like LIME provide feature attributions but lack the artifact structure needed for decision-level reconstruction. The framework addresses EU AI Act requirements for high-risk system transparency and contributes to Explainable AI for safety-critical autonomous systems.",
+      "authors": [
+        "Cagri Temel"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-09-02T17:44:25+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02861v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02861",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "由 deep learning 驅動的 autonomous robots 面臨根本性的可稽核性挑戰：事故發生後，調查人員往往無法重建系統作出特定決策的原因。本文提出 TRACE（Transparent Reasoning Architecture for Credible Execution），透過記錄化的因果鏈，確保每個自主動作都能追溯至 sensor evidence。TRACE 將決策分為四個可稽核層次：以證據為基礎的實體辨識（Semantic Perception）、結合 probabilistic state estimation 與 causal graphs 的信念推理（Belief Reasoning）、具約束感知規劃與 counterfactual documentation 的動作合成（Action Synthesis），以及合規監控（Execution Verification）。TRACE 具 model-agnostic 特性，可整合 CNN、transformer 等 learning-based perception 模組，同時維持 decision-level auditability。作者以 Evidence Traceability、Decision Reconstructability 與 Temporal Continuity 三項指標，在 warehouse robot navigation 的 500 個 simulated decision cycles 中評估，分別達到 98.6%、98.1% 與 99.0%。",
+      "problem_statement": "論文聚焦於 deep learning autonomous robots 的決策難以在事故後稽核與重建問題。現有 LIME、SHAP 等 post-hoc XAI 主要提供單次模型輸出的 feature attribution，無法保存跨時間的決策序列、候選動作與選擇理由；attention 也不必然代表因果關係。Runtime verification 可偵測規格違反，卻不記錄決策為何形成，因此難以支援事故調查、安全認證與高風險 AI 的透明度要求。",
+      "proposed_solution": "作者提出 TRACE（Transparent Reasoning Architecture for Credible Execution），將可稽核性直接嵌入 autonomous robot 的決策架構，而非事後從 opaque model 抽取解釋。框架包含四層：Semantic Perception 將 sensor data 轉為附帶證據連結的實體；Belief Reasoning 以 probabilistic scene graph 與 causal graph 表示觀測及推論狀態；Action Synthesis 記錄候選動作、選擇 rationale 與 Counterfactual Decision Tree；Execution Verification 則比對預期與實際執行並產生 timestamped audit records。核心創新是以統一 artifact structure 保存 sensor-to-decision causal chains、替代方案及反事實條件，支援獨立調查者進行 decision-level reconstruction。",
+      "core_contributions": [
+        "提出具正式層間介面的四層 TRACE decision architecture，使 audit artifacts 從 Semantic Perception、Belief Reasoning、Action Synthesis 延續至 Execution Verification。",
+        "定義 Evidence Traceability、Temporal Continuity 與 Decision Reconstructability 三項 auditability metrics，直接衡量 sensor evidence、時間記錄及決策重建條件。",
+        "提出 Counterfactual Decision Trees，記錄已選動作、替代動作、選擇 rationale 及觸發替代方案的條件，支援事故後的 what-if 分析。"
+      ],
+      "methodology": "TRACE 將每個 decision cycle 分為四層處理。第一層 Semantic Perception 融合 LiDAR、camera 與 ultrasonic 等 sensor data，輸出包含 id、class、pose、calibrated confidence distribution 及 evidence set 的 evidence-grounded entities；evidence set 記錄 sensor source、contribution weight 與 spatial region。第二層 Belief Reasoning 建立 probabilistic scene graph G=(V,E,P)：實體形成節點，推理規則產生具 conditional probability 的關係邊，並將如「aisle blocked」等 derived states 連回父證據節點。第三層 Action Synthesis 產生候選動作，依 objectives 與 constraints 評估，並以 Counterfactual Decision Tree 記錄 alternatives、rationale 及觸發其他動作的條件。第四層 Execution Verification 監控 command 執行，記錄 intended/actual deviation、flags，以及包含時間、實體、belief state 與 selected action 的 audit record。評估使用 Python warehouse simulation，環境為 50m×30m，10Hz，五種場景各 100 cycles，共 500 cycles；設定 LiDAR 2%、camera 12%、evidence link corruption 3%、causal edge write failure 2%、rationale truncation 2% 與 counterfactual timeout 2.5% 等失效模式。指標為 Evidence Traceability（決策因素是否連至 sensor evidence）、Temporal Continuity（audit trail 的時間完整性）及 Decision Reconstructability（action、alternatives、rationale 是否均被記錄）。",
+      "key_results": "| 方法 | Evidence Traceability（ET） | Temporal Continuity（TC） | Decision Reconstructability（DR） | 時間 |\n|---|---:|---:|---:|---:|\n| TRACE | 98.6% ± 7.0% | 99.0% | 98.1% | 0.12 ms |\n| Attention | 20–25% | 70–80% | 論文未報告（N/A） | <0.01 ms |\n| SHAP | 30–35% | 0% | 論文未報告（N/A） | 0.02 ms |\n| LIME | 25–30% | 0% | 論文未報告（N/A） | 1.29 ms |\n\nTRACE 的 ET 未完全滿足比例為 1.4%（500 次中的 7 次），ETpartial 為 0.98；TC 缺口為 1.0%（5 筆記錄）。DR 有 23/500 筆未完全可重建。各場景 ET 為 96.4%–100%，TC 為 99%–100%，DR 為 96.6%–99.0%。上述 baseline 為 architectural capability analysis，並非直接實作比較。",
+      "insights": [
+        "若系統需要事故後稽核，應在執行時保存實體、信念更新、候選動作與執行偏差，而不只保存模型輸出或 feature attribution。",
+        "可將 TRACE 的四層 artifact interface 作為既有 robotic software stack 的整合要求；論文指出底層模組需暴露 detected entities、belief updates 與 candidate actions 等中間表示。",
+        "部署 audit trail 時需同時規劃可靠寫入與分層儲存；論文估計完整記錄可能造成大規模儲存負擔，並提出 hot、warm、cold storage、壓縮及 delta encoding 作為策略，但其 fleet-scale 效益仍待驗證。"
+      ],
+      "limitations": "評估完全在 simulation 中進行，感測器噪聲與失效模式較理想化，0.1–0.12 ms 的 overhead 也未在 embedded hardware 驗證。指標只衡量由 artifacts 重建的能力，未證明調查人員實際使用效益；部分決策仍有不完整證據鏈。未來工作包括 ROS 2、實體機器人驗證、調查人員 user study、formal verification 與大規模壓縮驗證。",
+      "tags": [
+        "safety",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Explainable AI for autonomous robots",
+        "robot decision auditing",
+        "runtime verification",
+        "counterfactual explanations",
+        "EU AI Act logging"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.02859",
+      "title": "User Feedback Provides a Unique Signal that LLMs Can not Detect",
+      "abstract": "Harnessing naturally occurring feedback from user interactions offers a promising learning signal for Large Language Models (LLMs). However, recent studies suggest this feedback is inherently noisy and difficult to leverage effectively. We challenge this conception by demonstrating that user feedback is a highly actionable signal for improvement, and that its perceived ineffectiveness stems from a systematic bias in current evaluation paradigms. To isolate the usefulness of feedback, we construct synthetic data with a definitive ground truth, alongside naturalistic data to validate that our findings hold in real-world scenarios. By comparing model revisions generated with and without access to feedback across both settings, we show that feedback-informed revisions resolve targeted issues at significantly higher rates than baseline revisions. Finally, we expose the root of the evaluation bias: when a model successfully fixes an issue exclusively due to feedback, LLM judges frequently fail to identify the genuinely corrected response, systematically preferring inferior baseline outputs instead.",
+      "authors": [
+        "Shachar Don-Yehiya",
+        "Leshem Choshen",
+        "Omri Abend"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-02T17:42:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.02859v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.02859",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "利用使用者互動中自然產生的 feedback，為 Large Language Models（LLMs）提供學習訊號，是改善模型的重要方向；然而近期研究認為此類 feedback 天然嘈雜且難以有效利用。本研究挑戰此看法，指出 user feedback 實際上是高度可操作的改善訊號，其效果之所以被低估，源於現有 evaluation paradigms 的系統性偏差。作者建立具有明確 ground truth 的 synthetic data，並以 naturalistic data 驗證結果是否適用於真實情境。比較取得與未取得 feedback 的模型修訂後，feedback-informed revisions 在解決目標問題上的成功率顯著較高。進一步分析發現，當模型僅因 feedback 才修正問題時，LLM judges 經常無法辨識真正修正的答案，反而系統性偏好較差的 baseline outputs。",
+      "problem_statement": "論文探討 naturally occurring user feedback 是否真能改善 LLM 回應。既有研究以 reward model 或 LLM-as-a-judge 比較有、無 feedback 的修訂，常得出 feedback 無效甚至較差的結論；但這些評估可能偏好流暢或風格性變化，無法辨識細微的 factual、logical 或 completeness 修正。問題因此不只是 feedback 噪聲，也包括評估器對 feedback-driven improvements 的系統性誤判。",
+      "proposed_solution": "作者以「可驗證的 issue resolution」取代單純 pairwise preference，建立 synthetic 與 naturalistic 雙重實驗框架。Synthetic data 先將原本有效的模型回應施加四類可追蹤 corruption，並產生三種強度的 feedback；再比較 improver 在有、無 feedback 下的修訂。Naturalistic data 則從 ShareLM 對話抽取自然 feedback，過濾主觀或僅適用個人的內容。核心創新是將修正成功率與 LLM judge 的偏好分離，並在 feedback-only 成功的子集建立「應由有 feedback 回應勝出」的條件，以直接測量 judge blind spot。",
+      "core_contributions": [
+        "以 synthetic corruption 加上可驗證 ground truth，證明 feedback-informed revisions 比無 feedback baseline 更常解決目標問題；並在 naturalistic user data 上重現此趨勢。",
+        "揭示 LLM-as-a-judge 的 evaluation blind spot：在只有有 feedback 回應修正問題的案例中，judge 仍常偏好無 feedback 回應，naturalistic 情境正確率僅 34%–54%。",
+        "提出並以實驗支持 correlated failure 假說：模型若無法自行改善某類問題，也較可能無法正確評估該類 feedback-driven improvement；同時顯示 feedback 促成較多 substantive content improvements，而非僅風格修改。"
+      ],
+      "methodology": "資料方面，synthetic 實驗使用 Arena-Hard-v2.0 的 500 個 hard prompts，取 o3 回應後由 Gemini-3-flash-preview 施加 causality inversion、crucial omission、entity/subject swap、logic operator reversal 四類 corruption；每筆同時產生 change log、難度與三種 feedback：完整解法（fsol）、只指出問題（fprob）、僅表示有問題（fbinary）。Naturalistic 實驗使用 ShareLM 英文對話，由 Qwen3-30B-A3B-Instruct-2507 抽取 feedback，再由 Gemini-3-Flash 判定是否具有普遍、可操作性。Improver 使用 Gemini-3-flash-preview（large）與 Qwen3-8B（small），分別生成有 feedback 的 r+f 與無 feedback 的 r−f。評估包含 issue-resolution judge：依 intent matching、completeness 與 regression，以 1–5 分及 binary decision 判定是否修正；以及隨機交換順序的 pairwise judge，比較兩個候選回應。作者另分析「有 feedback 成功、無 feedback 失敗」的 WFShouldWin 子集，並以不同模型的自我改善能力切分資料，檢驗 improver 與 judge 的 correlated failure。",
+      "key_results": "主要結果如下（論文主文 synthetic 數據以 hard prompt 為主）：\n\n| 設定 | Improver | 無 feedback | 有 feedback | 增幅 |\n|---|---|---:|---:|---:|\n| Synthetic | Large | 86.3% | 95.6% | +9.3 個百分點 |\n| Synthetic | Small | 42.7% | 77.9% | +35.2 個百分點 |\n| Naturalistic | Large | 約70% | 約89% | 約+19 個百分點 |\n| Naturalistic | Small | 約26% | 約53% | 約+27 個百分點 |\n\n| WFShouldWin 子集 | Judge 正確偏好有 feedback |\n|---|---:|\n| Synthetic、Large improver | 54.6% |\n| Synthetic、Small improver | 80.9% |\n| Naturalistic、Large improver | 34% |\n| Naturalistic、Small improver | 54% |\n\n在 synthetic pairwise 評估中，Large 的 judge 偏好無 feedback 37.8%、有 feedback 27.2%、平手 35.0%；Small 則分別為 34.3%、51.2%、14.5%。較弱 feedback 仍有效：Large 的「指出問題」與「僅表示有問題」相對無 feedback 的增幅為 +6.3 與 +3.4 個百分點；Small 為 +16.7 與 +10.3 個百分點。",
+      "insights": [
+        "評估 feedback 或 self-improvement 時，不應只依賴整體 pairwise preference；應建立可驗證的 issue-resolution 指標，並報告 feedback-only 成功子集。",
+        "Feedback pipeline 可保留不同訊息強度：即使只指出問題，甚至只表示存在問題，也能帶來改善；但完整修正指示通常效果最大。",
+        "部署 user-feedback learning 時，應把內容正確性、邏輯與完整性和 tone、formatting 分開評估，避免 judge 因偏好風格變化而低估實質修正。"
+      ],
+      "limitations": "Synthetic corruption 在 creative writing 類別較不可靠，因此主文主要聚焦 math 與 code；naturalistic issue-resolution 的人工驗證 Cohen’s kappa 僅 0.24。Pairwise 評估未完成全面人工標註，且主要實驗僅涵蓋少數模型。作者未直接驗證 training-time learning，未來需以更多模型、領域與人工或專門 reward model 複核。",
+      "tags": [
+        "llm-as-judge",
+        "alignment",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "自然產生的使用者回饋學習",
+        "LLM-as-a-judge 偏差",
+        "test-time self-improvement",
+        "human feedback evaluation"
+      ],
+      "category": "Safety & Alignment"
+    }
+  }
+]

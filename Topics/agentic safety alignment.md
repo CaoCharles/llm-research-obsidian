@@ -1,6 +1,6 @@
-# Tool Use Safety
+# Agentic Safety Alignment
 
-> Tool Use Safety 相關研究的彙整頁面。
+> Agentic Safety Alignment 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 tool-use safety 相關關鍵字
+- 標題或摘要含有 agentic safety alignment 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,10 +22,6 @@
 ## 相關論文
 
 - `[Safety & Alignment]` [[[2609.02786] SafeEvolve - Harness-Policy Co-Evolution from Agent Experience for Safety Alignm...|SafeEvolve: Harness-Policy Co-Evolution from Agent...]] (2026-09-02)
-
-- `[Safety & Alignment]` [[[2608.27348] INTENT-AS-A-TOOL Makes it Easy to Track Agentic Misalignment|INTENT-AS-A-TOOL Makes it Easy to Track Agentic Mi...]] (2026-08-27)
-
-- `[Safety & Alignment]` [[[2608.27439] RedEvoAgent - Automatic Red-Teaming Agent with Experience-Driven Skill Evolution|RedEvoAgent: Automatic Red-Teaming Agent with Expe...]] (2026-08-27)
 
 ## 延伸閱讀
 

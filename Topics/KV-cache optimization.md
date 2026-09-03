@@ -1,6 +1,6 @@
-# Long Context Inference
+# Kv Cache Optimization
 
-> Long Context Inference 相關研究的彙整頁面。
+> Kv Cache Optimization 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 long-context inference 相關關鍵字
+- 標題或摘要含有 KV-cache optimization 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Agent Evaluation]` [[[2609.02737] Language Models Can Control Their Own Attention|Language Models Can Control Their Own Attention]] (2026-09-02)
-
-- `[Agent Evaluation]` [[[2608.26004] AsymSpec - Context-Asymmetric Speculative Decoding for Agentic LLMs|AsymSpec: Context-Asymmetric Speculative Decoding ...]] (2026-08-26)
 
 ## 延伸閱讀
 
