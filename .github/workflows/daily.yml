@@ -2,8 +2,10 @@ name: Daily paper digest
 
 on:
   schedule:
-    # GitHub Actions cron uses UTC: 00:00 UTC = 08:00 Asia/Taipei.
-    - cron: "0 0 * * *"
+    # GitHub Actions cron uses UTC: 00:00 UTC Monday = 08:00 Asia/Taipei Monday.
+    # Runs weekly (not daily) to limit OpenAI API spend; --lookback-days
+    # still covers the full week so no arXiv submissions are skipped.
+    - cron: "0 0 * * 1"
   workflow_dispatch:
     inputs:
       date:
