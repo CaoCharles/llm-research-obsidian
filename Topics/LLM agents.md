@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2609.05314] Large Language Models for HVAC Operations in Building Energy Systems - A Critica...|Large Language Models for HVAC Operations in Build...]] (2026-09-04)
+
 - `[Agent Evaluation]` [[[2608.27454] WikiSkill - Compiling Agent Experience into Persistent Knowledge for Skill Evolu...|WikiSkill: Compiling Agent Experience into Persist...]] (2026-08-27)
 
 ## 延伸閱讀

@@ -1,6 +1,6 @@
-# Reinforcement Learning
+# Building Energy Modelling
 
-> Reinforcement Learning 相關研究的彙整頁面。
+> Building Energy Modelling 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 reinforcement learning 相關關鍵字
+- 標題或摘要含有 building energy modelling 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Agent Evaluation]` [[[2609.05314] Large Language Models for HVAC Operations in Building Energy Systems - A Critica...|Large Language Models for HVAC Operations in Build...]] (2026-09-04)
-
-- `[Agent Evaluation]` [[[2608.07437] Fisher-R1 - Training LLM Agents for Reliable Hypothesis Testing|Fisher-R1: Training LLM Agents for Reliable Hypoth...]] (2026-08-07)
 
 ## 延伸閱讀
 

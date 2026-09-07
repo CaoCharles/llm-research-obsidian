@@ -1,0 +1,2 @@
+date,model,papers_analyzed,prompt_tokens,completion_tokens,reasoning_tokens,total_tokens,estimated_cost_usd,estimated_cost_twd
+2026-09-07,gpt-5.6-luna,10,160614,20227,368,180841,,

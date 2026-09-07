@@ -1,0 +1,553 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2609.05339",
+      "title": "Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory Portability",
+      "abstract": "Model upgrades are routine; memory migrations are not. An agent can keep the same memory store and still forget: a new model may interpret old notes differently, mixed embedding versions may break retrieval, and repair may fail without the original evidence. We compare memory as the same history is preserved verbatim for long-context reading (LC-RAW), divided into chunks for retrieval-augmented generation (RAG), compressed by a model into natural-language notes (NOTES), or normalized into a fixed-schema knowledge graph (KG-fixed). The study uses 48 synthetic histories with randomized answer codes, exact scoring, and two open-weight models with sub 10 billion parameters.   Our measurements show that fixed-schema structures transfer reliably, with KG-fixed accuracy changing by only $+0.0004 \\pm 0.0020$ following a writer swap. Conversely, compressed NOTES exhibit high model coupling, with accuracy shifting asymmetrically by $+9.91$ or $-13.28$ percentage points depending on the specific migration direction. In RAG systems, partial embedding migrations using a 50/50 mixed index capture only a 4.96-point accuracy improvement, forfeiting the majority of the 11.90-point gain achieved through full re-embedding. Diagnostic decomposition attributes 80% ($0.467 \\pm 0.014$) of the NOTES accuracy deficit to information lost during initial construction, whereas retrieval failures drive 81% ($0.364 \\pm 0.012$) of the RAG deficit. Finally, store-only repair of NOTES fails to reach a 90% performance recovery target in all 48 test cases, whereas retaining the raw source history enables successful recovery in 34 of 48 cases for one tested direction. These findings highlight the necessity of direction-specific migration testing, strict embedding space isolation, and the retention of source histories for memory repair.",
+      "authors": [
+        "Ankit Goyal",
+        "Jaideep Ray"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-09-04T16:44:17+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05339v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05339",
+      "score": 22
+    },
+    "analysis": {
+      "abstract_zh": "模型升級是例行工作，但 memory migration 並非如此。Agent 即使沿用相同的 memory store，仍可能因新模型對舊筆記的解讀不同、混合 embedding 版本破壞 retrieval，或缺乏原始證據而無法修復，導致遺忘。本文比較四種記憶形式：保留完整歷史供長上下文閱讀的 LC-RAW、切分後進行 retrieval-augmented generation 的 RAG、由模型壓縮成自然語言筆記的 NOTES，以及正規化為固定 schema knowledge graph 的 KG-fixed。研究使用 48 個含隨機答案代碼的 synthetic histories、exact scoring，以及兩個參數少於 10B 的 open-weight models。結果顯示，KG-fixed 在 writer swap 後的 accuracy 僅變化 +0.0004 ± 0.0020；NOTES 則高度依賴模型，依 migration direction 產生 +9.91 或 −13.28 個百分點變化。RAG 的 50/50 混合 index 僅取得 4.96 個百分點增益，低於完整 re-embedding 的 11.90 個百分點。研究因此強調方向特定的 migration testing、嚴格隔離 embedding space，以及保留 source history 以支援 memory repair。",
+      "problem_statement": "論文探討 agent model upgrade 後，既有 memory 是否仍能被新模型正確使用。現有 memory 評估多聚焦於單一模型或 day-one accuracy，未充分區分 writer、reader、retrieval、embedding 與 repair 各階段的損失，也缺少對 writer swap 方向差異、部分 embedding migration 及無原始歷史時修復能力的系統比較。因此，系統可能在資料庫正常運作時悄然遺忘，開發者卻難以判斷問題來自記憶建構、檢索或閱讀。",
+      "proposed_solution": "作者建立一個受控的 memory portability evaluation framework，將 agent 的歷史 X 固定，分離 writer、reader、embedder 與 repair source 的影響，並比較 LC-RAW、RAG、NOTES、KG-fixed 四種記憶格式。框架以 reader 使用自身建立的 store 作為基準，透過 Retained Performance After Swap（RPAS）衡量跨模型移轉後保留的效能，並以 Cost-to-Recover（CTR）評估不同修復方式達到 90%、95% 與 99% 目標的成本。核心創新是同時測試雙向 model migration、混合 embedding index、store-only 與 raw-retained repair，並用受控證據注入拆解 construction、retrieval 與 reader residual 的損失來源。",
+      "core_contributions": [
+        "建立在相同歷史、相同資源限制與 exact scoring 下比較 LC-RAW、RAG、NOTES、KG-fixed 的 memory portability framework，並分別測量雙向 writer→reader migration。",
+        "提出並實證 RPAS 與 CTR 兩項指標，分別衡量 inherited memory 的效能保留與達到新 reader 基準所需的修復成本。",
+        "透過 embedding migration、受控 evidence injection 與 repair experiments，指出 NOTES 的主要損失來自 construction、RAG 的主要損失來自 retrieval，並證明 mixed embedding index 與 store-only NOTES repair 的風險。"
+      ],
+      "methodology": "研究使用 48 個 synthetic histories，每個 history 含 160 個涵蓋直接事實、時間變化、矛盾、多步關係與 aliases 的問題；entity 與 answer value 採 randomized codes，以避免模型依靠 pretraining，並使用 exact-match scoring，不使用 LLM judge。測試兩個 locally served open-weight models：Llama-3.1-8B-Instruct 與 Qwen2.5-7B-Instruct-1M，採 deterministic reads、低 temperature writes 與固定 seeds。四種格式包括完整歷史的 LC-RAW、以約 512 characters 事件 chunk 並取 cosine top-k=8 的 RAG、受 128 KiB 上限的模型生成 NOTES，以及共享固定 schema 的 subject-predicate-object KG-fixed。RAG embedding migration 比較 bge-large-en v1.0 與 v1.5 的舊 index、完整重嵌入、50/50 mixed index 和 ideal routing。評估指標包括 exact accuracy、直接 accuracy gap、RPAS、writer-swap penalty、retrieval recall、MRR，以及不同修復預算下的 CTR。主要計畫測試以每個 history 為獨立樣本，使用單樣本單尾 t-test、五個百分點 action threshold 與 Holm correction；另以 10,000 次 bootstrap 作後續檢查。診斷測試則分別提供正常 store、正確 stored item 與原始 event，以估計 retrieval、construction 與 reader residual 的損失。",
+      "key_results": "| 實驗項目 | 結果 | 論文解讀 |\n|---|---:|---|\n| KG-fixed writer swap | accuracy 變化 +0.0004 ± 0.0020；Llama inherited −0.11 pp；Qwen inherited +0.02 pp | 固定 schema 在此 workload 中高度可移植 |\n| NOTES：Llama writer → Qwen reader | 0.4719 → 0.3391，−13.28 pp | migration 明顯受 writer 影響 |\n| NOTES：Qwen writer → Llama reader | 0.3762 → 0.4753，+9.91 pp | migration 具有方向不對稱性 |\n| 計畫測試 H1：NOTES writer-swap penalty | −1.47 pp；Holm-adjusted p=1.0 | 未支持超過 5 pp 的對稱性假設 |\n| 計畫測試 H4a：NOTES 相對 KG-fixed penalty | −1.51 pp；Holm-adjusted p=1.0 | 未支持預設的平均差異假設，但方向性效果仍很大 |\n| RAG：old index → full re-embed | accuracy 0.4257 → 0.5447，+11.90 pp | 完整 re-embedding 可大幅改善結果 |\n| RAG：old index → 50/50 mixed index | accuracy 0.4257 → 0.4753，+4.96 pp | 混合不同 embedding space 僅取得部分收益 |\n| RAG：ideal routing upper bound | accuracy 0.5960，較 old index +17.03 pp | 顯示 index routing 仍存在潛在上限 |\n| NOTES loss decomposition | construction 0.467 ± 0.014，占總 deficit 80%；retrieval 6%；reader residual 14% | 主要損失發生在初始壓縮與寫入 |\n| RAG loss decomposition | retrieval 0.364 ± 0.012，占總 deficit 81%；construction 1%；reader residual 18% | 主要損失發生在檢索 |\n| NOTES store-only repair | 90%、95%、99% target 均 0/48，兩個方向皆如此 | 舊 notes 缺失的證據無法由 store-only rewrite 恢復 |\n| NOTES raw-retained repair：Qwen repairer | 90%：34/48；95%：28/48；99%：22/48；90% median cost 約 $0.76 | 保留 raw history 可在部分案例恢復 |\n| NOTES raw-retained repair：Llama repairer | 三個 target 均 0/48 | 受測 output-token limit 下無法完成修復 |\n| RAG re-embed repair | 兩方向所有 target 均 48/48；median cost 約 $0.013 | 機械式重嵌入便宜且可靠 |\n| KG-fixed schema rebuild | 90% 兩方向 48/48；較高 target 亦為 45–48/48；成本約為零 | 固定 schema 重建具高成功率 |\n| 計畫測試 H2/H7a | H2 +6.95 pp、p=1.3×10^-6；H7a +8.90 pp、p=3.9×10^-7 | mixed index 與 raw-history repair 的劣勢／優勢超過五點門檻 |",
+      "insights": [
+        "model upgrade 應被視為 memory migration；上線前應讓新 reader 直接讀取舊 store，且必須分別測試每個 migration direction，不能以雙向平均結果掩蓋單一方向的退化。",
+        "不同 embedding 版本即使維度相同也不代表位於相容空間；實務上應建立獨立的新 index，完成 full re-embedding 後再切換，或將不同向量空間隔離並按版本路由。",
+        "若採用 model-written NOTES，應保留受保護的 raw source history、記錄 writer、prompt、schema 與 embedding provenance，並預先以實際 repair model 測試恢復能力；若重視可修復性，固定 schema 或機械式重建流程更可靠。"
+      ],
+      "limitations": "研究僅測試兩個相近規模的 open-weight models、48 個 scripted synthetic histories，以及單一 dense retriever、chunking、top-k 與 embedding migration 設定，未涵蓋大型模型、自然長對話、主觀任務或更長歷史。KG-fixed schema 貼合此 workload，不能推論所有 knowledge graph 都具同等 portability。raw-history repair 也只在一個方向部分成功，且受 repair model 與 output limit 影響。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM agent long-term memory",
+        "model migration testing",
+        "embedding index migration",
+        "knowledge graph memory",
+        "retrieval diagnostics"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05324",
+      "title": "RoboSPA: Can VLA Models Go Beyond Simple Scenes and Short-Horizon Tasks?",
+      "abstract": "Vision-Language-Action (VLA) models have shown promising progress in language-conditioned robotic manipulation. However, existing datasets and benchmarks mainly evaluate task completion under predefined settings, offering limited insight into model reasoning under increasing spatial and procedural complexity. We introduce \\textbf{RoboSPA} (\\textbf{Robo}t \\textbf{S}patial-\\textbf{P}rocedural \\textbf{A}ssessment), a large-scale robotic manipulation dataset and benchmark for diagnosing embodied reasoning in VLA models. \\texttt{RoboSPA} focuses on two core dimensions, Fine-Grained Spatial Reasoning and Long-Horizon Procedural Planning, covering 10 task categories and 56 base tasks. Each task is instantiated across five difficulty levels, yielding 280 variants with increasing spatial ambiguity and procedural complexity. We collect 527K trajectories across multiple embodiments and diverse scenes. Beyond binary success rate, \\texttt{RoboSPA} introduces diagnostic metrics for more detailed evaluation. Experiments on representative VLA models show that current systems still struggle with complex spatial relations, precise low-level execution, and memory-intensive planning. These results establish \\texttt{RoboSPA} as a challenging diagnostic benchmark for developing more capable, reliable, and generalizable embodied agents. Our data and code are available at https://github.com/fanzhenxuan/RoboSPA.",
+      "authors": [
+        "Zhenxuan Fan",
+        "Bo Zhang",
+        "Yutong Lin",
+        "Yuqian Yuan",
+        "Juekai Lin",
+        "Liang Liang",
+        "Zhuoyi Huang",
+        "Wenqiao Zhang",
+        "Juncheng Li",
+        "Siliang Tang",
+        "Jun Xiao",
+        "Yueting Zhuang"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-09-04T16:19:01+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05324v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05324",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "Vision-Language-Action（VLA）模型在語言條件式機器人操作方面已展現良好進展。然而，現有資料集與 benchmark 多半在預先定義的設定下評估任務是否完成，對模型在空間與程序複雜度逐步提高時的具身推理能力提供的資訊有限。本文提出 RoboSPA（Robot Spatial-Procedural Assessment），一個用於診斷 VLA 模型具身推理能力的大規模機器人操作資料集與 benchmark。RoboSPA 聚焦於兩個核心面向：Fine-Grained Spatial Reasoning 與 Long-Horizon Procedural Planning，涵蓋 10 個任務類別與 56 個基礎任務。每項任務皆設定 5 個難度等級，共形成 280 個任務變體，其空間歧義與程序複雜度逐級增加。作者跨多種 embodiment 與多樣場景收集 527K 條 trajectories。除 binary success rate 外，RoboSPA 也提出診斷性指標，以進行更細緻的評估。代表性 VLA 模型的實驗顯示，現有系統在複雜空間關係、精確低階執行與需要記憶的規劃方面仍有困難。RoboSPA 因而構成一個具挑戰性的診斷 benchmark，可支持更強健、可靠且具泛化能力的 embodied agents 開發。",
+      "problem_statement": "現有 VLA benchmark 多集中於簡單場景、預先定義的短程任務與最終成功率，較少直接測試細粒度目標辨識、跨視角空間關係、長程序執行、步驟順序及記憶需求，也缺乏受控的多級難度設計。因此，模型隨空間與程序複雜度增加而產生的失效模式難以被分辨與診斷。",
+      "proposed_solution": "作者提出 RoboSPA，一個以模擬器 SAPIEN 與 RoboTwin 2.0 framework 建構的診斷型資料集與 benchmark。其核心設計包含兩個面向：Fine-Grained Spatial Reasoning，測試幾何屬性、距離、位置索引、參照關係與跨視角推理；Long-Horizon Procedural Planning，測試重複操作、順序自由、順序約束、複合動作協調與記憶密集規劃。每項基礎任務建立五級難度，並同時提供 task-level 與 step-level 評估，以及 ONTA 和 Progress Score，以區分目標選擇、部分完成與最終失敗。",
+      "core_contributions": [
+        "提出 RoboSPA，涵蓋 56 個基礎任務、280 個五級難度變體、10 個具身推理能力類別與約 527K trajectories，專門評估細粒度空間推理及長程序規劃。",
+        "建立 controlled multi-level difficulty、clean/domain-randomized scenes、五種 embodiment 與 step-level evaluation，使模型性能隨複雜度增加的退化能被系統分析。",
+        "提出 ONTA 與 Progress Score；前者校正不同物體數量下的隨機選擇基線，後者衡量長程序任務的部分完成程度，並透過失效分析區分目標 grounding、操作、記憶、順序與重複錯誤。"
+      ],
+      "methodology": "RoboSPA 並非提出新的 VLA 模型架構，而是提出資料集建構與評測框架。作者以 SAPIEN 和 RoboTwin 2.0 為基礎，設計 56 個基礎任務，分為 Fine-Grained Spatial Reasoning 與 Long-Horizon Procedural Planning 兩大面向、共 10 個任務類別；每項任務建立 5 個難度等級，空間任務主要增加候選物體數量，程序任務則延長 action sequence。10 位受訓研究生各負責一個能力類別，另由兩位學生審查任務。每項任務使用 GPT-5.2 產生 60 個不重疊 instruction templates，其中 50 個用於訓練、10 個用於測試，並經人工檢查。資料在 clean 與 domain-randomized scenes 中由專家程式執行，涵蓋 Aloha-AgileX、ARX-X5、Piper、Franka 與 UR5 五種 embodiment，共約 527K trajectories、997 小時影片及 108M timesteps。實驗評估 RDT、GO-1、π0.5 與 X-VLA；使用 Aloha-AgileX 的 clean-scene 資料，採 single-task 訓練，每個基礎任務分別訓練模型，並對每個變體進行 100 次 rollout。基本指標為 Success Rate（SR）；空間任務另使用 Object-Normalized Target Accuracy（ONTA），將物體數量造成的隨機猜測基線納入校正；長程序任務使用 Progress Score（PS），計算各 episode 已完成子任務數占總子任務數的比例。",
+      "key_results": "主要結果如下（數值均為論文報告的 Success Rate；Drop 為 L1 至 L5 的下降幅度）：\n\n| 模型 | L1 整體平均 | L5 整體平均 | Drop | L1 長程序平均 | L5 長程序平均 |\n|---|---:|---:|---:|---:|---:|\n| RDT | 16.8% | 6.9% | 9.9 個百分點 | 24.1% | 7.7% |\n| GO-1 | 25.1% | 8.8% | 16.3 個百分點 | 29.3% | 7.0% |\n| π0.5 | 55.2% | 22.3% | 32.9 個百分點 | 71.2% | 23.1% |\n| X-VLA | 50.4% | 19.9% | 30.5 個百分點 | 58.8% | 15.9% |\n\n| 面向／觀察 | 論文結果 |\n|---|---|\n| 整體最佳模型 | π0.5；L1 為 55.2%，L5 為 22.3% |\n| 空間推理最佳模型 | X-VLA；平均 SR 從 L1 的 41.9% 降至 L5 的 23.9% |\n| 長程序規劃最佳模型 | π0.5；平均 SR 從 L1 的 71.2% 降至 L5 的 23.1% |\n| 最困難能力 | Memory-Intensive Planning；所有模型在 L5 的 SR 均為 0% |\n| ONTA | RDT 與 GO-1 多數類別為負值；π0.5 與 X-VLA 較少為負，但整體仍接近隨機選擇基線 |\n| PS 與 SR 的關係 | PS 通常高於最終 SR，顯示模型常能完成部分子任務，但因累積錯誤、順序錯誤或後段執行不完整而失敗 |\n\n論文未報告真實機器人 transfer 結果，也未提供所有任務的統一統計顯著性分析。",
+      "insights": [
+        "評估 embodied agent 不應只看最終 Success Rate；同時記錄目標選擇正確性、子任務完成比例與失敗類型，能更直接定位是 perception、grounding、planning 還是 low-level control 的問題。",
+        "將任務按物體數量與 action horizon 分級，可建立性能退化曲線，避免只用單一難度的平均分數掩蓋模型在複雜場景中的脆弱性。",
+        "長程序系統需要顯式的 progress tracking、任務狀態記憶與執行監控；論文結果顯示，即使模型能完成部分步驟，累積錯誤與順序失誤仍可能導致最終任務失敗。"
+      ],
+      "limitations": "所有任務均在模擬器中建構，存在 sim-to-real gap；範圍主要限於 tabletop manipulation，未充分涵蓋可變形物體、人機互動與開放式指令。多 embodiment 與 domain randomization 雖提升多樣性，但仍不能直接代表真實世界的開放環境。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Vision-Language-Action models",
+        "具身推理",
+        "機器人操作評測",
+        "長程序規劃",
+        "空間關係推理",
+        "sim-to-real transfer"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05401",
+      "title": "Same Trajectory, Contradictory Rewards (ROBORMBENCH): Paraphrase Fragility in Vision Language Reward Models",
+      "abstract": "Vision-language models are increasingly used as reward functions for robotic learning, but this role requires paraphrase invariance: the same trajectory should receive the same reward under semantically equivalent goal descriptions. We show that current VLM reward models often violate this property. Paraphrasing the instruction alone can substantially change predicted progress scores, and can even flip identical robot behavior between failure and success. To measure this failure mode, we introduce ROBORMBENCH, a benchmark with 2,390 real-robot trajectories, ground-truth progress labels, and 21,673 verified paraphrases spanning lexical, syntactic, and action-goal rewrites. Across proprietary and open-source VLMs, paraphrase-induced instability is widespread and severe, grows under more divergent rewrites, and is not reliably reduced by scale or explicit reasoning. Dedicated reward models trained with trajectory-grounded supervision are substantially more stable. These results show that paraphrase robustness is a core requirement for reliable VLM-based reward modeling in robotics.",
+      "authors": [
+        "Wonje Jeung",
+        "Sangyeon Yoon",
+        "Hyesoo Hong",
+        "Yoonjun Cho",
+        "Dongjae Jeon",
+        "Bumjun Kim",
+        "Jean Oh",
+        "Youngjae Yu",
+        "Albert No"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.CL"
+      ],
+      "published": "2026-09-04T17:47:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05401v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05401",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "Vision-language models（VLMs）日益被用作機器人學習的 reward function，但此用途要求 paraphrase invariance：對語義等價的目標描述，同一條機器人軌跡應得到相同 reward。本文顯示，現有 VLM reward models 經常違反此性質。僅改寫 instruction 就可能大幅改變預測的 progress score，甚至使完全相同的機器人行為在 failure 與 success 之間翻轉。為衡量此問題，作者提出 ROBORMBENCH，包含 2,390 條真實機器人軌跡、ground-truth progress labels，以及 21,673 個經驗證、涵蓋 lexical、syntactic 與 action-goal rewrites 的 paraphrases。專有與開源 VLM 普遍存在嚴重且隨改寫差異增加的 instability；model scale 或 explicit reasoning 並未可靠改善此問題。相較之下，接受 trajectory-grounded supervision 訓練的 dedicated reward models 穩定得多。結果顯示，paraphrase robustness 是可靠 VLM-based reward modeling 的核心要求。",
+      "problem_statement": "論文探討 VLM 作為機器人 reward model 時的 paraphrase fragility。現有評估通常固定單一 canonical instruction，只檢查平均預測準確率，因而忽略同一軌跡在語義等價描述下可能得到矛盾 reward。此問題會造成 conflicting learning signals，使 best-of-N 選擇與 reward-guided policy improvement 偏離真正任務目標。",
+      "proposed_solution": "作者提出 ROBORMBENCH，用固定的真實機器人軌跡搭配多組經語義驗證的 paraphrased instructions，直接測量 reward model 對語言表面形式的敏感度。資料涵蓋 lexical substitution、syntactic restructuring 與 action-goal perspective shift 三種逐漸增加語言差異的改寫。核心創新是引入 Score Crossing Rate（SCR）與 Flip Rate（FR），分別衡量同一軌跡是否跨越 failure-success 邊界，以及相對原始 instruction 的判斷翻轉；另以 Mean Error（ME）分離穩定性與準確率。作者也評估 paraphrase aggregation 與 variance-reduction training 作為緩解方法。",
+      "core_contributions": [
+        "提出 ROBORMBENCH，利用 2,390 條真實機器人軌跡與 21,673 個經語義驗證的 paraphrases，系統評估 VLM reward model 的 paraphrase robustness。",
+        "提出 SCR 與 FR 兩項 failure-success reversal 指標，並以 ME、range、standard deviation 及 extreme-only SCR 分離分類矛盾、數值波動與預測準確率。",
+        "實驗證明語言改寫 instability 普遍存在且會影響 best-of-N trajectory selection 與 pairwise preference；trajectory-grounded reward supervision 及 variance-reduction training 能有效改善穩定性。"
+      ],
+      "methodology": "ROBORMBENCH 建立於 RoboRewardBench，來源包括 Open X-Embodiment 與 RoboArena，涵蓋 14 種 robot embodiments、不同攝影機視角及多種 manipulation tasks。原始資料因 progress score 1 偏多而先下採樣，使分數分布較平衡。作者從每個 goal instruction 生成三類 paraphrases：LS 只替換同義詞；SR 改變句法結構；AGPS 在 action-centric 與 goal-state-centric 表述間轉換。候選句由 Gemini 3 Flash、Claude Sonnet 4.6、DeepSeek V3.2 組成的 ensemble 進行語義等價過濾；抽樣 210 個候選句時，對人類標記的語義不等價案例 recall 為 96%，最終保留至少五個 paraphrases 的軌跡。對每條固定軌跡 τ 與描述 g，模型輸出 progress score Rθ(τ,g)。SCR 將分數 1、2 視為 failure，4、5 視為 success，3 排除；若同一軌跡出現兩類判斷即算 crossing。FR 比較每個 paraphrase 與原始描述的二元判斷。ME 則先平均所有 paraphrase 預測，再與 human ground-truth score 計算平均絕對誤差。另報告 range、standard deviation、extreme-only SCR（僅 1 對 5），並在 best-of-N 與 pairwise preference 中檢驗下游影響。",
+      "key_results": "主要結果如下（SCR、FR、ME 越低越好）：\n\n| 模型 | LS SCR/FR/ME | SR SCR/FR/ME | AGPS SCR/FR/ME |\n|---|---:|---:|---:|\n| GPT-5.1 | 0.153 / 0.041 / 1.036 | 0.204 / 0.073 / 1.024 | 0.300 / 0.101 / 1.015 |\n| Gemini 2.5 Flash-Lite | 0.483 / 0.139 / 1.027 | 0.563 / 0.217 / 0.951 | 0.607 / 0.264 / 0.970 |\n| Claude Sonnet 4.6 | 0.051 / 0.013 / 0.999 | 0.144 / 0.051 / 0.938 | 0.164 / 0.047 / 0.970 |\n| Qwen3-VL-32B | 0.136 / 0.064 / 0.904 | 0.150 / 0.075 / 0.838 | 0.193 / 0.096 / 0.832 |\n| RR-4B | 0.034 / 0.009 / 0.323 | 0.072 / 0.020 / 0.375 | 0.086 / 0.045 / 0.456 |\n| RR-8B | 0.034 / 0.009 / 0.255 | 0.102 / 0.025 / 0.336 | 0.114 / 0.042 / 0.453 |\n\n論文報告：AGPS 下 Gemini 2.5 Flash-Lite 與 Llama4-Scout 的 SCR 超過 0.5；GPT-5.1 的 SCR 由 LS 0.153 升至 AGPS 0.300。RR-4B、RR-8B 在各策略均明顯較穩定且 ME 最低。模型規模不保證改善 robustness，Qwen3-VL 與 Gemma3 家族中較大模型的 SCR 反而傾向升高。best-of-20 中 SCR 與 regret 的 Pearson 相關為 0.882、Spearman 相關為 0.856；pairwise preference 中與 Pair Accuracy 的 Pearson 相關為 -0.893。variance-reduction training 在 Qwen3-VL-4B 上將 LS/SR/AGPS 的 SCR 從 0.076/0.168/0.200 降至 0.042/0.048/0.057，ME 從 1.046/1.003/1.020 降至 0.239/0.319/0.372。",
+      "insights": [
+        "部署 VLM reward model 時，不應只測量單一 instruction 下的 ME 或成功率；應固定軌跡、批量生成語義等價描述，並同時監控 SCR、FR 與 ME。",
+        "若推論成本允許，可使用 paraphrase aggregation 降低局部措辭偏差；若需低延遲部署，應優先考慮在訓練階段加入 paraphrase variance penalty。",
+        "模型規模與 explicit reasoning 不是 paraphrase robustness 的可靠代理指標；選擇 reward model 時，應重視 trajectory-grounded supervision 與實際下游 trajectory ranking 表現。"
+      ],
+      "limitations": "資料僅包含英文 instruction，未涵蓋多語言或 code-switching 情境；實驗主要評估 episode-level reward，未驗證 step-level reward shaping 或 trajectory comparison。語義過濾依賴三個 LLM ensemble，雖在人類抽樣中達 96% recall，仍可能存在保守誤剔除或未捕捉的語義差異。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "vision-language reward modeling",
+        "robot reinforcement learning",
+        "paraphrase robustness",
+        "reward hacking",
+        "trajectory ranking"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05381",
+      "title": "Molecular Déjà Vu: Digit-Level Retrieval of Published Values in Frontier Language Models",
+      "abstract": "Large language models (LLMs) are increasingly evaluated on molecular property benchmarks, but accuracy cannot distinguish a model that predicts a property from one that retrieves a published number. We audit 22 frontier models on 12 regression benchmarks for verbatim retrieval and find that it is widespread but relatively benchmark-specific: on five datasets more than $50\\%$ of the LLMs show verbatim retrieval, while on the remaining datasets it appears only in isolated cells. We run our experiments at two reasoning levels and find that reasoning changes retrieval. The same experiments, on the same molecules and with the same prompt, are flagged $89\\%$ more often at the higher reasoning level than at the lowest one. Finally, we test a way to interrupt retrieval in our most contaminated cases, and find that the strongest models in some cases still recognise a combination of transformed SMILES strings and original labels. Furthermore, suppressing retrieval moves the prediction errors of the different models closer together in relative terms, while their differing use of verbatim retrieval spreads them apart. This indicates that the general predictive capability of an LLM is not determined solely by the amount of memorised values. This work provides an overview of the amount and depth of verbatim retrieval in molecular regression benchmarks using LLMs.",
+      "authors": [
+        "Matthias Busch",
+        "Marius Tacke",
+        "Sviatlana V. Lamaka",
+        "Mikhail L. Zheludkevich",
+        "Christian J. Cyron",
+        "Roland C. Aydin",
+        "Christian Feiler"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-04T17:32:48+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05381v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05381",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）日益被用於 molecular property benchmarks，但僅看準確率，無法區分模型是在預測性質，還是在擷取已發表的數值。作者審查 22 個 frontier models 與 12 個 regression benchmarks 的逐字數值擷取，發現此現象相當普遍，但高度依賴 benchmark：五個資料集有超過 50% 的 LLM 出現逐字擷取，其餘資料集僅出現在少數模型—資料集組合。作者在兩種 reasoning levels 下進行相同實驗，發現 reasoning 會改變擷取行為；相同分子與 prompt 在較高 reasoning level 被標記的比例，比最低設定高 89%。在最受污染的案例中，作者進一步測試中斷擷取的方法，發現部分最強模型仍能從 transformed SMILES strings 與原始 labels 的組合辨識數值。此外，抑制擷取會使不同模型的相對 prediction errors 更接近，而模型對 verbatim retrieval 的不同使用程度，反而會擴大模型間差異。結果顯示，LLM 的一般預測能力不能僅由 memorised values 的數量決定。本研究概述了 LLM 在 molecular regression benchmarks 中逐字擷取已發表數值的規模與深度。",
+      "problem_statement": "LLM 在分子性質 regression benchmarks 上取得低誤差，不代表其具備從分子結構泛化的預測能力；模型可能只是記住並重現論文或資料集中的 published values。既有 contamination detectors 多依賴 token likelihood、canonical example order、可補全文字或分類答案，無法直接適用於數值 regression；單純 accuracy 或 error 也無法辨識第三位有效數字是否源自 retrieval。",
+      "proposed_solution": "作者提出以 digit-level retrieval 為核心的 contamination audit。對每個模型—benchmark 組合，將預測與 published value 比較至 1、2、3 個 significant figures，利用巢狀 retention statistics R12 與 R23，並與僅根據 benchmark label distribution 的 molecule-blind floor 比較；若 retention 顯著高於該 floor，則判定具有 retrieval evidence。研究同時建立 22 個模型與 12 個資料集的 contamination map，控制 reasoning level，重複最低與較高 reasoning 設定，並以 transformed SMILES 與匿名 property 的 blinding experiment 測試 retrieval 是否可被中斷及其對 benchmark ranking 的影響。",
+      "core_contributions": [
+        "建立涵蓋 22 個 frontier models 與 12 個 molecular property benchmarks 的 contamination map，使用 digit-level retention 而非單純 accuracy 或 error 判定 verbatim retrieval。",
+        "證明 retrieval 具有 reasoning-level dependence：相同分子與 prompt 在較高 reasoning 設定下出現更多顯著 retrieval，因此低 reasoning audit 只能視為 contamination 的 lower bound。",
+        "透過 SMILES transformation 與 character-substitution blinding，分析 retrieval 對分子身份與 labels 的依賴，並顯示 retrieval 會扭曲模型間的 error、排名與 benchmark 解讀。"
+      ],
+      "methodology": "實驗透過單一 provider 以 zero-shot 方式查詢 22 個 frontier models。system prompt 指定 benchmark 與 label name，user prompt 提供一個 SMILES string，要求輸出三個 significant figures；主要實驗對每個 benchmark 使用相同的 500 個 molecules，boiling-point positive control 使用全部 45 個分子。資料集包含實測性質、quantum-chemistry properties、textbook boiling points，以及 2024–2025 antiviral potency recency control。每個 truth—prediction pair 形成巢狀計數 m1≥m2≥m3，分別表示匹配 1、2、3 個 significant figures；評估 HIT3=m3/nusable、R12=m2/m1、R23=m3/m2、median absolute error（medAE）與 rank correlation。R12、R23 以條件式 Binomial test 與由 label distribution 建立、且以隨機半數 labels 擬合的 molecule-blind floor 比較，並以 Benjamini–Hochberg 控制每次 run 的 false discovery rate。reasoning 分析重跑相同 cells 的最低設定，另對五個模型建立多級 reasoning ladder，將 retrieval rate 對 emitted reasoning tokens。blinding study 選四個模型與三個高度 retrieved benchmarks，在 100 個 in-context examples 下比較 published SMILES 與 character-substituted SMILES、匿名 target 的條件。論文沒有提出或訓練新的模型架構；模型為透過 API 查詢的既有 LLM。",
+      "key_results": "| 分析項目 | 論文報告結果 |\n|---|---|\n| 審查範圍 | 22 個 frontier models、12 個 molecular regression benchmarks |\n| 高度受影響資料集 | FreeSolv、ESOL、LD50、AqSolDB 與 boiling-point positive control；五個資料集均有超過 50% 的 LLM 出現 verbatim retrieval |\n| 其餘資料集 | 多數僅有 isolated cells 顯著 retrieval；recency control、BACE 與 Caco-2 在 reasoning 對照中維持 0 個 flagged cells |\n| Reasoning effect | 最低 reasoning 有 47/264 cells 顯著 retrieval；較高設定有 89/264 cells，flagged cells 增加約 89% |\n| Corpus exposure 關聯 | benchmark 分子跨文件出現頻率與最強 retrieval rate 的 benchmark-level Spearman ρ=0.88；benchmark file headers 的對應為 ρ=0.20 |\n| SMILES 改寫 | 改成不同但有效的 SMILES 後，12 個 cells 的 retrieval 中位數仍保留原本的 102%，全部 12 個 cells 仍受污染 |\n| Blinding | 12 個 cells 中，published SMILES 條件有 10 個 flagged；character-substituted、匿名 target 條件仍有 3 個 flagged |\n| 殘餘 retrieval | Claude Opus 5 在 blinded ESOL 與 FreeSolv 仍分別達 6.7% 與 4.8% HIT3；GPT-5.6 sol 的 ESOL 由 14% 變為 13%，幾乎未受影響 |\n| Error spread | blinded 後 Claude Opus 5、Grok 4.5、Kimi K3、GPT-5.6 sol 的 pooled medAE 分別增加 34.9、16.9、3.2、1.8 倍；模型間誤差更接近，排名也改變 |\n| 排名穩定性 | 12 個 blinding cells 中僅 3 個保留 medAE 排名、2 個保留 Pearson r 排名 |\n| 不確定結果 | 論文未報告足以證明所有 clean cells 都沒有 retrieval；作者明確指出許多 clean cells 對深層 retention 的檢定 power 不足。",
+      "insights": [
+        "評估 LLM 的 molecular regression 時，應同時報告 HIT3、R12/R23、reasoning setting 與 contamination evidence，不能只比較 MAE、RMSE 或 correlation。",
+        "重新序列化 SMILES 並不能可靠防止 retrieval；若要進行 audit，至少應在不同 reasoning levels 下重複測試，因為最低 reasoning 可能漏掉約一半的 flagged cells。",
+        "對高度 redistributed 的 FreeSolv、ESOL、AqSolDB 與 LD50，應加入 blinding、未公開新資料或其他 retrieval controls；但 character substitution 會同時破壞 chemistry，因此不能直接視為保留原任務的公平 benchmark。"
+      ],
+      "limitations": "作者指出 digit-level statistic 只能提供 retrieval evidence；未被標記不等於乾淨，許多 cells 的檢定 power 不足。blinding 僅涵蓋四個模型、三個 benchmark，且 character substitution 同時破壞分子化學資訊。研究也未建立強力 non-memorising baseline，無法量化純預測模型在相同 digit statistic 上的表現。",
+      "tags": [
+        "benchmark",
+        "hallucination",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "benchmark contamination",
+        "molecular property prediction",
+        "memorisation auditing",
+        "data leakage detection",
+        "reasoning-dependent evaluation"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05405",
+      "title": "WearableQA: A Benchmark for Health Reasoning over Real-World Wearable Data",
+      "abstract": "Recent advances in wearable sensing enable continuous monitoring of physiological and behavioral signals, yet existing benchmarks rarely evaluate whether AI systems can reason over a real user's longitudinal wearable record. We introduce WearableQA, a benchmark comprising 4,084 10-option multiple-choice questions constructed from the wearable time series, blood biomarkers, and demographics of 200 real users, each with up to 500 days of daily measurements. WearableQA preserves authentic wearable distributions that include device noise and inter-individual variability. To evaluate distinct reasoning capabilities, we introduce 16 question types organized along two complementary axes: data versus health reasoning, which distinguishes computation over longitudinal measurements from physiological interpretation; and single- versus cross-signal reasoning, which separates reasoning about individual signals from the integration of multiple signals. To construct reliable questions at scale, we adopt a dual-grounding framework that combines literature-grounded physiological findings with statistically validated population-grounded physiological patterns. This enables the capture of meaningful relationships observed in real-world wearable data. Evaluation of 14 proprietary and open-source LLMs demonstrates that WearableQA effectively differentiates model capabilities, with performance ranging from 19.6% to 72.9% against a 10% chance baseline. Moreover, WearableQA remains far from solved: most models achieve accuracies below 60%. Overall, WearableQA provides a realistic and diagnostic benchmark for evaluating LLM reasoning over real-world wearable data.",
+      "authors": [
+        "Ji Soo Lee",
+        "Xilun Chen",
+        "Pierce Chuang",
+        "Ashish Shenoy",
+        "Jason Wei",
+        "Dohwan Ko",
+        "Hyunwoo J. Kim",
+        "Benoit Corda"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-04T17:52:37+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05405v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05405",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "穿戴式感測技術的進步，已能持續監測生理與行為訊號；然而，現有 benchmark 很少評估 AI 系統是否能根據真實使用者的 longitudinal wearable record 進行推理。本文提出 WearableQA：由 200 名真實使用者的 wearable time series、血液 biomarkers 與 demographic 資訊建立的 benchmark，包含 4,084 道十選一選擇題；每位使用者最多有 500 天的每日測量資料。WearableQA 保留真實穿戴式資料中的裝置雜訊與個體差異，並以 data versus health reasoning 及 single- versus cross-signal reasoning 兩個互補軸線，設計 16 種題型。為大規模建立可靠題目，作者提出結合文獻支持生理發現與經統計驗證之 population-grounded 生理模式的 dual-grounding framework。14 個 proprietary 與 open-source LLM 的準確率介於 19.6% 至 72.9%，相對於 10% 猜測基準仍有顯著差異，但多數模型低於 60%，顯示此 benchmark 尚未被解決。",
+      "problem_statement": "現有健康與 time-series benchmark 多以靜態文字、考試題、ECG 或 synthetic/simulated signals 為主，無法充分評估模型從真實使用者數百天的 noisy longitudinal wearable data 中計算趨勢、異常與訊號關係，再進行個人化生理解讀的能力。尤其資料推理、跨訊號整合，以及 wearable measurements 與 blood biomarkers、demographics 的聯合分析仍缺乏具診斷性的系統化評測。",
+      "proposed_solution": "作者提出 WearableQA，一個以 200 名真實使用者、最多 500 天每日 wearable measurements、17 項 blood biomarkers 與 demographic attributes 為基礎的 4,084 題 benchmark。核心是 dual-grounding framework：一方面從 11 篇經全文核驗、且至少有兩項同方向獨立研究支持的 biomedical literature findings 建題；另一方面從大型 cohort 挖掘並通過 effect size、bootstrap/leave-one-out robustness 與 cross-user null test 的 population-grounded patterns。題目先由 reasoning objective 轉換為可組合的 computation primitives，再對個人資料執行 deterministic labeling，並以 16 種題型診斷 data/health reasoning 與 single/cross-signal reasoning 的差異。",
+      "core_contributions": [
+        "提出包含 4,084 道十選一問題的 WearableQA，將 200 名真實使用者的最多 500 天 longitudinal wearable data、blood biomarkers 與 demographics 納入 LLM health reasoning 評測。",
+        "提出 dual-grounding 與 discover-then-label 建構流程，結合 literature-grounded findings、population-grounded patterns、統計驗證及 deterministic computation graphs，以產生可重現的 ground truth。",
+        "建立涵蓋 data/health reasoning 與 single/cross-signal complexity 的 16 類診斷性 taxonomy，並以 14 個模型揭示資料計算、跨訊號整合與工具使用上的能力差異。"
+      ],
+      "methodology": "資料包含 200 名真實使用者的 16 項每日 wearable metrics，涵蓋 cardio-fitness、activity/energy、sleep 與 stress 四個領域；另提供 17 項 blood biomarkers、age、sex、BMI、ethnicity，以及五項核心 wearable metrics 的 cohort-relative percentiles。題目沿兩個 2×2 軸分類：data versus health reasoning，以及 single- versus cross-signal reasoning，並另標記 literature-grounded 或 population-grounded。建題採 discover-then-label 流程：先由文獻或 cohort pattern 定義 reasoning objective，再以 reusable computation primitives，例如 mean、coefficient of variation、slope、rolling mean、lagged correlation、threshold flags 等，組成 explicit computation graph。每個使用者的答案由 deterministic program 從原始測量計算；若資料缺失或結果模糊則剔除。資料題的 distractors 包含反向趨勢、相鄰時間窗與錯誤幅度，並要求唯一選項滿足計算條件；健康題則以 grounded finding 建立臨床上合理但不符合個人資料的替代解釋。Population pattern 須滿足相關係數門檻、兩半窗口方向一致、30 次 bootstrap 至少 80% 重現、leave-one-out 穩定，以及 FDR≤0.20。評估 14 個 proprietary/open-weight LLM，使用十選一 exact-match accuracy、95% Wilson confidence interval，並比較 chain-of-thought 與 direct-answer、資料表徵、Python agentic tool use 及移除 time-series 的 ablation。",
+      "key_results": "| 實驗項目 | 主要結果 |\n|---|---|\n| 整體模型準確率 | 19.6%–72.9%；十選一 chance baseline 為 10%，多數模型低於 60% |\n| 最佳模型 | Gemini 3.1 Pro：72.9%；data 75.4%、health 67.8%、single 72.4%、cross 73.2% |\n| 次佳模型 | Claude Opus 4.6：60.2%；data 57.1%、health 66.3%、single 64.9%、cross 56.8% |\n| 最佳 open-source 模型 | Gemma-4-26B-A4B：42.5%；data 33.8%、health 59.8% |\n| 最低模型 | Llama-3.2-3B：19.6%，接近 10% chance baseline |\n| Data vs. health reasoning | 除 Gemini 3.1 Pro 外，多數模型 health reasoning 高於 data reasoning；例如 GPT-4o 為 53.5% vs. 25.3% |\n| Single vs. cross-signal | 多數 proprietary models 的 single-signal 高於 cross-signal；GPT-5.4 為 59.1% vs. 45.7% |\n| 困難題型 | Strongest pair 與 recovery time 對多數模型較難；cross-signal prediction 最高僅 Claude Opus 4.6 的 40.5% |\n| CoT 效果 | Claude Opus 4.6 整體由 direct-answer 40.6% 升至 60.2%；GPT-5.4 由 33.5% 升至 51.2%；Gemini 3.1 Pro 僅由 71.3% 升至 72.9% |\n| Python agentic tool use | GPT-5.4 由 row baseline 51.2% 升至 fixed-representation agentic 71.3%；data reasoning 45.0% 升至 72.9% |\n| 輸入表徵 | GPT-5.4 的 CSV 整體 51.5%，較 row baseline 51.2% 僅增加 1.2 個百分點；image-grid 為 36.6% |\n| 移除資料影響 | Claude Opus 4.6 移除全部 wearable time series 後，整體由 60.2% 降至 17.3%；history-dependent 題型由 75.9% 降至 39.8% |\n| 先驗依賴 | 部分模型在 definitional signal pairs 顯著優於 empirical pairs；Gemini 2.5 Pro 為 87.8% vs. 36.3%，差距 51.5 個百分點 |",
+      "insights": [
+        "若要建置個人健康 AI，不能只測試醫學知識；應分開評估模型是否能從長期原始測量正確計算，以及是否能進行生理詮釋。",
+        "對 longitudinal wearable data，提供可執行的 Python 計算工具比單純改變 CSV、Markdown 或圖像輸入格式更有效；論文中 GPT-5.4 的 agentic fixed-representation 結果由 51.2% 提升至 71.3%。",
+        "評測題目應同時包含 single-signal 與 cross-signal、個人歷史與 cohort-relative context，並用 balanced answer positions、distractor auditing 及移除資料測試檢查位置偏差與資料依賴性。"
+      ],
+      "limitations": "資料僅涵蓋 200 名使用者，且論文未報告更完整的族群代表性、跨裝置泛化或外部 cohort 測試結果。十選一選擇題主要衡量選項準確率，未完整評估臨床安全性、解釋品質與實際醫療決策。作者也未提供各題型完整的使用者分層與獨立測試集結果；未來可擴大族群、驗證跨 cohort 泛化，並加入臨床專家與安全性評估。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "longitudinal time-series reasoning",
+        "wearable health AI",
+        "health-related LLM evaluation",
+        "multimodal physiological reasoning"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05314",
+      "title": "Large Language Models for HVAC Operations in Building Energy Systems: A Critical Review of Methods, Applications, and Deployment Readiness",
+      "abstract": "Building automation systems generate rich sensor data yet remain insight-poor because heterogeneous point naming, missing metadata, and fragmented documentation obstruct their operational use. This systematic review analyses and codes 66 peer-reviewed studies on large language models (LLMs) for HVAC operations published between 2023 and March 2026. Each study is classified across five application families and three LLM method families and assessed for evidence realism, deployment readiness, and the responsibility boundary between the LLM and physical HVAC decisions. The corpus is concentrated in building energy modelling (BEM, 32 of 66 papers), while load forecasting remains too sparse for subfield-level conclusions. Only four studies reach pilot-level evidence, and none reports sustained operational deployment. No study was classified as ready-now for industry adoption; three were near-term and 63 research-only. Nevertheless, several bounded, human-in-the-loop uses merit near-term trials, including point-name normalisation, document-grounded operator support, BEM workflow assistance, and advisory interfaces around physics-based controllers. Conventional machine learning (ML), model predictive control (MPC), reinforcement learning (RL) and ontology-based tools remain more adopted for high-frequency control, short-horizon numerical forecasting, and well-posed ontology mapping, while autonomous agentic operation and unvalidated occupant proxies remain research-stage. Current evidence therefore supports LLMs primarily as semantic and workflow layers rather than autonomous HVAC controllers. Future work should prioritise field-validated benchmarks, orchestration evaluation under operational constraints, and LLM-MPC/RL architectures with bounded latency and verifiable safety properties.",
+      "authors": [
+        "Alexander Neubauer",
+        "Tianzhen Hong",
+        "Han Li",
+        "Mengbo Yu",
+        "Amin Darbandi",
+        "Yannick Fürst",
+        "Martin Kriegel"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "eess.SY"
+      ],
+      "published": "2026-09-04T16:08:05+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05314v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05314",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "建築自動化系統（BAS）產生大量感測器資料，卻因點位命名異質、metadata 缺失及文件分散，難以轉化為可操作的洞見。本系統性回顧分析 2023 年至 2026 年 3 月發表的 66 篇 LLM 用於 HVAC operations 的同儕審查研究，並依五類應用與三類 LLM 方法進行編碼，同時評估證據真實性、部署成熟度，以及 LLM 與實體 HVAC 決策之間的責任邊界。研究集中於 building energy modelling（BEM），共 32 篇；load forecasting 研究數量過少，尚不足以形成子領域結論。僅 4 篇研究達到 pilot-level evidence，且沒有研究報告持續性的實際營運部署。沒有研究可被分類為可立即產業採用，3 篇屬於近期可行，63 篇仍為研究階段。現有證據主要支持 LLM 擔任語意與工作流程層，而非自主 HVAC 控制器。近期可試行的受限用途包括點位名稱正規化、文件導向的操作員支援、BEM 工作流程協助，以及圍繞 physics-based controllers 的建議介面。未來應優先建立現場驗證 benchmark、評估受營運限制的 orchestration，並發展具有限延遲與可驗證安全性質的 LLM–MPC/RL 架構。",
+      "problem_statement": "HVAC 營運資料分散於 BAS 點位、設備手冊、BIM、ontology、維護紀錄與感測器歷史資料中；異質命名、缺少 metadata、文件不可直接被分析工具使用，使故障診斷、模型建立與控制部署受阻。既有 ML、MPC 與 RL 雖在模擬環境具成效，卻面臨跨設備泛化、信任、整合、延遲、可稽核性與治理問題。現有文獻亦缺乏將應用任務、LLM 方法、證據真實性、部署成熟度及責任邊界共同分析的系統性框架。",
+      "proposed_solution": "作者提出一套針對 LLM-for-HVAC operations 的系統性回顧與部署評估框架。研究將 66 篇主要研究依五個應用家族分類：fault detection and diagnosis、energy load forecasting、BEM and simulation、control and optimisation、thermal comfort and occupant interaction；並依三種整合方法分類：M1 prompting and supervised adaptation、M2 context-grounded orchestration、M3 multimodal input。框架進一步以 evidence type、deployment readiness、responsibility boundary 與 safety/governance reporting 評估研究是否具備實務可部署性。核心觀點是將 LLM 放置於 semantic and workflow layer，負責解讀、對齊、檢索與路由異質資訊，再透過 schema/unit checks、retrieval grounding、human review、simulation、MPC、RL 或 BAS 工具將輸出與實體控制隔離，避免未受限制的自主致動。",
+      "core_contributions": [
+        "建立涵蓋 66 篇研究的 A1–A5 應用分類與 M1–M3 方法分類，並以 A×M map 描述 LLM 在 HVAC operations 的研究分布與結構性缺口。",
+        "提出結合 evidence realism、closed-loop validation、部署成熟度與 responsibility boundary 的 deployment-readiness 評估，明確區分 ready-now、near-term 與 research-only。",
+        "提出以 LLM 作為 semantic and workflow layer、由人員或 physics-based controller 負責實體決策的安全邊界，並整理文件接地、點位正規化、BEM 協助與控制建議等受限用途。"
+      ],
+      "methodology": "研究以 Scopus 建立文獻 corpus，搜尋式結合 large language model、LLM、GPT、ChatGPT、generative AI、RAG 等詞，並與 HVAC、building energy、building performance 或 building management system 等詞交集；納入 2023 年起至 2026 年 3 月 31 日索引的英文、同儕審查 article、review 與 conference paper。初始取得 142 筆，經標題摘要篩選排除 38 筆，再對 104 筆全文評估，排除 38 筆後納入 66 篇 primary studies。每篇研究指定一個主要 application category，並依主要整合邏輯指定 M1–M3；具 run-time retrieval、database、tool interface、memory 或 orchestration loop 者歸入 M2，僅以 vision–language encoder 處理非文字輸入者歸入 M3。證據類型分為 conceptual、simulation-only、lab study、retrospective field data、pilot deployment 與 operational deployment。部署成熟度分為 ready-now、near-term、research-only；責任邊界則區分 LLM advisory–human decides、LLM generates–human reviews、LLM autonomous–low risk 與 LLM autonomous–high risk。另以 data realism、experimental or field realism、closed-loop validation、reproducibility、safety/governance reporting 五項準則輔助判讀。論文未提出統一的跨研究效能統計或 meta-analysis；F1、R²、MAE、RMSE、energy savings 等僅作為個別研究可能使用的指標，不能直接形成整體比較。",
+      "key_results": "| 評估項目 | 論文報告結果 |\n|---|---|\n| 納入研究數 | 66 篇 primary studies |\n| 應用分布 | A1 FDD：9；A2 Forecast：3；A3 BEM：32；A4 Control：15；A5 Comfort：7 |\n| 方法分布趨勢 | 文獻由 M1 prompting/fine-tuning 逐漸轉向 M2 context-grounded orchestration；M3 multimodal 仍較少 |\n| 最大交叉類別 | A3 × M2，共 15 篇 |\n| 證據類型 | Simulation-only：30；Retrospective field：23；Lab study：9；Pilot deployment：4 |\n| 持續營運部署 | 論文未報告任何 sustained operational deployment |\n| 部署成熟度 | Ready-now：0；Near-term：3；Research-only：63 |\n| 近期可試行用途 | Point-name normalisation、document-grounded operator support、BEM workflow assistance、physics-based controller 周邊的 advisory interface |\n| 適用技術邊界 | ML、MPC、RL 與 ontology-based tools 仍較適合高頻控制、短期數值 forecasting 與 well-posed ontology mapping |\n| 個別研究示例 | Zhang 等人的 LoRA-fine-tuned GPT-3.5 在 ASHRAE RP-1312 benchmark 的 FDD accuracy 從 29.5% 提升至接近 100%；四代理 BEM workflow 報告 IDF success rate 100%，專家 authoring time 從 4 小時降至 9 分鐘 |\n| 整體效能統計 | 論文未報告可跨 66 篇研究直接比較的統一效能數據或統合結果 |",
+      "insights": [
+        "若要導入 HVAC LLM，應優先選擇可由人員審核、低風險且不直接控制安全關鍵設備的語意與工作流程任務，而非讓 LLM 直接取代 MPC、RL 或 BAS 控制邏輯。",
+        "企業評估 RAG 或 agentic HVAC 系統時，不能只看回答正確率或單次節能率，還應驗證 retrieval 品質、工具使用、延遲、錯誤傳播、schema/unit checks、fallback 與操作員覆核流程。",
+        "建立 field-validated benchmark 與跨設備測試特別重要；論文指出 AHU、chiller 資料主導現有 FDD 研究，heat-pump 的 LLM FDD、forecasting 與 control 仍是明顯缺口。"
+      ],
+      "limitations": "研究受限於單一 Scopus、英文與同儕審查文獻範圍，可能遺漏快速變動的 arXiv、GitHub 與產業部署證據。2026 年僅涵蓋第一季，且 coding 由單一 reviewer 執行。各研究任務、資料與指標差異大，論文未提供統一 meta-analysis；未來應進行現場驗證、受營運限制的 orchestration 評估，以及具有限延遲、可驗證安全性質的 LLM–MPC/RL 整合。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "HVAC operations",
+        "building energy modelling",
+        "retrieval-augmented generation",
+        "LLM agents",
+        "model predictive control",
+        "reinforcement learning",
+        "fault detection and diagnosis"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05340",
+      "title": "Trust-Aware Adaptive Disclosure for Inference Privacy Preservation in Multi-Agent Networks",
+      "abstract": "Agent based systems are increasingly deployed in information critical systems including healthcare management systems, and smart grids. In this paper, we consider a multi-agent system where each agent has a latent goal that needs to be kept hidden from observing adversaries. More specifically, this paper studies privacy-preserving consensus in networked multi-agent systems under goal inference attacks. We propose a Trust-Aware Privacy Control framework that adapts message disclosure based on the dynamic trust relationships between agents. The proposed method controls information release using a trust-dependent stochastic policy. This enables a tradeoff between consensus performance and privacy preservation. Experiments demonstrate that the proposed method reduces adversarial goal inference accuracy compared to representative baselines, while maintaining competitive consensus utility, thereby highlighting the effectiveness of trust-aware mechanisms in privacy preservation of the agents in multi-agent systems.",
+      "authors": [
+        "Puspanjali Ghoshal",
+        "Tobias J. Oechtering"
+      ],
+      "categories": [
+        "cs.MA",
+        "cs.CR"
+      ],
+      "published": "2026-09-04T16:44:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05340v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05340",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "基於代理的系統日益部署於醫療管理、智慧電網等資訊關鍵系統。本文研究一種多代理系統，其中每個代理都具有必須對觀察型 adversary 隱藏的潛在目標，並探討遭受 goal inference attacks 時的隱私保護 consensus。作者提出 Trust-Aware Privacy Control（TAPC）框架，根據代理間動態 trust relationships 調整訊息披露程度，並透過 trust-dependent stochastic policy 控制資訊釋出。此方法在 consensus performance 與 privacy preservation 之間取得取捨。實驗顯示，相較於代表性 baseline，TAPC 可降低 adversarial goal inference accuracy，同時維持具競爭力的 consensus utility，說明 trust-aware 機制有助於多代理網路中的隱私保護。",
+      "problem_statement": "論文處理多代理協作中的 inference privacy 問題：代理交換的訊息與時間模式可能暴露其私人 goal、偏好或意圖，使 adversary 能從 communication history 推斷潛在目標。既有 differential privacy 或 additive noise 方法雖能降低洩漏，卻可能損害系統效能；既有 trust-aware coordination 則較少處理去中心化的 inference leakage，部分方法還依賴 central trust authority 或 query-based setting。因此需要依據代理間信任差異，自適應控制資訊披露，同時維持 consensus utility 與通信限制。",
+      "proposed_solution": "作者提出 Trust-Aware Privacy Control（TAPC）框架，整合 trust evaluation、adaptive disclosure control、privacy-preserving message generation 與 leakage-aware optimization。每個代理依據鄰居的 communication reliability 與 behavioral consistency 計算 trust score τij，再以 disclosure coefficient αij=τij^γ 控制披露量。訊息由 αij 加權的 task-relevant feature 與 (1−αij) 加權的 Gaussian obfuscation signal 組成，使高信任連結獲得較多有用資訊、低信任連結承受較強遮蔽。核心創新是把動態 trust 作為隨機隱私控制變數，取代 uniform noise 或硬式 trust threshold，並建立 trust、披露量與 leakage upper bound 的理論關係。",
+      "core_contributions": [
+        "提出 trust-aware probabilistic information disclosure mechanism，將代理間 trust score 連結至訊息披露程度與 inference leakage。",
+        "建立 trust、disclosure coefficient 與 leakage upper bound 的理論刻畫，證明固定噪聲與 sensitivity parameter 下，leakage bound 隨 trust score 增加而增加。",
+        "在 50-agent consensus 實驗中，與 full disclosure、uniform Gaussian noise 及 trust-thresholded communication 比較，展示 TAPC 的 privacy–utility tradeoff。"
+      ],
+      "methodology": "系統包含 N 個代理，代理狀態 xi(t) 為可觀測向量，私人目標 gi 屬於 K 類離散集合；代理透過 undirected graph 的鄰接連結交換訊息。被動 adversary 已知通信協定與網路拓撲，從可觀察連結的歷史 HT_A 以 inference model 預測 gi。每個代理在預設觀察視窗中計算可靠度 rij=Nsucc/Ntot，並以近期訊息與歷史平均行為的差異計算一致性 sij=exp(−平均差異)，再用 τij=λrij+(1−λ)sij 更新信任。接著設定 αij=τij^γ，產生 ηi(t)~N(0,σ²I)，並傳送 mij(t)=αijzi(t)+(1−αij)ηi(t)，其中 zi(t)=ϕ(xi(t),gi) 是 task-relevant feature。每輪每條邊依序更新 reliability、consistency、trust、disclosure coefficient，產生噪聲與訊息；論文給出的每輪複雜度為 O(|E|)。理論上，作者以 AWGN channel 的 SNR 推導 mutual-information leakage upper bound 1/2 log(1+SNR)，並證明固定噪聲時 leakage bound 隨 αij 與 τij 單調增加、隨 γ 增加而下降。實驗使用 50 個代理、connected random geometric graph、6 個 latent goals 與 100 輪通信；以 random forest 從時間通信歷史的統計特徵推斷目標，並評估 consensus utility、inference attack accuracy 作為 leakage surrogate，以及 communication cost。",
+      "key_results": "作者報告的 50-agent 實驗結果如下；其中 leakage 以 random-forest adversary 的 inference attack accuracy 表示。\n\n| 方法 | Consensus Utility | Inference Leakage | Communication Cost |\n|---|---:|---:|---:|\n| FD | 0.960 | 0.997 | 245000 |\n| GN | 0.872 | 0.583 | 245000 |\n| TOC | 0.909 | 0.173 | 245000 |\n| TAPC | 0.920 | 0.137 | 245000 |\n\nTAPC 的 leakage 為四種方法最低，且 utility 高於 GN 與 TOC、低於 FD。論文指出所有方法在固定代理數時通信成本相同；成本隨代理數增加而上升，但圖中未提供各代理數對應的具體數值。",
+      "insights": [
+        "若多代理系統中的不同鄰居具有不同信任程度，可採用分連結的披露策略，而非對所有通信套用相同噪聲強度。",
+        "實務部署時應同時監測任務效用與 adversarial inference accuracy；單獨追求最低洩漏可能造成 consensus utility 顯著下降，論文中的 GN 即呈現此取捨。",
+        "trust score 不應只代表可靠通信，也會直接影響可披露資訊量；因此可透過 γ 調整隱私敏感度，在不改變 trust evaluation 的情況下控制披露強度。"
+      ],
+      "limitations": "論文的理論分析採用簡化的 instantaneous communication setting，尚未完整處理時間相依性與通信歷史的資訊聚合。Gaussian noise 機制的理論保證與 convergence rates 仍待加強；實驗也僅涵蓋模擬網路與三種 baseline。作者未來將研究 time-varying、directed graphs、替代性擾動機制及真實多代理應用。",
+      "tags": [
+        "safety",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多代理系統隱私保護",
+        "安全共識與分散式協作",
+        "信任管理與資訊披露控制",
+        "目標推斷攻擊"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05289",
+      "title": "Beyond Aggregate Scores: Behavioral Correctness Assumptions for Assessing Reference-Based Automatic Evaluation Methods",
+      "abstract": "Automated reference-based evaluation methods play a critical role in assessing natural language generation systems. Existing meta-evaluation primarily measures agreement with human judgments or benchmark labels, providing limited insight into evaluator behavior under controlled conditions. We introduce behavioral correctness assumptions, a complementary framework for evaluating reference-based automatic evaluation methods. We define a taxonomy of correctness-preserving and correctness-altering assumptions and operationalize them through controlled response transformations that specify expected scoring behaviors. We evaluate diverse lexical, character-level, semantic, LLM-based, and hybrid evaluators and analyze their assumption-level behavior, stability, sensitivity, repeat-run variability, configuration sensitivity, and reproducibility. Our experiments reveal distinct behavioral trade-offs across evaluation paradigms: no evaluator satisfies all proposed correctness assumptions, and evaluators with similar aggregate performance can exhibit substantially different behavioral profiles. These findings demonstrate that behavioral correctness assumptions provide diagnostic information obscured by conventional aggregate meta-evaluation.",
+      "authors": [
+        "Maria Mahbub",
+        "Ashley Rice",
+        "Michael R. Munroe",
+        "Amidu Kamara",
+        "Amir Sadovnik"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-04T15:43:09+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05289v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05289",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "自動化的 reference-based evaluation methods 在評估 natural language generation systems 中扮演重要角色。現有 meta-evaluation 主要衡量其與 human judgments 或 benchmark labels 的一致性，但對評估器在受控條件下的行為了解有限。本文提出 behavioral correctness assumptions，作為評估 reference-based automatic evaluation methods 的互補框架。作者建立 correctness-preserving 與 correctness-altering assumptions 的 taxonomy，並透過受控 response transformations 將其具體化，為評估器指定預期的評分行為。研究涵蓋 lexical、character-level、semantic、LLM-based 與 hybrid evaluators，分析其 assumption-level behavior、stability、sensitivity、repeat-run variability、configuration sensitivity 與 reproducibility。實驗顯示，不同 evaluation paradigms 存在明顯的行為權衡；沒有任何 evaluator 能滿足所有 correctness assumptions，而 aggregate performance 相近的 evaluators 可能具有顯著不同的 behavioral profiles。這些結果說明，behavioral correctness assumptions 能揭示傳統 aggregate meta-evaluation 所掩蓋的診斷資訊。",
+      "problem_statement": "現有 reference-based automatic evaluation 多以與人類判斷、benchmark labels 的相關性或整體分數評估品質，無法充分說明評估器面對特定輸出變化時是否行為正確。例如，paraphrase、格式改寫或增加正確資訊不應降低分數；遺漏關鍵資訊、加入錯誤事實或產生邏輯矛盾則應受到懲罰。不同評估器即使 aggregate performance 相近，也可能在這些情境下呈現完全不同的敏感性與穩定性。",
+      "proposed_solution": "作者提出 behavioral correctness framework，以明確的 correctness assumptions 描述可靠 reference-based evaluator 應具備的行為。框架將假設分為 correctness-preserving 與 correctness-altering 兩類，前者要求受控變換後分數近似不變，後者要求輸出品質下降時分數降低。作者從 baseline response 出發，利用 LLM 生成 paraphrase、verbose、concise、alternative correct answer、key detail omitted、incorrect fact added、logical contradiction 等 transformation，並比較變換前後的分數差異。核心創新不是提出新 metric，而是以 transformation-based test suite 對既有評估器進行 assumption-level 診斷，另以 stability、sensitivity、重複執行、設定變化及 test-suite regeneration 分析其可靠性。",
+      "core_contributions": [
+        "提出 behavioral correctness assumptions 框架，將 reference-based evaluator 的可靠性拆解為 correctness-preserving 與 correctness-altering 行為要求。",
+        "建立 transformation-based test suite，透過受控 response transformations，在 transformation、assumption 與 summary 三個層級診斷多類 lexical、semantic、LLM-based 與 hybrid evaluators。",
+        "系統分析 stability、sensitivity、repeat-run variability、configuration sensitivity 與 test-suite reproducibility，證明行為診斷能補足傳統 aggregate meta-evaluation 的不足。"
+      ],
+      "methodology": "研究以九份美國海岸防衛隊程序與操作 PDF 為來源，先經 OCR 擷取文字，再使用 Llama-3.3-70B-Instruct 生成 question-reference pairs；接著以 Llama-3.1-8B 產生保留語意的 baseline response，並依假設生成受控 transformations。測試集包含 203 組 question-reference pairs、2,842 個 transformed responses，共 3,045 個 evaluation instances；人工審查每種 transformation 隨機 10 個樣本。評估器涵蓋 lexical metrics（BLEU、METEOR、ROUGE-1/2/L、Token F1）、character-level metrics（chrF、Jaro、Levenshtein）、semantic metrics（BERTScore、Embedding Cosine Similarity）、LLM-based evaluators（Truthfulness、Completeness），以及 hybrid evaluators（Answer Relevance、Semantic F1、Factual Correctness）。LLM 評估主要使用 Prometheus-2 8×7B，temperature=0.2、top-p=0.8、top-k=40。對每個 transformation 計算 Δ=M(G,Rt)-M(G,R0)：correctness-preserving 預期 Δ≈0，correctness-altering 預期 Δ<0；再聚合為 assumption-level Δ。另計算 stability 與 sensitivity，分別衡量對正確性不變變換的分數一致性，以及對品質下降的反應程度。研究也以五次重複執行、不同 backbone 與 decoding configurations，以及使用 Qwen-3-8B 重新生成測試集，分析 variability、configuration sensitivity 與 reproducibility。",
+      "key_results": "| 分析面向 | 論文報告的主要結果 |\n|---|---|\n| 整體行為 | 沒有任何 evaluator 滿足所有 proposed correctness assumptions；aggregate performance 相近的 evaluator 具有不同 behavioral profiles。 |\n| 最具挑戰的 correctness-preserving assumption | Alternative Correct Answer 幾乎使所有 evaluator 分數下降；Semantic F1 Δ=-0.25、Factual Correctness Δ=-0.21、Truthfulness Δ=-0.20。 |\n| 其他 correctness-preserving 行為 | BERTScore 在 Verbose、Structure Change、Alternative Correct Answer 下分別下降 -0.13、-0.15、-0.14；Embedding Cosine Similarity 在 Irrelevant Sentence Added 下下降 -0.12。 |\n| Verbose transformation | METEOR、chrF、Completeness、Truthfulness 反而提高分數，分別為 +0.10、+0.09、+0.10、+0.07；BERTScore、ROUGE-L、Token-F1 則分別下降 -0.13、-0.10、-0.10。 |\n| 邏輯矛盾偵測 | Truthfulness 對 Logical Contradiction 的分數下降 -0.41；Factual Correctness 下降 -0.44；Completeness 為 -0.25，Answer Relevance 為 -0.16。 |\n| 穩定性與敏感性 | Jaro 的 stability 最高，為 0.937，但 sensitivity 最低，為 0.028，顯示高穩定性不代表能偵測錯誤。 |\n| 較佳權衡 | Factual Correctness 的 stability/sensitivity 為 (0.889, 0.238)；Truthfulness 為 (0.895, 0.195)。 |\n| Repeat-run variability | Truthfulness 與 Answer Relevance 五次重複評估中，所有 assumption 的標準差低於 0.0025；Answer Relevance 全部低於 0.001。 |\n| Configuration sensitivity | 同一 backbone 內 decoding configuration 造成的變異較小；backbone choice 的影響較大。論文未報告完整數值表。 |\n| Test-suite reproducibility | 不同生成器重新建立測試集後，所有 evaluator 的 profile MAE 低於 0.075；主要 qualitative behavioral patterns 大致保留。 |\n\n上述結果顯示，similarity-based methods 通常 stability 較高但 sensitivity 較低；LLM-based 與 hybrid methods 的行為差異較細緻，卻仍可能錯誤懲罰正確變換或不足以懲罰真正錯誤。",
+      "insights": [
+        "選擇 evaluator 時不應只看與人類評分的整體相關性；若應用重視 paraphrase、格式改寫與多種正確答案，應優先檢查 semantic invariance、structural invariance 與 alternative answer recognition。",
+        "在 RAG 或 factual QA 中，可將 key detail omission、incorrect fact、subtle factual error 與 logical contradiction 納入 evaluator 的例行 behavioral regression tests，而非只監控平均分數。",
+        "LLM-as-a-Judge 的 backbone 可能比 temperature、top-p、top-k 等設定更影響行為 profile，因此部署或論文報告應明確固定並揭露 judge backbone，且同時報告 stability 與 sensitivity。"
+      ],
+      "limitations": "測試集主要依賴 LLM 生成 baseline 與 transformations，人工驗證範圍有限，未必涵蓋自然發生的所有變化。correctness assumptions 並不完整，未明確處理 reasoning quality、uncertainty calibration、safety 與 domain-specific requirements。實驗集中於單一文件型 QA 與 single-reference setting；對 summarization、dialogue、long-form、code generation 及 multi-reference 任務的泛化仍待驗證。",
+      "tags": [
+        "llm-as-judge",
+        "rag-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "behavioral testing",
+        "automatic evaluation meta-evaluation",
+        "reference-based NLG metrics",
+        "LLM judge reliability"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05295",
+      "title": "RISE: Recursive Improvement via Self-Extrapolating Policy Distillation",
+      "abstract": "On-policy distillation (OPD) provides dense, per-token supervision for language model post-training, but its effectiveness is bottlenecked by teacher quality: external teachers suffer from distribution mismatch, while self-distillation with privileged conditioning is limited by in-context learning capacity. We propose \\textbf{RISE} (\\textbf{R}ecursive \\textbf{I}mprovement via \\textbf{S}elf-\\textbf{E}xtrapolating Policy Distillation), which constructs a synthetic teacher directly from the model's own RLVR training trajectory. By extrapolating the displacement between the current checkpoint and a trailing anchor---in parameter space or output logit space---RISE converts a sparse outcome-induced parameter update into a dense token-level target, without any external model or privileged conditioning. RISE combines RLVR and OPD in a complementary loop: outcome rewards ground the extrapolation toward correct reasoning, while the extrapolated teacher refines token-level decisions. Moreover, since the teacher is refreshed every iteration as the student improves, distillation becomes a recursive improvement mechanism rather than a one-shot compression step. Experiments spanning mathematical reasoning, multi-domain STEM, code generation, and multi-turn agentic tasks show that RISE outperforms RLVR-only training and on-policy self-distillation across all settings.",
+      "authors": [
+        "Yang Li",
+        "Semih Yavuz",
+        "Shafiq Joty"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-09-04T15:47:51+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05295v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05295",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "On-policy distillation（OPD）能提供逐 token 的密集監督，但其效果受限於 teacher 品質：external teacher 會遭遇 distribution mismatch，而帶有 privileged conditioning 的 self-distillation 則受限於 in-context learning 能力。本文提出 RISE（Recursive Improvement via Self-Extrapolating Policy Distillation），直接從模型自身的 RLVR training trajectory 建構 synthetic teacher。RISE 在 parameter space 或 output logit space 外推 current checkpoint 與 trailing anchor 之間的 displacement，將由 outcome reward 產生的稀疏 parameter update 轉化為密集的 token-level target，不需 external model 或 privileged conditioning。RLVR 以可驗證 outcome reward 錨定正確 reasoning 方向，OPD 再細化 token-level decisions；teacher 於每輪更新，使 distillation 成為 recursive improvement，而非一次性壓縮。實驗涵蓋數學、多領域 STEM、程式生成及多輪 agentic tasks，RISE 均優於 RLVR-only 與 on-policy self-distillation。",
+      "problem_statement": "論文要解決的是 post-training 中 sequence-level reward 的 credit assignment bottleneck：RLVR、preference 或 accept/reject 訊號只告訴模型整段回應是否成功，無法指出各 token 應如何改進。OPD 雖能提供逐 token 分布監督，卻依賴高品質 teacher。External teacher 會因 student prefix 未見於 teacher 訓練分布而產生 distribution mismatch；privileged-conditioned self-distillation 則受限於模型的 ICL 能力，且 teacher 與 student 輸入不一致。",
+      "proposed_solution": "RISE 將模型自身 RLVR trajectory 的改善方向視為未來較佳 policy 的近似。給定 anchor policy 與 RLVR 更新後 policy，在 representation space φ 中以 φ(πfuture)=φ(πanchor)+β(φ(πupdated)−φ(πanchor))、β>1 進行 extrapolation，再將此 synthetic teacher 的逐 token 分布蒸餾回 updated student。作者實作兩種版本：weight-space extrapolation 直接外推參數；logit-space extrapolation 外推 log probabilities，等價於對兩個 policy 做 geometric mixture。RLVR 負責以 verified reward 錨定方向，OPD 透過 token-level JSD 將外推方向轉為穩定更新；β 隨訓練遞減至 1，避免接近最佳點時 overshoot。",
+      "core_contributions": [
+        "提出 RISE，從模型自身 RLVR training trajectory 外推 future teacher，消除 external teacher 與 privileged conditioning 的必要性。",
+        "在統一 representation-map 框架下實作並比較 logit-space 與 weight-space extrapolation，並提出遞減 β 與 anchor dynamics 設計以控制 overshoot。",
+        "在數學、多領域 STEM、程式生成及多輪 agentic tasks 上，以實驗、消融、多 seed 與 compute-matched 比較證明 RISE 相較 RLVR-only 和既有 OPSD 方法具有較佳表現或 sample efficiency。"
+      ],
+      "methodology": "RISE 每輪包含兩階段。第一階段從目前 policy πθn 取樣 rollouts，以 outcome reward 計算 GRPO 類 policy-gradient update，得到 πθ′n+1；第二階段以 anchor 與該更新的 displacement 建構 future teacher，並從 πθ′n+1 開始以 OPD 最小化逐位置 Jensen–Shannon divergence。Logit-space 版本在每個 rollout position 取 post-RLVR policy 的 top-K token，加上 tail bucket，對 anchor 與 updated policy 的 log-probability 做外推並 cache teacher；預設 K=100，code 任務 K=20。Weight-space 版本使用 θfuture=θanchor+β(θ′n+1−θanchor)，在 OPD 時對其作 forward pass。teacher 全程 stop-gradient。β0 預設 1.2，採線性遞減至 1；anchor 可使用前一 checkpoint 或 EMA，Qwen 預設 η=0.1、OLMo 預設 η=1。OPD 重用 RLVR rollouts，因此不增加 sampling cost，但作者報告 wall-time overhead 為 1.3–1.6 倍。評估涵蓋 MATH500、AIME、AMC、Minerva、OlympiadBench、GPQA、IFEval、MMLU-Pro、TheoremQA、HumanEval+、MBPP+、LiveCodeBench、ALFWorld 與 WebShop，主要指標為 accuracy、avg@N、pass@N、agent success rate 及 WebShop score/accuracy。",
+      "key_results": "主要結果如下；數值為論文報告的 accuracy（%）、success rate 或 score。\n\n| 設定與指標 | GRPO | RISE（logit） | RISE（weight） |\n|---|---:|---:|---:|\n| Qwen3-8B 數學 Math Avg | 60.0 | 62.5 | 62.7 |\n| Qwen3-1.7B 數學 Math Avg | 45.4 | 50.2 | 49.2 |\n| OLMo3-7B 數學 Math Avg | 47.6 | 56.4 | 53.7 |\n| Qwen3-8B OOD Avg | 70.6 | 71.3 | 72.0 |\n| OLMo3-7B OOD Avg | 51.2 | 55.5 | 53.7 |\n| Qwen3-4B mixed Math Avg | 40.2 | 43.3 | 44.8 |\n| Qwen3-4B mixed STEM Avg | 45.5 | 47.4 | 47.5 |\n| ALFWorld success rate | 75.0 | 78.1 | 84.4 |\n| WebShop WS-A | 63.3 | 68.0 | 74.2 |\n\n細項亮點：OLMo3-7B 的 AIME’24 從 GRPO 30.2 提升至 RISE（logit）46.9（+16.7）；Qwen3-1.7B 的 AIME’24 從 30.0 提升至 36.3。多 seed 結果中，Qwen3-8B RISE（weight）Math Avg 為 62.4±0.2，GRPO 為 60.1±0.2；Qwen3-1.7B RISE（logit）為 49.6±0.4，GRPO 為 45.1±0.4。移除 RLVR 會導致 accuracy 崩潰、生成長度達 8K context cap；直接採用 θfuture 而移除 OPD 時，Qwen3-8B Math Avg 僅由 60.0 到 60.3，顯示穩定收益來自 RLVR grounding 與 OPD projection 的結合。",
+      "insights": [
+        "若只有 sparse outcome reward，可利用相鄰 checkpoint 的改善位移建構 dense token-level supervision；但必須讓方向由可驗證 reward grounding，不能單靠 self-distillation 反覆外推。",
+        "Extrapolation 不宜採固定幅度：論文顯示接近訓練後期時 safe β range 會縮小，因此實務上應使用遞減 β，並依 RLVR update 的穩定性選擇 previous 或 EMA anchor。",
+        "RISE 的收益不是單純採取更大的 parameter step；消融顯示 OPD 將外推 teacher 投影回 student 的 token 分布，是把改善方向轉為跨 benchmark 穩定收益的關鍵。"
+      ],
+      "limitations": "論文未提供更大模型、更多訓練 epoch 或更廣泛任務上的結果；外部 teacher OPD 也未納入直接比較，因其需要額外強模型。方法對 β、anchor rate、top-K 及模型訓練動態敏感，且 weight-space 版本需 materialize teacher、增加計算。安全性、長期遞迴穩定性與非 verifiable reward 情境仍未充分評估。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "RLVR",
+        "on-policy distillation",
+        "policy extrapolation",
+        "GRPO",
+        "token-level credit assignment",
+        "model self-improvement"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.05279",
+      "title": "Testing Interchangeability in LLM Agent Teams",
+      "abstract": "Production multi-agent systems replace agents constantly, on the assumption that an agent filling a role is interchangeable with any other agent that can do the job. We test that assumption. Eight teams per setting are formed independently from one base model on the same tasks, each agent keeping a private notebook across ten formation episodes; we then trade role-matched agents between teams and measure what changes on held-out tasks. Against a placebo that reproduces the disruption of a roster change without changing who occupies the seat, a swap costs little in task score but raises the communication a team spends per unit of progress by 16 to 63 percent, and in Hanabi a swapped agent is more expensive than an inexperienced one, consistent with interference from conventions learned with its former partner. In Collab-Overcooked, when the agent that sets the agenda is replaced, most of the extra communication comes from the agent that stayed. Three ablations, over base models, decoding temperature and formation length, move the swap penalty alongside one other quantity: how far independently formed teams drift apart. Greedy decoding lowers both; doubling a team's history raises both. In these settings, agents are more fungible in task outcome than in coordination efficiency, with larger swap effects after longer formation histories.",
+      "authors": [
+        "Jianxin Gao",
+        "Tianyi Yu",
+        "Linna Deng",
+        "Runze Li",
+        "Zining Wang"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-09-04T15:32:20+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.05279v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.05279",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "生產環境中的多代理系統經常替換 agent，通常假設只要新 agent 能完成相同角色，便可與原 agent 互換。本研究檢驗此假設：每個設定由同一 base model 獨立形成八個團隊，每名 agent 在十個 formation episodes 間維護 private notebook，之後交換角色匹配的 agent，並在 held-out tasks 上評估。相較於僅模擬 roster change、但不改變座位成員的 placebo，交換對 task score 的影響很小，卻使每單位進展的 communication cost 增加 16% 至 63%；在 Hanabi 中，交換 agent 的成本甚至高於無經驗 agent。三項 ablation 顯示，swap penalty 會隨獨立形成團隊間的 protocol divergence 一同變化；greedy decoding 降低兩者，而延長 team history 則提高兩者。結果顯示，在這些設定中，agents 在任務成果上較具可互換性，但在 coordination efficiency 上並非如此，且較長的共同歷史會放大交換影響。",
+      "problem_statement": "論文探討 LLM agent team 中，角色匹配且能力與經驗相當的 agent 是否真正可互換。現有 multi-agent framework 將角色視為 configuration，並常以個體能力或 task score 判斷替換是否成功，但未充分區分一般 task experience 與特定夥伴形成的 conventions。既有 cross-play 研究也常混合模型能力差異，或沒有 persistent memory，因而無法測量長期合作歷史在 roster replacement 後造成的 coordination cost。",
+      "proposed_solution": "作者提出 swap test，以同一 frozen base model、相同 role prompts 與相同 task pool，獨立形成多個團隊；agent 在每次 formation episode 後將資訊寫入含 task notes κ 與 partner notes π 的 private notebook。形成後交換不同團隊中 role-matched agents，並在 held-out tasks 評估。研究以 placebo 控制 roster-change announcement 與 context reset 的干擾，再加入 swap-cleared、amnesia 與 naive 條件，分離一般經驗、夥伴特定殘差及錯誤 partner model 的影響。核心創新是以 task score 與 coordination cost 的雙重指標，並以 V、Π、ρ、W、Σ 和 protocol-signature divergence 系統化量化 agent interchangeability。",
+      "core_contributions": [
+        "提出具 placebo control 的 LLM agent team swap test，在固定 base model、角色與經驗量的情況下，分離一般 task experience 與 partner-specific coordination residue。",
+        "實驗顯示 agent interchangeability 在 task score 與 coordination efficiency 之間存在差異：交換對成果影響有限，卻使 communication cost 增加 16% 至 63%，Hanabi 的 coordination-cost ρC 更達 1.11。",
+        "透過 notebook section ablation、seat-targeted swap、protocol signatures，以及 model、temperature、formation-length ablation，分析 partner-specific conventions 的位置、角色不對稱性、恢復速度與隨團隊歷史變化的情形。"
+      ],
+      "methodology": "研究使用三種設定：Collab-Overcooked 的 low-coupling level 2 與 high-coupling level 6，以及雙人 Hanabi。主實驗每個設定以同一 base model 建立八個獨立團隊；每隊包含固定角色，agent 使用 role-specific system prompt、episode transcript 與可重寫的 private notebook，先進行十個 formation episodes，再於五個 held-out tasks 或不重疊的 Hanabi deals 上評估十個 episodes。每個 cohort 的八隊組成四個不重疊配對並交換 role-matched agent。六項條件為 Intact、Placebo、Swap、Swap cleared、Amnesia 與 Naive；除 Intact 外均有相同 roster-change announcement。task score T 為 benchmark 原生分數正規化值；coordination cost C 為 Collab-Overcooked 每完成 sub-task 的 messages，或 Hanabi 每得一分所花的 hints。V=T_placebo−T_naive，Π=T_placebo−T_swap，ρ=Π/V；另以 W 比較刪除 intact team 的 partner notes、以 Σ 衡量清除交換 agent notes 的改善。研究也以 rule-based protocol signature 與 Jensen–Shannon divergence d 衡量團隊協定差異，並測量交換後接收團隊向 donor protocol 移動的程度。Ablation 在 high-coupling Collab-Overcooked 改變 base model、decoding temperature 與 formation episodes。",
+      "key_results": "主要結果如下：\n\n| 設定 | Placebo task score | Swap task score | Naive task score | ρ（score） | Placebo coordination cost | Swap coordination cost | ρC |\n|---|---:|---:|---:|---:|---:|---:|---:|\n| Collab-Overcooked low | 91.6 | 90.0 | 83.1 | 0.18 | 3.33 | 3.85（+16%） | 0.45 |\n| Collab-Overcooked high | 63.2 | 58.0 | 43.4 | 0.26 | 4.33 | 6.53（+51%） | 0.72 |\n| Hanabi | 15.8/25 | 13.7/25 | 11.2/25 | 0.44 | 0.64 | 1.04（+63%） | 1.11 |\n\n其他可直接由論文支持的結果包括：形成經驗的價值 V 在三個設定分別為 0.085、0.199、0.183；刪除 intact team partner notes 可重現 swap penalty 的 44%、81% 與 64%。在 high-coupling Collab-Overcooked，交換 initiator 的 progress penalty 為 7.54 points，交換 responder 為 2.55 points；initiator 被交換時，約 70% 的額外訊息由留下的 incumbent 發出。交換後 task score 約於 low-coupling 第 2 集、high-coupling 第 5 集、Hanabi 第 6 集回到 placebo 的 1% 內，但 coordination cost 恢復較慢，Hanabi 到第 10 集仍高出 7%。形成 episodes 從 5、10 增至 20 時，ρ 為 0.17、0.27、0.41。溫度從 0、0.7、1.0、1.5 到 2.0 時，ρ 為 0.14、0.27、0.31、0.38、0.17；溫度 2.0 時 value of experience V 降至 0.064，作者指出此時 ratio 的解讀性下降。",
+      "insights": [
+        "部署多代理系統時，不應只監控成功率或 task score；agent rotation 後應同步追蹤每單位進展的 communication cost，因為協調效率可能比成果更慢恢復。",
+        "在需要 interleaved coordination 的任務中，可優先保留設定議程或 initiator 角色的 agent；論文結果顯示交換 initiator 的損失較大，且額外溝通主要由留下的 agent 承擔。",
+        "若交換 agent 攜帶與舊夥伴形成的 partner-specific notes，可能引入過時 conventions；在實務上可評估清除或重建此類記憶，並在輪替前以 swap test 檢查實際協調成本。"
+      ],
+      "limitations": "研究僅涵蓋 dyadic teams，無法回答三名以上 agent 是否能繞過被替換成員。formation history 最長為二十集，尚不清楚 partner specificity 是否飽和。κ/π notebook 分區由提示誘導，刪除 partner notes 也會縮短 context，缺少等長中性文字控制。protocol signature 主要是表面特徵；ρ 與 divergence 的關係也僅基於少量 ablation 點，且部分設定同時改變任務複雜度。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-agent coordination",
+        "ad hoc teamwork",
+        "zero-shot coordination",
+        "LLM persistent memory",
+        "team familiarity and transactive memory",
+        "cross-play evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]

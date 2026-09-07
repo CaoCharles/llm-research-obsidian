@@ -1,6 +1,6 @@
-# On Policy Distillation
+# Policy Extrapolation
 
-> On Policy Distillation 相關研究的彙整頁面。
+> Policy Extrapolation 相關研究的彙整頁面。
 
 ## 為什麼重要？
 
@@ -10,7 +10,7 @@
 
 論文被收入此主題的原因：
 
-- 標題或摘要含有 on-policy distillation 相關關鍵字
+- 標題或摘要含有 policy extrapolation 相關關鍵字
 - 研究主題與此分類高度相關
 
 ## 研究方向
@@ -22,8 +22,6 @@
 ## 相關論文
 
 - `[Agent Evaluation]` [[[2609.05295] RISE - Recursive Improvement via Self-Extrapolating Policy Distillation|RISE: Recursive Improvement via Self-Extrapolating...]] (2026-09-04)
-
-- `[Benchmark]` [[[2608.27409] Consolidating RLVR Capabilities Across Domains - A Deep Dive into Fusion Paradig...|Consolidating RLVR Capabilities Across Domains: A ...]] (2026-08-27)
 
 ## 延伸閱讀
 
