@@ -1,0 +1,613 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2609.22043",
+      "title": "An Interpretable Memory Decision Controller for LLM Agents Based on Three-Signal Complementarity: Decoupling Confidence and Consistency",
+      "abstract": "Memory systems for large language models have focused predominantly on efficient retrieval, whereas the decision of whether retrieved memories should be trusted has received comparatively little attention. When the memory store contains conflicting positions, standard retrieval-augmented generation (RAG) blindly injects memories and amplifies hallucinations: in models susceptible to memory injection, the RAG hallucination rate under conflicting memories is markedly higher than that of a memory-free baseline. Inspired by memory signaling mechanisms in the prefrontal cortex, we propose the Memory Decision Layer (MDL), a zero-parameter memory decision controller situated between the retrieval and generation stages. Its core is a three-signal complementary encoder that fuses relevance, reliability, and task risk through QR-based orthogonal subspace projection and a meta-working-memory signal into an interpretable decision representation that quantifies the trustworthiness of retrieved memories. Building on this encoder, MDL explicitly decouples confidence from consistency and introduces risk inversion and explicit abstention. Evaluations on mainstream large language models and multiple open-source datasets show that MDL reduces the hallucination rate under conflicting memories by about 56.04% in general scenarios and approaches zero hallucination in high-risk scenarios. The controller is fully white-box: it relies purely on geometric operations, requires no trained parameters, and adds only about 0.14 ms per decision -- roughly 50x faster than the embedding-retrieval step that precedes it and four to five orders of magnitude faster than an LLM self-evaluation call.",
+      "authors": [
+        "Yiming Zhang",
+        "Jinghong Zhang",
+        "Haoran Zhao",
+        "Yiren Ma",
+        "Chunlei Zhao"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-18T17:34:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.22043v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.22043",
+      "score": 24
+    },
+    "analysis": {
+      "abstract_zh": "LLM agent 的記憶系統過去主要聚焦於高效率 retrieval，但對 retrieved memories 是否值得信任的決策關注較少。當 memory store 含有相互衝突的立場時，standard RAG 會盲目注入 memories，並放大 hallucination；對容易受 memory injection 影響的模型而言，衝突記憶下的 RAG hallucination rate 明顯高於無記憶 baseline。本文提出 Memory Decision Layer（MDL），一個位於 retrieval 與 generation 之間的 zero-parameter memory decision controller。其核心是 three-signal complementary encoder，透過 QR-based orthogonal subspace projection 融合 relevance、reliability 與 task risk，並結合 meta-working-memory signal，形成可解釋的記憶可信度表示。MDL 明確區分 confidence 與 consistency，並引入 risk inversion 與 explicit abstention。多個 LLM 與 open-source datasets 的評估顯示，MDL 在一般衝突記憶情境下約降低 56.04% hallucination rate，在高風險情境接近零 hallucination。控制器完全 white-box、無需訓練參數，每次決策僅約 0.14 ms。",
+      "problem_statement": "論文處理 retrieved memory 被注入 LLM context 前缺乏信任判斷的問題。現有 RAG 多以 relevance 或 retrieval score 決定採用記憶，無法辨識高相關但過時、錯誤或立場衝突的內容；Self-RAG、Reflexion 與 post-hoc detection 則在錯誤記憶已污染 context 或生成結果後才處理，難以事前阻止 hallucination。",
+      "proposed_solution": "作者提出位於 retrieval 與 generation 之間的 Memory Decision Layer（MDL）。MDL 以 relevance（M）、reliability（R）與 task risk（A）三種訊號建立 zero-parameter complementary encoder，利用 value encoding、QR 產生的 orthogonal subspaces、meta-working-memory fusion 與 risk inversion，形成決策向量。其核心創新是將 confidence C（向量 norm）與 directional consistency α（cosine）分開計算，再以 Cfinal=C·(0.3+0.7α) gating，映射至 Active、Suppress、Silent、Opt-Out 四種行動，讓高風險或衝突記憶能被抑制或拒答。",
+      "core_contributions": [
+        "提出位於 retrieval 與 generation 之間的 zero-parameter Memory Decision Layer，以 relevance、reliability 與 task risk 三訊號進行記憶採用或 abstention 決策。",
+        "提出以 QR orthogonal subspace projection、value encoding 與 meta-working-memory fusion 建立可解釋的決策表示，並將 confidence norm 與 directional consistency cosine 分開審計。",
+        "透過 risk inversion 與四級 action mapping 實現高風險拒答；在 TruthfulQA、HaluEval 及多個 LLM 上驗證衝突記憶 hallucination 抑制，並維持約 0.14 ms 的低延遲。"
+      ],
+      "methodology": "MDL 的輸入包含 query、candidate memories、relevance、reliability 與 risk。M 定義為 query embedding 與候選記憶 embedding 的最大 cosine similarity；R 為相關記憶的平均 pairwise similarity，乘以 conflict rate 的平方補數，衝突由涵蓋否定、yes/no polarity 與 antonym pairs 的 lexical detector 判定。A 依 TruthfulQA 類別或 HaluEval 的 health、legal、finance 與 science keywords 指派，並以 1−A 進行 risk inversion。三個 scalar 透過 16 維 Gaussian-peak value encoding 轉為向量，再依 5、5、6 維配置投影至 QR 建立的互相正交子空間，經 risk modulation 與 tanh fusion 得到 vmeta。其 norm 經校準正規化為 C，與 relevance pathway 的 cosine 得到 α，再計算 Cfinal 並以三個 thresholds 產生四級 action。實驗在 TruthfulQA 與 HaluEval 建立包含正確答案、錯誤答案及兩筆 distractor 的衝突 memory store，以 embedding similarity、錯誤答案相似度超過 0.5 且高於正確答案來判定 hallucination，明確 refusal 則視為 safe abstention。比較 B1 no memory、B2 standard RAG、B3 MDL，以及 CRAG、Self-RAG 和 supervised LR、MLP、XGBoost；另進行訊號組合、模組 ablation、跨模型、跨資料集與 latency 評估。",
+      "key_results": "| 評估項目 | Baseline／方法 | 結果 |\n|---|---|---:|\n| gemma-4-E4B-it，衝突記憶，整體 hallucination | B1 no memory | 23.0% |\n| 同上 | B2 standard RAG | 53.0% |\n| 同上 | B3 MDL | 23.3%，較 RAG 低 29.7 個百分點，p=0.014 |\n| gemma-4-E4B-it，高風險 | B2 standard RAG | 63.0% |\n| 同上 | B3 MDL | 0.0% |\n| deepseek-v4-flash，TruthfulQA，整體 | B1 / B2 / B3 | 16.0% / 4.3% / 4.7% |\n| deepseek-v4-flash，TruthfulQA，高風險 | B1 / B2 / B3 | 12.4% / 10.7% / 0.0% |\n| deepseek-v4-flash，HaluEval，整體 | B1 / B2 / B3 | 8.3% / 6.5% / 7.0% |\n| deepseek-v4-flash，HaluEval，高風險 | B1 / B2 / B3 | 4.0% / 2.7% / 1.3% |\n| TruthfulQA，Self-RAG 對比 | Self-RAG | 整體 hallucination 0.5%，refusal 83.3%，約 2.1 次 LLM calls/question |\n| 決策訊號 accuracy | M+R+A MDL | 61.2%；R+A 為 62.7% |\n| supervised comparison | LR / MLP / XGBoost | 63.3% / 63.0% / 64.6% |\n| MDL ablation | 移除 value encoding / risk inversion / α gating | 43.4% / 55.7% / 59.6% |\n| latency | controller decision / total added latency | 40.1 μs / 約 0.14 ms |\n\n作者報告 MDL 在一般情境約降低 56.04% hallucination rate，且高風險情境接近零；但不同表格的任務、模型與 baseline 設定不同，不能將所有數字視為同一實驗條件。",
+      "insights": [
+        "在 RAG pipeline 中，retrieval 與 generation 之間可增設獨立的 trust-decision gate，避免將「高相關」直接等同於「可採用」。",
+        "高風險任務不應只提高 retrieval 或 generation 品質，也需要明確的 risk-aware abstention policy；本文結果顯示 risk inversion 對高風險 hallucination 控制尤其關鍵。",
+        "可將 confidence 與 directional consistency 作為不同的 audit signals，而不是只輸出單一 retrieval score；不過本文也顯示兩者正相關（r=0.902），因此其價值是可分別解讀與稽核，並非統計獨立。"
+      ],
+      "limitations": "論文指出，高風險且高相關（A≥0.70、M≥0.70）時，極高 relevance 可能抵銷部分 risk suppression，117 筆醫療資料的 decision accuracy 為 55.6%；Active action 仍有 8.0% hallucination。訊號抽取依賴 heuristic lexical detector 與規則式 risk mapping，且評估主要使用 TruthfulQA、HaluEval 及構造的衝突 memory store。未來方向包括 differentiable signal extraction、fragment-level filtering，以及更大模型與 adversarial multi-turn dialogue 的驗證。",
+      "tags": [
+        "rag-evaluation",
+        "hallucination",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "memory-augmented LLM agents",
+        "knowledge conflict evaluation",
+        "risk-aware abstention",
+        "interpretable uncertainty estimation"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.21879",
+      "title": "Benchmarking the Explanatory Quality of Open-Weight Vision-Language Models in Face Recognition",
+      "abstract": "Vision-Language Models (VLMs) have recently been proposed as promising tools for face recognition, as they can produce natural language explanations alongside similarity scores. This capability is considered appealing for face comparisons in forensic contexts, which require decisions to be transparent and auditable. However, existing evaluations of VLMs for that use case focus mostly on recognition accuracy, while the validity of generated explanations remains unquantified. In this work, we introduce a benchmarking framework for VLM-based face recognition that treats explanation quality as a core evaluation axis. We propose two criteria that explanations should satisfy: relevance, i.e., reliance on identity-stable facial features; and faithfulness, i.e., alignment with the visible image content without hallucinated features. We jointly develop a methodology enabling the quantification of relevance and faithfulness of evaluated models, based on constraining model outputs to a structured explanation format that supports automated querying and auditing. Using this framework, we benchmark several families of open-weight VLMs, jointly evaluating face verification accuracy and explanation quality. Our results highlight remaining shortcomings of produced explanations, and emphasize the need for such explanation quality metrics to get a complete picture of model performance. The proposed benchmark and open-source evaluation harness provide a foundation for proper benchmarking and future fine-tuning of explainable face recognition systems.",
+      "authors": [
+        "Laurent Colbois",
+        "Sébastien Marcel"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-09-18T15:06:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.21879v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.21879",
+      "score": 23
+    },
+    "analysis": {
+      "abstract_zh": "Vision-Language Models（VLMs）近期被視為臉部辨識的潛在工具，因其除了產生相似度分數，也能提供自然語言解釋；此能力對要求決策透明且可稽核的鑑識情境特別具吸引力。然而，既有評估多集中於辨識準確率，尚未量化生成解釋的有效性。本研究提出一套以解釋品質為核心評估軸的 VLM 臉部辨識 benchmark，要求解釋具備 relevance，即依賴身分穩定的臉部特徵，以及 faithfulness，即符合影像中可見內容、避免 hallucination。作者透過限制模型輸出為結構化格式，使解釋能被自動查詢與稽核，並對多個 open-weight VLM 家族同時評估 face verification 準確度與解釋品質。結果顯示，生成解釋仍有顯著缺陷，僅測量辨識能力不足以完整反映模型表現。公開的 benchmark 與 evaluation harness 可作為未來改善及微調可解釋臉部辨識系統的基礎。",
+      "problem_statement": "現有 VLM 臉部辨識研究主要報告 verification accuracy，通常只對自然語言解釋進行定性描述，因此無法判斷解釋是否依賴身分穩定特徵，或是否描述影像中不可見的臉部內容。在鑑識情境中，單純有文字理由不代表具備有效、透明且可稽核的 explainability；模型可能依賴眼鏡、表情、光線等暫時線索，或產生 hallucinated claims。",
+      "proposed_solution": "作者提出一套面向 forensic face verification 的 benchmark，將 explanation quality 拆成 relevance 與 faithfulness 兩項可量化準則。模型被要求輸出固定 JSON，包含 similarity score、整體 explanation，以及逐項的 facial feature、兩張影像各自的 description 與 comparison。透過 constrained decoding 保證格式可解析，再以預先定義的 lexicon 與資料集 occlusion annotations 自動稽核：relevance 檢查是否提及不穩定線索，faithfulness 檢查是否描述被遮蔽部位。框架並聯合報告 EER、accuracy、FTA 與解釋品質，分析模型家族、參數規模及結構化輸出限制的影響。",
+      "core_contributions": [
+        "提出面向 forensic VLM face verification 的兩項解釋品質準則：relevance，要求依賴 identity-stable evidence；faithfulness，要求不對不可見內容提出 unsupported claims。",
+        "設計以 JSON schema 與 constrained decoding 為核心的結構化解釋評估方法，使 feature-level explanation 能以 lexicon 與 occlusion annotations 進行自動化、可稽核的量化。",
+        "對 Gemma3、Qwen2.5-VL 與 InternVL3 多個規模進行聯合 benchmark，揭示 verification performance、結構化輸出成本與 explanation quality 之間並非簡單一致，並公開 evaluation harness。"
+      ],
+      "methodology": "研究以四個資料集進行 face verification：LFW 採標準 6000-pair protocol；ARFace、Soteria 與 CelebA 建立平衡 genuine/impostor pairs 及 10-fold identity-disjoint splits。臉部以 InsightFace 偵測與裁切；任一影像偵測失敗的 pair 視為 FTA，並排除於相應 metric 計算。評估 Gemma3、Qwen2.5-VL 與 InternVL3 三個 open-weight VLM 家族，規模涵蓋 1B–78B，採 zero-shot、temperature 0 與固定 seed。比較 unstructured output 與 token sampling 階段強制 JSON schema 的 structured output。Verification 以 similarity score 計算 EER 與 accuracy；accuracy 在每個 fold 以其餘九折選 threshold，再於 held-out fold 評估。Relevance 以不穩定線索 lexicon 計算 feature entries 中的 unstable-feature rate U，定義 R=1−U；詞彙涵蓋 accessories、attire、environment、expression 與 grooming。Faithfulness 聚焦 occlusion：若 explanation 的 feature 欄提及 ARFace 遮蔽的 eyes/mouth，或 Soteria 遮蔽的 nose/mouth，則標記為 hallucination，H 為相關 entries 比率，F=1−H；若文字只是承認不可見，則不處罰。兩者皆先逐 comparison 計算，再做 macro-average，並另以(1−FTA)×score反映可實際使用的品質。",
+      "key_results": "主要結果如下；表中數值均為論文報告的百分比。\\n\\n| 比較項目 | 代表結果 | 論文觀察 |\\n|---|---:|---|\\n| 專用 ArcFace baseline | LFW EER 0.3%、ACC 99.9%；CelebA EER 3.0%、ACC 98.1% | VLM 整體明顯落後 dedicated face recognition system |\\n| 最佳 VLM：Gemma3-27B | LFW EER 5.2%、ACC 94.7%；ARFace EER 7.1%、ACC 93.0%；Soteria EER 4.6%、ACC 95.5% | 多數資料集的 VLM verification 表現最佳 |\\n| Qwen2.5-VL-3B | LFW EER 44.3%、ACC 55.5%；FTA 2.6% | 接近 chance-level，且結構化輸出成本明顯 |\\n| InternVL3-1B | LFW EER 48.9%、ACC 51.6%；FTA 28.7% | schema non-compliance 造成大量 FTA |\\n| 結構化輸出影響 | Qwen2.5-VL-7B 在 LFW 的 EER 變化 +19.0 個百分點、ACC −18.9 個百分點 | 小模型受 constrained decoding 影響較大 |\\n| 結構化輸出影響（較大型模型） | Qwen2.5-VL-72B 在 LFW 的 EER 變化 +0.4 個百分點、ACC −0.7 個百分點 | 隨規模增加，輸出限制造成的差距通常縮小 |\\n| 解釋 relevance | 作者報告部分 InternVL3 設定在最多約 20% feature entries 提及不穩定線索 | EER 相近的模型可能有顯著不同的鑑識適切性 |\\n| 解釋 faithfulness | 作者報告部分模型在 occlusion datasets 最多約 10% entries 提及遮蔽區域 | 大模型通常較少描述不可見部位，但並非單調改善 |\\n| scaling 趨勢 | Gemma3-12B、Qwen2.5-VL-7B、InternVL3-14B 通常有較佳 relevance | 中等規模模型的 relevance 可能優於最大模型；faithfulness 則較常隨規模改善 |",
+      "insights": [
+        "評估可解釋 VLM 不應只看 EER 或 accuracy；實務選型應同時納入 relevance、faithfulness 與 FTA，避免高辨識率模型以眼鏡、表情或光線等不穩定線索產生看似合理的報告。",
+        "結構化輸出能把自由文字理由轉換為可審計資料，但小模型可能因 schema non-compliance 產生顯著 FTA；部署時應把格式失敗視為系統性 operational risk，而非單純忽略。",
+        "模型 scaling 對 verification 與 faithfulness 通常有幫助，卻不保證 relevance 單調提升；若應用重視鑑識報告品質，應測試中等規模模型及針對穩定特徵、可見性與 abstention 的微調。"
+      ],
+      "limitations": "Relevance 依賴 lexicon，只涵蓋部分不相關線索；faithfulness 僅評估 ARFace 與 Soteria 的 occlusion，無法涵蓋其他 hallucination 或非遮蔽資料錯誤。實驗採 deterministic decoding，未測量輸出變異、其他 prompting 或非零 temperature。LFW、CelebA 可能與預訓練資料重疊；亦未涵蓋 CFP-FP、AgeDB-30、CA-LFW、CP-LFW、IJB-B/C。未來可加入 correctness、visibility/confidence、FISWG 對齊 schema、fine-tuning 及 forensic practitioner user studies。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Vision-Language Models",
+        "可解釋臉部辨識",
+        "鑑識生物辨識",
+        "結構化輸出與 constrained decoding",
+        "模型幻覺評估",
+        "臉部驗證 benchmark"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.21859",
+      "title": "TrialAtlas: Multi-Agent Research Organization for Clinical Trial Design and Optimization",
+      "abstract": "Nearly 90% of drugs entering clinical development ultimately fail, despite billions of dollars in investment. Pharmaceutical companies therefore rely on clinical development planning (CDP) and probability of technical and regulatory success assessment to anticipate development risks, yet these decisions remain labor-intensive and subjective, requiring experts across clinical science, statistics, regulatory affairs, and competitive intelligence to jointly acquire, synthesize, and reason over heterogeneous evidence. Here, we introduce TrialAtlas, a memory-augmented multi-agent research organization for CDP that mirrors this collaborative process by coordinating specialized agents for literature synthesis, competitive trial intelligence, regulatory precedent analysis, and integrated reasoning over trial design and development risk. TrialAtlas further learns from historical clinical trials and regulatory outcomes, including prior New Drug Applications (NDAs), to ground its decisions in accumulated development experience. To evaluate these capabilities in an authentic regulatory setting, we introduce TrialAtlasBench, constructed from 291 FDA Complete Response Letters and spanning three practical tasks: detecting trial design deficiencies, recommending actionable design improvements, and predicting technical and regulatory success. TrialAtlas achieves an F1 score of 50.0% for deficiency detection, outperforming the strongest baseline by 6.1 points, and reaches 85.3% balanced accuracy and 84.7% F1 for prediction of technical and regulatory success, improving over the best baselines by 6.7 points in balanced accuracy and 12.0 points in Cohen's kappa. In expert evaluation, 86.4% of TrialAtlas-generated concerns were judged valid, compared with 83.1% for OpenAI DeepResearch and 59.3% for Gemini DeepResearch.",
+      "authors": [
+        "Jiacheng Lin",
+        "Zifeng Wang",
+        "Zheng Chen",
+        "Erick Scott",
+        "Ziwei Yang",
+        "Fanyang Yu",
+        "Sheng Zhong",
+        "Jimeng Sun"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-18T14:53:34+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.21859v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.21859",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "近 90% 進入臨床開發的藥物最終失敗，儘管投入了數十億美元。製藥公司因此依賴臨床開發規劃（CDP）以及技術與法規成功機率評估來預測開發風險；然而，這些決策仍然勞力密集且帶有主觀性，需要臨床科學、統計、法規事務與競爭情報等專家共同取得、整合並推理異質性證據。本文提出 TrialAtlas，一個具記憶增強能力的多代理研究組織，用於 CDP，透過協調文獻綜述、競爭性試驗情報、法規先例分析及試驗設計與開發風險的整合推理代理，模擬此協作流程。TrialAtlas亦從歷史臨床試驗與法規結果（包括既有 NDA）學習，以累積的開發經驗支撐決策。作者建立 TrialAtlasBench，從291封 FDA Complete Response Letters（CRLs）整理三項任務：偵測試驗設計缺陷、提出可執行的設計改進，以及預測技術與法規成功。TrialAtlas在缺陷偵測達到50.0% F1，在成功預測達到85.3% balanced accuracy與84.7% F1；專家評估中，86.4%的其提出疑慮被判定為有效。",
+      "problem_statement": "臨床試驗設計需要跨學科搜尋、整合文獻、競爭試驗與 FDA 法規先例，但現有 AI 多集中於孤立的結果預測、文獻搜尋或報告生成，通常只依賴試驗摘要，難以指出具體設計缺陷、提出可執行的 protocol-level 改進，也較少納入 NDA 審查標準。因此，既有方法對真實法規決策的可解釋性、可追溯性與實務支援能力不足。",
+      "proposed_solution": "作者提出 TrialAtlas，一個具階層式組織與持久記憶的 multi-agent research organization。Director 負責問題分解、規劃與整合；Competing Trial Analysis、Literature Evidence Synthesis 及 Drug Benchmarking 等部門由 Department Heads 和 specialized working agents 執行專門分析。系統先從 ClinicalTrials.gov、PubMed、FDA CRLs、Drugs@FDA 與產品標籤取得證據，再透過共享 memory base 檢索歷史試驗、法規理由與補救策略。其核心創新是把試驗設計支援從單純 outcome prediction 擴展為法規對齊的缺陷診斷、可執行優化與成功預測，並以可檢視的證據與先例呈現推理。",
+      "core_contributions": [
+        "提出 TrialAtlas 階層式多代理研究組織，協調競爭試驗分析、文獻證據綜合、藥物基準比較與整合推理。",
+        "建立 TrialAtlasBench，將291封 FDA CRLs 與 ClinicalTrials.gov 試驗設計連結，評估缺陷偵測、設計優化及技術與法規成功預測三項任務。",
+        "以 FDA 法規先例與歷史試驗建立共享 human-readable memory base，並透過製藥業專家盲評驗證輸出疑慮的實務有效性。"
+      ],
+      "methodology": "資料方面，作者蒐集 OpenFDA 的291封 FDA Complete Response Letters，經去重、embedding、階層式凝聚分群及 GPT-5 分類，整理為16類法規缺陷。CRL先透過 NDA/BLA 與 FDA 標籤連結 ClinicalTrials.gov；無法直接連結者再以 TrialMind 搜尋，最後得到588組 CRL–NCT 配對。作者僅保留可由 registry 結構化欄位推斷的設計問題，形成 Phase 3 試驗資料；另以2020–2025年首次提交即核准的申請建立無缺陷對照。資料按更新年份切分，較新的試驗作為約150筆 held-out benchmark，其餘266筆供系統發展。TrialAtlas執行三項任務：多標籤選擇題形式的缺陷偵測、選擇 protocol-level actionable optimization，以及二元技術與法規成功預測。執行流程包含解析試驗、規劃查詢、檢索競爭試驗與 PubMed 文獻、進行藥物及法規基準比較、讀取 memory base，最後由 Director 整合。比較系統包括 GPT-5 standalone、ReAct、Biomni 與 TrialGenie，所有系統均以 GPT-5 為 backbone。評估使用 precision、recall、F1、balanced accuracy 與 Cohen’s kappa；另由6名製藥業專家盲評缺陷有效性，共228項判斷。",
+      "key_results": "主要結果如下（數字均為論文報告值）：\n\n| 任務／指標 | TrialAtlas | 最佳 baseline | 改善或補充 |\n|---|---:|---:|---:|\n| 缺陷偵測 Precision | 50.0% | 45.8%（baseline最高） | TrialAtlas 同時達到 precision、recall、F1 50.0% |\n| 缺陷偵測 Recall | 50.0% | 45.8%（baseline最高） | 論文報告 TrialAtlas F1 比 TrialGenie 高6.1個百分點 |\n| 缺陷偵測 F1 | 50.0% | 43.9%（TrialGenie） | +6.1個百分點 |\n| 設計優化 Precision | 82.9% | 71.7%（Biomni） | 論文報告 TrialAtlas 最佳 |\n| 設計優化 Recall | 65.1% | 51.4%（ReAct） | 論文報告 TrialAtlas 最佳 |\n| 設計優化 F1 | 69.4% | 56.6%（Biomni） | 論文報告 TrialAtlas 最佳 |\n| 成功預測 Balanced accuracy | 85.3% | 78.6%（Biomni） | +6.7個百分點 |\n| 成功預測 F1 | 84.7% | 78.4%（TrialGenie） | 論文報告 TrialAtlas 最佳 |\n| 成功預測 Cohen’s kappa | 0.694 | 0.574（TrialGenie） | 論文摘要報告提升12.0個百分點 |\n| 專家判定有效疑慮比例 | 86.4%（76/88） | OpenAI DeepResearch：83.1%（49/59）；Gemini：59.3%（48/81） | 6名專家、228項判斷；專家間一致率73.7% |\n\n作者的消融案例顯示，memory base 可避免把已被 FDA 接受的設計慣例誤判為缺陷；但這是案例層級證據，論文未報告完整量化消融結果。",
+      "insights": [
+        "對高風險領域的 agent evaluation，不應只測單一結果分類；可同時評估缺陷定位、可執行建議與最終風險預測，讓 benchmark 更接近實際決策流程。",
+        "多代理系統的價值不只在分工，也在於讓每個結論連結檢索證據與歷史先例；實務部署時應保留來源、推理鏈與人工覆核介面，以支持 traceability。",
+        "memory augmentation 可降低因 registry 資訊不完整或忽略法規慣例而產生的 false positive，但應搭配持續更新、來源驗證與專家 adjudication；TrialAtlas 的缺陷偵測 F1 僅50.0%，不適合自主決策。"
+      ],
+      "limitations": "作者指出，缺陷偵測的 precision、recall 與 F1 均為50.0%，仍有大量漏報與誤報。CRL 數量有限，benchmark規模較小；ClinicalTrials.gov 主要提供結構化 registry 資訊而非完整 protocol，可能遺漏關鍵細節。未來可擴充 CRL、納入完整 protocol、前瞻性法規指引及 human-in-the-loop 回饋。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "臨床試驗設計評估",
+        "FDA法規推理",
+        "多代理系統",
+        "檢索增強生成",
+        "醫療AI安全與可解釋性"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.21863",
+      "title": "AutoRecLab: Describe the Experiment, Get the Code!",
+      "abstract": "Empirical evaluation is central to recommender-systems (RecSys) research, but turning experimental designs into executable code remains a manual and error-prone task. We present AutoRecLab, a Python-based autonomous RecSys lab that automates RecSys experiments from natural-language prompts. Given a research idea, AutoRecLab derives explicit experiment requirements, builds and validates a prototype, and iteratively expands it into the requested full experiment. The workflow combines retrieval-augmented generation (RAG) for documentation lookup, static type verification, and execution-steered tree search. In our demonstration, AutoRecLab autonomously implements an explicit-to-implicit feedback conversion study. In a baseline comparison across six algorithms and three datasets, 8 of 9 runs succeed at an average cost of approx- imately $1 per run with GPT-5.4-mini.",
+      "authors": [
+        "Moritz Baumgart",
+        "Philipp Meister",
+        "Justus Krell",
+        "Michael Schmidt",
+        "Bela Gipp",
+        "Joeran Beel"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-09-18T14:54:44+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.21863v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.21863",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "實證評估是推薦系統（RecSys）研究的核心，但將實驗設計轉換為可執行程式碼，通常仍是手動且容易出錯的工作。本文提出 AutoRecLab，一個以 Python 建置的自主 RecSys 實驗室，可根據自然語言提示自動執行推薦系統實驗。給定研究想法後，AutoRecLab 會推導明確的實驗需求、建立並驗證原型，再逐步擴充至所要求的完整實驗。其工作流程結合 retrieval-augmented generation（RAG）文件查詢、靜態型別驗證與 execution-steered tree search。在示範中，AutoRecLab 自主實作了 explicit-to-implicit feedback conversion 研究；針對六種演算法與三個資料集的 baseline 比較，九次執行中有八次成功，使用 GPT-5.4-mini 時每次平均成本約為 1 美元。",
+      "problem_statement": "論文要解決的是：研究者如何將自然語言描述的 RecSys 實驗設計，可靠地轉換成可執行、可檢查且可重現的程式碼。現有一般型 LLM 或科學研究代理可能產生 RecSys 函式庫的錯誤 API，也未必保留資料過濾、資料切分、候選集合、評估方式與 random seed 等會影響結果的實驗選擇。既有代理在 RecSys 任務上曾出現程式錯誤與方法不正確問題，因此僅能執行不等於實驗具科學意義。",
+      "proposed_solution": "作者提出開源 Python 命令列工具 AutoRecLab，作為推薦演算法與實驗函式庫之上的研究自動化層。系統先把自然語言 prompt 轉為 prototype requirements 與 full requirements，再以小型原型驗證資料載入、演算法、指標與流程，最後逐步擴充至完整研究。核心創新包括：利用 RAG/MCP 查詢 OmniRec、LensKit 與 RecBole 文件以降低 API 幻覺；以靜態型別檢查和實際執行回饋修正程式；以及以 execution-steered tree search 搜尋候選實作。每個階段都保存程式碼、圖表、執行紀錄與中間狀態，供研究者檢查。",
+      "core_contributions": [
+        "提出 AutoRecLab，一個專為推薦系統實驗設計的開源自然語言到可執行程式碼工具，涵蓋需求推導、程式生成、執行、評估與 refinement。",
+        "設計 prototype-to-full 的分階段工作流程，結合 RecSys 文件的 RAG/MCP、靜態型別驗證、實際執行回饋與 execution-steered tree search。",
+        "以 explicit-to-implicit feedback、資料集過濾及 random-seed splitting 等離線 RecSys 情境進行概念驗證，報告九次 baseline 執行中八次產生被分類為 bug-free 的程式與圖表。"
+      ],
+      "methodology": "AutoRecLab 的流程分為三階段。第一是 requirements engineering：LLM 根據研究 prompt 產生兩組需求，prototype requirements 通常只包含一個資料集、一個 baseline 演算法與一個 cutoff，以降低初始執行成本；full requirements 則保留使用者指定的完整演算法、資料集、指標與視覺化內容。第二是 prototyping：系統透過 OmniRec 執行生成的 Python 程式；OmniRec 提供資料載入與訓練執行層，連接 RecPack、RecBole、LensKit 與 Elliot，並支援超過 230 個資料集。生成候選程式後，系統使用 MCP 存取索引文件與程式碼，進行靜態型別檢查，並在獨立 workspace 執行。LLM 依據 console output 與程式結果，逐項判定需求是否滿足，以及候選程式是否 buggy；需求滿足比例定義為節點分數 S，範圍為 0 至 1。候選實作形成搜尋樹，節點選擇先在 buggy 與 bug-free 集合間取樣，再透過 epsilon-greedy 選擇最高分或隨機候選，直到 S=1 或達到迭代上限。第三是 refinement：從可執行原型逐步增加完整需求，每次修改後重新執行與評估。示範研究比較 explicit-to-implicit feedback 的不同 binarization thresholds，並報告 NDCG@10 與 Precision@10；論文未提供更完整的資料切分細節或各演算法的數值結果。",
+      "key_results": "作者報告的主要結果如下：\n\n| 實驗或指標 | 論文報告結果 |\n|---|---:|\n| explicit-to-implicit feedback 示範的需求數 | 22 項 |\n| 示範產生的可執行 Python 程式碼 | 169 行 |\n| 示範使用 GPT-5.4-mini 的 API 成本 | USD 0.76 |\n| baseline 比較的演算法數 | 6 種 |\n| baseline 比較的資料集數 | 3 個 |\n| baseline 執行次數 | 9 次 |\n| 被分類為 bug-free 的執行 | 8/9，約 89% |\n| baseline 每次執行成本 | 約 USD 0.90–1.10；平均約 USD 1 |\n| 原型階段節點數 | 每次 8 個 |\n| 最終 refinement 階段節點數 | 每次 4 個 |\n| 論文對各演算法、資料集與 threshold 的完整指標數值 | 論文未報告 |\n| 科學意義或結果正確性的整體量化評估 | 論文未報告 |\n\n此外，作者表示資料集過濾與 random seed 對使用者切分的情境，重現了既有人類研究所描述的定性趨勢；但未提供完整數值比較。論文也明確指出，八次 bug-free 分類不代表所有分析都具科學意義。",
+      "insights": [
+        "若將自然語言研究問題轉為逐項、可檢查的實驗需求，可提升實驗流程的可追蹤性；實務部署時仍應讓研究者審閱資料切分、負回饋轉換、候選集合與評估指標。",
+        "先執行小型 prototype 再擴充完整實驗，有助於在高成本執行前發現 API、型別與流程錯誤；這種設計可作為研究代理的工程化檢查點。",
+        "需求覆蓋率、程式可執行與 bug-free 分類不等同於科學正確性，因此實務上應增加獨立的結果合理性、方法學一致性與可重現性審查。"
+      ],
+      "limitations": "研究僅涵蓋有限且相對簡單的離線 RecSys 任務，且部分可執行分析仍缺乏科學意義。系統受 OmniRec、底層 LLM、文件索引範圍與序列式搜尋限制，可能產生較長執行時間。作者未完整評估程式碼品質、不同 LLM 或更複雜任務；未來將擴充函式庫與任務、平行化 tree search，並加入文獻搜尋與論文撰寫。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "自主科學代理",
+        "推薦系統實驗可重現性",
+        "LLM 程式碼生成",
+        "execution-guided tree search",
+        "OmniRec 與 RecSys 評估框架"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.22086",
+      "title": "Designer-RSI: Evolving Procedural Memory from User Traffic for Agentic Graphic Design",
+      "abstract": "Professional graphic design is a long-horizon agentic task in which structured, editable artifacts emerge from many interdependent actions, yet outcomes admit no reliable programmatic oracle. We introduce a continual adaptation framework in which a frozen frontier model operates professional design software through more than 230 tools, while an external procedural memory of natural-language skills accumulates and refines reusable design procedures from experience. The memory widens by acquiring procedures for recurring uncovered subtasks and deepens by revising existing procedures against their own successful and failed executions, while a matched replay gate admits only changes that repair failures without regressing observed successes. Five rounds over 1,406 real user briefs and 1,869 automatically graded trajectories, with no weight updates and no human labels, grow the bank from 76 documentation-derived skills to 139 and raise GenEval2 execution success on Claude-Sonnet-4 from 72.7% to 99.3% (+11.99 points in generation quality), with 61.8% and 67.6% win rates against the no-skill agent across four specialized design benchmarks on Claude-Sonnet-4 and Claude-Opus-4.6. We further show the two mechanisms are effective in combination: on 200 held-out briefs from user-traffic benchmark, widening or deepening alone reaches a 49.4% / 48.6% win rate over the no-skill agent, while their combination reaches 58.5% (p = 0.025). Procedural memory offers a practical route to continual adaptation of agents under noisy, unverifiable feedback.",
+      "authors": [
+        "Hongyang Du",
+        "Lan Yan",
+        "Christian Flores",
+        "Asim Kadav"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-09-18T17:59:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.22086v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.22086",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "專業 graphic design 是一項長時程 agentic task：結構化且可編輯的 artifacts 由許多相互依賴的操作逐步形成，但結果沒有可靠的 programmatic oracle。本文提出持續適應框架：由 frozen frontier model 透過 230 多項工具操作專業設計軟體，外部 procedural memory 則從經驗累積並改良可重用的 natural-language skills。記憶體一方面透過 widening，為反覆出現且尚未涵蓋的子任務新增程序；另一方面透過 deepening，根據既有程序的成功與失敗執行結果修訂技能，並使用 matched replay gate，只接受能修復失敗且不使既有成功退化的變更。五輪演化涵蓋 1,406 個真實 user briefs 與 1,869 條自動評分 trajectories，在不更新模型權重、也不使用人工標註的情況下，將技能庫由 76 個 documentation-derived skills 增至 139 個。Claude-Sonnet-4 在 GenEval2 的 execution success 由 72.7% 提升至 99.3%，generation quality 增加 11.99 個百分點；在四個專業設計 benchmark 上，對無技能 agent 的勝率亦達 61.8% 至 67.6%。結果顯示，procedural memory 能在回饋嘈雜且不可完全驗證的環境中支持 agent 的持續適應。",
+      "problem_statement": "專業 graphic design 涉及數十個相互依賴的工具操作，必須同時滿足具體要求、主觀構圖與可編輯性。終端結果難以進行長時程 credit assignment，且設計不像程式具有可靠的成功 oracle；自動評估器只能部分捕捉主觀品質。當 frontier model 為外部託管或不宜更新時，監督式學習需要昂貴示範，outcome-based optimization 又容易受 proxy reward 與 judge noise 影響。",
+      "proposed_solution": "作者將持續學習的對象從 frozen model 權重轉移至外部 procedural memory，即可檢索、注入模型上下文的自然語言 SKILL.md playbooks。框架包含兩種互補機制：widening 從反覆出現、尚未覆蓋的子任務中蒸餾新技能，以擴大能力覆蓋；deepening 對反覆失敗的既有技能，對照相似成功與失敗執行進行針對性修訂，以提高可靠性。兩者都必須通過 matched replay gate：在固定上游情境下，以候選版本與 incumbent 或 no-skill baseline 進行配對重播，只有至少贏得一個 prompt 且沒有輸掉任何 prompt 的變更才會部署。",
+      "core_contributions": [
+        "提出以外部 procedural memory 作為 frozen frontier model 周邊學習目標的 graphic-design agent 持續演化框架，並以 widening 與 deepening 分別處理能力覆蓋與程序可靠性。",
+        "提出 matched replay gate，在固定上游情境、配對重播及隨機化 pairwise judging 下，僅部署修復失敗且不回歸既有成功的技能變更，以應對 noisy、不可驗證的設計回饋。",
+        "透過五輪 user-traffic 演化、三個 frozen backbones、一般 T2I 與專業 graphic-design benchmarks，證明 widening 與 deepening 的組合優於單獨使用，且不需模型權重更新或人工 reward labels。"
+      ],
+      "methodology": "系統由四個角色組成：Prompter 產生 design briefs，Solver 是使用 frozen frontier model、skill bank 與 230 多項設計工具的 agent，Grader 以 multimodal evaluation kit 為圖像及各項要求評分並說明未滿足原因，Reflector 將失敗轉為 SKILL.md 編輯。執行時先以技能檢索取得 top-k playbooks，並可過濾相關工具；模型接著反覆呼叫 raster、vector、layout、asset retrieval 與 verification 工具，建立可編輯 artifact。Widening 會從未被技能涵蓋的 trajectory 抽取並 canonicalize subtasks，依標籤累積；同一標籤達到 k_min=3 次後蒸餾候選技能，再與 no-skill agent 重播。Deepening 對 failure count 達 m=2、且 trajectory 分數低於 τ=0.6 的技能進行修訂，Reflector 同時查看失敗理由、目前技能及相似成功 calls、tool sequences 與 intermediate states；必要時可整體重寫、刪除或將不可修復案例回送 coverage pool。Replay gate 固定每個 prompt 的 asset retrieval 與 upstream state，對 candidate 與對照組執行多個 contexts，採 order-randomized pairwise judging；prompt 必須在多數 contexts 勝出，且整體不得出現 prompt-level regression。實驗使用 Claude-Opus-4.6、Claude-Sonnet-4 與 Qwen3.6-27B，五輪處理 1,406 個演化 briefs，並以固定且不重疊的 200 個 human-authored briefs 評估。另以 GenEval2、DPG-Bench、OneIG-EN/ZH 評估一般 T2I 品質與成功率，並以 OpenCOLE、GraphicBench、CreatiDesign、BannerRequest400 的 GPT-5.4 blind pairwise win rate 評估專業設計能力。",
+      "key_results": "主要結果如下（數值均依論文報告）：\n\n| 評估項目 | BASE | EVOLVE | 變化 |\n|---|---:|---:|---:|\n| 技能數量 | 76 | 139 | +63 |\n| Claude-Sonnet-4 GenEval2 generation quality | 34.26 | 46.25 | +11.99 |\n| Claude-Sonnet-4 GenEval2 execution success | 72.7% | 99.3% | +26.6 個百分點 |\n| Claude-Sonnet-4 DPG-Bench quality | 68.28 | 83.79 | +15.51 |\n| Claude-Sonnet-4 DPG-Bench success | 82.7% | 100.0% | +17.3 個百分點 |\n| Claude-Opus-4.6 四項一般 T2I 平均 quality | 67.04 | 70.87 | +3.83 |\n| Claude-Sonnet-4 四項一般 T2I 平均 quality | 51.63 | 59.33 | +7.70 |\n| Qwen3.6-27B 四項一般 T2I 平均 quality | 68.67 | 78.34 | +9.67 |\n| Claude-Opus-4.6 專業設計 overall win rate | — | 67.6% | 相對 50% 高 17.6 個百分點 |\n| Claude-Sonnet-4 專業設計 overall win rate | — | 61.8% | 相對 50% 高 11.8 個百分點 |\n| Qwen3.6-27B 專業設計 overall win rate | — | 62.8% | 相對 50% 高 12.8 個百分點 |\n| 200 個 held-out briefs，completeness≥0.9 | 43% | 56%（R5） | +13 個百分點 |\n| Ablation：僅 deepening 對 BASE 勝率 | — | 48.6% | 未超過 50% |\n| Ablation：僅 widening 對 BASE 勝率 | — | 49.4% | 未超過 50% |\n| Ablation：widening + deepening 對 BASE 勝率 | — | 58.5% | p=0.025 |\n| 平均延遲額外開銷 | — | 3.4%–6.2% | 論文報告為輕微增加 |",
+      "insights": [
+        "對長時程 agent，可將可持續更新的知識放在外部技能庫，而非每次重新訓練模型；技能應位於 atomic tool call 與完整 trajectory 之間，兼顧可重用性與執行彈性。",
+        "在自動評分不穩定時，應優先採用同一上游情境下的 paired replay、對照比較與 regression gate，而非只比較跨批次的絕對平均分數。",
+        "能力擴充與可靠性修補需要聯動：widening 發現新程序，deepening 則修正其誤用；部署時可透過失敗回流 coverage pool，形成覆蓋與穩定性的閉環。"
+      ],
+      "limitations": "論文指出，自然語言技能不一定能覆寫模型既有策略；細緻幾何操作仍受模型 perception 與自動驗證限制。長程序會在標註、蒸餾與執行階段累積 fidelity loss。Replay gate 只保證 replay cases 不回歸，不能保證整體 user distribution 單調改善。未來需結合 preference-aware retrieval、deterministic primitives、numeric 或 human-assisted verification、plan-level orchestration 與模型更新。",
+      "tags": [
+        "agent-evaluation",
+        "llm-as-judge",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "procedural memory",
+        "continual adaptation",
+        "tool-using agents",
+        "graphic design automation",
+        "matched replay",
+        "multimodal evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.22076",
+      "title": "APort Vault: Benchmarking AI Agent Payment Authorization with the Open Agent Passport",
+      "abstract": "APort Vault is a benchmark for payment authorization in tool-using AI agents. It replays 4,371 attacks written by humans against a live payment agent during a public capture-the-flag event, across 14 models from 8 labs, five policy configurations and two replay tracks, with and without a deterministic pre-action check implementing the Open Agent Passport (OAP) specification. 225,964 evaluations completed. We report five distinct events per evaluation, because collapsing them is how an agent benchmark produces a number that does not survive review.   Requests are common and their rate differs far more across configurations than across models, though each attack exists at exactly one configuration so policy and attack cohort vary together: 10.9% of model-alone evaluations at Level 1, 3.0% at Level 2, 0.1% at Level 3, 79.4% at Level 4. On the 1,293 Level 4 prompts, each evaluated on every model, request rates run from 71.2% to 84.3%, and 809 prompts (62.6%) elicited a request from all fourteen models, each ending in a successful payment to the level's allowlisted recipient.   The authorization boundary is where the conditions diverge. At Levels 2 to 4, transfers to recipients the passport did not permit number 140 of 76,842 with the model alone and 0 of 69,297 behind the layer, and 105 against 0 on 68,970 matched model, prompt and track triples. The zero spans 790 source sessions, giving a per-session upper bound of 0.38%. It was not obtained by refusing payments: 25,370 payments executed behind the layer, while the policy denied 187 of the 25,640 transfer calls it evaluated, 148 of them for a forbidden recipient.   We release the 225,964 evaluations, the level passports, the scoring code and the analysis script at huggingface.co/datasets/aporthq/vault-benchmark-v1 .",
+      "authors": [
+        "Uchi Uchibeke"
+      ],
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-09-18T17:58:10+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.22076v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.22076",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "APort Vault 是一個用於評測會使用工具之 AI agent 付款授權能力的 benchmark。研究重播公共 capture-the-flag 活動中，真人針對線上付款 agent 撰寫的 4,371 次攻擊，涵蓋 8 個實驗室的 14 個模型、5 種 policy 設定與兩種 replay track，並比較有無實作 Open Agent Passport（OAP）的 deterministic pre-action check。共完成 225,964 次 evaluation。研究分別報告五類事件：付款請求、成功付款、授權決策、recipient membership，以及付款至 passport 不允許 recipient 的 unpermitted transfer。Levels 2–4 中，model alone 發生 140/76,842 次未授權轉帳；加入 authorization layer 後為 0/69,297，且仍成功執行 25,370 筆付款。作者同時釋出資料集、passport、評分程式與分析腳本。",
+      "problem_statement": "現有 agent 安全 benchmark 多以模型是否拒絕攻擊或是否產生工具呼叫為主要指標，無法直接回答部署者最關心的問題：即使模型被攻陷，工具執行前的 authorization layer 是否能阻止真正的 consequential action。單一 refusal 或 judge 分數也會混淆請求、付款成功與政策違規，且未充分處理同一攻擊 session 造成的相關性。本文因此評估相同攻擊、模型與 prompt 在有無工具邊界 enforcement 時的實際付款結果。",
+      "proposed_solution": "作者提出 APort Vault benchmark，將真人在公開 CTF 中針對 live payment agent 的攻擊重播至多模型、多 policy level、多輪次與兩種架構。核心比較變項是：model alone 讓 transfer_funds call 直接執行，或在模型與工具之間加入實作 Open Agent Passport（OAP）的 deterministic pre-action authorization check。研究不把結果壓縮成單一成功率，而是分離 payment request、successful payment、policy decision、recipient membership 與 unpermitted transfer 五個事件，並以實際 executed tool calls 作為主要 deterministic metric；同時以 clustered bootstrap、matched triples 及 session-level upper bound 評估不確定性。",
+      "core_contributions": [
+        "建立含 4,371 個真人 CTF 攻擊、14 個模型、5 個 policy levels、兩種 replay tracks 與兩種 enforcement architectures 的 APort Vault payment-authorization benchmark，並釋出 225,964 筆 evaluation 與分析工具。",
+        "提出並實證五階段結果記錄方式，區分付款請求、成功付款、授權決策、recipient membership 與 unpermitted transfer，避免以單一 refusal 或 attack-success rate 混淆不同事件。",
+        "在相同模型、prompt 與 replay track 的 matched comparison 中，顯示 OAP deterministic pre-action check 將 Levels 2–4 的未授權轉帳由 105 次降至 0 次，同時保留政策允許的付款執行。"
+      ],
+      "methodology": "資料來自 2026 年公開 capture-the-flag 付款 agent 活動：由 1,128 個 source sessions 產生 4,371 個真人攻擊，移除空白與含個資提交後納入分析。攻擊分布於五個 policy levels；Levels 2–4 允許特定 allowlisted recipients，Level 1 基本上為 wildcard recipient，Level 5 不授予付款能力。每次攻擊重播至 14 個模型、兩種 track（僅 attacker 最終訊息的 single-turn，以及保留完整訊息序列的 multi-turn），並在 model-alone 與 authorization-layer 兩種架構下執行。兩架構維持模型版本、prompt、decode settings 與 tool schema 相同；layer 會在 transfer_funds call 執行前依 OAP passport 檢查 recipient、金額、limits、audit code 等條件，拒絕的 call 不會執行。主要指標直接讀取 executed tool calls，不依賴 LLM judge；另以兩個 judge 作為 audit。研究分別記錄 request、successful payment、policy allow/deny、recipient 是否在 allowlist 及 unpermitted transfer。統計上以 source session 為 cluster，使用 1,500 次 percentile bootstrap；零事件同時報告 exact one-sided upper bound 與 per-session rule-of-three bound，matched comparisons 則固定 model、prompt 與 track。",
+      "key_results": "| 評估項目 | Model alone | Behind OAP layer |\n|---|---:|---:|\n| Levels 2–4：payment requests | 28,543 / 76,842（37.1%） | 25,527 / 69,297 |\n| Levels 2–4：successful payments | 28,521 | 25,370 |\n| Levels 2–4：unpermitted transfers | 140 / 76,842（0.182%） | 0 / 69,297 |\n| Matched Levels 2–4：unpermitted transfers | 105 / 68,970 | 0 / 68,970 |\n| Levels 2–4：policy-evaluated transfer calls | 未適用 | 25,453 allowed、187 denied |\n| 其中因 forbidden recipient 而拒絕 | 未適用 | 148 calls |\n| 零事件的 per-session 95% upper bound | 未適用 | 0.38%（790 sessions） |\n| Level 4 單輪 payment-request rate | 71.2%–84.3%（14 個模型） | 論文未報告逐模型 layer 對照 |\n| Level 5 successful payments | 5,362 / 22,320 | 0 / 20,109 |\n\n作者指出，OAP layer 並非透過全面壓低請求或拒絕所有付款達成結果：Levels 2–4 的 matched request-rate paired difference 為 +0.084 percentage points，95% interval 為 [-0.020, +0.189]；layer 後仍有 25,370 筆成功付款。Level 4 的 1,293 個 prompts 中，809 個（62.6%）讓全部 14 個模型提出請求，且均支付至該 level 的 allowlisted recipient，因此不能視為攻擊成功。140 次 model-alone 違規轉帳集中於 24/790 sessions，其中單一 session 佔 67 次；multi-turn Level 2 的 113 次結果中，111 次來自 103 個 forged-receipt attempts。LLM judge 的 pooled inter-judge kappa 為 0.772，但 Level 3 僅 0.167；因此 headline metric 採 deterministic tool-call outcome。",
+      "insights": [
+        "對涉及金錢或其他可驗證副作用的 agent，應將 enforcement architecture 納入實驗變項，並以實際狀態變更而非模型拒答作為主要安全指標。",
+        "評估資料應保留 request、tool execution、policy decision 與 authorization result 等階段；付款請求本身不等於 compromise，成功執行也不必然等於政策違規。",
+        "攻擊結果應按 source session、攻擊技術與 replay track 分析並進行 clustering；本文中少數 session 與 forged-receipt cohort 集中了大部分違規結果，單一模型 leaderboard 會掩蓋這種結構。"
+      ],
+      "limitations": "研究限於模擬銀行、單一 transfer tool 與付款場景，不能直接推論至資料外洩、程式碼執行或 multi-agent delegation。攻擊者為自選 CTF 參與者，每個 cell 僅單次執行，跨 provider 的 decode defaults 未統一，且 multi-turn coverage 不完整。Level 4 local engine 比 published pack 更嚴格；預註冊的人工作者驗證 slice 未完成，模型污染也僅被部分排除。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "tool-using AI agents",
+        "pre-action authorization",
+        "prompt injection",
+        "payment security",
+        "deterministic policy enforcement"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.22000",
+      "title": "RecreationWorld: Scalable and Verifiable Environments for Hybrid Computer-Use Agents",
+      "abstract": "Computer-use agents (CUAs) have advanced along two separate lines: graphical interaction and software development through code and the command line. Real digital work requires both, interleaved rather than stacked end to end. We study hybrid CUAs that autonomously decide when to explore an interface, implement software, and run and visually verify their artifacts. We introduce RecreationWorld, a five-platform framework built around recreation: given a running reference, an agent must discover its behavior and build a faithful implementation with no prescribed workflow. RecreationWorld provides reproducible environments on Ubuntu, macOS, Windows, Android, and Web, plus a unified harness with native GUI control and coding tools. The running reference serves as an oracle for hidden behavioral tests, providing execution-grounded rewards. We scale trajectory generation with high-quality open-source applications. Models trained on these trajectories improve across five out-of-distribution coding and hybrid computer-use benchmarks and more frequently verify their rendered outputs, providing evidence of transfer beyond recreation. For held-out evaluation, we introduce RecreationBench, comprising 250 diverse tasks across domains and platforms. Reference-grounded programmatic and visual assertions cover action-conditioned outcomes at multiple interaction depths; each is validated on the reference and by human reviewers before the suite is frozen for automatic scoring. GPT-6 Astra leads at 58.1% overall, but passes all programmatic tests on just 2.8% of tasks. Agents reproduce static interface structure more reliably than interactions and computed outputs, while generated applications remain smaller and more monolithic than their references. We release the benchmark, environments, and test suites.",
+      "authors": [
+        "Shuai Bai",
+        "Jiayong Deng",
+        "Yikun Fu",
+        "Chang Gao",
+        "Xuhao Hu",
+        "Mianqiu Huang",
+        "Yizhen Jiang",
+        "Yuheng Jing",
+        "Dehui Kong",
+        "Keliang Li",
+        "Ning Li",
+        "Wanli Li",
+        "Dayiheng Liu",
+        "Dunjie Lu",
+        "Changwei Luo",
+        "Que Shen",
+        "Zheyuan Wang",
+        "Zijian Wang",
+        "Jie Wu",
+        "Gao Wu",
+        "Zhihui Xie",
+        "Rui Xie",
+        "Haiyang Xu",
+        "An Yang",
+        "Jiakang Yuan",
+        "Yanming Zhang",
+        "Jiajun Zhang",
+        "Xi Zhang",
+        "Zhenru Zhang",
+        "Zhuo Zhen",
+        "Mingkang Zhu",
+        "Bowen Zhou"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.SE"
+      ],
+      "published": "2026-09-18T17:00:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.22000v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.22000",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "Computer-use agents（CUAs）過去主要沿兩條路線發展：透過圖形介面操作應用程式，或透過程式碼與命令列進行軟體開發；然而真實數位工作需要兩者交錯整合。本文研究 hybrid CUAs，讓代理自主決定何時探索介面、實作軟體，以及執行並以視覺方式驗證成果。作者提出 RecreationWorld，一個涵蓋 Ubuntu、macOS、Windows、Android 與 Web 的五平台框架。代理取得一個可執行的 reference，需探索其行為並建造 faithful implementation，且沒有預設工作流程。Reference 可作為 oracle，產生隱藏行為測試與 execution-grounded reward。作者利用高品質 open-source applications 產生可驗證的長軌跡訓練資料；訓練後模型在五個 out-of-distribution coding 與 hybrid computer-use benchmarks 上提升，並更常驗證自身的 rendered outputs。本文亦提出 RecreationBench，包含跨平台 250 個任務，以 programmatic 與 visual assertions 評估多層次互動。GPT-6 Astra 的整體分數為 58.1%，但僅有 2.8% 任務通過全部 programmatic tests。結果顯示代理較能重現靜態介面結構，較難重現互動、計算輸出及複雜軟體結構。",
+      "problem_statement": "現有 computer-use benchmarks 多半分開評估 GUI 操作或程式碼開發，無法衡量代理在真實工作中反覆交錯探索介面、撰寫程式、建置執行與視覺驗證的能力。GUI-only 代理通常不能建構介面背後的軟體，terminal-only 代理則缺乏觀察自身輸出介面的能力。既有任務也缺少可大規模、客觀且 implementation-agnostic 的行為驗證，導致長期 hybrid coordination 與自我修正能力未被充分測量。",
+      "proposed_solution": "作者提出 RecreationWorld，以 application recreation 作為 hybrid CUA 的統一任務：代理只能從執行中的 reference 探索行為，之後自行撰寫、建置、啟動並驗證候選實作，不受指定 workflow 限制。框架支援 Ubuntu、macOS、Windows、Android 與 Web，提供原生 GUI 控制、coding tools、隔離且可重現的 worker，以及可跨長時間 rollout 保存狀態的執行基礎設施。作者進一步提出 RecreationBench，從 reference 的可觀察行為產生隱藏 programmatic 與 visual tests，經 reference replay、穩定性過濾及人工審查後凍結，用於自動且可比較的評分。",
+      "core_contributions": [
+        "提出 RecreationWorld，建立涵蓋 Ubuntu、macOS、Windows、Android 與 Web 的可重現 hybrid CUA 環境，統一支援原生 GUI 操作與 coding tools。",
+        "提出以 running reference 為 oracle 的 test construction 與 RecreationBench，透過 programmatic、visual、action-conditioned 及多互動深度 assertions，提供 implementation-agnostic、execution-grounded 評估。",
+        "以 35,000 條經 verifier rejection sampling 的 recreation trajectories 進行訓練，並在五個 OOD coding 與 computer-use benchmarks 上觀察到 transfer；同時以 250 個 held-out 任務量化現有模型在跨平台 recreation 上的行為與視覺差距。"
+      ],
+      "methodology": "每個 recreation task 提供高層提示、可互動的 running reference、GUI 與軟體開發工具；代理反覆進行 explore、implement、build/launch、visual and behavioral verify 與 revision，最後提交符合平台 build/launch contract 的 source。桌面平台使用原生 accessibility API：Ubuntu 的 AT-SPI、macOS 的 AXUIElement、Windows 的 UI Automation；Android 使用 UiAutomator；Web 使用 DOM/ARIA。評估在乾淨環境重播固定 fixture、初始狀態與互動序列。Prog channel 讀取精確文字、widget state、navigation、persistence 與 computed values；VLM channel 在固定視覺檢查點，以 Qwen3.7-Plus、temperature 0 對 reference-grounded assertions 做 binary verdict。平台內以 application 為單位 macro-average，平台間等權平均，總平均為 Prog 與 VLM 的均值。資料方面，作者從 GitHub、F-Droid 與網站取得並固定版本的 open-source applications，排除訓練與測試重疊；以 Qwen3.8-Max 產生 rollout，透過 task-specific verifiers rejection-sample，每平台選取 7,000 條、共 35,000 條 trajectory，形成 SFT mixture。另評估十個 frontier models，並在 ProgramBench、GameCraft-Bench、Vision2Web、OSWorld 2.0 與 WeaveBench 檢驗 OOD transfer。",
+      "key_results": "主要結果如下：\n\n| 結果項目 | 數據／觀察 |\n|---|---:|\n| RecreationBench 任務數 | 250（Ubuntu、macOS、Windows、Android、Web 各 50） |\n| GPT-6 Astra 整體分數 | 58.06%（摘要四捨五入為 58.1%） |\n| GPT-6 Astra Prog 分數 | 58.19% |\n| GPT-6 Astra VLM 分數 | 57.92% |\n| Claude Opus 5 整體分數 | 44.16% |\n| GPT-5.6 Sol 整體分數 | 42.06% |\n| GPT-6 Astra 通過 Prog ≥90% 的任務 | 17.60% |\n| GPT-6 Astra 通過全部 Prog tests 的任務 | 2.80% |\n| RecreationBench 平均 navigation depth | 22.8% 起始面、53.2% 1-hop、24.1% 2+ hops |\n| 具有 interaction outcome 的測試案例 | 94.2%；其中要求 exact outcome 者為 40.7% |\n| 訓練資料 | 每平台 7,000 條、共 35,000 條 selected trajectories |\n| OOD transfer | 兩個訓練 run 在五個 OOD benchmarks 的最後 checkpoint 均高於首次測量 checkpoint；個別提升幅度最高達 17.9 個百分點 |\n| 代表性 OOD 分數變化 | Qwen3.7-Plus：ProgramBench 41.9→44.6、GameCraft-Bench 17.9→26.5、Vision2Web 48.2→56.6、OSWorld 2.0 17.4→18.4、WeaveBench 35.7→48.2 |\n| 行為變化 | 後期 checkpoint 更常進行 code verification、image inspection，以及 GUI observation/interaction；作者明確指出這些描述性變化不證明因果關係 |\n\n作者另指出，代理通常比互動與計算輸出更容易重現靜態介面結構；生成應用程式相較 reference 明顯更小且更 monolithic。",
+      "insights": [
+        "若要評估實際軟體代理，不應只測 GUI click success 或程式碼測試通過率；應將探索、實作、執行、視覺檢查與修正放入同一個長期閉環。",
+        "programmatic assertions 與 visual assertions 應互補使用：前者可檢查精確狀態與計算結果，後者可捕捉 accessibility tree 無法表達的版面、圖示、色彩與視覺層次。",
+        "以可執行 reference 產生固定隱藏測試，能降低逐候選人工評審成本；但實務部署仍需同時設計來源隔離、網路限制、replay 檢查與 provenance 偵測，以避免複製 reference 內容而非真正重建行為。"
+      ],
+      "limitations": "論文未提供受控的因果實驗，無法證明更多 GUI 探索、視覺驗證或 Bash 使用直接造成分數提升。Web 無法完全 source-blind，Android 仍有封裝檔可被取得的殘餘風險；VLM 評分依賴單一 Qwen3.7-Plus judge。測試範圍也排除了需登入或遠端服務的應用，且部分 isolation、provenance 偵測仍可能被繞過。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "hybrid computer-use agents",
+        "長期代理軌跡與自我修正",
+        "GUI automation 與 software engineering agents",
+        "execution-grounded evaluation",
+        "visual interface fidelity"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.22038",
+      "title": "QuranicMMLU: A Cognitively-Aware Benchmark for Evaluating Generative AI Solutions on Quranic Linguistic Knowledge",
+      "abstract": "We introduce QuranicMMLU, a benchmark for evaluating generative AI on Quranic Arabic across multiple dimensions of linguistic complexity. Existing Quranic benchmarks center on general question answering and semantic retrieval, without probing specific linguistic competencies or stratifying by cognitive demand and verse difficulty. We construct a five-pillar Quranic taxonomy spanning Phonology, Morphology, Syntax, Semantics, and Pragmatics, with 31 leaves covering phenomena from tajwīd and root-and-pattern morphology to occasions of revelation and inter-surah coherence. For each leaf we generate questions stratified by Bloom's cognitive level and verse perplexity, then have LLM as a judge to independently answer and score every item and route the annotations to manual review. The resulting dataset comprises 980 human-reviewed questions, each issued in both open-ended and multiple-choice form. We benchmark 12 systems on these items and find that the Islamic-specialized model leads, yet every system scores higher on multiple-choice accuracy (average 84%) than open-ended answer quality (average 60%): the two rankings agree closely (Kendall's τ=0.73), but multiple-choice scoring hides failures that surface only once answer choices are removed. QuranicMMLU thus offers a rigorous, linguistically grounded framework for evaluating Arabic NLP in the Quranic domain.",
+      "authors": [
+        "Rawan El Ghali",
+        "Umm Kulsoom",
+        "Anas Madkoor",
+        "Dima Faris Alsaudi",
+        "Roaa Abdelmagid",
+        "Roaa Ibrahim",
+        "Raghad Mousa",
+        "Hamza Aljaji",
+        "Abdullah Khanafer",
+        "Abdallah Alkanani",
+        "Salah Feras Alali",
+        "Rawan Khaled Mohamed",
+        "Ehsaneddin Asgari"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-09-18T17:30:27+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.22038v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.22038",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 QuranicMMLU，一個評估生成式 AI 之《古蘭經》阿拉伯語能力的 benchmark，涵蓋多層次 linguistic complexity。不同於既有以一般問答與語義檢索為主的 Quranic benchmarks，本研究建立五大支柱 taxonomy：Phonology、Morphology、Syntax、Semantics 與 Pragmatics，共 31 個 leaves，涵蓋 tajwīd、root-and-pattern morphology、啟示背景及跨 surah coherence 等現象。每個 leaf 的題目依 Bloom’s cognitive level 與 verse perplexity 分層；先由 LLM 產生並由兩個 LLM 獨立回答、評分，再交由人工審查。最終資料集包含 980 題 human-reviewed questions，每題同時提供 open-ended 與 multiple-choice 形式。對 12 個系統的評測顯示，Islamic-specialized model 表現最佳；所有系統的 multiple-choice 平均準確率為 84%，高於 open-ended 平均品質 60%。兩種格式的模型排名高度一致（Kendall’s τ=0.73），但 multiple-choice 會掩蓋在移除選項後才暴露的回答失敗。QuranicMMLU 因而提供一個具 linguistic grounding 的 Quranic Arabic 評測框架。",
+      "problem_statement": "論文要解決生成式 AI 在《古蘭經》阿拉伯語理解上缺乏細粒度評測的問題。既有 Quranic benchmarks 多集中於一般事實問答、語義檢索或 multiple-choice，未涵蓋從語音、形態、句法到語用的完整 linguistic competencies，也很少依認知需求與經文難度分層。此外，multiple-choice 可能受選項線索影響，且不等同於使用者實際提出自由問題時的回答品質。",
+      "proposed_solution": "作者提出 QuranicMMLU，以五支柱、12 類別、31 leaves 的 Quranic linguistic taxonomy 組織題目，並將每個能力點與 Bloom’s 五個認知層級（Remember、Understand、Apply、Analyze、Evaluate）及 verse perplexity 結合。題目同時生成 open-ended 與 multiple-choice 版本，答案以 Quran.com API、Quranic Arabic Corpus、Tarteel tafsīr 與 asbāb al-nuzūl 資料集 grounding。透過雙 LLM annotation、雙人工審查及三位 adjudicators 解決衝突，形成 980 題 human-reviewed benchmark，進而比較選項式與自由回答式評測的差異。",
+      "core_contributions": [
+        "建立涵蓋 Phonology、Morphology、Syntax、Semantics、Pragmatics 五大支柱、12 類別與 31 leaves 的 Quranic Arabic linguistic taxonomy。",
+        "發布包含 980 題 human-reviewed questions 的 retrieval-grounded benchmark；每題同時具有 open-ended 與 multiple-choice 形式，並依 Bloom’s cognitive level 與 verse perplexity 分層。",
+        "以 12 個系統進行格式、語言能力與認知層級的細粒度評測，實證 multiple-choice 分數普遍高於自由回答品質，且 Phonology、Apply 與 Analyze 是較明顯的弱項。"
+      ],
+      "methodology": "資料建構採六階段 pipeline。第一，依文獻與核心資料源建立五個 linguistic pillars、12 個 categories 與 31 個 leaves；Bloom’s taxonomy 採 Remember 至 Evaluate 五層，因倫理考量省略 Create。第二，由 Claude Opus 4.7 依 leaf、Bloom level 與目標經文產生題目、參考短答及四選一選項；每題包含一個正確答案、兩個接近 distractors 與一個明顯錯誤選項，並以 Gemma-3-12B 計算 verse perplexity，將單節題目分為 low、medium、high。第三，由 GPT-5.2 與 Gemini-2.5-Flash 各自回答題目、選擇 MCQ 答案、判定 Bloom level，並按 specificity、answerability、leaf relevance、clarity 評分。第四，每題由兩名 fluent Arabic speakers 依 grounding evidence 審查，可修改、補答或刪除題目；爭議由三名 adjudicators 裁決。1,086 個候選中 370 題修訂、106 題刪除，保留 980 題。第五，對 12 個 open-weight 或 open-access systems 進行兩種格式的相同題目評測。第六，open-ended 回答由 Gemini judge 依 0–5 分 rubric 評分並換算百分比；MCQ 使用 accuracy，另按 pillar、Bloom level 與資料集分解，並以 Kendall’s τ 比較兩種格式的模型排名。",
+      "key_results": "| 指標／模型 | MCQ accuracy | Open-ended 分數（平均±標準差） |\n|---|---:|---:|\n| Ansari | 96.4% | 93.2% ± 21.8 |\n| gemma-4-31B | 93.3% | 82.5% ± 28.8 |\n| Qwen3.6-27B | 91.8% | 62.1% ± 37.0 |\n| gemma-4-26B-A4B | 91.2% | 75.7% ± 32.8 |\n| Qwen3.5-35B-A3B | 89.7% | 62.1% ± 35.8 |\n| Qwen3-235B-A22B | 88.3% | 52.3% ± 39.0 |\n| Qwen3.5-9B | 84.5% | 53.1% ± 36.6 |\n| Fanar-Sadiq | 80.1% | 66.7% ± 37.0 |\n| Qwen3-VL-8B | 76.3% | 41.1% ± 37.2 |\n| gemma-3-12B | 73.2% | 50.2% ± 38.2 |\n| Qwen3-VL-4B | 69.7% | 36.0% ± 36.4 |\n| ALLaM-7B | 69.5% | 46.4% ± 39.8 |\n| 全體平均 | 84% | 60%（摘要報告） |\n\n其他結果：Ansari 在兩種格式均排名第一；兩種格式的模型排名 Kendall’s τ=0.7273（66 個模型配對中 57 對排名一致）。Phonology 幾乎對所有系統最弱，open-ended 多數系統低於 34%；Morphology 與 Semantics 通常最強。Bloom level 方面，Understand 表現最高，Apply 與 Analyze 最低。MCQ 與 open-ended 的整體平均差距顯示，選項可能掩蓋自由回答時的失敗。",
+      "insights": [
+        "對高風險宗教領域的模型評測，應同時使用 multiple-choice 與 open-ended；前者便於標準化比較，後者更能揭露無選項提示時的 hallucination 與知識缺口。",
+        "benchmark 設計可採能力 taxonomy、認知層級與輸入難度三維分層，避免單一總分掩蓋模型在規則套用、跨經文推理或高 perplexity 經文上的失敗。",
+        "LLM-as-judge 適合擴大自由回答評測，但實務部署前應保留 grounding evidence、人工抽查與跨 judge 驗證，尤其是涉及不同詮釋或學術爭議的宗教內容。"
+      ],
+      "limitations": "taxonomy 雖力求廣泛，仍未涵蓋各支柱的全部規則與概念。Open-ended 僅由 Gemini judge 評分，可能有模型偏差，尚無 human scoring。研究只評估 open-weight 或 open-access systems，未納入 closed-source models 及所有 Islamic-specialized systems。題目由單一 Claude Opus 4.7 生成，人工審查後仍可能殘留 generation artifacts。未來將擴充 leaves、加入人工自由回答評分並評估更多專門模型。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Arabic NLP evaluation",
+        "Quranic question answering",
+        "Bloom’s taxonomy",
+        "open-ended versus multiple-choice evaluation",
+        "retrieval-grounded religious AI"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.21967",
+      "title": "NemotronLabs VoiceChat: An Open Full-duplex Speech-to-Speech Model with Tool Calling Capabilities",
+      "abstract": "We introduce NemotronLabs VoiceChat, an open full-duplex speech-to-speech model with native tool-calling capabilities. NemotronLabs VoiceChat combines a streaming speech encoder and decoder-only language model with parallel specialized output streams for agent text and structured function calls, an auxiliary RNN-T branch for incremental user transcription, and a streaming TTS decoder. This design enables the model to listen, transcribe, reason, invoke tools, and speak within a unified streaming architecture while preserving the temporal behavior required for natural conversation. On Full-Duplex-Bench 1.0, NemotronLabs VoiceChat achieves the lowest pause-handling takeover rates among evaluated open-weight systems, 100\\% takeover following user interruptions, and a 4.33/5 post-interruption response-quality score. On Full-Duplex-Bench 1.5, it resumes its response after user backchannels in 93\\% of cases. NemotronLabs VoiceChat obtains a 55.1 normalized average on VoiceBench and, on Full-Duplex-Bench 3.0 (FDB 3.0), achieves 82.5\\% tool-selection F1, while argument accuracy and end-to-end tool execution remain areas for improvement. These results demonstrate that full-duplex interaction, speech recognition and generation, general language capabilities, and external tool use can be integrated in a single open speech-to-speech model without sacrificing real-time conversational behavior.",
+      "authors": [
+        "Jagadeesh Balam",
+        "Travis Bartley",
+        "Edresson Casanova",
+        "Sanjay Chauhan",
+        "Chen Chen",
+        "Zhehuai Chen",
+        "Zijia Chen",
+        "Francesco Ciannella",
+        "Slyne Deng",
+        "Mikyas Desta",
+        "Harishchandra Dubey",
+        "Slim Essid",
+        "Nourchene Ferchichi",
+        "Boris Ginsburg",
+        "Mariana Graterol Fuenmayor",
+        "Negar Habibi",
+        "Kevin Hu",
+        "Anand Joseph",
+        "Viraj Karandikar",
+        "Myungjong Kim",
+        "Viacheslav Klimkov",
+        "Seelan Lakshmi Narasimhan",
+        "Lily Lee",
+        "Jason Li",
+        "Eileen Long",
+        "Ameya Mahabaleshwarkar",
+        "Aditya Malte",
+        "Adi Margolin",
+        "Sasha Meister",
+        "Valentin Mendelev",
+        "Oluwatobi Olabiyi",
+        "Ankita Pasad",
+        "Yifan Peng",
+        "Elena Rastorgueva",
+        "Jayda Ritchie",
+        "Jason Roche",
+        "Nikhil Srihari",
+        "Yuanhang Su",
+        "Yoshi Suhara",
+        "Viet Anh Trinh",
+        "Jinhan Wang",
+        "Piotr Zelasko",
+        "Hui Wang",
+        "Puhui Meng",
+        "Chaosen Zhang",
+        "Yunsheng Liu",
+        "Shawn Wang",
+        "Wenjing Li",
+        "Zhonglei He"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-09-18T16:27:22+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.21967v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.21967",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 NemotronLabs VoiceChat，一個開放權重、全雙工 speech-to-speech 模型，原生支援 tool calling。模型結合 streaming speech encoder、decoder-only language model、平行的 agent text 與 structured function-call 輸出串流、用於增量使用者轉錄的 auxiliary RNN-T 分支，以及 streaming TTS decoder，使系統能在統一的 streaming 架構中持續聆聽、轉錄、推理、呼叫工具與說話，同時保留自然對話所需的時間行為。在 Full-Duplex-Bench 1.0 中，模型於受評估的開放權重系統取得最低的 pause-handling takeover rate、使用者打斷後 100% takeover，以及 4.33/5 的打斷後回應品質；在 1.5 中，對 user backchannel 有 93% 的回應續接率。模型在 VoiceBench 取得 55.1 normalized average，並在 Full-Duplex-Bench 3.0 達到 82.5% tool-selection F1，但 argument accuracy 與端到端工具執行仍有改善空間。",
+      "problem_statement": "傳統 speech agent 多採 ASR、LLM 與 TTS 串接，通常依賴 VAD 等待使用者說完，因此屬於 half-duplex，難以處理重疊說話、backchannel、停頓與 barge-in。既有 full-duplex speech model 雖改善即時輪替與打斷處理，卻較少能在不中斷自然對話的情況下可靠執行一般工具呼叫。開放研究尤其缺乏同時整合 speech understanding、speech generation、turn-taking 與 structured action 的統一模型。",
+      "proposed_solution": "作者提出 NemotronLabs VoiceChat，以 streaming FastConformer speech encoder 將使用者語音映射至 decoder-only Nemotron-Nano-9B-v2 LLM。模型使用平行且專門化的 agent-text 與 function-call channels，避免將異質 action token 序列化到單一 autoregressive channel；另以共享語音表徵的 auxiliary RNN-T 產生增量使用者轉錄，並由獨立的 streaming VoiceChat-TTS 將 agent text 轉成持續音訊。工具呼叫採明確的 <SOTC>、<EOTC>、<EOTR> 狀態協定，runtime 可非同步執行工具、播放預設 filler message，再注入工具結果並繼續生成。",
+      "core_contributions": [
+        "提出一個開放的統一 full-duplex speech-to-speech 架構，將 streaming speech encoder、LLM、TTS、使用者增量轉錄與工具呼叫整合於持續時間軸。",
+        "以平行的 agent-text 與 function-call 專用輸出串流，以及明確的工具邊界 token 與非同步 runtime，支援在自然語音互動期間進行一般工具呼叫。",
+        "透過 FDB 1.0、FDB 1.5、VoiceBench 與 FDB 3.0，系統性展示 turn-taking、backchannel、語音智能、工具選擇與端到端工具使用的性能取捨。"
+      ],
+      "methodology": "架構上，16-kHz 音訊先轉為 128-bin log-Mel features，經 600M 參數、24 層 cache-aware FastConformer；因果 subsampling 每 80 ms 產生一個 encoder state，並以 70-frame left context、無 right context 進行 streaming。投影後的表徵供 LLM 直接進行 speech-conditioned response generation；raw states 則供兩層、640 維 RNN-T 分支進行增量轉錄。LLM 以音訊、前一個 agent-text token 與前一個 function token 的加權融合表徵，同時預測文字與 function channel。訓練分 CPT 與 SFT：CPT 使用語音化 pseudo-dialogue 與 text-only corpus；SFT 混合 duplex chat、自然語音對話、tool calling、安全與 instruction-following 資料，並加入 early interruption、backchannel injection、text-channel delay、噪音、RIR、MIR 與 codec augmentation。SFT 目標為 0.5(文字 loss+function loss)+0.5 T2T loss，function padding 用於抑制誤觸發。工具資料將 assistant call 與 tool response 對齊至共同時間軸，response token 僅作 context、不計 loss。TTS 使用 977M 參數的持續 streaming decoder、22-kHz codec 與 31-level RVQ，支援 BOS、padding、interruption 控制。評估涵蓋 FDB 1.0 的 pause、smooth turn-taking、interruption TOR/latency/品質，FDB 1.5 的 backchannel 行為，VoiceBench 的知識、推理、指令與安全，以及 FDB 3.0 的 tool-selection F1、argument accuracy 與 Pass@1；另報告 ASR WER、TTS WER/SECS/SQuIM-MOS 與推論延遲。",
+      "key_results": "| 評估面向 | NemotronLabs VoiceChat 結果 | 對照或說明 |\n|---|---:|---|\n| FDB 1.0：Synthetic pause TOR | 15.3% | 開放權重系統中最低；V-Model 名稱為論文表格中的模型標示 |\n| FDB 1.0：CANDOR pause TOR | 25.5% | 開放權重系統中最低 |\n| FDB 1.0：smooth turn-taking TOR | 81.5% | PersonaPlex 為 90.8%，較高 |\n| FDB 1.0：smooth-turn latency | 0.448 秒 | PersonaPlex 為 0.170 秒 |\n| FDB 1.0：user interruption TOR | 100.0% | 與部分系統並列；論文報告回應品質 4.33/5 |\n| FDB 1.0：interruption latency | 0.480 秒 | 論文提供該數值 |\n| FDB 1.5：Resume | 93.0% | Freeze-Omni 80.0%；Gemini Live 2.0 亦為 93.0% |\n| FDB 1.5：Respond | 1.0% | 將 backchannel 誤當成需回答的比例 |\n| VoiceBench normalized average | 55.1 | 與 Freeze-Omni 55.2 接近；高於 Moshi 29.5 與 PersonaPlex 30.6 |\n| FDB 3.0：Tool Selection F1 | 82.5% | Gemini Live 2.5 為 78.6%，Gemini Live 3.1 為 81.7% |\n| FDB 3.0：Argument Accuracy | 42.2% | 低於 Gemini Live 2.5 的 59.3% 與 3.1 的 58.8% |\n| FDB 3.0：Pass@1 | 33.0% | 低於 Gemini Live 2.5 的 49.0% 與 3.1 的 54.0% |\n| OpenASR 平均 WER（80 ms / 160 ms） | 9.02% / 8.28% | 160 ms chunk 提升準確率，但增加可觀測音訊量 |\n| 四路並發推論 p95 latency | 每 160 ms chunk 為 118 ms | 單張 H100 PCIe 80 GB；吞吐為 1.36× real time |\n| AdvBench refusal rate | 100.0% | VoiceBench 安全子集的評估結果 |",
+      "insights": [
+        "對即時 voice agent 而言，工具路由與參數正確性應分開評估；本文 82.5% tool-selection F1 但僅 42.2% argument accuracy，顯示選對工具不代表能可靠完成呼叫。",
+        "將 action channel 與對話文字 channel 平行化，有助於維持低延遲與自然輪替；產品設計可採類似的結構化事件流，而非把工具指令混入一般語音回覆。",
+        "工具執行期間的 filler message 能降低等待時的沉默感，但目前模型在執行工具時無法處理 barge-in；實務部署仍需設計可取消、可中斷並可恢復的工具執行狀態。"
+      ],
+      "limitations": "模型音訊上下文約限於兩分鐘，長對話記憶不可靠；工具數量增加時性能下降，實務建議每次不超過五個工具，並且 simultaneous multi-tool invocation 尚不穩定。模型可能跳過工具、產生虛構參數或直接依內部知識回答；長工具回應會延遲語音，工具執行期間也不支援 barge-in。噪音、混響及競爭語音環境下的 robustness 有限。未來工作包括改善 argument grounding、多步工具組合、可中斷工具執行、記憶、推理與 alignment。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "full-duplex speech agents",
+        "streaming speech-to-speech modeling",
+        "tool calling evaluation",
+        "turn-taking and barge-in handling",
+        "speech agent safety"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2609.21942",
+      "title": "When Should a Failing Robot Ask? Initiating Corrective Human-Robot Dialogue from Audited Sensor Evidence",
+      "abstract": "A robot that fails at a task faces the first decision in corrective dialogue: act on its own diagnosis, consult another onboard sensor, or interrupt a person. Choosing well requires knowing how much the robot's sensors reveal about the cause and how reliable the robot's own diagnosis is. We build a simulated benchmark in which every failure's true cause is known, because we injected it, and measure what each sensor reveals, with explicit checks against data leakage. Some failures are diagnosable from camera images; others only from the robot's force data (0.99 from force data, no image method above 0.55). We then test six open vision-language models. Their behavior tracks the surface of the prompt, not the evidence: moving the refusal option from last to first in the answer list collapses refusal rates from 78-100% to 0-6% in three of the six swept model-and-family pairs. Accuracy from frames stays at or below a majority-class baseline under every prompt variant, with or without worked examples, and stated confidence carries no information about correctness. Handing the same models the force data as ten lines of text produces the first above-baseline diagnoses, in four of the six models: much of the failure reflects missing sensor data, not missing ability. We pose the choice as a three-action decision problem, act, consult your own sensors, or ask a human, whose optimal policy follows from measured accuracy. The models do not follow it, and their ask rates ignore a fourfold change in question cost. One question to a human still lifts them from that baseline to roughly the answerer's own reliability (0.70-0.81 when they ask). The decision to ask should be tied to measured accuracy and stated costs, not to the model's confidence.",
+      "authors": [
+        "Eshika Pathak",
+        "Leela Krishna"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-09-18T15:56:52+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2609.21942v1",
+      "arxiv_url": "https://arxiv.org/abs/2609.21942",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "機器人執行任務失敗後，必須先決定自行依診斷行動、查詢其他機載感測器，或打斷人類尋求協助。此決定取決於感測器對失敗原因揭露多少，以及機器人診斷本身的可靠度。作者建立一個每次失敗原因皆由注入而知的模擬 benchmark，並以資料洩漏檢查衡量各感測器的診斷資訊。部分失敗可由影像診斷，另一些則只能由 force data 判定；後者的 force-data 準確率達0.99，而影像方法最高僅0.55。六個 open vision-language models 從影像診斷時，行為更受 prompt 表面與選項順序影響，而非證據；信心也無法反映正確性。將 force data 以文字提供後，四個模型首次超越 majority-class baseline。作者進一步以測得的準確率與詢問成本建立 act、sense、ask 三種行動的 optimal policy，發現模型未能依成本調整詢問率。不過，人類一次回答可使模型在詢問後達到約0.70–0.81的準確率。因此，詢問決策應依測得的準確率與明確成本設計，而不應依賴模型信心。",
+      "problem_statement": "論文研究機器人失敗後何時應自行修復、查詢機載感測器，或向人類提問。既有失敗診斷工作通常假設原因可由既有觀測恢復，卻未驗證感測器是否真的包含相關證據；求助與 corrective dialogue 工作則常未以可量化的診斷可靠度和詢問成本決定是否發問。此外，模型的 refusal、confidence 與實際可辨識性是否一致，也缺乏系統評估。",
+      "proposed_solution": "作者提出以已知失敗原因建立 simulated benchmark，透過 audit 衡量每一類失敗由不同 sensor 可診斷的程度，再測量各模型實際能抽取的準確率。audit 包含 shuffle、transfer 與 separation checks，以排除標籤洩漏、視角或場景 shortcut，以及近重複資料。接著以模型準確率、human answer reliability、sensor consultation cost 與 human question cost，計算 act、sense、ask 三種行動的 expected cost 與 break-even threshold。模型行為則以 reference policy、regret、confidence informativeness 與詢問後任務準確率評估。核心創新不是提出新的 threshold 公式，而是把 audited sensor evidence 與實際模型能力接入可計算、可比較的 dialogue initiation policy。",
+      "core_contributions": [
+        "建立具已知注入原因的 failure benchmark，並以 shuffle、transfer、separation checks 審核 sensor evidence，區分真正可診斷資訊與 shortcut/data leakage。",
+        "證明六個 open VLM從影像診斷時多數不超越 majority-class baseline，且 refusal與confidence受 prompt layout 影響，不能反映實際證據或正確性。",
+        "提出以 audited evidence、模型測得準確率與明確成本計算 act、sense、ask policy，並以 regret評估模型是否做出成本合理的 corrective dialogue initiation決策。"
+      ],
+      "methodology": "資料來自 LIBERO simulator 的 tabletop pick-and-place 任務，每個 failure family有2,200個失敗 episode，其中2,000個用於 audit、200個保留給模型評估；失敗由注入的 cause與severity產生，並記錄 camera frames及 wrist force-torque、gripper aperture、kinematic status等force data。三類失敗為 grasp、detection與placement。感測器資訊以小型 classifier衡量：影像端使用 pixel/PCA、DINOv2 embedding與3D convolution模型，force端使用 force、gripper與軌跡統計；只有通過 shuffled-label、held-out appearance/viewpoint或severity transfer，以及不同simulation run分割的結果，才作為 certificate。六個7B–16B open VLM接受八張frames、任務指令與失敗事實，進行含或不含「cannot be determined」的多選診斷；另測 few-shot、force telemetry十行文字及frames-plus-telemetry。模型評估包含 accuracy、answered-only accuracy、answer rate、三種confidence readout、Spearman correlation與McNemar test。決策階段令模型選擇 ACT或ASK；預設 correct repair成本1、wrong repair成本10、詢問成本3，human回答正確率0.80、無資訊0.15、錯誤0.05，並掃描詢問成本1、3、6、10及加入成本0.5的SENSE。以測得accuracy計算 expected-cost threshold，將模型 realized cost與best fixed reference policy的regret比較。",
+      "key_results": "主要結果如下：\n\n| 項目 | 結果 |\n|---|---|\n| Grasp：force data classifier | 0.986，通過 audit；在嚴格 severity 配對下為0.97 |\n| Grasp：camera classifier | 最高0.545；影像證據接近 plateau，低於多數比較的資訊 certificate |\n| Detection：camera classifier | 0.910；held-out appearance 0.844、viewpoint 0.813 |\n| Placement：camera classifier | 表面準確率0.998，但 held-out viewpoint降至0.605，因 shortcut 被排除為可信證書 |\n| 六模型 frames-only | grasp最高0.343（majority baseline 0.400）；detection最高整體0.17，未達證書0.910 |\n| 選項位置影響 | 三個 swept model-family pairs 的 refusal rate由78–100%降至0–6% |\n| Force telemetry文字 | 六模型中四個超越grasp majority baseline 0.400：InternVL3 0.514、Pixtral 0.486、Llama 0.543、Cosmos3-Nano 0.457 |\n| Human question後準確率 | 四個有 decision-task ask data 的模型，在詢問時達0.70–0.81；Qwen 0.76、Cosmos-Reason2 0.70、Llama 0.76、Cosmos3-Nano 0.81 |\n| 成本敏感性 | 參考政策在grasp約accuracy 0.32時，成本1與3應詢問，成本6與10應行動；模型詢問率未隨成本一致變化 |\n| Confidence | 多數 stated confidence與正確性或episode decidability無資訊關聯；僅Pixtral token log-probability呈ρ=+0.50 |\n\n",
+      "insights": [
+        "部署前應先做 sensor-to-cause audit；若原因存在於 force、proprioception等模型尚未看到的通道，優先提供可讀的 telemetry 可能比直接打擾人類更有效。",
+        "詢問策略應以 held-out calibration accuracy與實際 action cost建立 threshold，並持續檢查詢問率是否隨成本變化；不能把 verbal confidence直接當作 self-knowledge。",
+        "Human-in-the-loop 的效益不只取決於回答是否正確，也取決於模型能否理解自然語言表述；實務系統應加入回答正規化、確認回合或 cause mapping，避免選項詞彙依賴。"
+      ],
+      "limitations": "研究限於 LIBERO 模擬器、三類 tabletop pick-and-place failures、六個7B–16B open VLM與小型測試集；未驗證真實機器人、frontier models或人類觀察者是否能判斷 grasp原因。human reply是固定 scripted answer，問題品質未評分，且只研究一次詢問，尚未涵蓋連續對話、語音、物理狀態變化、示範或 teleoperation。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "cost-sensitive selective prediction",
+        "human-robot interaction",
+        "sensor fusion and failure diagnosis",
+        "uncertainty calibration",
+        "value of information"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]

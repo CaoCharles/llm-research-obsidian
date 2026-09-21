@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2609.22086] Designer-RSI - Evolving Procedural Memory from User Traffic for Agentic Graphic ...|Designer-RSI: Evolving Procedural Memory from User...]] (2026-09-18)
+
 - `[Agent Evaluation]` [[[2607.29468] Self-Play Meets Skill Evolution - Self-Evolving Search Agents that Pose, Solve, ...|Self-Play Meets Skill Evolution: Self-Evolving Sea...]] (2026-07-31)
 
 ## 延伸閱讀
