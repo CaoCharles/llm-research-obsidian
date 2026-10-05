@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.03632] World Embedding Benchmark|World Embedding Benchmark]] (2026-10-02)
+
 - `[Agent Evaluation]` [[[2609.05314] Large Language Models for HVAC Operations in Building Energy Systems - A Critica...|Large Language Models for HVAC Operations in Build...]] (2026-09-04)
 
 - `[Hallucination & Faithfulness]` [[[2608.15820] QuantumPhaseNet - A Gauge-Covariant Geometric and Quantum-Spectral Theory of Sem...|QuantumPhaseNet: A Gauge-Covariant Geometric and Q...]] (2026-08-16)

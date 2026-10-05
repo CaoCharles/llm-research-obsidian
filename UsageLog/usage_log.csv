@@ -2,3 +2,4 @@ date,model,papers_analyzed,prompt_tokens,completion_tokens,reasoning_tokens,tota
 2026-09-07,gpt-5.6-luna,10,160614,20227,368,180841,,
 2026-09-21,gpt-5.6-luna,10,147304,20640,344,167944,,
 2026-09-28,gpt-5.6-luna,10,149215,20500,332,169715,,
+2026-10-05,gpt-5.6-luna,10,150495,20834,453,171329,,

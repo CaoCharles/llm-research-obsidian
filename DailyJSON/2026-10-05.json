@@ -1,0 +1,558 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2610.03625",
+      "title": "FALCON: A Model and Dataset Agnostic Framework for Synthetic Data Generation for NL2SQL Pairs",
+      "abstract": "Relational databases are among the most widely deployed forms of structured knowledge, and natural language access to them requires grounding language onto schema entities and relations while handling the ambiguity inherent in how people phrase requests. Existing synthetic NL-to-SQL data generation methods largely ignore this ambiguity and produce oversimplified queries that fail to prepare models for the complexity of real-world structured knowledge access. We present FALCON, a framework that generates realistic, ambiguity-aware NL-to-SQL data matching the complexity of challenging real-world benchmarks, at low cost using compact open models. Our approach combines reserved-word SQL seeding and persona-based prompting to generate structurally complex queries, while alignment-based filtering preserves difficulty by distinguishing genuinely incorrect examples from complex but valid queries. Human evaluation confirms consistent high quality across model sizes, and our generated data exceeds existing benchmarks in both SQL complexity and natural language richness. Difficulty-stratified analysis shows models trained on FALCON data increasingly outperform baseline-trained models as query complexity increases, validating our pipeline's success in generating challenging training data. When combined with a small proportion of existing benchmark data, mixed training recovers performance on simpler queries while preserving these advantages on complex ones. The model- and database-agnostic design enables organizations to generate high-complexity NL-to-SQL training data locally without external APIs.",
+      "authors": [
+        "Darian Lee",
+        "Shannon Rumsey",
+        "Jack St. Clair",
+        "Xinyi Tang",
+        "Aditya Bansal",
+        "Yuanming Shi"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.DB",
+        "cs.LG"
+      ],
+      "published": "2026-10-02T17:19:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03625v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03625",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "關聯式資料庫是最廣泛部署的結構化知識形式之一，而讓使用者以自然語言存取資料庫，必須將語言 grounded 到 schema 實體與關係，並處理人類表達方式所 inherent 的歧義。現有 synthetic NL-to-SQL 資料生成方法大多忽略歧義，產生過度簡化的 queries，無法讓模型學習真實結構化知識存取的複雜性。我們提出 FALCON，一個 model-與 database-agnostic framework，使用 compact open models、以低成本生成 realistic 且 ambiguity-aware 的 NL-to-SQL 資料。方法結合 reserved-word SQL seeding 與 persona-based prompting 產生結構複雜的 queries，並透過 alignment-based filtering 區分真正錯誤與複雜但有效的 examples，以保留難度。Human evaluation 顯示不同模型規模皆維持穩定高品質；生成資料在 SQL complexity 與 natural-language richness 上超越既有 benchmarks。依難度分層的實驗顯示，模型在 FALCON 資料上訓練後，query 越複雜，相較 baseline-trained models 的優勢越大。加入少量既有 benchmark 資料後，可恢復簡單 queries 的表現，同時保留複雜 queries 的優勢。此設計可讓組織在本地、無需 external APIs 的情況下產生高複雜度訓練資料。",
+      "problem_statement": "論文針對 synthetic NL-to-SQL 資料難以反映真實部署情境的問題。既有方法常生成單表、簡單且語言單一的 queries，忽略 scope、attachment、entity vagueness 與 broadness 等自然語言歧義；較強的方法又依賴昂貴的 frontier-model APIs、較大模型或特定資料集。結果是訓練資料無法涵蓋 enterprise database 的 SQL complexity、語言多樣性與模糊需求，也不利於隱私保護與本地部署。",
+      "proposed_solution": "作者提出 FALCON（Framework for synthetic Ambiguity-aware Linguistically-diverse Cost-efficient Optimized NL-to-SQL data generation），以 SQL-then-NL 為主流程，先利用 schema 生成可執行且高複雜度的 SQL，再生成對應自然語言。核心創新包括：以 BIRD 的 reserved-word 分布控制 SQL 難度；以 common 或 creative personas 注入真實且多樣的使用情境；產生多個 NL candidates 並用 LLM-as-a-judge 選擇；以 Ambrosia 訓練的 ambiguity detector 尋找歧義，為有效歧義建立多重 SQL interpretations；最後透過 alignment reward model 與 prompt-based filters，移除 schema grounding 或語意不一致的 pairs，同時盡量保留複雜度。整體流程採 compact open models，並主張具 model-與 database-agnostic 及本地隱私優勢。",
+      "core_contributions": [
+        "提出 model-與 database-agnostic 的 FALCON pipeline，透過 reserved-word seeding 與 persona-based prompting，低成本生成具有 BIRD-level SQL complexity 和較高 NL richness 的 synthetic NL-to-SQL pairs。",
+        "將 ambiguity detection、multi-interpretation SQL generation 與 ambiguity-specific validation 納入資料生成流程，明確處理 Scope、Attachment、Entity Vagueness 與 Broadness 等語意歧義。",
+        "提出結合 semantic similarity、schema entity matching 與 corruption penalties 的 alignment-based filtering，並以 human evaluation 與下游 difficulty-stratified results 驗證其能保留複雜度、降低 misalignment。"
+      ],
+      "methodology": "FALCON 從既有 database schemas 出發。第一階段以 SQL-then-NL 生成：模型依 schema、foreign-key 關係與 seeding prompt 產生 SQL，最多重試三次並以實際執行檢查 validity。Reserved-word seeding 從 BIRD training distribution 抽樣目標 SQL reserved-word 數量；persona seeding 則為每個 table 產生 common 或 creative persona、目標與 example queries，以增加 SQL use cases 和 NL register 的多樣性。第二階段將 validated SQL 與 schema 輸入模型，產生四個 NL candidates，再由 Compare Judge 依 completeness、no hallucination、naturalness 與 schema independence 選出最佳問題。第三階段使用在 Ambrosia 上 fine-tune 的 DistilBERT，輸出 0–10 ambiguity score；高於 7 時，透過 prompt 判斷 Scope、Attachment、Entity Vagueness 或 Broadness，並嘗試生成另一個可執行且語意不同的 SQL interpretation。第四階段使用以 9,000 多個 BIRD-derived examples（半數系統性 corruption）訓練的 alignment model；其 hybrid score 由 semantic similarity（40%）與 schema entity matching（60%）組成，並加入 corruption penalties。最後再用 prompt-based filter 檢查 NL-SQL validity、SQL 合理性、非冗餘性與自然度。評估包含 NL richness、SQL complexity、human ratings，以及 Exact Match、Fuzzy Score、Soft-EX；下游以 Qwen-2.5-3B 和 1.5B 比較 FALCON、Spider 與 95% synthetic/5% Spider mixed training，並進行難度分層與 ablation。",
+      "key_results": "主要結果如下（數值均來自論文）：\n\n| 實驗面向 | 結果 |\n|---|---|\n| Reserved-word seeding | 與目標 reserved-word count 的 Pearson correlation 為 0.60；median deviation 為 3 words |\n| Alignment metric | hybrid alignment score 與 human judgments 的 Pearson correlation 為 0.70 |\n| Alignment reward model | F1 93.73%、specificity 71.43%、recall 92.81%；將 misaligned examples 從 16% 降至 4% |\n| Ambiguity pipeline | accuracy 94.0%、precision 66.7%、recall 28.6%、F1 40.0%、specificity 98.9% |\n| Human evaluation | 各模型的 SQL、NL、alignment 分數皆超過 0.92；Qwen-3B 分別為 0.96/0.95/0.94，Qwen-32B 為 0.98/0.97/0.93 |\n| Complexity comparison | Spider-seeded FALCON：SQL 0.43、NL 0.39；BIRD：SQL 0.42、NL 0.31；Spider：SQL 0.38、NL 0.29 |\n| Qwen-2.5-3B：Spider train → Spider test | EM 35.95%、FS 0.89、Soft-EX 0.42 |\n| Qwen-2.5-3B：FALCON train → FALCON test | EM 13.80%、FS 0.83、Soft-EX 0.48 |\n| Qwen-2.5-3B：FALCON train → Spider test | EM 0.80%、FS 0.68、Soft-EX 0.32；作者指出 raw EM 低估了可接受變體 |\n| Mixed training：95% FALCON + 5% Spider | Spider test EM 27.10%；FALCON test EM 13.60% |\n| Generation cost | 5,500 examples 約需 34.47M input tokens、5.13M output tokens；論文估計 GPT-5.5 約 326 美元、open model commodity GPU 約 20 美元 |\n| Ablation | SQL→NL 的 SQL/NL complexity 為 0.42/0.31，NL→SQL 為 0.40/0.21；加入 reserved words 後為 0.48/0.31，加入 personas 後為 0.42/0.34，Compare Judge 後為 0.46/0.36 |",
+      "insights": [
+        "若 synthetic data 的目標是涵蓋困難案例，應先控制結構化 SQL complexity，再反向生成自然語言；論文的 SQL→NL ablation 顯示此順序優於 NL→SQL。",
+        "資料品質過濾不應只依賴 execution validity；可執行的 SQL 仍可能與 NL 語意或 schema entity 不對齊，因此需要 alignment model、LLM judge 與最後 prompt filter 的互補檢查。",
+        "高難度資料與真實簡單資料應混合使用：論文中 95% FALCON 加 5% Spider 可改善簡單分布與 Spider 表現，而保留複雜 query 上的優勢；實務部署應依難度分布調整比例。"
+      ],
+      "limitations": "FALCON 偏重複雜 queries，單獨訓練在 Spider 上僅達 0.8% EM，需加入約 5–10% real data。Ambiguity detection specificity 高但 recall 僅 28.6%，會漏掉許多歧義案例。目前僅支援 SQLite，評估限於 Spider、WikiSQL、BIRD 與 compact models；生成資料也繼承 seed databases 的 domain coverage 與 bias。",
+      "tags": [
+        "llm-as-judge",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "NL-to-SQL data synthesis",
+        "SQL complexity evaluation",
+        "semantic alignment filtering",
+        "ambiguous query parsing",
+        "synthetic data quality"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03574",
+      "title": "HyperBrowseComp: A Multilingual and Multimodal Stress Test for Web-Browsing Agents",
+      "abstract": "We introduce HyperBrowseComp, a multilingual and multimodal browsing benchmark comprising 423 manually authored and human-validated questions across 13 languages, written by native or highly proficient speakers. Questions are designed to be extremely challenging. Each question targets a concise, publicly verifiable answer whose discovery requires locating obscure evidence, following multi-step clue chains, or inspecting heterogeneous sources such as videos, scanned documents, images, or maps. Easier questions are filtered out by evaluating them with models without internet access to reduce the likelihood that they can be answered with parametric knowledge alone. We evaluate several models using provider-native search and a shared external retrieval harness under a common agent protocol. To contextualize model performance and effort, we also conduct a human evaluation on a sample of the questions. HyperBrowseComp provides a challenging testbed for persistent information seeking across languages and evidence modalities, with difficulty arising from discovering and connecting evidence on the open web.",
+      "authors": [
+        "Alham Fikri Aji",
+        "Faiz Rizki Ramadhan",
+        "Zayd M. K. Zuhri",
+        "Seung Hun Eddie Han",
+        "Ryandito Diandaru",
+        "Qinrong Cui",
+        "Jan Christian Blaise Cruz",
+        "Badrinath Chandana",
+        "Peerawat Chomphooyod",
+        "Ahmed Attia",
+        "Jonibek Mansurov",
+        "Emilio Villa-Cueva",
+        "Canh Duong Nguyen",
+        "Imran Turganov",
+        "Minghao Wu",
+        "Peerat Limkonchotiwat",
+        "Irina Nikishina"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-10-02T16:48:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03574v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03574",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 HyperBrowseComp，一個多語言、多模態的 web-browsing agent 評測基準，包含 13 種語言的 423 道人工撰寫且經人類驗證的問題，作者為母語者或高熟練度使用者。每題都要求一個簡潔且可公開驗證的答案，但答案發現通常需要尋找冷門證據、追蹤多步線索，或檢查影片、掃描文件、圖片、地圖等異質來源。為降低問題僅依賴模型參數知識即可回答的可能性，作者先以無網路模型進行難度篩選。研究以 provider-native search、Exa 與 OWL 等設定，在共同 agent protocol 下評估多個模型，並對部分題目進行人類評測，以比較正確率與搜尋成本。HyperBrowseComp旨在測試 agent 跨語言、跨證據模態進行持續資訊搜尋、證據連接與驗證的能力。",
+      "problem_statement": "現有 web-browsing 評測多偏重英語與純文字，或只控制單一語言、單一模態；部分資料也可能因模型參數知識累積而失去辨識力。這些基準較難衡量 agent 是否能在開放網路中發現隱含線索、跨影片、地圖、PDF、圖片等來源完成多跳證據鏈。論文因此要解決多語言、多模態且具長程資訊搜尋需求的嚴格評測問題。",
+      "proposed_solution": "作者提出 HyperBrowseComp，建立 423 題、13 語言、涵蓋多種網路證據型態的人工基準。每題由語言使用者從可驗證答案與支持證據出發設計，附有標準答案、可接受別名、URL、精確證據位置與解題路徑，再由第二位標註者驗證唯一性、可存取性與難度。資料另經七個無網路模型審核，排除可能依靠參數記憶回答的題目。評測同時比較原生搜尋、共同 Exa 檢索介面與 OWL 多代理 harness，將模型能力與搜尋系統效應分離觀察。",
+      "core_contributions": [
+        "提出 HyperBrowseComp，提供 423 道由母語或高熟練度使用者撰寫、涵蓋 13 語言的開放網路瀏覽題目。",
+        "將多語言問題與影片、音訊、圖片、PDF、掃描書籍、表格、圖表及地圖等異質證據結合，評測多跳資訊發現與證據連接能力。",
+        "在共同 agent protocol 下比較原生搜尋、Exa 與 OWL，並同時報告準確率、token、時間、工具失敗與人類表現，揭示 retrieval harness 對結果的顯著影響。"
+      ],
+      "methodology": "資料建立採人工出題與雙人驗證。題目要求單一、簡短、可區分的答案；來源須公開可存取，不得要求付款、登入或私人社群。作者記錄答案別名、來源語言、URL、頁碼、表格或圖表、影片時間戳、音訊區間及地圖位置等證據。七個無網路模型先回答候選題；若至少兩個模型答對，或一個模型答對且答案高度具體，題目即被排除，最終由 500 題左右保留 423 題。資料涵蓋 13 語言、8 類模態與 13 個主要領域，約 64.3% 題目需要至少一種非文字模態。實驗使用五個 frontier LLM，設定包括 provider-native search、Exa，以及具 task manager、coordinator、researcher、synthesizer 的 OWL workforce。前兩者採最多 25 個 research steps 的 ReAct 交替流程；模型自行產生查詢、呼叫搜尋與抓取工具。OWL則使用多代理與多模態瀏覽工具。最終以 LLM judge 對問題、完整回答與參考答案進行二元正確性判定，並統計正確率、token、時間與工具失敗。另在印尼、泰國、越南各抽 10 題進行可瀏覽但不可使用 LLM 的人類評測。",
+      "key_results": "主要結果如下；所有數字均為論文報告值。\n\n| 設定／模型 | 答對數 | 準確率 | Token總量 | 總時間 |\n|---|---:|---:|---:|---:|\n| Built-in Gemini 3.7 Flash | 134/423 | 31.68% | 14.1M | 129.5小時 |\n| Built-in Gemini 3.1 Pro | 108/423 | 25.53% | 10.2M | 45.3小時 |\n| Exa GPT-5.6 Sol | 113/423 | 26.71% | 928.8M | 75.1小時 |\n| Exa Gemini 3.7 Flash | 94/423 | 22.22% | 663.9M | 22.7小時 |\n| OWL Gemini 3.7 Flash | 75/423 | 17.73% | 195.3M | 125.1小時 |\n\n- 原生搜尋下，五個模型共同評測的 423 題中，有 244 題（57.68%）沒有任何模型答對；只有 21 題被五個模型全部答對。\n- 最佳設定為 Built-in Gemini 3.7 Flash，準確率 31.68%，顯示目前 web-enabled agents 仍有顯著改進空間。\n- Exa 對 GPT-5.6 Sol 的準確率高於其原生搜尋（26.71% 對 19.15%），但使 Gemini 3.1 Pro 與 Gemini 3.7 Flash 降至 18.20% 與 22.22%，顯示模型與原生搜尋環境存在共同適配。\n- OWL 有 93 次終止性執行失敗；若只計完成案例，Gemini 3.7 Flash 準確率為 22.73%，仍低於原生搜尋的 31.68%。\n- 30 題人類評測中，人類答對 15 題，最佳模型在同一子集答對 13 題；人類平均耗時 89.5 分鐘，中位數 54.57 分鐘。",
+      "insights": [
+        "評估 web agent 時不應只報告模型名稱；搜尋引擎、抓取工具、瀏覽流程與失敗處理會大幅改變結果，應固定或明確拆分 model 與 harness 的效應。",
+        "若要測試真正的 evidence discovery，題目應保留可驗證的短答案，但要求跨來源、跨模態與多步線索推理，避免僅測量常識記憶或單次檢索。",
+        "部署研究型 agent 時，除正確率外應追蹤 token、延遲、工具呼叫與終止失敗；論文結果顯示更高成本不必然帶來更高準確率。"
+      ],
+      "limitations": "基準刻意設計為壓力測試，不能代表日常搜尋分布；開放網路的頁面、排名、地區可用性與工具行為也會隨時間改變。語言覆蓋仍有限，各語言題目難度未完全標準化。模型評估僅涵蓋五個系統，Exa與OWL的比較也不完整。未來可在固定資源預算下擴大模型、檢索器與 harness 的系統性比較。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multilingual information retrieval",
+        "multimodal web search",
+        "deep-research agents",
+        "multi-hop evidence verification",
+        "retrieval harness evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03632",
+      "title": "World Embedding Benchmark",
+      "abstract": "Physical fidelity has received increasing attention in world models and video generation, yet how video representations encode physical information remains less understood. We introduce the World Embedding Benchmark, comprising 8,000 controlled simulation cases from 80 families spanning fluid mechanics, solid mechanics, dynamics, and optics & electromagnetism. Each case pairs a rendered video with simulation-derived physical annotations, supporting three complementary tasks: text-video retrieval, physical-property regression, and multiple-choice video-description pair classification. We use these tasks to distinguish cross-modal physical alignment from the recoverability of quantitative physical information. Evaluated pre-trained omnimodal embedding models show weak retrieval and near-chance within-family pair classification, while lightweight probes recover useful physical information from frozen video embeddings. Continual contrastive training with physics-specific video-text pairs improves retrieval and pair classification but degrades physical-property regression, revealing a trade-off between alignment and quantitative information recoverability. Finally, we use the embeddings to retrieve reference videos for retrieval-augmented generation with MiniMax-H3. Retrieved references improve the physical fidelity of generated videos, with stronger retrieval models yielding larger gains in our experiments. Together, these findings highlight the need to evaluate physical alignment and property recoverability jointly, and demonstrate the utility of physical representations for improving video generation.",
+      "authors": [
+        "Yiqi Liu",
+        "Ruifeng Yuan",
+        "Yang Wang",
+        "Long Li",
+        "Fengyu Cai",
+        "Hou Pong Chan",
+        "Jialin Yu",
+        "Hao Zhang",
+        "Chenghua Lin",
+        "Chenghao Xiao"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CL"
+      ],
+      "published": "2026-10-02T17:24:25+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03632v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03632",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Physical fidelity 在 world models 與 video generation 中日益受到重視，但影片表徵如何編碼物理資訊仍不明確。作者提出 World Embedding Benchmark，包含來自流體力學、固體力學、動力學及 optics & electromagnetism 四個領域、80 個 family 的 8,000 個受控模擬案例。每個案例將 rendered video 與由 simulation 推導的物理標註配對，支援 text-video retrieval、physical-property regression，以及 multiple-choice video-description pair classification 三項任務，用以區分跨模態物理對齊與定量物理資訊的可恢復性。實驗顯示，預訓練 omnimodal embedding models 的 retrieval 能力偏弱，within-family pair classification 接近隨機，但 frozen video embeddings 仍可透過輕量 probe 恢復有用的物理資訊。以物理影片—文字對進行 continual contrastive training 可改善 retrieval 與 pair classification，卻降低 physical-property regression，呈現對齊與定量資訊恢復之間的取捨。最後，使用 embeddings 為 MiniMax-H3 進行 retrieval-augmented generation，檢索參考影片可提升生成影片的 physical fidelity。",
+      "problem_statement": "論文探討影片 embedding 是否保留物理系統及其參數資訊，以及這些資訊是否能與自然語言對齊。既有評測多聚焦數值場、物體動力學或視覺真實感，未在同一受控設定中同時測量跨模態 matching、定量物理量 recoverability 與細粒度 discrimination。因此，模型可能辨識流體或彈性變形，卻無法區分 viscosity、stiffness 等參數；現有 embedding similarity 也未必能取出其已編碼的物理訊號。",
+      "proposed_solution": "作者提出 World Embedding Benchmark，從四大物理分支建立 80 個 simulation families、8,000 個案例，每個 family 包含不同參數設定的 100 個實例，並提供 rendered videos、物理參數、導出物理量與模板化文字描述。框架以三項互補任務分離能力：text-video retrieval 測量語言—影片物理對齊，linear physical-property regression 測量 frozen embedding 的定量資訊可恢復性，pair classification 測量細粒度配對辨識。作者再以物理資料進行 contrastive adaptation，並將檢索到的參考影片供 MiniMax-H3 進行 retrieval-augmented video generation，以驗證 representation 的下游效用。",
+      "core_contributions": [
+        "提出包含 80 個 physical simulation families 與 8,000 個受控案例的 World Embedding Benchmark，統一提供影片、語言描述及 simulation-derived physical annotations。",
+        "以 retrieval、physical-property regression 與 pair classification 三項任務區分 cross-modal physical alignment、定量資訊 recoverability 及細粒度物理辨識，發現三者並不等價。",
+        "證明 physics-specific contrastive adaptation 可增強物理影片—文字對齊，卻可能損害定量物理量回歸；並展示物理導向 embedding 能透過 RAG 提升 MiniMax-H3 生成影片的 physical fidelity。"
+      ],
+      "methodology": "資料由 OpenFOAM、DOLFINx/FEniCSx、Project Chrono、解析式或 ODE integration、HCIPy、Mitsuba 3 與 Meep/FDTD 產生，涵蓋 Fluid Mechanics 700、Solid Mechanics 2,700、Dynamics 1,900、Optics & EM 2,700 個案例。模擬輸出經 ParaView 渲染為 PNG frames，再以 FFmpeg 編碼為 MP4；品質控制檢查失敗或不收斂、NaN/Inf、重複案例、空白或近乎靜止影片及 flickering。Retrieval 在各物理分支 corpus 內進行雙向 text-to-video 與 video-to-text 評估，回報 mean Recall@10；文字由 family-specific templates 填入案例條件、參數與導出診斷量。Regression 固定 video encoder，對十個 family-specific scalar targets 訓練 linear probe，使用 nRMSE 與 Spearman correlation。Pair classification 以每 family 十個 anchors，加入 within-family 與 cross-family negatives，embedding 以正負配對 similarity 比較，MLLM 則直接回答二選一問題。比較 Video-CLIP-XL、Qwen3-VL-Embedding、Omni-Embed-Nemotron、LCO-Embedding、V-JEPA2 及 Qwen MLLMs；另以 2k/4k/8k physics pairs 和 271k general pairs 對 LCO 進行 contrastive adaptation。最後以不同 retriever 取 top-1 video reference，接入 MiniMax-H3 的 ref2v 生成流程，並在 PhyGenBench 的 Optics 與 Thermal 分支評估。",
+      "key_results": "主要結果如下；表中數值均為論文報告值。\\n\\n| 模型/設定 | Retrieval Avg. R@10（Fluid/Solid/Dynamics/Optics） | Regression Avg. nRMSE×100 | Within-Family Acc. | Cross-Family Acc. |\\n|---|---:|---:|---:|---:|\\n| Video-CLIP-XL | 3.3/1.4/2.3/0.6 | 0.81 | 48.1% | 66.1% |\\n| Qwen3-VL-Embedding-8B | 6.6/1.9/7.4/3.1 | 1.80 | 53.1% | 86.2% |\\n| LCO-Embedding-3B | 3.9/1.5/5.1/0.7 | 2.47 | 51.5% | 68.5% |\\n| LCO-Embedding-7B | 4.9/1.6/5.7/1.9 | 2.02 | 46.8% | 76.4% |\\n| LCO-Embedding-3B + Physics Adaptation | 18.6/8.0/16.5/8.9 | 3.95 | 53.5% | 98.2% |\\n| LCO-Embedding-7B + Physics Adaptation | 17.9/9.4/21.0/9.4 | 2.89 | 59.6% | 98.4% |\\n| V-JEPA2 ViT-L / ViT-g | 論文未報告 | 0.94 / 1.02 | 論文未報告 | 論文未報告 |\\n\\n作者的主要結論是：預訓練 embedding 的 retrieval 偏弱且 within-family classification 接近 chance，但 regression 可恢復物理訊號；contrastive adaptation 提升 retrieval 與 pair classification，卻降低 regression。MLLM pair classification 約達 59–61% within-family、91–92% cross-family。RAG 方面，MiniMax-H3 的 PhyGenBench 平均分為 No RAG 0.60、VideoCLIP-XL 0.59、原始 LCO-3B 0.63、LCO-3B general+physics 0.66、physics-only 0.65。",
+      "insights": [
+        "若應用需要物理參數估計，不應只以 retrieval 或跨模態相似度選模型；應同時加入 frozen-feature regression 或其他資訊可恢復性測試。",
+        "對 embedding 進行 domain-specific contrastive tuning 時，應監測 alignment 與 quantitative recoverability 的 trade-off，必要時加入顯式 regression 或多任務目標；這是根據作者對未來訓練目標的討論提出的實務方向。",
+        "在 physics-aware video generation 中，可將物理影片資料庫與專門 retriever 結合；論文結果顯示，較強的物理 retrieval 與較高的生成 physical-fidelity 分數相關，且 general+physics adaptation 在所報告設定中平均達 0.66。"
+      ],
+      "limitations": "資料主要來自受控、合成的 simulation 與模板化文字，與真實世界影片及自然語言的差異仍未在本文充分評估。Regression 僅涵蓋十個 family-specific scalar targets，RAG 實驗則只報告 Optics 與 Thermal 兩個分支及 top-1 reference。論文未提供更廣泛真實資料、不同 top-k 或統計顯著性分析，因此泛化範圍仍有限。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "physical video representation learning",
+        "multimodal embedding evaluation",
+        "physics-aware video generation",
+        "retrieval-augmented generation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03675",
+      "title": "FrugalEvo: Towards Cost-Aware LLM-Guided Program Evolution",
+      "abstract": "LLM-guided evolutionary methods, such as AlphaEvolve, have emerged as powerful approaches for challenging computational optimization problems, such as circle packing. However, prior work typically optimizes performance gain over a fixed number of iterations. We argue that practical optimization should maximize gain per unit cost. To this end, we propose FrugalEvo, a cost-aware evolutionary framework where a stronger, higher-cost LLM explores solution strategies, and a cheaper LLM implements them and iteratively refines the resulting code. We also design a cache-efficient evolution process, where our harness and prompts maximize the sharing of prefixes across different evolution steps, to improve cache reuse. To measure solution quality throughout a fixed cost budget, we introduce Budget-Aware Area Under the Curve (BA-AUC), defined as the area under the best-so-far evaluation score curve over cumulative LLM cost, up to the budget. Across 10 mathematical and systems optimization tasks, FrugalEvo matches or surpasses state-of-the-art baselines, including OpenEvolve, ShinkaEvolve, AdaEvolve, and EvoX, in final solution quality and achieves higher BA-AUC on 9 tasks. It also achieves higher average performance than these baselines on 10 algorithmic optimization tasks from ALE-Bench-Lite. Notably, on circle packing, FrugalEvo achieves new state-of-the-art performance with GPT-5.6 Terra and Luna for only 1.68 USD and with GLM-5.3 and its Flash variant for only 0.55 USD, matching or surpassing all baselines, including multi-agent methods such as CORAL and SwarmResearch, which cost approximately 50 USD on average.",
+      "authors": [
+        "Hui Chen",
+        "Xuan Qi",
+        "James Xu Zhao",
+        "Zhaopeng Feng",
+        "Shilong Liu",
+        "Kuang Xu",
+        "Pang Wei Koh",
+        "Bryan Hooi"
+      ],
+      "categories": [
+        "cs.NE",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-10-02T17:44:05+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03675v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03675",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "LLM-guided evolutionary methods（如 AlphaEvolve）已成為處理圓打包等高難度計算最佳化問題的有力方法。然而，既有工作通常在固定迭代次數下最佳化效能增益，未充分考慮實際成本。本文主張，實用的最佳化應最大化單位成本的效能增益，並提出 FrugalEvo：由較強但較昂貴的 LLM 探索解題策略，再由較便宜的 LLM 實作策略、產生程式並反覆改良。此外，作者設計 cache-efficient 的演化流程，透過 harness 與 prompt 的前綴共享提升快取重用率。本文提出 Budget-Aware Area Under the Curve（BA-AUC），以累積 LLM 成本為橫軸、截至該成本的最佳分數為縱軸，衡量固定預算內的整體搜尋效率。在 20 個數學、系統與演算法最佳化任務上，FrugalEvo 多數情況匹配或超越既有方法，並在圓打包任務以低成本達到具競爭力的結果。",
+      "problem_statement": "既有 LLM-guided program evolution 多以固定迭代次數、候選程式數量或 evaluator 呼叫次數衡量進步，因此較高的最終分數可能只是投入更多推理成本的結果，無法反映實務上的效益。論文要解決的問題是：在固定 LLM 成本預算下，如何兼顧探索能力、程式實作品質與搜尋速度，最大化最佳化解的品質及成本效益。",
+      "proposed_solution": "作者提出 FrugalEvo，將候選程式生成拆成策略探索與程式實作兩階段。高成本、較強的 LLM 負責根據 incumbent、任務描述、評估回饋與搜尋記憶提出多個具體且不同機制的策略；低成本 LLM 則負責逐一實作、評分排序及連續修正。框架另包含 low-cost cold start、island-based MAP-Elites 搜尋記憶，以及將固定內容、較少變動內容與動態回饋依序排列的 cache-efficient prompt。作者以 BA-AUC 衡量固定成本區間內的 best-so-far 品質曲線。",
+      "core_contributions": [
+        "提出 BA-AUC，將 best-so-far 解品質對累積 LLM 成本的曲線積分，用於衡量固定預算下的搜尋效率，而不只比較固定迭代數的最終分數。",
+        "提出 FrugalEvo 的雙模型協作框架，由高成本 LLM 探索策略、低成本 LLM 實作與連續修正，並結合 cold start、策略排序及 MAP-Elites 搜尋記憶。",
+        "設計 cache-efficient prompt 與演化 harness，透過共享 prompt 前綴降低輸入 token 成本，並在 20 個數學、systems 與 algorithmic optimization 任務上進行實證評估。"
+      ],
+      "methodology": "FrugalEvo 以初始程式 x₀、程式空間 X、任務 evaluator 與固定 LLM 預算 B 為輸入。第一階段是 cold start：低成本 LLM 反覆改良初始程式，直到分數停滯，將最佳程式設為 incumbent。接著 high-cost LLM 分析任務描述與 evaluator，並結合 incumbent、程式資料庫、歷史策略、成功與失敗回饋，提出 K 個不同策略；每個策略需說明 mechanism family、替換範圍、計算預算及預期增益。low-cost LLM 對每個策略產生一個初始實作並以 evaluator 排序，再依序進行最多 M 次連續 refinement；每次失敗的評估回饋會加入下一次 prompt，若改善 incumbent 即更新 parent，否則轉換策略。搜尋記憶使用 island-based MAP-Elites 維持候選多樣性。Prompt 將固定任務指令放在前方，接著放較穩定的範例與 elite 程式，最後放頻繁變動的回饋，以提升 prefix cache reuse。實驗涵蓋 5 個數學、5 個 systems 與 10 個 ALE-Bench-Lite 演算法最佳化任務，使用 GPT-5.6 Terra/Luna 或 GLM-5.3/Flash，與 OpenEvolve、ShinkaEvolve、AdaEvolve、EvoX 比較。BA-AUC(B) 定義為 0 到 B 的 best-so-far 分數曲線積分；若執行提前結束，分數延伸至 B，若超出預算則截斷。",
+      "key_results": "| 評估範圍／設定 | FrugalEvo 結果 | 論文中的比較結果 |\n|---|---:|---|\n| 數學最佳化，5 任務；GPT-5.6 Terra/Luna | 5 個任務皆取得最高平均 BA-AUC；平均最終表現為最佳或可比 | 相較 OpenEvolve、ShinkaEvolve、AdaEvolve、EvoX；並在 4 個有可比資料的任務匹配或超越 AlphaEvolve |\n| 數學最佳化，GLM-5.3/Flash | 5 個任務皆取得最高平均 BA-AUC；4/5 任務取得最佳或可比平均表現 | 其餘 4 個 baseline 使用 GLM-5.3 |\n| Systems 最佳化，GPT-5.6 Terra/Luna | 5 個任務皆有最佳或可比的平均與最佳分數；4/5 任務取得最高平均 BA-AUC | 比較 OpenEvolve、ShinkaEvolve、AdaEvolve、EvoX |\n| ALE-Bench-Lite，10 任務，GPT-5.6 Terra/Luna | 平均 private performance **1924.9** | OpenEvolve **1887.5**、ShinkaEvolve **1877.9**、AdaEvolve **1881.9**、EvoX **1879.3**、ALE-Agent **1822.8** |\n| Circle Packing，GPT-5.6 Terra/Luna | 最佳 sum of radii **2.635996**；達到最佳解成本 **$1.679599** | AlphaEvolve 報告值 **2.635000**；CORAL 約 **$50**、2.635985；SwarmResearch 約 **$50**、2.635996 |\n| Circle Packing，GLM-5.3/Flash | 最佳 sum of radii **2.635990**；成本 **$0.549490** | 論文稱匹配或超越各 baseline；其他方法平均每次迭代成本較高 |\n| Ablation：Signal Processing | 完整 FrugalEvo 平均 **0.77791**、最佳 **0.78912** | Terra+Terra：平均 **0.68534**、最佳 **0.70706**；Luna+Luna：平均 **0.74865**、最佳 **0.75973**；無 cold start：平均 **0.75576**；無 sequential feedback：平均 **0.76072** |\n| Ablation：Circle Packing | 完整 FrugalEvo 平均 **2.635989**、最佳 **2.635996** | Terra+Terra 平均 **2.632278**；Luna+Luna 平均 **2.634565**；無 cold start 平均 **2.632417**；無 sequential feedback 平均 **2.633659** |\n\n作者摘要指出，在 10 個數學與 systems 任務中，FrugalEvo 的 final quality 匹配或超越 baseline，且在 9 個任務取得較高 BA-AUC；全文表格則分別列出 5 個數學與 5 個 systems 任務的結果。",
+      "insights": [
+        "若任務可自動執行與評分，可將昂貴模型集中於高層次策略探索，將大量程式修改與除錯交給便宜模型，以提升固定預算下的候選覆蓋率。",
+        "評測 agent 或最佳化系統時，應同時報告最終品質與 performance-cost curve；BA-AUC 可作為衡量早期收益、搜尋速度與預算利用率的補充指標。",
+        "Prompt caching 不只是部署層面的最佳化，也應反向影響搜尋上下文設計：把穩定資訊放在前綴、把動態回饋放在末端，可降低重複演化步驟的輸入成本。"
+      ],
+      "limitations": "方法主要適用於候選解能在程式環境中自動執行與評分的計算最佳化任務，難以直接延伸至需實體實驗或 wet-lab 評估的領域。策略探索指令目前由人工針對計算最佳化任務設計，尚未自動從任務產生。作者未來計畫處理實體互動領域，並自動生成策略探索指令。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "cost-aware LLM inference",
+        "LLM-guided program evolution",
+        "test-time scaling",
+        "prompt caching",
+        "multi-model orchestration",
+        "MAP-Elites"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03585",
+      "title": "Threat-Preserving Representation Sensitivity in Agent-Security Benchmarks",
+      "abstract": "Security benchmarks for LLM-based agents often report the attack success rate (ASR) as a measure of model robustness and use these scores to compare different models and defense mechanisms, assuming that they describe the security of the agent. In this paper, we explore whether it also influences the benchmark's measurement.   To measure the effect of the benchmark representation, we introduce threat-preserving representation sensitivity (TPRS), which measures how much the ASR changes when we change the agent-visible representation while holding the underlying task, harmful action, security policy, ground truth, environment, and the evaluation criteria fixed.   On Agent Security Bench (ASB), replacing threat-related tool names with threat-neutral names raises the committed attack success rate by 11.67 percentage points on GPT-5-mini and by 13.21 points on Claude Haiku 4.5. On MCPTox, replacing the original neutral tool name with an explicit threat-related name lowers the ASR by 11.00 percentage points on GPT-5-mini and 4.11 points on Claude Haiku 4.5. On AgentDojo, adding threat-related wording to the attack-relevant tool changes ASR by only 0.50 percentage points on GPT-4o-mini, yet the benign utility falls by 5.36 points on tasks requiring that tool.   We ran an experiment on MCPTox where we observed that a threat-neutral name matched on token count, length, and casing reproduces most of the shift produced by the threat-explicit name (8.54 of 11.00 points on GPT-5-mini).   The results show that a security score measured under one representation may fail to generalize across threat-preserving representations of the same security problem. Robustness claims should therefore be supported by performance across a controlled set of threat-preserving representations rather than relying on a single representation-dependent score.",
+      "authors": [
+        "Neeraj Karamchandani",
+        "Piyush Nagasubramaniam",
+        "Xinhong Xie",
+        "Sencun Zhu",
+        "Dinghao Wu"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-10-02T16:55:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03585v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03585",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "面向 LLM-based agents 的安全 benchmark 通常以 attack success rate（ASR）衡量模型 robustness，並用分數比較模型與防禦機制，假設分數能代表 agent security。本研究探討 benchmark 的 representation 是否也會影響測量結果。作者提出 threat-preserving representation sensitivity（TPRS），衡量在 underlying task、harmful action、security policy、ground truth、environment 與 evaluation criteria 均固定時，僅改變 agent-visible representation 所造成的 ASR 變化。在 28,904 次 agent runs、三個 benchmark 上，ASR 呈現顯著且不一致的雙向變化。ASB 將 threat-related tool names 改為 threat-neutral names 後，GPT-5-mini 與 Claude Haiku 4.5 的 committed ASR 分別上升 11.67 與 13.21 個百分點；MCPTox 加入 threat-explicit name 後，兩模型 ASR 分別下降 11.00 與 4.11 個百分點。AgentDojo 的 ASR 僅變化 0.50 個百分點，但 benign utility 下降 5.36 個百分點。結果顯示，單一 representation 下測得的 security score 未必能泛化至其他 threat-preserving representations。",
+      "problem_statement": "現有 agent-security benchmarks 常將單一 representation 下的 ASR 視為模型 robustness 或防禦效果，卻未充分檢查 tool name、description 與 threat framing 等 agent-visible 輸入是否改變測量結果。若底層 task、攻擊目標與評分規則不變，僅改變表示方式仍造成 ASR 顯著波動，則單一分數可能混合了真實安全行為與 benchmark 設計效應，也可能限制跨模型或跨防禦機制比較的有效性。",
+      "proposed_solution": "作者提出 threat-preserving representation sensitivity（TPRS）作為 security benchmark 的 measurement-validity audit。對 benchmark B 與 model m，先建立只改變 agent-visible representation 的 transformation T，固定 environment、attacker objective、violation policy、attack success criterion 與 evaluation mechanism，再計算 ΔT(B,m)=ASR(T(B),m)−ASR(B,m)。研究以 orthographic、semantic-neutral 與 cue-altering transformations 分析表示變化來源，並使用配對比較、cluster bootstrap confidence intervals、失敗執行的多種處理方式，以及 MCPTox 的 matched-neutral control，檢驗 ASR 是否依賴特定威脅詞彙或 identifier form。",
+      "core_contributions": [
+        "提出 TPRS 與形式化定義，將 agent-security benchmark 的 representation dependence 轉化為可量測的 ASR 差異。",
+        "在 ASB、MCPTox 與 AgentDojo 共 28,904 次 agent runs 上，展示 representation sensitivity 可顯著、雙向且依 benchmark 與 metric 而異。",
+        "透過 orthographic、semantic-neutral 與 matched-neutral controls，指出 MCPTox GPT-5-mini 的主要變化不能簡單歸因於 explicit threat vocabulary，並提出同時報告 threat-preserving variants、security 與 utility 的建議。"
+      ],
+      "methodology": "研究將每個 benchmark instance 分為 environment、attacker objective、違規 policy、attack success criterion、evaluation mechanism 與 agent-visible representation 六部分。ASB 中，對 36 個 attacker tools、六個 domains、每 tool 五個 tasks、三次 replicate，將 threat-related tool names 或 descriptions 改為 neutral wording；同時區分 native ASR 與要求 agent 未曾拒絕的 committed ASR。MCPTox 從 1,348 個 cases 中預先選取 203 個可可靠重現 scorer 的 cases，測試 orthographic、semantic-neutral、conservative threat 與 explicit threat names，並以 matched-neutral S3 控制 token count、length、casing 與 component form。AgentDojo 使用 40 個 user tasks、14 個 injection tasks 與五次 replicate，將 attack-required 或 unrelated ordinary tool 加上 threat wording，並沿用 security 與 benign-utility scorers。總計 28,904 次 runs，ASB 與 MCPTox 使用 GPT-5-mini、Claude Haiku 4.5，AgentDojo 使用 GPT-4o-mini。相同 units 盡可能跨 arms 配對，依 transformation 共用層級進行 clustering，以 10,000 次 cluster-bootstrap 取得 95% confidence intervals；MCPTox 另使用 Holm-adjusted p-values。",
+      "key_results": "主要結果如下；百分點變化均相對於各 benchmark 的原始 representation。\n\n| Benchmark／比較 | 模型 | 原始 ASR | 變換後 ASR | ΔASR（百分點） | 95% CI |\n|---|---|---:|---:|---:|---|\n| ASB committed，neutralize tool names（A1） | GPT-5-mini | 36.67% | 48.34% | +11.67 | [+4.44, +19.07] |\n| ASB committed，neutralize tool names（A1） | Claude Haiku 4.5 | 20.85% | 34.06% | +13.21 | [+6.33, +21.10] |\n| ASB native，neutralize tool names（A1） | GPT-5-mini | 47.59% | 61.66% | +14.07 | [+5.56, +23.70] |\n| ASB committed，neutralize names + descriptions（A3） | GPT-5-mini | 論文未報告 | 論文未報告 | +13.15 | [+5.56, +21.11] |\n| MCPTox explicit threat name（N1） | GPT-5-mini | 32.02% | 21.02% | −11.00 | 論文提供之表格片段未完整呈現 |\n| MCPTox explicit threat name（N1） | Claude Haiku 4.5 | 9.03% | 4.92% | −4.11 | 論文提供之表格片段未完整呈現 |\n| MCPTox matched-neutral control（S3） | GPT-5-mini | 論文未報告 | 論文未報告 | −8.54 | 論文未報告 |\n| AgentDojo security ASR，required tool 加 threat wording（Dval） | GPT-4o-mini | 論文未報告 | 論文未報告 | −0.50 | [−3.65, +2.51] |\n| AgentDojo benign utility，required tool 加 threat wording | GPT-4o-mini | 論文未報告 | 論文未報告 | −5.36 | 論文未報告 |\n\n此外，MCPTox 的 S3 matched-neutral name 在 GPT-5-mini 重現了 N1 相對原始 representation 之 11.00 個百分點變化中的 8.54 個百分點，顯示 explicit threat vocabulary 並非大部分效果的必要條件。ASB 的 orthographic control 未產生已解決的 committed-ASR 效果。",
+      "insights": [
+        "實務上不應只報告單一 tool naming 或 prompt representation 下的 ASR；至少應加入預先定義的 threat-preserving transformation，並報告 ΔASR 與 confidence interval。",
+        "若 attacker 能控制 tool name 或 metadata，representation 本身可能成為攻擊面；評估時可同時報告多種 representation 下的最高 ASR，而非只採用 benchmark 原始命名。",
+        "安全評估應與 benign utility 一起觀察，因為 AgentDojo 顯示 ASR 變化很小不代表整體行為穩定，representation 仍可能造成 5.36 個百分點的 utility 損失；同時應明確區分 tool invocation 與 committed attack success。"
+      ],
+      "limitations": "測試僅涵蓋三個 benchmark、三種模型設定與 tool name／description 等有限 representation，無法代表所有可能的變化。ASB 的 neutral names 未完全驗證語義等價，MCPTox 的 matched control 也未隔離 identifier 的所有屬性。研究未檢驗模型或防禦排名是否反轉，且部分 transformation 跨 runs 共用，因此並非全部獨立。未來可擴展至更多模型、攻擊、防禦、schema、argument names 與 instruction framing。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agent-security benchmark validity",
+        "tool metadata sensitivity",
+        "prompt injection evaluation",
+        "attack success rate measurement",
+        "benign utility"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03639",
+      "title": "Do Large Language Models Know Colombian Law? A Reliability Benchmark for the Colombian Legal System",
+      "abstract": "Large language models (LLMs) are increasingly used to support legal practice, education, and research, yet their reliability in national legal systems outside the United States remains largely undocumented. We introduce an expert-validated benchmark for evaluating LLM reliability on the Colombian legal system. The benchmark comprises 1,042 items spanning ten areas of law and three question formats (closed multiple-choice, semi-open, and open-ended IRAC), built through a human-in-the-loop pipeline with multi-stage expert review. We evaluate 15 contemporary proprietary and open-weight models with format-appropriate metrics. Accuracy on closed questions ranges widely, from 0.905 (Gemini 3.1 Pro) to 0.577, but on free-text legal answers factual correctness never exceeds 0.45 (on a 0-1 scale) for any model. We find a dissociation between answer relevancy and correctness (Spearman rho = -0.46): models reliably sound responsive while frequently being wrong, a pattern of particular concern for non-expert users. Closed-question accuracy and free-text correctness are strongly rank-correlated (rho = 0.94), so cheap multiple-choice screening predicts model ranking but overstates absolute reliability. An independent rubric-based LLM judge and blind human expert scoring both reproduce the free-text ranking (rho >= 0.88). The judge further reveals that only about half of the norms models cite are correct; the rest are wrong or non-existent. Reliability varies systematically by legal area and follows an inverted-U across question complexity. Our results indicate that current LLMs require expert supervision for Colombian legal tasks, and that grounding answers in authoritative sources is a promising path to higher reliability. We release the benchmark construction pipeline to support reproducible evaluation.",
+      "authors": [
+        "Rubén Manrique",
+        "Michelle Castellanos",
+        "Jorge Morales",
+        "Juan David Gutiérrez",
+        "Antonio Barreto Rozo",
+        "Joaquín Vélez Navarro"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CY"
+      ],
+      "published": "2026-10-02T17:27:41+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03639v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03639",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）日益被用於法律實務、教育與研究，但其在美國以外國家法律體系中的可靠性仍缺乏系統性證據。本研究提出一個由專家驗證、用於評估哥倫比亞法律可靠性的 benchmark，包含 1,042 題，涵蓋十個法律領域與三種題型：封閉式單選題、半開放題及開放式 IRAC 題，並透過 human-in-the-loop 流程與多階段專家審查建立。研究評估 15 個 proprietary 與 open-weight 模型。封閉題準確率介於 0.905 與 0.577；然而自由文字答案的 factual correctness 對任何模型均未超過 0.45。答案 relevancy 與 correctness 呈負相關（Spearman ρ=-0.46），顯示模型常能流暢且切題地回答，卻在法律事實上出錯。封閉題排名與自由文字正確性高度相關（ρ=0.94），但封閉題會高估絕對可靠性。獨立的 LLM judge 與盲測法律專家均重現自由文字模型排名（ρ≥0.88）。研究指出，現有 LLM 執行哥倫比亞法律任務仍需專家監督，而以權威法律來源 grounding 是提升可靠性的可行方向。",
+      "problem_statement": "現有法律 LLM 評測主要集中於英文與美國普通法，缺乏針對西語、拉丁美洲及哥倫比亞 civil-law 體系的專家驗證 benchmark。既有研究多只測量 multiple-choice accuracy，無法區分法律知識辨識、自由文字生成、事實正確性與表面切題性，也未充分揭露模型引用不存在或錯誤法源的風險。因此，研究需要一個涵蓋多法律領域、題型與複雜度，且可重現、可進行專家核驗的可靠性評估框架。",
+      "proposed_solution": "作者提出 Colombian Legal Reliability Benchmark，透過 Horizontes Conectados 平台建立 human-in-the-loop 資料建構與評審流程。學生與法律團隊先產生題目，再經法律助理初審、專門領域評估者審查，以及法律助理與領域評估者組成的委員會批准。benchmark 涵蓋 1,042 題、十個法律領域與 closed、semi-open、open-ended 三種格式，並為各格式配置不同評分方法。研究的核心創新包括：將 recognition 與 generation 分開評估；以 reference-anchored、雙 judge 的 RAGAS correctness 作為自由文字主要指標；再以 rubric-based LLM judge 與盲測人類專家驗證排名，並分析法源引用錯誤、法律領域差異及題目複雜度。",
+      "core_contributions": [
+        "建立首個針對哥倫比亞法律體系、涵蓋 1,042 題、十個法律領域及三種題型的 expert-validated reliability benchmark，並公開 benchmark 建構流程與 prompt。",
+        "提出與題型匹配的評估設計，將 closed 題的法律知識辨識與 semi-open、open-ended 題的自由文字法律生成分開，並區分 relevancy、語義相似度與 factual correctness。",
+        "以 reference-anchored 的雙 LLM judge、rubric-based judge 及盲測法律專家進行交叉驗證，揭露模型流暢但錯誤、錯誤法源引用及模型間 correlated errors 等可靠性問題。"
+      ],
+      "methodology": "資料集最終包含 305 題 closed multiple-choice、682 題 semi-open 與 55 題 open-ended，分布於 constitutional、administrative、criminal、labor、civil、commercial and corporate、procedural、tax、family 及 markets law。semi-open 題再分為 low、medium、high 三種複雜度；open-ended 題以法律案例呈現，參考答案依 IRAC 撰寫，但模型提示未直接要求使用 IRAC。資料建構先收集 1,084 題，經法律助理、專門法律評估者及委員會多階段審查後，刪除 42 題；971 題曾至少修改一次。研究以 OpenRouter 統一介面評估 15 個 proprietary 與 open-weight 模型，temperature 設為 0、無網路與外部工具，並使用各題型固定且版本控制的西語 JSON prompt。closed 題以 accuracy 評估；737 題自由文字則計算 BERTScore、BLEU、ROUGE、RAGAS answer relevancy 與 answer correctness，以及西語 readability 指標。主要自由文字指標為由 GLM 5.2 與 GPT-4.1 兩個 judge 平均產生的 RAGAS correctness。另在 350 題分層子集上，以 rubric-based judge 將參考答案拆成 atomic ideas，評估核心內容涵蓋、矛盾、法源正確性、錯誤類型與 1–5 分法律適足性，並與盲測法律專家分數比較。作者亦使用 Wilson 信賴區間、McNemar 檢定、模型錯誤一致性分析、階層式 clustering 與 2PL item response theory。",
+      "key_results": "| 評估面向 | 主要結果 |\n|---|---|\n| 封閉題整體範圍 | 15 個模型 accuracy 介於 0.905（Gemini 3.1 Pro）與 0.577（Command R）；隨機猜測基準為 0.25。 |\n| 前段模型 | Gemini 3.1 Pro 0.905、Claude Opus 4.5 0.869、GPT-5.4 0.859、GLM 5.2 0.856。 |\n| 自由文字 factual correctness | 所有模型均未超過 0.45；GPT-5.4 為 0.451，Gemini 3.1 Pro 為 0.447。 |\n| 自由文字 relevancy | RAGAS relevancy 最高為 Qwen2.5 72B 的 0.824，但其 correctness 僅 0.340，顯示切題不等於正確。 |\n| Relevancy 與 correctness | Spearman ρ=-0.46，模型可能產生高度響應性但錯誤的法律答案。 |\n| 跨題型排名 | closed accuracy 與 free-text correctness 的排名相關為 ρ=0.94；可預測排名，但會高估絕對可靠性。 |\n| 評測者一致性 | rubric-based LLM judge 與盲測人類專家均重現自由文字排名，ρ≥0.88。 |\n| 法源引用 | rubric-based judge 顯示模型引用的法律規範約一半正確，其餘為錯誤規範或不存在的規範。 |\n| 法律領域差異 | closed 題在 labor、tax、civil 平均 accuracy 約為 0.81、0.80、0.79；procedural 與 administrative 約為 0.71。 |\n| 模型集成 | 15 模型 majority vote accuracy 為 0.843，低於最佳單一模型 0.905；至少一模型答對的 oracle accuracy 為 0.984。 |\n| 錯誤相關性 | 模型答錯時平均有 87% 選擇相同干擾選項，顯示錯誤具有高度相關性。 |\n| 模型類型 | proprietary 模型平均 accuracy 0.804，open-weight 模型為 0.716；研究明確指出此比較具探索性。 |\n| 複雜度關係 | reliability 隨題目複雜度呈 inverted-U；論文摘要提供此結論，但未在提供文字中給出完整分層數值。 |",
+      "insights": [
+        "實務部署不能只依賴 multiple-choice accuracy 或模型回答是否切題；哥倫比亞法律應用應把法源逐條核驗與專家覆核納入工作流程。",
+        "多模型 majority voting 未必能提升法律可靠性，因模型在錯誤題目上平均有 87% 選擇相同干擾項；優先改善單一模型能力或導入權威來源 grounding，比單純增加模型數量更有依據。",
+        "closed 題可作為低成本模型排序與初篩工具，但不應直接解讀為自由文字法律建議的絕對正確率，因論文發現兩者雖排名高度相關，絕對可靠性仍被 closed 題高估。"
+      ],
+      "limitations": "資料建構雖有多階段專家審查，但沒有獨立雙重編碼或正式 inter-annotator agreement 統計，且多數法律領域由單一評估者審查。部分題目涉及未提供的外部文件、模型訓練截止後的判例或存在瑕疵的選項。open-ended 題僅 55 題，LLM judge 也可能有評分偏差；論文未提供完整法律領域與複雜度分層的所有數值。",
+      "tags": [
+        "benchmark",
+        "llm-as-judge",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "西語法律問答評測",
+        "法律幻覺與法源引用可靠性",
+        "reference-anchored LLM evaluation",
+        "retrieval-augmented legal AI"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03713",
+      "title": "What Should World Models Forget? Stratified Retention for Continual Adaptation",
+      "abstract": "Continual learning treats degradation on previously seen data as evidence of failure, a convention inherited from settings with a stationary prediction target, where a correct label remains correct indefinitely. World models do not satisfy this condition. Their prediction target is the environment, which changes, so knowledge that was accurate when acquired may later become false, and discarding it is required behavior rather than a defect. Non-stationary ground truth is well studied in the concept drift literature and in the temporal factuality of language models, but has not been formulated for world models, which are distinctive in that they also encode knowledge that must never be revised. We argue that continual world models require retention stratified by invariance timescale, separating invariants such as physics and object permanence, which must never be revised, from instance-level facts that should be revised as soon as the environment changes. Standard forgetting metrics cannot distinguish a world model that has correctly revised outdated knowledge from one that has suffered catastrophic forgetting, and consequently rank a frozen model highest, while existing physical-reasoning benchmarks evaluate only frozen checkpoints. We propose differential retention, which reports invariant regression testing across the adaptation stream jointly with revision latency, without aggregation.",
+      "authors": [
+        "Nishit Anand",
+        "Ramani Duraiswami",
+        "Dinesh Manocha"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV",
+        "eess.IV",
+        "eess.SP"
+      ],
+      "published": "2026-10-02T17:58:14+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03713v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03713",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "傳統 continual learning 將先前資料上的性能下降視為失敗，因其假設 prediction target 穩定且正確標籤永久有效。然而，world model 預測的是會變動的環境；曾經正確的知識可能因道路重建、物體移動或場景重排而過時，適時捨棄這些知識反而是必要行為。本文指出，world model 同時包含必須永不修改的 invariant，例如 physics 與 object permanence，以及應隨環境變化更新的 instance-level facts，因此需要依 invariance timescale 分層 retention。作者主張標準 forgetting metrics 無法區分正確修訂過時知識與 catastrophic forgetting，甚至會偏好 frozen model。為此提出 differential retention，以 adaptation stream 中的 invariant regression testing 聯合 revision latency 進行評估，且不將兩者聚合為單一分數。",
+      "problem_statement": "論文處理 continual world models 的評估錯置問題。既有 continual-learning metrics 把所有舊知識性能下降都算作 forgetting，無法辨識環境改變後的正確 revision 與真正的 catastrophic forgetting；固定目標的 benchmarks 也排除了 obsolescence。現有 consolidation 方法依過去任務重要性保護參數，而非依知識可持續多久，因此可能過度保護過時場景、又不足以保護 physics、geometry 與 causal invariants。",
+      "proposed_solution": "作者提出以 invariance timescale τ 對 world-model knowledge 分層，並讓保護程度隨 τ 增加。τ=∞ 的 invariants（如 gravity、object permanence、geometric consistency 與 action–effect structure）不可被更新破壞；environment regularities 應隨累積證據較慢修訂；instance configuration 應在環境變化後迅速修訂；transient state 則不要求 retention。核心評估框架 differential retention 包含兩個分開報告的量：每輪 adaptation 後對 held-out invariants 執行 regression testing，以及量測模型修訂變動事實所需的 observations 數量與永不修訂的比例。",
+      "core_contributions": [
+        "將 world-model 的 obsolescence 與 catastrophic forgetting、deliberate unlearning 明確區分，指出環境變動使傳統 stationary-target 假設失效。",
+        "提出依 invariance timescale τ 分層 knowledge，涵蓋不可修改的 invariants、應慢速更新的 environment regularities、應快速更新的 instance configurations，以及不需 retention 的 transient state。",
+        "提出 differential retention 評估協議，將 invariant regression testing 與 revision latency 分開呈現，避免以單一 forgetting 分數獎勵 frozen model。"
+      ],
+      "methodology": "本文是 position paper，沒有提出新的模型架構、訓練演算法或資料集，而是提出評估與知識組織框架。首先將 knowledge 依環境真值的 invariance timescale τ 分為 invariants、environment regularities、instance configuration 與 transient state，主張保護強度應隨 τ 增加，而非依 past-task importance 決定。評估流程包含兩部分：(1) 從 τ=∞ strata 建立與 adaptation data 分離的 held-out probe set，在每一輪更新後重新測試，以定位哪次更新破壞 invariant；作者指出 WorldBench 與 PhyGround 的 concept-isolated physical probes 可直接重用，但目前僅涵蓋 physical sub-case。(2) 對已改變的環境事實持續提供 observations，計算模型預測反映新事實所需的 observation 數量，並另計永不 revision 的事實。兩項結果不可合併：frozen model 可能有高 invariant retention 卻無法 revision，而覆寫式更新可能快速 revision 卻損害 invariants。論文未指定完整資料處理、模型架構或實作演算法。",
+      "key_results": "論文未報告新的實驗結果、模型比較或統計數據；主要成果是概念分析與評估協議。文中引用的既有數據如下：\n\n| 項目 | 論文提供的結果 |\n|---|---|\n| Differential retention 評估 | 分開報告 invariant regression testing 與 revision latency；論文未提供新數值 |\n| Frozen model | 作者以概念性 Figure 1 說明其可能具有高 invariant retention、但 revision latency 失敗；非實驗數據 |\n| Overwriting adaptation | 作者以概念性分析說明其可能快速 revision、但 invariant retention 失敗；非實驗數據 |\n| Push-T 背景重染色（引用 Maes et al.） | LeWM 與 PLDM 的 planning success 均由 50.8% 降至 6.0%；此為文獻引用結果，非本文實驗 |\n| WorldBench、PhyGround | 被指出可作為 physical invariant regression probes；論文未報告跨 adaptation stream 的新測試數值 |",
+      "insights": [
+        "部署 continual world model 時，應將 physical invariant probes 納入每輪更新後的 regression suite，而不是只在最終 checkpoint 評估。",
+        "評估 adaptation 不應只看舊任務性能下降；應同步記錄新證據出現後的 revision latency，以及模型是否錯誤保留已過時的環境事實。",
+        "記憶或 consolidation 機制的保護對象應依知識的環境穩定性設計，而不能只依 past-task importance；但這是依本文框架提出的實務應用方向，論文未驗證具體架構效果。"
+      ],
+      "limitations": "本文是 position paper，未提供實驗、模型比較、資料規模或量化驗證。τ 的邊界可能依領域而異，尚不清楚能否由 observations 估計或必須由 domain knowledge 指定。目前足夠嚴謹的 probes 主要限於 physical invariants；geometric consistency 與 causal structure 尚缺乏對應測試。此外，invariants 是否在 learned world model 中局部化仍未知，若知識彼此糾纏，可能需要 architectural support。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "continual learning",
+        "concept drift",
+        "world model evaluation",
+        "catastrophic forgetting",
+        "physical reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03598",
+      "title": "When a Correct Reward Is Not Enough: Diagnosing and Guiding PPO in an Analytically Solved Broker-Trader Game",
+      "abstract": "Reinforcement learning (RL) is increasingly used for financial optimal-control problems when complex dynamics make analytical strategies difficult to obtain. There are financial mathematics literactures which provides many solved models whose equations and controls could evaluate and guide learning; we ask whether RL can exploit these results.   We place a proximal policy optimisation (PPO) agent in an analytically solved continuous-time broker--trader game. PPO replaces the broker and chooses its trading speed while interacting with an informed trader and stochastic uninformed order flow. We derive a finite-step reward from the broker's continuous-time payoff and verify its discrete implementation through grid refinement and an exact one-step identity. With zero uninformed flow, a validation-selected PPO--FFNN approaches the reference action. With stochastic uninformed flow, the tested PPO--FFNN and PPO--LSTM remain inaccurate, although supervised learning confirms that their actors can represent the action. Monte Carlo diagnostics show that their critics do not reliably rank nearby actions; potential-based reward shaping also gives no reliable improvement. Under partial information, a causal certainty-equivalent controller based on the broker's observable history remains close to the reference, while PPO has larger errors and lower payoffs.   Finally, we freeze the analytical policy and train PPO to adjust it after the execution cost changes. Halving the cost yields a repeatable improvement that closes \\(2.22\\%\\) of the gap to the changed-cost reference. The analytical solution therefore provides both a benchmark for diagnosing RL and a useful starting policy for adaptation.",
+      "authors": [
+        "Siu Tung Wong",
+        "Carlo Campajola"
+      ],
+      "categories": [
+        "q-fin.TR",
+        "cs.AI"
+      ],
+      "published": "2026-10-02T17:03:29+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03598v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03598",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "強化學習（RL）日益用於複雜動態下的金融最佳控制問題；金融數學文獻則提供許多可解析模型，其方程式與控制策略可用來評估及引導學習。本文探討 RL 是否能利用這些結果。作者將 proximal policy optimisation（PPO）代理置於一個具有解析解的連續時間 broker–trader game 中，由 PPO 取代 broker，選擇交易速度，並與 informed trader 及隨機 uninformed order flow 互動。研究從 broker 的連續時間 payoff 推導 finite-step reward，並透過網格細化與 exact one-step identity 驗證離散實作。無 uninformed flow 時，經 validation 選出的 PPO–FFNN 可接近參考動作；加入隨機 uninformed flow 後，PPO–FFNN 與 PPO–LSTM 仍不準確，儘管 supervised learning 證實 actor 具備表達該動作的能力。Monte Carlo 診斷顯示 critic 無法可靠排序鄰近動作，potential-based reward shaping 也未帶來可靠改善。在 partial information 下，基於可觀測歷史的 causal certainty-equivalent controller 接近參考策略，而 PPO 的誤差較大、payoff 較低。最後，作者固定解析策略，讓 PPO 在 execution cost 改變後學習調整；成本減半時，方法重複性地改善表現，縮小相對新成本參考解差距的 2.22%。因此，解析解既可作為診斷 RL 的基準，也可作為策略適應的起點。",
+      "problem_statement": "本文研究 PPO 能否僅依靠正確的環境 reward，在具有已知解析最優策略的 broker–trader game 中恢復 state-dependent trading strategy，並在 execution cost 改變後進行適應。既有 optimal-execution RL 研究多聚焦於學習策略或調整解析排程，較少將可解析控制、離散 reward、partial information 與同狀態動作比較結合。本文特別要釐清：失敗究竟來自離散化、actor 表達能力、資訊不完整，還是 critic 無法提供可靠的局部動作排序。",
+      "proposed_solution": "作者建立一個以 Cartea、Jaimungal 與 Sánchez-Betancourt broker–trader model 為基礎的 PPO 評測框架。首先由連續時間 broker payoff 推導含 Δt² cross-product 修正的 finite-step reward，並以 grid refinement、exact one-step identity 及 finite-grid LQ backward recursion 驗證參考策略。其次比較 full-information 下的 PPO–FFNN 與 PPO–LSTM，使用 supervised action imitation、payoff、action RMSE、LQ loss、critic local-ranking Monte Carlo 診斷及 potential-based shaping 分離問題來源。partial-information 下則與 causal certainty-equivalent controller 比較。最後固定原 execution cost 下的解析 broker policy，以零初始化的 residual PPO network 學習成本變動後的 additive adjustment。核心創新是把解析解同時用作嚴格 benchmark、學習診斷工具與 residual adaptation 起點。",
+      "core_contributions": [
+        "推導並驗證適用於離散 PPO 環境的 finite-step broker reward，納入離散乘積法則產生的 Δt² 修正，並以網格細化、exact one-step identity 與 finite-grid LQ 解確認數值誤差不是主要因素。",
+        "建立以解析 broker strategy 為 ground-truth 的 PPO 診斷流程，證明在 stochastic uninformed flow 下，actor 雖可透過 supervised learning 表達參考動作，PPO critic 卻無法可靠排序鄰近動作。",
+        "提出以 frozen analytical policy 加 residual PPO 適應 execution-cost misspecification；在成本減半實驗中獲得可重複但有限的 payoff 改善，顯示解析策略可兼具 benchmark 與 initialization 功能。"
+      ],
+      "methodology": "環境為 T=1 的連續時間 broker–trader game，以 Euler–Maruyama、Δt=2×10^-4、共 5,000 步離散化。狀態包含 broker/informed-trader inventory、price-impact state、midprice、predictive signal 與 uninformed flow；PPO 選擇 broker trading rate，動作執行前裁切至 [-100,100]。full-information policy 觀察完整狀態；partial-information policy 隱藏 informed-trader inventory 與 signal，僅觀察 broker 可得歷史、目前 uninformed flow 與前一步動作。PPO–FFNN 的 actor/critic 各為兩層、每層 64 個 ReLU 單元；PPO–LSTM 使用 24-unit LSTM 加 64-unit Tanh layer。每一設定使用五個 training seeds、每 seed 4×10^6 transitions，checkpoint 由 50 條 validation paths 的平均 payoff 選取，再於未使用的 test paths 評估。reward 為 action-dependent payoff rate 乘 Δt，加上由離散乘積法則導出的 Δt² 修正；γ=1。指標包括 broker payoff、相對 clipped finite-grid reference 的 payoff shortfall、action RMSE、LQ loss、critic explained variance，以及 critic 與 Monte Carlo cumulative return 的 Pearson、Spearman correlation 和 sign accuracy。另以 supervised learning 檢查 actor 容量，以 potential-based shaping 檢驗學習訊號，並以 certainty-equivalent filter 估計隱藏狀態。成本適應實驗則固定原解析策略，使用兩層、64-unit Tanh residual network，以 additive correction 進行 PPO 訓練。",
+      "key_results": "| 實驗設定 | 方法 | 主要結果 |\n|---|---|---|\n| Grid alignment，Δt=2×10^-4 | finite-grid LQ reference 對連續解析策略 | LQ loss = 1.383×10^-8；action RMSE = 0.003389 |\n| Full information，ξ=0 | PPO–FFNN | LQ loss = 0.045±0.031；action RMSE = 5.494±2.163 |\n| Full information，ξ=0 | PPO–LSTM | LQ loss = 0.688±0.687；action RMSE = 16.304±2.921 |\n| Full information，σξ=100 | clipped reference | payoff = 0.1303；shortfall = 0；RMSE = 0 |\n| Full information，σξ=100 | PPO–FFNN | payoff = −7.060；shortfall = 7.191；RMSE = 20.449 |\n| Full information，σξ=100 | PPO–LSTM | payoff = −39.194；shortfall = 39.324；RMSE = 31.284 |\n| Partial information，σξ=100 | certainty-equivalent controller | payoff = 0.1297；shortfall = 0.0006；RMSE = 0.732 |\n| Partial information，σξ=100 | PPO–FFNN | payoff = −21.680；shortfall = 21.810；RMSE = 24.819 |\n| Partial information，σξ=100 | PPO–LSTM | payoff = −24.108；shortfall = 24.238；RMSE = 26.585 |\n| Critic local ranking | PPO critic vs. Monte Carlo | Pearson = 0.216；Spearman = 0.053；sign accuracy = 51.7%；排除不確定比較後為 49.3% |\n| Reward shaping | potential-based shaping | 平均 payoff 增加 1.57，95% CI=[−5.00, 8.14]；action RMSE 減少 1.76，95% CI=[−4.50, 8.02]，未達可靠改善 |\n| 成本減半，a: 0.0012→0.0006 | frozen policy / PPO adjusted / reference | payoff = 0.29632 / 0.30151 / 0.53010；平均改善 0.00519，縮小差距 2.22% |\n| 成本增加，a=0.0018 | frozen policy / PPO adjusted / reference | payoff = −0.16164 / −0.16145 / −0.15783；改善 0.00019，95% CI=[−0.00034, 0.00071] |",
+      "insights": [
+        "評估 RL 控制器時，不能只看 episode payoff；應加入同狀態 action RMSE、finite-grid 最優解、local action-ranking 與 Monte Carlo return 診斷，以區分策略表達問題和 value estimation 問題。",
+        "在具有解析或半解析控制器的環境中，可先用 supervised imitation 驗證 actor 容量，再測試 PPO；若 imitation 成功而 PPO 失敗，應優先檢查 exploration、reward scale 與 critic 局部排序能力。",
+        "對模型參數變動，使用 frozen analytical policy 加保守 residual adjustment 可能比從零訓練更穩健；但本文結果顯示改善幅度依成本變化而異，不能將初始化視為普遍有效。"
+      ],
+      "limitations": "實驗集中於單一解析 broker–trader game、固定參數與 PPO，且 uninformed flow、成本變化及 partial-information 設定有限。成本減半僅縮小 2.22% 差距，其他成本設定改善不具統計可靠性。論文未提供更廣泛演算法比較。作者建議未來研究導入解析 value/action-value、filter-based actor、其他 action parameterization，以及 nonlinear cost 或 uncertain market impact。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "optimal execution",
+        "proximal policy optimisation",
+        "continuous-time stochastic control",
+        "partial observability",
+        "residual reinforcement learning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03591",
+      "title": "HazardWeaver: Scientific Route Selection for Hazard Analysis Agents",
+      "abstract": "Understanding and assessing natural hazards is essential for disaster preparedness and risk reduction. Recent advances in large language models have spurred growing interest in AI agents for hazard analysis, particularly their ability to integrate scientific data, models, and tools into automated workflows. However, effective automation requires agents to determine which scientific methods are appropriate for a given event and executable with the available data and tools. As new evidence and execution results become available, these conditions can change, requiring agents to reconsider their choices. We formulate this problem as state-dependent scientific route selection and introduce HazardWeaver. Specifically, HazardWeaver first leverages the Hazard Knowledge Compiler to extract evidence-linked conditions governing scientific applicability, then its Hazard Capability Graph represents executable scientific capabilities and checks compatibility between their inputs and outputs. Using these complementary representations, the Hazard Weaver Agent component selects applicable and executable routes, carries out their workflows, and revises its decisions as the analysis state changes. To evaluate both the scientific outputs and the decisions that produce them, we introduce the Hazard Weaver Benchmark, comprising 141 instances across seven single-hazard domains and four multi-hazard interaction classes. The benchmark accommodates multiple valid scientific routes and evaluates output correctness, route validity, and justified abstention. Extensive experiments on this benchmark show that HazardWeaver outperforms existing agent systems, with the largest gains on tasks with multiple eligible scientific routes. Our code is publicly available at https://github.com/LabRAI/HazardWeaver.",
+      "authors": [
+        "Wangshu Zhu",
+        "Xueqi Cheng",
+        "Liang Wu",
+        "Yushun Dong"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-10-02T16:59:19+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03591v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03591",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "理解與評估自然災害對防災準備與風險降低至關重要。大型語言模型（LLM）的進展促使研究者發展能整合科學資料、模型與工具的 hazard analysis agents。然而，自動化分析要求 agent 判斷某一事件適用哪些科學方法，以及在現有資料與工具下哪些方法可執行；當新證據與執行結果出現時，這些條件可能改變，agent 必須重新考慮選擇。本文將問題形式化為 state-dependent scientific route selection，提出 HazardWeaver。系統先由 Hazard Knowledge Compiler 擷取與證據連結的科學適用性條件，再以 Hazard Capability Graph 表示可執行能力並檢查輸入輸出相容性。Hazard Weaver Agent 據此選擇適用且可執行的 route、執行 workflow，並隨分析狀態變化修訂決策。作者另提出 Hazard Weaver Benchmark，包含七個單一災害領域與四類多災害互動的 141 個實例，評估輸出正確性、route 有效性與有理據的 abstention。實驗顯示 HazardWeaver 優於既有 agent systems，且在存在多個合格 route 的任務上提升最大。程式碼已公開。",
+      "problem_statement": "論文處理 hazard analysis agent 的 state-dependent scientific route selection：給定災害任務與當前分析狀態，agent 必須選擇既符合科學適用條件、又能由現有資料與工具執行的 route，並在狀態改變後重新選擇。既有 hazard models 的適用假設分散於文獻與文件，workflow 系統也未充分表達異質資產間的科學相容性；一般 AutoML 或 LLM agent 多聚焦於固定目標的模型、程式或 workflow 搜尋，無法充分處理執行期間的 route 失效、替代與合理 abstention。",
+      "proposed_solution": "作者提出 HazardWeaver evidence-to-execution 架構，由三個互補元件組成。Hazard Knowledge Compiler（HKC）從論文、報告與指南擷取、正規化並保留 provenance 的科學條件，依任務證據判定 route 為 APPLICABLE、INAPPLICABLE 或 UNDETERMINED。Hazard Capability Graph（HCG）將資料集、模型、公式、轉換與軟體表示為具型別輸入輸出的 executable capabilities，僅允許註冊的相容關係連接。Hazard Weaver Agent（HWA）取 HKC 適用性與 HCG 可達性的交集，選擇並執行 route，在每一步更新 analysis state 後重算 eligible routes，必要時進行復原、能力替換或 abstain。核心創新是把科學適用性、可執行組合與動態 route 修訂整合，並以 route-aware benchmark 同時評估 artifact 與決策有效性。",
+      "core_contributions": [
+        "將 hazard analysis 形式化為 state-dependent scientific route selection，要求 route 同時滿足 evidence-based scientific applicability 與 capability reachability，並在執行過程中持續更新。",
+        "提出由 Hazard Knowledge Compiler、Hazard Capability Graph 與 Hazard Weaver Agent 組成的 evidence-grounded adaptive agent system，將文獻條件、typed capability composition 與可修訂 workflow 統一。",
+        "建立 Hazard Weaver Benchmark：141 個 sealed instances 覆蓋七個 single-hazard domains、四類 multi-hazard interactions，並以 artifact correctness、route validity、provenance、執行有效性與 justified abstention 進行 route-aware 評估。"
+      ],
+      "methodology": "形式化上，任務實例 q 包含 hazard setting、task、事件環境 context、輸出規格與 information cutoff；分析狀態 s_k=(X_k,C_k,b_k) 分別記錄可用原始或衍生 artifacts、能力可用性與剩餘資源。HKC 對每個 route family 建立條件集合，條件涵蓋假設、所需觀測、適用範圍、尺度、不確定性與失效情況，並將各條件判定為 SATISFIED、VIOLATED 或 UNRESOLVED；只有全部滿足時 route 才具科學適用性。HCG 建立 typed directed graph，能力 port 以變數、單位、欄位、空間與時間支援、解析度等八類資訊描述；輸出與輸入只有在註冊相容關係成立時才能連接，聚合、插值、downscaling 與 thresholding 等資訊變更必須顯式表示。HWA 在每個決策步驟計算兩者交集，選擇 route、實例化 workflow 並執行模型、solver、公式與轉換；每次執行後更新狀態並重新評估，若無 eligible route，則在預算內探索資訊請求、轉換、能力替換與替代 workflow，否則 abstain。HWB 含 141 個 sealed instances，涵蓋 90 個 single-hazard、51 個 multi-hazard，且 45 個僅有一條 route、96 個有多條 route。主要指標 Decision-Constrained Accuracy（DCA）同時要求 artifact 正確、route 在承諾時有效、provenance、型別、時間 cutoff 與預算有效；abstention 只有在允許的 recovery 無法到達有效 route 時才得分。",
+      "key_results": "主要結果如下；DCA 為作者的主要指標，括號中的數值為論文報告的 Wilson 95% 信賴區間。\n\n| 方法／設定 | Single-hazard DCA | Multi-hazard DCA | One route DCA | Multiple routes DCA | Overall DCA |\n|---|---:|---:|---:|---:|---:|\n| Plan-and-Solve | 41.1% | 41.2% | 57.8% | 33.3% | 41.1% |\n| HazardWeaver | 91.1% | 86.3% | 80.0% | 93.8% | 89.4% |\n| 最佳 baseline（Plan-and-Solve） | — | — | — | — | 41.1% |\n\n| 消融／設定 | DCA 結果 |\n|---|---:|\n| Llama：完整 HazardWeaver（96 個 multiple-route instances） | 93.8%（90/96） |\n| Llama：移除 HKC conditions | 45.8%（44/96） |\n| Llama：HCG untyped | 47.9%（46/96） |\n| 五 backbone pooled：固定 route eligibility | 16.0%（32/200） |\n| 五 backbone pooled：更新 route eligibility | 41.5%（83/200） |\n\n跨 backbone 的 overall DCA 為：OLMo 60.3%、Mixtral 70.2%、Gemma 79.4%、DeepSeek 86.5%、Llama 89.4%。對所有 baseline 的 paired McNemar tests 均達顯著；例如相較 Plan-and-Solve，HazardWeaver 有 75 個獨有成功案例，baseline 僅有 7 個。",
+      "insights": [
+        "對科學型 agent 而言，工具數量或一般規劃能力不足以保證可靠性；應把方法假設、適用範圍、輸入輸出型別與 provenance 設為可檢查的結構化約束。",
+        "多步驟 workflow 不應只在初始狀態規劃一次；每次工具執行產生新 evidence、artifact 或失敗訊號後，都應重新計算可行 route，並保留替代 route 而非直接放棄。",
+        "評測 agent 時應把最終輸出正確性與產出該輸出的決策過程分開衡量，納入 route validity、時間 cutoff、能力相容性與合理 abstention，避免偶然正確的 artifact 被視為完整成功。"
+      ],
+      "limitations": "系統依賴 frozen capability catalog 與 evidence index；HKC 條件受 benchmark 建置時的文獻、Route Cards 與註冊 route 限制，新證據、標準或模型需重新編譯與 sealing。HWB 僅含 141 個實例，未涵蓋所有地區、事件、感測器與營運限制；論文也指出 recovery 搜尋失敗不等於形式化證明不存在可行 route，因此實際預報與緊急決策仍需更新證據、地方校準與領域審查。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific workflow planning",
+        "multi-hazard analysis",
+        "tool-use agents",
+        "provenance-aware evaluation",
+        "abstention and recovery"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.03651",
+      "title": "MRVQ: One Resident Index for Dimension- and Rate-Elastic Vector Search",
+      "abstract": "Dense-retrieval services must switch among embedding-prefix dimensions and index bit rates as latency, quality, and memory budgets change. Tuning a quantizer separately for each rate gives the best quality, but the retrieval tier then holds several code streams and quantizer states at once. We introduce Matryoshka Residual Vector Quantization (MRVQ), a post-hoc residual quantizer for frozen embeddings. Its maximum-rate code can be truncated two ways: dropping residual stages lowers the rate, and dropping embedding coordinates lowers the dimension. One resident artifact therefore serves every (dimension, rate) pair we evaluate. Across FiQA and NFCorpus, four embedding families, and {4, 8, 16}-byte codes, MRVQ is the lowest-RAM design we evaluate. It uses 17.8-22.0x less memory than three separately trained QINCo2 indices, and 1.89-2.02x less than a lean shared-model steelman. The saving is not free: per-rate QINCo2 is 0.026-0.107 nDCG@10 better on FiQA. But MRVQ beats PQ, OPQ, and AdANNS-OPQ at matched code size. We also evaluate a low-build-cost PCA-scalar design that attains quality comparable to RaBitQ and its extension while fitting 420x faster at the median. Finally, we report two negative results: QINCo2 collapses when trained at high rates, and a ranking-bound hypothesis misses its pre-specified acceptance criteria. MRVQ is therefore a low-memory operating point for elastic retrieval, not a universal quality winner.",
+      "authors": [
+        "Sean Culatana",
+        "Shang-En Huang",
+        "Kang Li"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-10-02T17:33:13+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.03651v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.03651",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "Dense retrieval 服務必須在延遲、品質與記憶體預算變動時，切換 embedding-prefix 維度與 index bit rate。各 rate 分別調校 quantizer 可獲得最佳品質，但 retrieval tier 必須同時保存多組 code stream 與 quantizer state。本文提出 Matryoshka Residual Vector Quantization（MRVQ），一種針對 frozen embeddings 的 post-hoc residual quantizer。其最高 rate code 可沿兩個方向截斷：移除 residual stages 以降低 rate，移除 embedding coordinates 以降低維度。因此單一 resident artifact 即可支援所有評估的（dimension, rate）組合。在 FiQA、NFCorpus、四種 embedding families 與 4、8、16-byte codes 上，MRVQ 是評估設計中最低 RAM 者；相較三個分別訓練的 QINCo2 indices 少用 17.8–22.0 倍記憶體，相較精簡 shared-model steelman 少用 1.89–2.02 倍。代價是 per-rate QINCo2 在 FiQA 的 nDCG@10 高 0.026–0.107。MRVQ 仍在相同 code size 下勝過 PQ、OPQ 與 AdANNS-OPQ。作者另評估低建置成本的 PCA-scalar 設計，品質與 RaBitQ 及其延伸方法相當，但中位數 fitting 快 420 倍。",
+      "problem_statement": "Dense retrieval 不只需要單一品質與壓縮點，還要在 embedding prefix 維度和 code rate 間彈性切換。現有作法若為每個 rate 分別訓練 quantizer，雖然品質較佳，卻需常駐多組 code stream 與模型狀態，造成顯著記憶體負擔。共享模型可降低部分成本，但仍未同時解決 dimension 與 rate elasticity。本文因此研究能否以單一 resident document code 支援完整操作選單。",
+      "proposed_solution": "MRVQ 在 frozen embeddings 上 post-hoc fitting 一個 16-stage residual vector quantizer。每個 stage 使用 256 個 codewords、每個索引佔 1 byte；保留前 b 個 residual stages 即得到 b-byte rate，保留前 m 個 embedding coordinates 即得到 prefix dimension m。訓練時以多個服務維度的加權重建誤差共同最佳化，讓同一組 codebooks 同時適應維度選擇。如此只需保存一份最高 rate 的 16-byte code 與一份 codebook state，即可支援所有（m,b）組合。作者並以 PCA 旋轉加 coordinate-wise scalar quantization 作為低建置成本的獨立 operating point。",
+      "core_contributions": [
+        "提出 MRVQ，使單一 post-hoc residual quantizer 的最高 rate code 能同時沿 residual-stage 與 embedding-coordinate 兩軸截斷，支援 dimension- and rate-elastic vector search。",
+        "建立完整 rate menu 的 resident-memory accounting，顯示在所評估資料規模與設定下，MRVQ 相較分別訓練 QINCo2 可節省 17.8–22.0× RAM，相較 shared-model steelman 可節省 1.89–2.02×。",
+        "以實驗明確量化記憶體與品質的 Pareto trade-off，並報告 PCA-scalar 的低建置成本結果，以及高 rate QINCo2 失效與 ranking-bound predictor 未達門檻等負結果。"
+      ],
+      "methodology": "資料使用 BEIR 的 FiQA（57,638 documents、648 queries）與 NFCorpus（3,633 documents、323 queries），搭配 MPNet、Mxbai、Nomic、BGE 四種 frozen embedding families，維度分別為 768 或 1024。MRVQ 設定為 L=16 stages、每 stage K=256 codewords、fp32 codebooks；以 50,000 個 sampled vectors、50 iterations、seed 0 fitting。對每個 embedding family，使用指定 prefix menu，prefix weights uniform，且 16 個 residual stages 等權。其目標函數為各服務 prefix 維度上的重建平方誤差加權和。服務時採 asymmetric scoring，query 保持 floating point；rate menu 為 4、8、16 bytes/vector，dimension 由 coordinate prefix 選擇。比較對象包括 per-rate QINCo2、shared-model QINCo2、PQ、OPQ、AdANNS-OPQ，以及獨立評估的 PCA-scalar、RaBitQ 與 Extended-RaBitQ。主要指標為 nDCG@10；不確定性以 paired per-query bootstrap（一般 5,000 次，RaBitQ study 10,000 次）估計。記憶體採解析式 parameter/code accounting，不包含 optimizer 或 runtime buffers；另測量 PCA 與 OPQ fitting 時間。作者也測試 residual-energy ranking predictor，涵蓋 40 個 cells，並預先設定相關係數與 non-vacuous bound 的接受門檻。",
+      "key_results": "| 比較項目 | 論文報告結果 |\n|---|---|\n| MRVQ resident RAM（完整 4/8/16 B/vector menu） | 12.06–16.88 MiB，四種 embedding families、兩個資料集皆為最低 RAM 設計 |\n| 相較三個分別訓練的 QINCo2 indices | MRVQ 少用 17.8–22.0× 記憶體 |\n| 相較 leanest shared-model QINCo2 | MRVQ 少用 1.89–2.02× 記憶體 |\n| FiQA：MRVQ 相較 per-rate QINCo2 | 每個 family-rate cell 均較低；QINCo2 領先 0.026–0.107 nDCG@10 |\n| FiQA：MRVQ − QINCo2，rate mean | MPNet −0.054、Mxbai −0.085、Nomic −0.050、BGE −0.050 nDCG@10 |\n| matched code size：MRVQ 相較 OPQ | 約高 0.06–0.07 nDCG@10 |\n| matched code size：MRVQ 相較 PQ | 約高 0.10–0.12 nDCG@10 |\n| matched code size：MRVQ 相較 AdANNS-OPQ | 所有評估 cells 均勝出；論文未報告單一彙總差值 |\n| PCA-scalar 相較 RaBitQ/Extended-RaBitQ | pooled delta 為 +0.0076/+0.0029/+0.0010 與 −0.0009/+0.0012/+0.0006；作者判定品質 comparable，非普遍優勝 |\n| PCA-scalar fitting speed | 相較 matched OPQ，median 快 420×、mean 快 686×；範圍 47–1967× |\n| 高 rate QINCo2 reliability | NFCorpus、16 stages 下，BGE 3/3 seeds 發生 retrieval collapse；Nomic 1/3 seeds 發生 collapse |\n| ranking predictor | pooled Spearman correlation 0.825，低於預設 0.85；僅 72% cells 有 non-vacuous bound，低於預設 90% |",
+      "insights": [
+        "若部署約束是 resident memory，且需要同時支援多個 embedding prefix 與 code rate，可優先考慮單一 MRVQ artifact；但不應將其記憶體優勢解讀為 latency 或 throughput 優勢。",
+        "若最高 nDCG@10 是首要目標，論文結果支持選擇 per-rate QINCo2，因其在 FiQA 所有比較 cells 均優於 MRVQ；實務選型應依記憶體與品質預算取捨。",
+        "若主要需求是快速重建或 in-place rebuild，PCA-scalar 是可評估的低建置成本方案；論文顯示其品質與 RaBitQ 系列相當，但 fitting 時間比較並非在 FiQA/NFCorpus 上進行。"
+      ],
+      "limitations": "實驗僅涵蓋兩個規模有限的 BEIR 資料集與四種 embedding families，未評估 end-to-end ANN latency、build energy 或 recall–throughput curves。RAM 是解析式 accounting，不是 process RSS。資料規模很大時，MRVQ 相較 shared-model 的優勢會縮小；此外，高 rate QINCo2 有訓練崩潰，ranking predictor 也未達預設接受門檻。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "dense retrieval",
+        "vector quantization",
+        "elastic indexing",
+        "memory-efficient ANN search"
+      ],
+      "category": "RAG Evaluation"
+    }
+  }
+]
