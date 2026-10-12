@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Benchmark]` [[[2610.13797] REFLECT - Role-Aware Detection of Sentiment, Emotion, Politeness, and Formality|REFLECT: Role-Aware Detection of Sentiment, Emotio...]] (2026-10-09)
+
 - `[Benchmark]` [[[2607.29459] TFGformer - Multivariate Time Series Forecasting via Time-Frequency Graph Learni...|TFGformer: Multivariate Time Series Forecasting vi...]] (2026-07-31)
 
 ## 延伸閱讀

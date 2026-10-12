@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.13910] When VLMs Destroy What They Know - Spatial Representations Fall Below Lexical Pr...|When VLMs Destroy What They Know: Spatial Represen...]] (2026-10-09)
+
 - `[Hallucination & Faithfulness]` [[[2608.14465] You Only Pass Once - Answering and Abstaining Together in a Single Forward Pass ...|You Only Pass Once: Answering and Abstaining Toget...]] (2026-08-14)
 
 ## 延伸閱讀

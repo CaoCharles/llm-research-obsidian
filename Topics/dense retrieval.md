@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.13889] RATED - Reliability-Aware AI Agent Tool Retrieval via Execution Dynamics|RATED: Reliability-Aware AI Agent Tool Retrieval v...]] (2026-10-09)
+
 - `[RAG Evaluation]` [[[2610.03651] MRVQ - One Resident Index for Dimension- and Rate-Elastic Vector Search|MRVQ: One Resident Index for Dimension- and Rate-E...]] (2026-10-02)
 
 ## 延伸閱讀
