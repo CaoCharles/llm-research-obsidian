@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.23787] DLite - History-free Speculative Decoding for Agentic AI|DLite: History-free Speculative Decoding for Agent...]] (2026-10-16)
+
 - `[Agent Evaluation]` [[[2609.31568] DeepEdu-v1 - Efficient and Scalable Agentic LLMs for Vietnamese Education|DeepEdu-v1: Efficient and Scalable Agentic LLMs fo...]] (2026-09-25)
 
 - `[Agent Evaluation]` [[[2609.02737] Language Models Can Control Their Own Attention|Language Models Can Control Their Own Attention]] (2026-09-02)

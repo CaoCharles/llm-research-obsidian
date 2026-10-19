@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.23787] DLite - History-free Speculative Decoding for Agentic AI|DLite: History-free Speculative Decoding for Agent...]] (2026-10-16)
+
 - `[Agent Evaluation]` [[[2608.26004] AsymSpec - Context-Asymmetric Speculative Decoding for Agentic LLMs|AsymSpec: Context-Asymmetric Speculative Decoding ...]] (2026-08-26)
 
 ## 延伸閱讀

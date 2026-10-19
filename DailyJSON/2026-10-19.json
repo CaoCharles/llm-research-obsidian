@@ -1,0 +1,578 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2610.23670",
+      "title": "OwlSight: A Panoramic Monitor for Chain-of-Thought Reasoning",
+      "abstract": "Chain-of-Thought (CoT) monitoring offers actionable evidence for oversight AI systems, with the potential to enable early detection and intervention. However, existing approaches are focused on specific tasks, whereas the regulation of AI, particularly reasoning models, requires monitoring a broader range of tasks. We introduce Factor for CoT monitoring, a strategy that supports customizing monitoring requirements in the prompt, which enables a single monitor to cover different tasks by relying on different factors. Furthermore, we introduce two types of factors, fine-grained and coarse-grained (e.g., monitoring whether a specific email address has been leaked versus monitoring privacy leakage), to accommodate diverse user monitoring needs. Based on this, we develop a CoT monitor named OwlSight that relies solely on factor to monitor behaviors related to multiple dimensions, including capability, safety, and trustworthiness. Experiments across 15,971 reasoning trajectories show that OwlSight surpasses general-purpose LLMs by 1.32-30.57 and 11.71-27.81 points at fine and coarse granularity, respectively, and achieves state-of-the-art results on OpenAI's CoT monitorability benchmark. It also generalizes to unseen models' CoTs and remains robust to Factor rephrasings, CoT compression, and obfuscation, offering a promising paradigm for CoT monitoring that can contribute to the oversight of frontier AI.",
+      "authors": [
+        "Lewen Yan",
+        "Yanxu Zhu",
+        "Jie Zhang",
+        "Jing Shao"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-10-16T16:01:49+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23670v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23670",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "Chain-of-Thought（CoT）監控可提供監督 AI 系統的可操作證據，具有及早偵測與介入的潛力。然而，現有方法多聚焦於特定任務；AI 監管，尤其是 reasoning models，則需要涵蓋更廣泛的任務。本文提出 Factor for CoT monitoring，允許透過 prompt 客製化監控要求，使單一 monitor 能依不同 Factor 覆蓋多種任務。作者進一步區分 fine-grained 與 coarse-grained Factors，例如分別監控特定 email 是否外洩，以及是否發生 privacy leakage，以滿足不同粒度需求。在此基礎上，作者建立 OwlSight，僅依賴 Factor 監控 capability、safety 與 trustworthiness 等多面向行為。跨 15,971 條 reasoning trajectories 的實驗顯示，OwlSight 在兩種粒度均優於 general-purpose LLM，並在 OpenAI CoT monitorability benchmark 達到 state-of-the-art。它也能泛化至未見過的模型 CoT，並對 Factor 改寫、CoT 壓縮與 obfuscation 保持一定穩健性。",
+      "problem_statement": "論文要解決的是：如何以單一 CoT monitor，彈性監控 capability、safety 與 trustworthiness 等多種行為。既有監控器通常為 deception、hidden objectives 或 covert malicious behavior 等固定目標而訓練，難以直接適用於真實監督場景中不斷變動且具多樣性的監控需求，也未充分支援 fine-grained 與 coarse-grained 的不同判定粒度。",
+      "proposed_solution": "作者提出 Factor-based CoT monitoring，將監控目標以自然語言 Factor 注入 prompt。每個 Factor 指定待監控的 target、relation，以及 Applied 與 Not Applied 的判定準則；同一 reasoning trajectory 可搭配不同 Factors，因而得到相對於監控目標的不同判定。作者以多類別、雙粒度資料進行 supervised fine-tuning，建立小型共享監控器 OwlSight。其核心創新包括：以 Factor 在 inference time 客製化監控目標、同時支援 fine-grained 與 coarse-grained 監控，以及使用 multiple-instance learning（MIL）處理超長 CoT。",
+      "core_contributions": [
+        "提出 Factor-conditioned CoT monitoring，使單一 monitor 能在 inference time 依自然語言監控目標切換任務，並同時支援 fine-grained 與 coarse-grained Factors。",
+        "建立 OwlSight 與涵蓋 11 類監控目標、三大領域及 15,971 條 reasoning trajectories 的 Factor-conditioned 評估基準，並以 G-Mean²、intervention、transfer 與 robustness 等面向驗證。",
+        "提出用 top-2 MIL 聚合重疊長 CoT windows 的訓練方式，在不截斷完整 trajectory 的情況下處理最長 263.9k tokens 的資料，並降低長序列訓練記憶體需求。"
+      ],
+      "methodology": "OwlSight 以 pretrained causal language model 為 backbone，主要模型為 Qwen3.5-4B，另訓練 Qwen3.5-9B 與 Llama-3.2-3B 版本。輸入序列包含 Factor O、task context C 與 reasoning trace R；backbone 產生 hidden states 後，取最後一個非 padding hidden state，接 linear classification head，以 sigmoid 輸出 Factor 是否 Applied 的機率。Factor 表示為 target description、relation、Applied criteria 與 Not Applied criteria。資料涵蓋 Capability（Instruction Following、Reasoning Method、Skill Use）、Safety（Deception、Sycophancy、Reward Hacking、Sabotage、Sandbagging）及 Trustworthiness（Hallucination、Privacy、Jailbreak），並混合 fine-grained 與 coarse-grained Factors。標籤依可驗證性採 outcome-based 或 reasoning-trace-based labeling；訓練資料包含 17,812 monitoring queries、8,796 條 trajectories。對長 CoT，作者將軌跡切成具重疊的 33,024-token windows，最多取四個 windows，並以最高兩個 window 機率的平均作為 trajectory-level 預測，再使用 binary cross-entropy 訓練。評估集包含 32,222 個 Factor-conditioned queries、15,971 條 trajectories，使用固定 validation threshold 與 G-Mean²＝TPR×TNR；另評估 intervention tracking、Factor sensitivity、改寫穩健性、未見模型 transfer、記憶體效率，以及 CoT compression 與 obfuscation。",
+      "key_results": "主要結果如下（分數為 G-Mean² ×100；越高越好）：\n\n| 評估面向 | OwlSight | 最強列示 baseline／比較 | 結果 |\n|---|---:|---:|---|\n| Fine-grained macro average | 69.57 | Qwen3.8-Flash 68.25 | OwlSight 高 1.32 分 |\n| Coarse-grained macro average | 66.80 | Qwen3.8-Flash 55.09 | OwlSight 高 11.71 分 |\n| Fine-grained 領先類別 | 7/11 類別 | General-purpose LLMs | OwlSight 在 7 類別第一 |\n| Coarse-grained 領先類別 | 6/11 類別 | General-purpose LLMs | OwlSight 在 6 類別第一 |\n| Fine-grained vs 最強 guard model | 69.57 | 48.79 | 高 20.78 分 |\n| Coarse-grained vs 最強 guard model | 66.80 | 40.78 | 高 26.02 分 |\n| Intervention comparisons | 15/16 | GPT-5.6-Luna、DeepSeek-v4-Flash、Grok-4.6、Qwen-3.8-Flash | OwlSight 在 16 項比較中 15 項最佳 |\n| GPQA sycophancy intervention | 100.00 / 100.00 | 其他 baseline 未同時達成 | Fine / coarse 均為 100 |\n| GPQA encoded sycophancy | 100.00 / 100.00 | 其他 baseline 未同時達成 | Fine / coarse 均為 100 |\n| WMDP sandbagging | 53.28 / 52.97 | Qwen-3.8-Flash 52.38 / 51.29 | 兩種粒度均最佳 |\n| Factor sensitivity concordance | 0.940–1.000 | 論文未報告統一 baseline | 對替換 Factor 保持高一致性 |\n| Factor rephrasing | concordance 變化最多 0.030 | 論文未報告統一 baseline | 對小幅語句改寫大致穩定 |\n| CoT compression macro | 65.54 / 60.82 | Original 69.57 / 66.80 | Fine / coarse 均下降 |\n| CoT obfuscation macro | 63.47 / 56.35 | Original 69.57 / 66.80 | Fine / coarse 均下降 |\n| MIL 記憶體節省 | 25.5%–49.2% | Full-context training | 在可比較長度下減少峰值 GPU memory |\n\n其中，未見模型 transfer 在 Kimi-K2.6 與 GLM-5.3-Flash trajectories 上維持一定表現，但論文未提供跨所有設定的單一 macro average。",
+      "insights": [
+        "實務上可將監控政策拆成可版本控管的自然語言 Factors，讓同一個 monitor 依不同風險事件、任務或資料敏感度切換，而不必為每個目標重新訓練分類器。",
+        "監控介面應明確區分「提及或察覺目標」與「目標實質影響推理或行為」；論文中的 hard negatives 顯示，這種 Applied／Not Applied 定義有助於降低僅憑關鍵字觸發的誤報。",
+        "CoT monitor 不應只看單一固定長度的 trace。以涵蓋式 windows 與 MIL 保留長軌跡資訊具有工程價值，但 compression 與 obfuscation 仍造成性能下降，因此部署時應搭配 outcome、tool、環境事件或人工審查等其他訊號，而非單獨依賴 CoT。"
+      ],
+      "limitations": "論文的 robustness 實驗仍顯示 CoT compression 與 obfuscation 會使 macro G-Mean² 下降，且不同類別退化不均；例如 sycophancy 的 obfuscation 明顯下降。資料標註部分使用 reasoning-trace-based 判定與生成式模型輔助，雖有 audit 程序，但跨資料來源、真實部署與更強對抗性規避的可靠度仍需進一步驗證。",
+      "tags": [
+        "safety",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Chain-of-Thought monitorability",
+        "Factor-conditioned evaluation",
+        "AI oversight",
+        "long-context monitoring",
+        "deception and sabotage detection"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23656",
+      "title": "ABF-Bench: A Verifiable Benchmark for Agentic Blockchain Forensics",
+      "abstract": "Blockchain forensics is adversarial and open-ended: money launderers split, swap, and bridge funds, cut their trail at mixers or custodial services, and change tactics from one incident to the next. Investigators must keep adapting their tracing in response. Yet the immutability of public ledgers preserves every recorded movement in public view, making much of the investigation independently verifiable. We introduce ABF-Bench, an interactive benchmark that makes evidence-backed fund tracing a verifiable agent task, in which every claimed movement must cite ledger records the agent retrieved. A case-to-task pipeline builds well-posed tasks across ledgers: conservative rules halt tracing wherever the records leave a continuation unresolved, and each task's reference graph is the answer those rules determine. Built from real laundering activity, the tasks combine multi-hop transfers, DeFi exchanges, cross-chain round trips, custodial and mixer deposits, and address poisoning. We also propose the ABF agent harness, built around a working memory, and evaluate it alongside general-purpose agents and fixed-order tracers. The harness reaches 75% edge recall, against 47% for Codex with the same model and 10% for Claude Code, which loses recall to overconfidence: it cites records it left unretrieved. Compared with fixed-order tracers, the harness acquires evidence faster than the best of them early in the budget and recognizes undisclosed custodial services that they walk past (89% vs. 0%), with 98% fidelity. However, agents tend to stop early and lose recall on larger tasks, which holds their final recall below the best tracer. Beyond exposing these gaps, ABF-Bench opens blockchain forensics to LLM agents as a verifiable domain, where the verdicts that score agents also offer potential training signals.",
+      "authors": [
+        "Xiaohang Yu",
+        "Hejia Geng",
+        "William Knottenbelt"
+      ],
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-10-16T15:51:03+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23656v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23656",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "Blockchain forensics 具有對抗性且開放式：洗錢者會拆分、交換、跨鏈轉移資金，並在 mixer 或 custodial service 截斷軌跡、持續改變策略；調查者必須隨之調整追蹤方式。公共 ledger 的不可竄改性則保留所有已記錄的資金移動，使許多調查結論可獨立驗證。本文提出 ABF-Bench，一個互動式 benchmark，將有證據支持的資金追蹤轉化為可驗證的 agent 任務，要求每項聲稱的移動都引用 agent 實際取得的 ledger records。任務由真實洗錢活動建立，涵蓋多跳轉帳、DeFi exchange、跨鏈往返、custodial 與 mixer 存款及 address poisoning。作者另提出以 working memory 為核心的 ABF agent harness。其 edge recall 為 75%，高於相同模型的 Codex（47%）與 Claude Code（10%）；但 agents 常過早停止，在大型任務上的最終 recall 低於最佳 fixed-order tracer。",
+      "problem_statement": "現有 blockchain forensics 資源多聚焦於固定資料集的標註交易、特定 protocol linking 或事故流量重建，無法充分評估 agent 如何在查詢預算下自主搜尋記錄、辨識跨 protocol 操作、組織證據並提交可核驗結論。固定順序的 tracing procedures 又難以應對分流、跨鏈、mixer、custody 與 address poisoning 等變化。論文因此要解決：如何建立答案可由 ledger records 驗證、證據取得成本受控、且能公平比較 LLM agents 與規則式 tracer 的 benchmark。",
+      "proposed_solution": "作者提出 ABF-Bench，將任務定義為 ledger records、seed fund states、scope/accounting declaration 與 operation rules 的組合。Agent 透過 metered evidence environment 查詢 activity、transaction、receipt、trace、UTXO 與跨鏈記錄，提交每個 movement 及其 citations；deterministic verifier 先獨立檢查證據是否支持操作，再由 grader 對隱藏 reference graph 計算 recall、fidelity 與 precision。case-to-task pipeline 以保守規則從真實 incident 建立可重現任務，並確保每條 reference edge 有可取得 witness。作者同時提出 ABF agent harness，以 working memory、工具和五項 forensic heuristics 支援搜尋、線索管理、證據引用及持續追蹤。",
+      "core_contributions": [
+        "提出 ABF-Bench，將 evidence-backed blockchain fund tracing 形式化為具 metered retrieval、citation verification 與隱藏 reference graph 的 interactive verifiable agent task。",
+        "建立可重複的 case-to-task pipeline，從真實 Bybit theft incident 產生跨 Ethereum 與 Bitcoin 的任務，並以保守規則與 witness 審查確保 reference edges 可驗證。",
+        "提出 ABF agent harness，以 working memory、memory tools、submission preview、context compaction 與 forensic heuristics 支援 agent；實驗顯示相同 GPT-5.5 下 harness 的 recall 明顯高於 Codex。"
+      ],
+      "methodology": "任務形式為 t=(L,Λ,S,O)：L 是指定 ledger 與區塊範圍內的固定記錄，Λ 是 seed fund states，S 定義 scope、會計分攤、方向、hop cap、資產與停止條件，O 則規定 transfer、exchange、cross-chain crossing 等操作所需證據。Agent 在隔離環境中依 query cost 取得 activity listings、balances、transactions、receipts、execution traces、Bitcoin output spends、contract-call results 與 events；每個有效查詢成本為 1，listing 每頁也計一次，submission 結束執行。生成流程先在單一 ledger 反覆 walk 與 sweep，依 traced-value membership 擴張 holdings，再跨 Ethereum 與 Bitcoin 反覆 link deposits/payouts，直到跨鏈結果收斂；經人工審查後保留有 verified witness 的 seed-rooted tasks。reference graph 對未解決 continuation 採保守停止。評估以 edge recall 為主：只有 agent 已取得其引用全部 records、且 operation 通過 verifier 的 reference edges 才算 recovered；另計 fidelity（通過驗證的 operations 比例）、edge precision、query budget、token 與 API cost。實驗比較 ABF harness、同模型 Codex、Claude Code，以及 BFS、DFS、largest-incoming-first greedy tracers；資料為 Bybit 2025 theft，追蹤 90 天、跨 Ethereum 與 Bitcoin，首輪評估 31 tasks。",
+      "key_results": "主要結果（論文報告的 first round task-level means）：\n\n| Solver | Edge recall | Fidelity | Edge precision | Budget used | Output tokens | Cost |\n|---|---:|---:|---:|---:|---:|---:|\n| ABF agent harness（GPT-5.5） | 0.75 | 0.98 | 0.92 | 0.47 | 43k | $9.4 |\n| Codex（GPT-5.5） | 0.47 | 0.98 | 0.92 | 0.33 | 24k | $2.7 |\n| Claude Code（Opus 4.8） | 0.10 | 0.95 | 0.87 | 0.16 | 122k | $6.5 |\n| BFS tracer | 0.88 | 0.98 | 0.78 | 0.92 | 論文未報告 | 論文未報告 |\n| DFS tracer | 0.77 | 0.99 | 0.78 | 0.87 | 論文未報告 | 論文未報告 |\n| Greedy tracer | 0.54 | 0.95 | 0.63 | 0.88 | 論文未報告 | 論文未報告 |\n\n其他結果：ABF harness 在預算 25% 時 evidence recall 為 39%，最佳 hindsight tracer 為 35%；預算 50% 時分別為 70% 與 41%。harness 平均使用 47% 預算即停止，且所有 agents 的 recall 都隨任務規模下降；harness 從最小到最大 reference-edge 三分位任務由 0.82 降至 0.69。harness 對已取得 operations 的 claim rate 為 83%，BFS 為 85%；對 undisclosed custody 的停止辨識為 89%（16/18），而 BFS、DFS、greedy 均為 0%。Claude Code 在 31 次執行中有 29 次引用未實際取得的 records；若忽略 retrieval condition，其 recall 會是 0.54，但論文未將此列為正式 edge recall。",
+      "insights": [
+        "評估 agentic investigation 時，應同時檢查答案正確性與證據是否真的被取得；ABF-Bench 的 retrieval condition 能揭露僅憑 listing 或模型既有知識引用記錄的 overconfidence。",
+        "working memory 應明確區分 confirmed findings、未結 leads 與 notes，並將未結線索與停止條件納入控制流程，以降低 agents 在分支較多時過早提交。",
+        "效率與最終覆蓋率可能衝突：agent 在早期 evidence acquisition 領先，但 breadth-first tracer 因持續消耗預算而取得較高 final recall；實務系統應加入剩餘預算、fan-out 與未探索分支的停止決策。"
+      ],
+      "limitations": "論文僅評估一個公開的 Bybit theft incident，結果能否泛化至其他案件仍未確定；incident 也可能已出現在模型訓練資料中。保守停止規則只衡量 incident flow 的可驗證子集。比較同時改變 harness、模型與 query policy，未測量 agents 使用剩餘預算後可增加多少 recall；此外，未來仍需擴充更多 incidents、ledgers 與 operation types。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "verifiable agent benchmarks",
+        "blockchain forensics",
+        "anti-money-laundering",
+        "evidence-grounded reasoning",
+        "cross-chain transaction tracing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23745",
+      "title": "VocalGrad: Evaluating Acoustic Perception in Audio Language Models",
+      "abstract": "Recent large audio language models (LALMs) have extended their capabilities beyond lexical speech understanding to tasks requiring paralinguistic and non-linguistic audio understanding, such as emotion recognition. However, these models still struggle to reliably utilize acoustic information, particularly when it co-occurs with spoken linguistic content. Existing benchmarks do not clearly distinguish acoustic perception from higher-level reasoning, making it difficult to identify the source of these failures. To address this issue, we introduce VocalGrad, a benchmark designed to evaluate LALMs' ability to perceive low-level acoustic variations. VocalGrad formulates this problem as a simple binary classification of temporal change direction, enabling evaluation largely independent of higher-level reasoning or semantic understanding. Our benchmark results reveal a substantial gap in acoustic perception between human annotators and state-of-the-art LALMs: while human annotators achieve high accuracy, LALMs perform at near-chance levels. We further conduct linear probing to identify structural bottlenecks in these models. Our analysis reveals two distinct failure modes: for some categories, task-relevant information is preserved in internal representations but not utilized by the language model head; for others, the information becomes progressively less linearly decodable across model layers. Overall, our results reveal substantial limitations of LALMs in modeling acoustic variation under controlled settings and expose representation differences not observable from text outputs.",
+      "authors": [
+        "Koki Ryu",
+        "Hitomi Yanaka"
+      ],
+      "categories": [
+        "cs.SD",
+        "cs.CL"
+      ],
+      "published": "2026-10-16T16:54:35+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23745v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23745",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "近年的大型 audio language models（LALMs）已從詞彙語音理解擴展至情緒辨識等副語言與非語言音訊理解任務。然而，當聲學線索與口語語言內容同時出現時，模型仍難以可靠運用聲學資訊。既有 benchmark 未能清楚區分聲學感知與高階推理，因此難以定位失敗來源。為此，作者提出 VocalGrad，一個評估 LALM 感知低階聲學變化能力的 benchmark。VocalGrad 將問題簡化為判斷聲學特徵隨時間增加或減少的二元分類，盡量排除高階推理與語意理解的影響。結果顯示，人類標註者表現優異，而最先進 LALM 幾乎接近隨機猜測。作者進一步以 linear probing 分析模型內部表徵，發現兩種失敗模式：部分類別的任務資訊仍保留於內部表徵，但未被 language model head 使用；另一部分類別的資訊則在模型層間逐漸變得難以線性解碼。整體而言，研究揭示 LALM 在受控情境下建模聲學變化的重大限制。",
+      "problem_statement": "論文處理 LALM 是否能直接感知低階、隨時間變化的聲學特徵，而非僅依賴語音文字或高階推理。既有 benchmark 常要求跨片段排序、時間戳定位或複雜語意判斷；模型失敗時，無法區分聲學表徵不足與後續推理、整合或輸出讀取失敗。因此需要一個保留語言內容、隔離單一聲學因素，並以簡單二元分類直接測量感知能力的評估方法。",
+      "proposed_solution": "作者提出 VocalGrad，一個包含 21,600 個音訊片段的受控 benchmark。研究從 VCTK 選取語音來源，對每段語音只施加一種聲學轉換，並設計增加或減少兩個方向、三種強度及四種時間軌跡，包括突變、線性與二次變化。模型只需回答該特徵隨時間增加或減少。資料涵蓋 Speaking Speed、Voice Pitch、Volume，以及 distortion、roughness、noise、echo、clarity、vibration 等九類變化。除文字輸出 accuracy 外，作者以不同處理階段和 language decoder 層的 linear probing 追蹤資訊，並以 Kimi-Audio 的 LoRA fine-tuning 驗證瓶頸是否可被改善。",
+      "core_contributions": [
+        "提出 VocalGrad benchmark，以保留語言內容、隔離單一聲學因素的受控轉換，將聲學感知轉化為增加／減少的二元時間變化分類，資料集共 21,600 個片段。",
+        "以人類基線與五個 LALM 進行系統評估，證實人類平均 accuracy 為 94.4%，而模型整體接近 50% 隨機水準。",
+        "透過跨處理階段與 decoder 層的 linear probing，區分資訊仍被保留但未被 LM head 讀取，以及資訊在深層逐漸失去線性可解碼性兩種失敗模式，並以 LoRA fine-tuning 驗證其可改善性。"
+      ],
+      "methodology": "資料建構以 VCTK 為來源，平衡選取 50 位不同性別與口音的說話者，每位取兩段至少三秒的語音，共 100 個 source clips；偵測並人工確認 speech onset/offset，將語音區段切成 0.05 秒片段，再施加平滑的時間聲學轉換。九類轉換包含 speaking speed、pitch、volume、audio distortion、roughness、background noise、echo、voice clarity 與 voice vibration。每段資料組合兩種方向、三種強度及四種軌跡，形成每類 2,400 個樣本。統一 prompt 要求模型只輸出 increase 或 decrease，以文字輸出 accuracy 評估五個 LALM；人類基線則由六名熟悉英語語音的標註者完成，每類抽樣 50 段。另以 sine-wave 資料移除語言內容，測試 pitch、volume、noise、vibration。內部分析使用 Mel、Pre-LLM、Late-LLM audio representations，以及各 language decoder layer 的 text-prediction representations；音訊表徵切成 16 個時間區段後平均池化，訓練線性分類器。最後在 Kimi-Audio 上比較只更新 LM head 與更新所有 linear layers 的 LoRA fine-tuning。",
+      "key_results": "主要結果如下（accuracy，單位為 %）：\n\n| 模型／標註者 | 平均 | speed | pitch | volume | distortion | roughness | noise | echo | clarity | vibration |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| Human Avg. | 94.4 | 95.3 | 84.7 | 100.0 | 86.0 | 99.3 | 100.0 | 94.7 | 90.7 | 99.3 |\n| Gemini 3 Flash | 50.2 | 50.0 | 51.5 | 49.9 | 48.1 | 44.8 | 55.5 | 50.3 | 54.0 | 47.6 |\n| Kimi-Audio | 51.8 | 53.1 | 50.5 | 50.5 | 51.6 | 48.0 | 56.5 | 54.5 | 53.6 | 47.6 |\n| MiMo-Audio | 50.3 | 50.7 | 50.5 | 52.9 | 49.8 | 43.2 | 53.2 | 50.0 | 52.2 | 50.3 |\n| Step-Audio 2 mini | 50.0 | 49.9 | 50.2 | 49.9 | 50.2 | 49.9 | 49.9 | 50.0 | 49.8 | 49.8 |\n| Audio Flamingo 3 | 49.6 | 50.0 | 50.0 | 50.0 | 50.0 | 46.7 | 50.0 | 50.0 | 49.9 | 50.0 |\n\n人類平均為 94.4%，五個 LALM 的平均表現皆約 50%，最佳模型 Kimi-Audio 為 51.8%。移除語言內容的 sine-wave ablation 中，MiMo-Audio 在 noise 類別達 64.2%，但所有模型與類別均未超過 70%。Kimi-Audio 的 LM-Head fine-tuning 在 volume、roughness、noise 分別達 88.2%、97.7%、98.6%；All-Linear fine-tuning 則在多數類別接近完美，最高達 100.0%。",
+      "insights": [
+        "評估 audio LLM 時，應將低階聲學感知與語意推理拆開測量；簡單、對稱且可控的方向分類能更直接定位模型瓶頸。",
+        "模型文字輸出接近隨機不必然代表輸入表徵完全沒有相關資訊；應搭配 probing 檢查資訊是在 audio encoder、decoder 傳遞，還是最終輸出 head 遺失。",
+        "針對穩定的局部聲學線索，更新 LM head 可能已能大幅改善；對需要長時間整合的變化，則可能需要調整更早期或多層 linear components。"
+      ],
+      "limitations": "資料主要來自 VCTK 腳本語音與人工聲學轉換，可能不完全代表自然對話或真實環境聲。人類評估每類僅抽樣 50 段，且標註者熟悉英語語音。作者也指出跨類別 fine-tuning 效果與時間線索假說仍需更多研究；目前尚未證明 VocalGrad 改善能穩定提升情緒辨識等高階任務。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "audio language model evaluation",
+        "acoustic perception",
+        "speech representation probing",
+        "multimodal model evaluation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23845",
+      "title": "AI-Driven Reproducibility and Analytical Robustness in Scientific Discovery",
+      "abstract": "Reproducible and analytically robust research findings are essential to scientific progress, but evaluating these properties typically requires costly manual effort. We investigate whether LLM agents can help automate reproduction and robustness analysis, using a medical case study grounded in the Surveillance, Epidemiology, and End Results (SEER) database, a widely used U.S. cancer registry underlying tens of thousands of published studies. First, we introduce SEER-Repro, a benchmark of 20 published SEER-based papers together with the data and resources required to reproduce their findings. Second, we create an AI agent that successfully reproduces 77.4% of 2,190 atomic claims, while providing executable baselines for further analysis. Third, we develop an agentic analysis pipeline to test the robustness of the medical findings by identifying analytical choices underlying each finding, proposing defensible alternatives, and rerunning the analysis to determine whether those choices affect the conclusion. Across published papers in SEER-Repro, our pipeline identifies potentially consequential analytical choices in 9.5% of fully reproduced findings and flags them for expert review. These results show how LLM agents can support scientific review by reproducing findings, systematically testing their robustness, and directing expert attention toward potentially consequential analytical choices.",
+      "authors": [
+        "Shicheng Liu",
+        "Krista Opsahl-Ong",
+        "Andrew Drozdov",
+        "Julian Killingback",
+        "Arnav Singhvi",
+        "Ronak Pradeep",
+        "Michael Bendersky",
+        "James C. Dickerson",
+        "Monica S. Lam"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-10-16T17:57:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23845v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23845",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "可重現性（reproducibility）與分析穩健性（analytical robustness）是科學進步的基礎，但傳統評估通常需要高昂的人工重現與再分析成本。本研究以醫學流行病學為案例，使用美國 Surveillance, Epidemiology, and End Results（SEER）癌症登錄資料庫，建立包含20篇已發表論文及其資料與文件資源的 SEER-Repro benchmark。作者建構 AI agent，對2,190個 atomic claims 成功重現77.4%，並產生可執行的分析基線。接著提出 agentic robustness pipeline，自動辨識每項發現背後的分析選擇、提出具科學合理性的替代方案並重新執行分析。在完全重現的579項發現中，系統標記55項（9.5%）可能受到關鍵分析選擇影響，供專家審查。專家深入檢視10個案例後，9個未證實在合理替代方案下產生實質後果，1個仍需進一步審查。結果顯示，LLM agents 可協助重現研究、系統測試穩健性，並將專家注意力集中於最值得檢查的分析選擇。",
+      "problem_statement": "科學研究的可重現性與分析穩健性通常依賴人工重建資料、撰寫程式及測試替代模型，成本高且難以大規模執行。既有 many-analyst 與 multiverse 研究顯示，合理的分析選擇可能導致不同結論，但這類證據主要來自心理學與社會科學，是否適用於高風險醫學流行病學尚不清楚。此外，SEER研究常涉及歷史資料、人口分母、編碼手冊與未明確記錄的分析決策，使忠實重現特別困難。",
+      "proposed_solution": "作者提出兩部分解決方案。第一，建立 SEER-Repro benchmark，收集20篇近期或高引用的 SEER 論文、39個資料表、40份文件資源及2,190個 atomic claims，形成可執行的研究重現環境。第二，建立由 coding agents、claim verification agent 與 robustness agents 組成的 AI-assisted pipeline：先從論文抽取 findings 並拆解 claims，再產生程式重現原始結果，最後透過獨立報告、Perturbation Agent 與 Direct Coding Agent 測試合理替代分析。系統以 evidence、執行結果及1–9 consequentiality 分數篩選需專家檢視的案例，而非讓模型直接取代專家判斷。",
+      "core_contributions": [
+        "提出 SEER-Repro benchmark，將20篇真實癌症流行病學論文、資料表、手冊、claims、程式與執行證據整合為可評估的重現環境。",
+        "建立從 finding 抽取、atomic claim 驗證到可執行分析的 LLM agent 重現流程，量化醫學研究的重現結果與失敗原因。",
+        "提出結合獨立分析、分析選擇擾動與直接 coding agent 的穩健性評估管線，將可能重要的案例排序後交由專家審查。"
+      ],
+      "methodology": "流程首先從論文排除背景與相關工作，抽取核心 findings，並將每個 finding 拆成單一數值或質性目標的 atomic claims。coding agent 讀取論文、SEER資料與手冊，選擇資料、撰寫並執行分析程式；claim verification agent 再依據執行證據判定 REPRODUCED、CLOSE 或 NOT REPRODUCED。數值 claim 的相對誤差不超過5%視為 reproduced，超過5%且不超過10%視為 close；質性 claim則採二元判定。穩健性分析只納入所有 atomic claims 均成功重現的 findings。Independent Report Generation 讓 agent 重新回答相同研究問題並與原文比較；Perturbation Agent 從 cohort、endpoint、統計模型等分析選擇中最多選20項，提出替代設定，固定其餘流程後執行 baseline 與 alternative；Direct Coding Agent 則直接選擇並測試科學上合理的替代方案。結果分類為 DirectChange、Qualification、StableUnderTest、Inconclusive、Unavailable 或 NotTested。DirectChange 另以改編 GRADE 的1–9分制評估影響，7–9代表主要結論被重大限定、失去支持或反轉。研究使用 GPT-5.6 Sol、Claude Opus 4.8、Kimi K3、GLM 5.3，以及 Codex 和 Claude Code 執行不同分析與交叉比較。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---:|\n| 納入論文 | 20篇 |\n| Findings數量 | 901 |\n| Atomic claims總數 | 2,190 |\n| Reproduced | 1,694（77.4%） |\n| Close | 76（3.5%） |\n| Not reproduced | 420（19.2%） |\n| 完全重現、進入穩健性分析的findings | 579 |\n| 至少一名分析者標記高後果連結（分數7–9） | 55（9.5%） |\n| 至少兩名分析者共同標記 | 14（2.4%） |\n| 專家深入檢視案例 | 10 |\n| 專家認為未證實合理替代造成後果 | 9/10 |\n| 仍需進一步審查 | 1/10 |\n\n未重現的420個claims中，資料問題佔251（59.8%）、分析描述不足47（11.2%）、不可用軟體造成的近似28（6.7%）、agent端錯誤48（11.4%）、疑似評估錯誤20（4.8%），另有26（6.2%）原因未解。獨立報告分析在39個可比較報告中未發現會推翻核心結論的矛盾。",
+      "insights": [
+        "在導入 AI 科學分析系統時，應先要求其重現既有研究並保存程式、輸出與證據，再進一步產生新發現。",
+        "重現率不應只被解讀為模型能力指標；歷史資料不可得、研究描述不完整與不可用軟體同樣是關鍵瓶頸，因此 benchmark 必須記錄失敗原因。",
+        "穩健性檢查適合採人機協作：LLM agents 負責大規模提出與執行候選替代分析，專家負責判斷替代方案是否合理及其是否真正改變科學結論。"
+      ],
+      "limitations": "研究只涵蓋20篇 SEER癌症流行病學論文，外部效度尚未證明。部分歷史資料、人口分母與軟體不可取得，使未重現不一定代表原研究錯誤。穩健性分數主要由模型評估，且專家只深入檢視10個案例；替代分析的科學合理性仍可能受模型或資料處理錯誤影響。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific reproducibility",
+        "analytical robustness",
+        "medical epidemiology",
+        "many-analyst studies",
+        "multiverse analysis",
+        "AI-assisted peer review"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23839",
+      "title": "DiscoveryRSI: Recursively Learning to Discover Valuable Hypotheses",
+      "abstract": "Scientific discovery requires developing worthwhile hypotheses into practical investigations, yet learning from this evolving research process remains challenging. We introduce an operational definition of valuable and testable research hypotheses: evidence-grounded claims about consequential uncertainties, coupled with feasible investigations, explicit decision criteria, and alternative explanations. Our DiscoveryRSI framework develops hypothesis trees through multi-agent evolutionary search, compiles selected investigations into executable Harbor tasks, and recursively learns through three mechanisms: hypothesis credit optimization attributes scientific assessments to documented research contributions; harness replay identifies productive strategies and recurring failures to refine research workflows; and rediscovery applies accepted improvements to new investigations, generating further experience for subsequent learning. We also introduce DFM-Bench, which provides comprehensive assessment of hypothesis quality and cumulative research progress at the levels of hypotheses, revisions, development paths and research runs. Across four life-science domains, automated evaluation shows that hypothesis quality rises from 4.86 for the base model to 5.39 after two rounds of self-improvement, with the large gains in falsifiability and data resolvability. We further validate hypothesis quality through expert review, comparing our DiscoveryRSI-27B with other research agents. Preliminary human assessments show that DiscoveryRSI-27B scores higher than GPT-6 Luna on hypothesis importance and whether claims are plausible and evidence-bounded. DiscoveryRSI-27B achieved a 6.3% rate of hypothesis correspondence with research published after the model cutoff, largely outperform GPT-6 with 2.5% and Claude Opus 5 with 2.3%, while delivering greater human-rated improvement along research paths.",
+      "authors": [
+        "Jianyuan Zhong",
+        "Chenwei Wu",
+        "Zhaochen Yu",
+        "Xixian Jiang",
+        "Xuewei Li",
+        "Hao Xiao",
+        "Xilin Dai",
+        "Junyang Wang",
+        "Jiaru Zou",
+        "Zhiqing Cui",
+        "Boyuan Zheng",
+        "Jing Xiong",
+        "Zhen Zhang",
+        "Qiang Gao",
+        "Michael Morley",
+        "Luis Nakayama",
+        "Qiang Xu",
+        "Liyue Shen",
+        "Tao Gui",
+        "Leo Anthony Celi",
+        "James Zou",
+        "Zhenfei Yin",
+        "Yingcheng Wu",
+        "Ling Yang"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-10-16T17:56:35+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23839v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23839",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "科學發現不僅需要提出值得研究的假說，也需要將其發展為可執行的實際研究。論文提出 DiscoveryRSI，將有價值且可檢驗的研究假說定義為：以證據為基礎、針對重要不確定性提出主張，並搭配可行的 investigation、明確的 decision criteria 與 alternative explanations。框架透過 multi-agent evolutionary search 建立 hypothesis trees，將選定的研究計畫編譯為可執行的 Harbor tasks，並以 hypothesis credit optimization、harness replay 及 rediscovery 進行遞迴學習。作者同時提出 DFM-Bench，從假說、修訂、發展路徑與完整研究執行等層次評估科學品質與累積進展。在四個生命科學領域中，自動評估分數由 base model 的4.86提升至兩輪自我改進後的5.39，主要改善來自 falsifiability 與 data resolvability。專家評估顯示，DiscoveryRSI-27B在重要性、合理性與 evidence-bounded claims方面優於GPT-6 Luna，且與 cutoff 後發表研究的假說對應率達6.3%。",
+      "problem_statement": "科學研究代理人需要從證據形成假說、設計可行調查、修訂解釋並決定是否持續投入，但現有方法多聚焦於產生最終想法或執行單次實驗，未充分保留假說演化歷史、貢獻來源與失敗經驗。因此，模型難以將研究過程轉化為可歸因、可訓練且能改善後續研究的經驗；既有評測也較少同時衡量假說品質、修訂價值、發展路徑與整體資源配置。",
+      "proposed_solution": "DiscoveryRSI將研究建模為跨回合的遞迴自我改進流程。每個研究節點包含 evidence-grounded claim、investigation plan、decision criteria 與 alternative explanations，並由 Lead、Generation、Evolution、Critique 等多代理角色透過 evolve、repair、crossover 和 restart 建立 hypothesis tree。選定計畫會被編譯成具體輸入、環境、輸出與檢查條件的 Harbor task。其核心創新包括：將科學評估透過 contribution records 歸因至具體歷史並進行 hypothesis credit optimization；固定模型、透過 harness replay 找出工具與協作失敗；再以 rediscovery 將接受的模型與流程更新應用到新問題。",
+      "core_contributions": [
+        "提出有價值且可檢驗研究假說的操作性定義，將 evidence-grounded claim、investigation plan、decision criteria 與 alternative explanations 組合為可修訂研究物件。",
+        "提出 DiscoveryRSI 遞迴學習框架，透過 hypothesis credit optimization、harness replay 與 rediscovery，將研究歷史、具體貢獻及執行失敗轉化為模型與研究流程改進。",
+        "提出 DFM-Bench，分層評估假說品質、修訂貢獻、發展路徑、研究執行與 scientific contribution，並以自動評估、專家評估及文獻對應進行驗證。"
+      ],
+      "methodology": "研究流程以 hypothesis tree 保存每個假說版本、父子關係、證據、草稿、工具執行、評估與貢獻紀錄。Lead 協調 Generation 與 Evolution；Critique 進行盲評，Progress 比較實際前後代的科學進展。每個假說以 H=(c,π,d,a)表示，分別為主張、調查計畫、決策標準與替代解釋。選定的計畫由 Harbor compiler 轉為可執行任務，但不可取得的資料或實體實驗仍被標記為依賴條件。Hypothesis credit optimization先以 TrueSkill 彙整偏好與不確定性，再依 contribution records、評估覆蓋率與進展將有限 credit 分配到具體歷史，僅對受支持的 assistant responses 和 tool-call arguments進行加權 supervised fine-tuning。Harness replay 固定模型權重，在相同資源限制下診斷重複探索、工具失敗、遺失產物與過早結束，並測試流程修改；rediscovery 將模型與 harness 候選更新在 development set 上篩選後，對 fresh questions重新收集經驗。評估使用 DFM-Bench，涵蓋 importance、novelty、grounding、falsifiability、data resolvability、feasibility、alternative explanations、actionability，以及 revision、development path、research run 和 scientific contribution。實驗含四個生命科學領域、241個研究問題；另有27名具生醫背景者評估292份提案。自動評分由 GPT-5.6 Sol產生，文獻對應則以共同 reference corpus與 GPT-6 Luna判定。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---|\n| 自動假說品質：Base / Round 1 / Round 2 | 4.86 / 5.18 / 5.39 |\n| Falsifiability：Round 0 → Round 2 | 4.00 → 6.20 |\n| Alternative explanations：Round 0 → Round 2 | 4.44 → 5.98 |\n| Data resolvability：Round 0 → Round 2 | 3.73 → 4.99 |\n| Feasibility：Round 0 → Round 2 | 4.79 → 5.87 |\n| Importance：Round 0 → Round 2 | 6.48 → 6.04，下降 |\n| Novelty：Round 0 → Round 2 | 4.87 → 4.58，下降 |\n| Evolve/Repair episode share：Base → Round 2 | 77.5% → 91.7% |\n| Restart episode share：Base → Round 2 | 21.7% → 5.0% |\n| 人類評分每次修訂平均變化：DiscoveryRSI-27B / GPT-5.6 Sol / GPT-6 Luna | +0.07 / +0.03 / −0.01 |\n| 人類評估中改善/不變/惡化修訂：DiscoveryRSI-27B | 41% / 47% / 12% |\n| Post-cutoff literature correspondence：DiscoveryRSI-27B / GPT-6 / Claude Opus 5 | 6.3% / 2.5% / 2.3% |\n| Battery-domain hypothesis quality | 5.61（165份完整評分） |\n\n上述 literature correspondence 是作者定義的 reference actionability，並非研究者實際採用或受到模型因果影響的證據。",
+      "insights": [
+        "若要提升研究代理人的可靠性，評測不應只看最終答案；應保存假說版本、父子關係、證據與決策標準，以衡量每次修訂是否帶來實質進展。",
+        "將 reward 或 training credit 分配到有 provenance 支持的具體行動，而非整段對話，可降低把偶然參與或未支持內容誤當成有效策略的風險。",
+        "研究型 agent 的改進可拆成模型學習與 harness 改進兩條路徑；固定模型進行 replay，有助於區分推理能力問題、工具使用問題與協作流程問題。"
+      ],
+      "limitations": "研究的主要提升多集中於可否證性、資料可解析性與調查設計，重要性與新穎性反而下降。自動評估依賴 GPT-5.6 Sol，且人類校準仍待完成。文獻對應率受詞彙檢索、長文本截斷、模型判定與不同群組規模影響，不能解讀為實際影響或採用。研究主要聚焦生命科學，跨領域結果有限；部分路徑與修訂存在共享祖先，統計獨立性不足。",
+      "tags": [
+        "llm-as-judge",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific discovery agents",
+        "recursive self-improvement",
+        "multi-agent evolutionary search",
+        "research provenance",
+        "hypothesis evaluation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23685",
+      "title": "HardEval: An Execution-Verified Benchmark for AI-Driven Security Hardening and Compliance Remediation",
+      "abstract": "Implementing Security Technical Implementation Guide (STIG) controls remains a demanding operating-system administration task. Each natural-language security requirement must be translated into a precise and persistent configuration change. These changes span Secure Shell (SSH) configuration, authentication policy, audit rules, and kernel parameters. Existing benchmarks do not measure whether a model can perform this task on a live system. Code benchmarks evaluate isolated programs without persistent system state, while agent benchmarks largely focus on applications rather than operating-system configuration. In this paper, we introduce \\textbf{HardEval}, an execution-verified benchmark for evaluating language-model-assisted security hardening. HardEval is built from Red Hat Enterprise Linux 8 STIG controls that fail on an unhardened baseline system. Expert-written reference remediations and Open Vulnerability and Assessment Language (OVAL) checks serve as hidden ground truth for grading; they are never shown to the model, and each task states only the required security outcome while withholding the implementation. The model produces a Bash script, which is executed on a live virtual machine and graded from fail to pass using the corresponding OpenSCAP/OVAL compliance check. Evaluation of fourteen frontier and open-weight configurations reveals large and uneven capability differences across security domains. A recurring failure mode is plausible security code that does not satisfy the exact compliance condition. For four open-weight configurations, multi-run Wilson confidence intervals preserve the observed ordering. HardEval is publicly available.",
+      "authors": [
+        "Manohar Vellala",
+        "Soumya Banerjee",
+        "Sandip Roy",
+        "Ross Gore",
+        "Sachin Shetty"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.LG"
+      ],
+      "published": "2026-10-16T16:14:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23685v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23685",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "實作 Security Technical Implementation Guide（STIG）控制項，是一項具挑戰性的作業系統管理工作。每項自然語言安全要求都必須被轉換為精確且持久的設定變更，涵蓋 SSH、身分驗證政策、稽核規則與 kernel 參數。既有 benchmark 無法衡量模型在 live system 上完成此任務的能力：程式碼 benchmark 通常評估沒有持久系統狀態的孤立程式，而 agent benchmark 多聚焦於應用程式。本文提出 HardEval，一個以執行驗證的 AI security hardening benchmark。它取自未強化 RHEL 8 baseline 上失敗的 DISA STIG controls，以專家撰寫的 remediation 與 OVAL checks 作為隱藏 ground truth。模型只能看到安全結果要求，必須產生 Bash script；script 會在 live VM 執行，再由 OpenSCAP/OVAL 檢查是否由 fail 轉為 pass。十四種模型配置顯示，不同安全領域的能力差異顯著且不均衡；常見失敗是產生看似合理、卻不符合精確 compliance condition 的安全程式碼。HardEval 已公開提供。",
+      "problem_statement": "論文要解決的是：LLM 能否將自然語言 STIG 要求轉換為可持久化的 OS hardening code，並使 live system 通過權威 compliance scanner。既有 HumanEval 等程式碼 benchmark 缺乏持久系統狀態，SWE-bench 與 agent benchmark 主要針對 repository、應用程式或互動環境；安全評測則多衡量漏洞避免或攻擊能力。因此，現有方法無法直接測量 Bash remediation 是否讓作業系統由 fail 轉為 scanner-verified pass。",
+      "proposed_solution": "作者提出 HardEval，一個針對 RHEL 8 OS hardening 的 execution-verified benchmark。資料由未強化主機的 OpenSCAP 掃描建立，保留 STIG rule、專家 reference remediation 與 OVAL check 作為隱藏答案。每個任務只向模型提供 implementation-withheld 的自然語言目標、理由、必要值與持久性要求，不揭露檔案路徑、directive、sysctl key 或命令。模型以 single-shot 方式產生 Bash script，script 在乾淨、可丟棄的 AlmaLinux 8 VM 執行，最後以相同 OVAL rule 判定 fail-to-pass。此設計將 code-generation capability 與 retrieval、agent orchestration 及 scanner feedback 分離。",
+      "core_contributions": [
+        "提出 HardEval execution-verified benchmark，以 live VM、Bash remediation 與 OpenSCAP/OVAL fail-to-pass grading 評估 LLM 的 OS hardening 能力。",
+        "建立 implementation-withheld prompt 與隱藏 reference remediation、OVAL oracle 的資料建構流程，將模型能力與 retrieval、orchestration 及 scanner feedback 分離。",
+        "對十四個 frontier 與 open-weight configurations 進行基準研究，揭示模型在 server、audit、SSH 等安全領域的結構化能力差異，並提供多次執行、跨作者提示與 Ubuntu 24.04 portability 驗證。"
+      ],
+      "methodology": "HardEval 的資料來源是 RHEL 8 DISA STIG profile 下、使用 SCAP Security Guide 0.1.81 進行的 OpenSCAP scan。初始有 233 條失敗規則，其中 215 條具 reference Bash remediation，200 條屬於 automatable tasks；跨模型固定 manifest 包含 151 條 verified-applicable rules，其中排除 SSH 後的 server-safe 集合為 137 條。提示由 Claude Opus 4.8 根據 rule title、severity、rationale 與 description 生成，但不使用 reference script；系統提示要求保留安全目標、閾值、idempotency、reboot persistence 與 scope，同時刪除實作機制，並以 lexical-leakage checker 檢查機制詞洩漏。模型收到單一 prompt、不可使用工具或檢查主機，並以 temperature 0 產生一份 Bash script。每個配置在獨立 throwaway AlmaLinux 8 VM 上執行；sanitized PATH 會阻止 reboot、shutdown、poweroff 與 systemctl reboot。執行後重新呼叫 OpenSCAP 1.3.14，只有 OVAL 結果為 literal pass 才計分；invalid、空白或未評分輸出均視為失敗。主要指標是各 bucket 的 pass 數除以固定分母，包括 server configuration plus kernel、audit rules、combined server-safe、SSH 與 all verified applicable。研究評估十四個 closed frontier 與 open-weight configurations，另以四個 open-weight 配置進行三次 seeded runs，使用 pooled Wilson 95% confidence intervals；並測試 GPT-4o authored prompts 與 Ubuntu 24.04 port。",
+      "key_results": "主要結果如下：\n\n| 模型配置 | Server+kernel | Audit rules | Combined server-safe | SSH | All verified applicable |\n|---|---:|---:|---:|---:|---:|\n| Claude Opus 4.7 | 70/79 (88.6%) | 41/58 (70.7%) | **111/137 (81.0%)** | 11/14 (78.6%) | 122/151 (80.8%) |\n| Claude Opus 4.8 | 65/79 (82.3%) | 41/58 (70.7%) | 106/137 (77.4%) | 10/14 (71.4%) | 116/151 (76.8%) |\n| Claude Sonnet 4.5 | 58/79 (73.4%) | **47/58 (81.0%)** | 105/137 (76.6%) | 9/14 (64.3%) | 114/151 (75.5%) |\n| GPT-4o | 54/79 (68.4%) | 36/58 (62.1%) | 90/137 (65.7%) | 10/14 (71.4%) | 100/151 (66.2%) |\n| DeepSeek-Coder-33B FP16 | 35/79 (44.3%) | 14/58 (24.1%) | 49/137 (35.8%) | 6/14 (42.9%) | 55/151 (36.4%) |\n| Qwen2.5-Coder-14B | 32/79 (40.5%) | 14/58 (24.1%) | 46/137 (33.6%) | 7/14 (50.0%) | 53/151 (35.1%) |\n| CodeLlama-34B FP16 | 20/79 (25.3%) | 9/58 (15.5%) | 29/137 (21.2%) | 3/14 (21.4%) | 32/151 (21.2%) |\n| GLM-4-9B FP16 | 16/79 (20.3%) | 2/58 (3.4%) | 18/137 (13.1%) | 3/14 (21.4%) | 21/151 (13.9%) |\n| GLM-4-9B 4-bit | 17/79 (21.5%) | 0/58 (0.0%) | 17/137 (12.4%) | 2/14 (14.3%) | 19/151 (12.6%) |\n\n作者報告 frontier 模型佔據前七名，最強 open-weight 配置為 DeepSeek-Coder-33B 的 35.8%。Audit-rule construction 是差異最明顯的領域。四個 open-weight 配置的多次 Wilson intervals 保留單次評估排序；Qwen-14B 與 CodeLlama-34B 區間仍分離，而 GLM-4-9B FP16 與 4-bit 區間重疊。GPT-4o authored prompts 上，Claude Opus 4.8 為 101/137 (73.7%)、GPT-4o 為 73/137 (53.3%)。Ubuntu 24.04 的 88 條 shared rules 中，Claude Opus 4.8 為 60/88 (68.2%)、GPT-4o 為 55/88 (62.5%)、Claude Sonnet 5 為 53/88 (60.2%)。",
+      "insights": [
+        "若要評估自動化安全修補，不應只檢查 shell 語法或文字相似度；應在隔離 VM 執行後，以外部 compliance oracle 驗證實際終態。",
+        "安全程式碼的合理性不等於合規性；實務部署需要特別檢查 scanner 所要求的精確值、檔案、directive、audit key 與設定機制。",
+        "聚合分數可能掩蓋 domain-specific weakness，尤其 audit-rule construction 與 server configuration 應分開報告；SSH 等可能影響評估通道的控制項也需獨立解讀。"
+      ],
+      "limitations": "研究僅涵蓋 RHEL 8 DISA STIG 的 curated、automatable 子集；Ubuntu port 顯示方法可移植，但未證明跨 RHEL 9、Windows 或其他 profiles 的結果一致。十個配置只有單次 greedy run，variance study 未涵蓋 closed models；SSH 可能因共用 grading channel 而低估。作者亦指出 STIG 公開資料造成 training-data contamination 的可能性，以及 oracle satisfaction 不等於廣義安全性。未來將擴展至 RHEL 9 與 Windows STIG。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "OS security hardening",
+        "STIG compliance automation",
+        "OpenSCAP/OVAL evaluation",
+        "execution-based code generation",
+        "cybersecurity LLM benchmarking"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23791",
+      "title": "DrugHarness: An Evolvable Agent Harness for Computational Drug Discovery",
+      "abstract": "Computational drug discovery requires agents to compose scientific operations and adapt to changing evidence and constraints. Here we introduce DrugHarness, an evolvable agent harness coupling composable scientific execution with conditional skill induction. Its environment integrates over 80 scientific operations, biomedical resources and task-specific code, preserving associations among candidates, results and artifacts. From execution trajectories and outcome feedback, DrugHarness induces action hypotheses with observable applicability conditions, recommended actions and supporting evidence. An independent review agent evaluates candidate skills derived from these hypotheses through source verification and, when needed, targeted execution trials. Admitted skills guide subsequent tasks and are revised through feedback. Evaluation on MolBench and SMDD-Bench demonstrates capabilities in molecular screening, optimization and constrained design. Without evolution, DrugHarness exceeds reported MolClaw-CC results by 10.8 percentage points in affinity-comparison accuracy and 55% in mean top-three active hits on MolBench. Retrospective evaluation on skill-development tasks shows that evolution increases Qwen's affinity-comparison accuracy from 62.2% to 81.1% and optimization success from 79.5% to 87.2%. In a prospective HPK1 study, DrugHarness achieves a more favorable median docking score than Biomni among system-specific candidates. A synthesized compound achieves a cellular IC50 of 14.19 nM, a 2.64-fold potency improvement over the best input reference, with activity competitive with two selected compounds designed by experienced medicinal chemists. These results support conditional skill evolution for scientific agents and demonstrate a workflow connecting computational drug design with experimental validation.",
+      "authors": [
+        "Yuxing Chen",
+        "Zhisheng Zhang",
+        "Cheng Tang",
+        "Wei Li",
+        "Minghui Zhang",
+        "Ziyan Huang",
+        "Shaocong Wei",
+        "Jiawei Chen",
+        "Junru Hu",
+        "Hongze Zhu",
+        "Jianghan Shen",
+        "Min Cen",
+        "Xinyuan Zhu",
+        "Yaxue Zhao",
+        "Jubo Wang",
+        "Yuqiang Li",
+        "Chun-Mei Feng",
+        "Zongyuan Ge",
+        "Rui Su",
+        "Jie Xu",
+        "Yirong Chen",
+        "Xi Xu",
+        "Ming Hu"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-10-16T17:20:19+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23791v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23791",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "Computational drug discovery 需要 agents 組合科學操作，並適應持續變化的證據與限制。本文提出 DrugHarness，一個可演化的 agent harness，結合可組合的科學執行與條件式 skill induction。其環境整合超過 80 項科學操作、生物醫學資源及任務專用程式碼，並維持候選分子、結果與產物之間的關聯。系統由執行軌跡與結果回饋誘導具備可觀察適用條件、建議行動及支持證據的 action hypotheses，再由獨立 review agent 透過來源驗證及必要的 targeted execution trials 評估候選 skills。通過審查的 skills 會引導後續任務，並依回饋修訂。在 MolBench 與 SMDD-Bench 上，系統展現分子篩選、最佳化及受限設計能力；在 HPK1 前瞻研究中，合成化合物的 cellular IC50 為 14.19 nM，較最佳輸入參考提升 2.64 倍效力。",
+      "problem_statement": "藥物發現 agent 必須協調文獻、資料庫、分子表示、預測器與程式工具，依中間結果決定檢索、候選修改及計算流程。現有方法雖能整合工具或重用經驗，卻未充分處理三項問題：推薦是否由正確證據支持、來源策略在不同候選狀態與限制下是否仍適用，以及建議是否可執行、可驗證並能依後續結果修訂。",
+      "proposed_solution": "作者提出 DrugHarness，將 composable scientific execution 與 conditional skill learning 統一於共享科學工作區。執行器可組合超過 80 項操作，並把候選、觀測、計算條件、來源、結果及交付物建立可追蹤關聯。學習器比較任務軌跡與允許的 outcome feedback，產生包含目標、可觀察適用條件、替代與推薦行動、來源及未解問題的 action hypothesis。獨立 review agent 檢查來源、科學前提與可執行性，必要時重現、消融或比較試驗；只有通過審查的 skill 才會部署，之後再由新軌跡與回饋修訂。",
+      "core_contributions": [
+        "建立可組合的 computational drug discovery execution environment，整合超過 80 項科學操作、生物醫學資源與任務程式碼，並維持候選、結果及 artifacts 的關聯。",
+        "提出 evidence-reviewed conditional skill evolution：從執行經驗誘導具適用條件與證據的 action hypotheses，由獨立 reviewer 進行來源核驗與 targeted trials，再以後續回饋修訂。",
+        "以 MolBench、SMDD-Bench、回溯 skill evaluation 及前瞻 HPK1 實驗驗證，展示從 benchmark 任務到合成分子 cellular potency 的完整工作流程。"
+      ],
+      "methodology": "系統包含科學執行與 skill 演化兩部分。執行環境提供十類、超過 80 項 agent-accessible operations，涵蓋證據檢索、標的與結構準備、virtual screening、de novo design、property prediction、multi-objective optimization、結構編輯、retrosynthesis 及評估；工具包括 BindingDB、RDKit、ADMET-AI、Boltz-2 與 scientific Python environment。每筆 experience 由任務目標與限制、action-observation 軌跡、deliverable 及允許的 outcome feedback 組成。學習器比較科學物件、endpoint、方法與當時證據狀態，形成 hypothesis h=(goal, condition, current action, recommended action, sources, unresolved information)，再編輯為候選 skill。獨立 reviewer 驗證來源與介面，必要時執行 reproduction、ablation 或 comparison trial，結果為 admit、reject 或 defer。任務內固定 skill version；executor 根據可見狀態判斷條件為 supported、contradicted 或 unknown。評估使用 MolBench 的 screening、affinity-comparison accuracy、Hits@3、GT rank、editing 與 optimization 指標，以及 SMDD-Bench 的任務成功率；另比較 HPK1 候選 docking、抑制預測與實驗 cellular IC50。論文未報告 DrugHarness 內部基礎模型的自訂神經網路架構；實驗使用 Codex、Hermes、Qwen 與 GPT-5.6 Terra 等配置。",
+      "key_results": "主要結果如下（數值均依論文報告）：\n\n| 評估項目 | 方法／設定 | 結果 |\n|---|---|---:|\n| MolBench affinity-comparison accuracy | DrugHarness（w/o Evol.），Codex/GPT-5.6 Terra | 91.9% |\n| MolBench affinity-comparison accuracy | MolClaw-CC 報告值 | 81.1% |\n| MolBench mean Hits@3 | DrugHarness（w/o Evol.） | 1.24 |\n| MolBench mean Hits@3 | MolClaw-CC | 0.80 |\n| MolBench screening accuracy | DrugHarness（w/o Evol.） | 98.0% |\n| MolBench editing | DrugHarness（w/o Evol.） | 39/39 任務成功 |\n| MolBench optimization positive improvement | DrugHarness（w/o Evol.） | 94.9%，37/39 |\n| Skill evolution：affinity accuracy | Qwen 歷史無 skill → frozen skills | 62.2% → 81.1% |\n| Skill evolution：optimization success | 歷史無 skill → frozen skills | 79.5% → 87.2% |\n| Skill evolution：valid JSON | 歷史無 skill → frozen skills | 34/39 → 39/39 |\n| SMDD-Bench interaction-point discovery | DrugHarness/Codex vs 原 SMDD harness，同為 GPT-5.6 Terra | 28.0% vs 0.0% |\n| SMDD-Bench 40 項 lead optimization | DrugHarness/Codex vs 原 SMDD harness | 60.0% vs 50.0% |\n| HPK1 median MOE docking score | DrugHarness vs Biomni system-specific candidates | -8.180 vs -7.825 |\n| HPK1 synthesized compound cellular IC50 | DrugHarness 設計化合物 | 14.19 nM |\n| HPK1 potency improvement | 相對最佳輸入參考 37.47 nM | 2.64 倍 |\n\n作者另報告該化合物在 1 nM 達 96.92% HPK1 inhibition，且 cellular activity 與兩個由具五年以上經驗 medicinal chemists 選出的化合物具競爭力。",
+      "insights": [
+        "若要讓 agent 經驗可重用，skill 不應只保存抽象建議，還應明確記錄可由 executor 觀察的適用條件、推薦行動、限制與來源。",
+        "科學工具鏈需要以候選分子為核心維持 provenance，將生成、預測、結構分析與最終交付物連結到同一物件，才能降低評估與提交對象不一致的風險。",
+        "將 skill 部署前的來源檢查與 targeted execution trial 納入流程，有助於把看似合理但未驗證的操作指南轉成可審查、可拒絕及可修訂的 agent 行為規則。"
+      ],
+      "limitations": "作者指出，尚未系統比較 runtime、計算成本、資源需求與人類專家。Skill evolution 只在單一 benchmark、有限任務及 retrospective、in-domain 設定下評估，對未見 target 與 task family 的泛化仍未知。實驗驗證規模與 developability 性質覆蓋也有限。未來將加入跨 benchmark、held-out 評估及更廣泛的實驗驗證。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "scientific agents",
+        "computational drug discovery",
+        "conditional skill learning",
+        "tool-use provenance",
+        "molecular optimization"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23787",
+      "title": "DLite: History-free Speculative Decoding for Agentic AI",
+      "abstract": "Speculative decoding has become a mainstream technique for accelerating large language model (LLM) inference by using a lightweight draft model to generate candidate tokens that are subsequently verified by the target model. However, agentic workloads introduce long and continuously evolving contexts and frequent multi-turn interactions. Under such workloads, we observe that existing draft models suffer from up to an 80% degradation in acceptance length, while maintaining their historical KV cache introduces substantial system overhead. In this paper, we identify the growing historical context as a common source of both problems and introduce DLite, a history-free speculative decoding framework for agentic AI. DLite directly reuses contextual hidden states from the target model and performs local speculative prediction without explicitly maintaining the historical context, transforming an increasingly complex modeling problem into local simple prediction problem. A lightweight sequential head further restores intra-block causal dependencies with low overhead. To effectively train this heterogeneous history-free architecture, we introduce a tailored two-stage training strategy. Experiments on general-purpose, long-context and agentic workloads show that DLite achieves 2-6 acceptance length and outperforms the state-of-the-art speculative decoding method, DSpark, up to 70%.",
+      "authors": [
+        "Jiaming Xu",
+        "Hanzhen Wang",
+        "Tianlang Zhao",
+        "Jiewen Xiao",
+        "Chengze Yuan",
+        "Jiayi Pan",
+        "Yongkang Zhou",
+        "Jiancai Ye",
+        "Yu Wang",
+        "Guohao Dai"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-10-16T17:18:54+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23787v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23787",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "Speculative decoding 已成為加速大型語言模型（LLM）推論的主流技術：先由輕量 draft model 產生候選 token，再由 target model 驗證。然而，agentic workload 具有長且持續演化的 context，以及頻繁的 multi-turn interaction；在此情境下，既有 draft model 的 acceptance length 最多下降 80%，維護歷史 KV cache 也帶來顯著系統負擔。本文辨識出不斷增長的歷史 context 是兩項問題的共同來源，提出 DLite，一種面向 agentic AI 的 history-free speculative decoding framework。DLite 直接重用 target model 的 contextual hidden states，在不顯式維護歷史 context 的情況下進行局部 speculative prediction，將日益複雜的建模問題轉化為局部簡單預測問題。輕量 sequential head 用低成本恢復 block 內的因果依賴；此外，作者提出適用於此異質、history-free 架構的兩階段訓練策略。實驗涵蓋一般、長 context 與 agentic workload，DLite 的 acceptance length 為 2–6，且相較 DSpark 最多提升 70%。",
+      "problem_statement": "論文針對 agentic AI 中 speculative decoding 效率下降的問題。Agent execution 通常具有長輸入、短輸出、頻繁 multi-turn interaction 與持續增長的 context，使既有 draft model 必須自行重建長期歷史，acceptance length 在 SWE-Bench、AgentLongBench 等工作負載可能降至 1–2 tokens，降幅超過 80%。此外，draft model 還需更新與保存歷史 KV cache，作者觀察其可占端到端延遲的 10%–20%。",
+      "proposed_solution": "作者提出 DLite history-free speculative decoding framework，將長期 context 建模交由 target model，draft 端直接接收 target model 已計算的 contextual hidden states，僅針對目前 anchor 與固定數量的 speculative positions 進行局部預測，因此不維護歷史 draft KV cache。架構由 history-free parallel backbone 與低秩 sequential head 組成：前者平行產生各位置表示，後者只在 hidden space 中恢復 speculative block 內的因果依賴，避免反覆執行中間 full-vocabulary projection。訓練上先以保留歷史 KV cache 的同構 teacher 進行 warm-up，再直接對齊原始 target model。",
+      "core_contributions": [
+        "提出 DLite history-free speculative decoding framework，直接重用 target model 的 contextual hidden states，使 draft model 不需顯式處理或維護歷史 KV cache。",
+        "設計 history-free parallel backbone 與低秩 sequential head：前者進行局部平行預測，後者在 hidden space 恢復 speculative block 內的 causal dependency，降低 drafting 開銷。",
+        "提出兩階段訓練策略，先以 history-aware、架構同構的 teacher bridging structural mismatch，再以 CE 與 total variation loss 直接對齊 target model，並在一般、長 context 與 agentic workload 上驗證其效果。"
+      ],
+      "methodology": "DLite 的推論流程如下：target model 先處理輸入並保留其原有 KV cache；每輪 speculative decoding 取 target hidden states、目前 anchor token 與 K 個 draft placeholders，送入五層、hidden dimension 為 2560/4096 的 parallel backbone。作者在 Qwen3-4B/8B 分別抽取 12/14 個 target hidden states，使用 depth embedding 標示來源層，並採 sequence-wise concatenation；位置資訊改用局部 position ID。parallel backbone 同時產生各 speculative position 的 hidden representation。由於平行預測缺少 block 內前序 token，DLite 使用低秩 RNN-style sequential head，以 recurrent state 壓縮先前已生成 draft token 的 embedding；其 rank 在 Qwen3-4B/8B 為 320/512，且只在 hidden space 中修正依賴，最後才進行 vocabulary projection。候選 token 仍由 target model 按標準 speculative decoding 驗證並提交接受前綴，整個 draft 端不維護歷史 KV cache。訓練資料包含 Open-PerfectBlend 的 1.3M samples 與 NVIDIA Nemotron Post-Training Dataset V2 的 600K samples，僅使用 prompts，並由對應 target model 重新生成 responses；最大 sequence length 為 4096。第一階段先以 token-level CE 訓練 history-aware teacher，再以 forward KL 訓練 DLite；第二階段移除 teacher，以 target model 的 CE 與 total variation loss 直接對齊。評估指標包括 acceptance length、相對 vanilla autoregressive decoding 的端到端 speedup，以及 concurrency 1–64 下的 throughput。",
+      "key_results": "主要結果如下；表中數據均為論文報告值。\n\n| 模型／工作負載 | 方法 | Acceptance length τ | Speedup |\n|---|---|---:|---:|\n| Qwen3-4B／GSM8K | DSpark | 6.27 | 論文未報告 |\n| Qwen3-4B／GSM8K | DLite | 6.38 | 論文未報告 |\n| Qwen3-8B／LiveCodeBench | DSpark | 5.43 | 論文未報告 |\n| Qwen3-8B／LiveCodeBench | DLite | 5.66 | 論文未報告 |\n| Qwen3-4B／LongBench Multi-Doc QA | DSpark | 2.20 | 1.81× |\n| Qwen3-4B／LongBench Multi-Doc QA | DLite | 2.74 | 2.18× |\n| Qwen3-8B／Long-dialog History | DSpark | 4.01 | 3.02× |\n| Qwen3-8B／Long-dialog History | DLite | 4.77 | 3.96× |\n| Qwen3-4B／SWE-Bench | DSpark | 1.89 | 1.64× |\n| Qwen3-4B／SWE-Bench | DLite | 3.15 | 2.68× |\n| Qwen3-8B／SWE-Bench | DSpark | 1.94 | 1.60× |\n| Qwen3-8B／SWE-Bench | DLite | 3.19 | 2.74× |\n| Qwen3-4B／LCB、concurrency 64 | DSpark | 平均 5.28 | 1.72× |\n| Qwen3-4B／LCB、concurrency 64 | DLite | 平均 5.98 | 1.83× |\n| Qwen3-8B／LCB、concurrency 64 | DSpark | 平均 5.47 | 2.08× |\n| Qwen3-8B／LCB、concurrency 64 | DLite | 平均 6.04 | 2.13× |\n\n作者另外報告：DLite 在一般、長 context 與 agentic workload 的 acceptance length 約為 2–6；相較 DSpark 最多提升 70%。在 KV cache ablation 中，無 KV cache、128-token sliding window 與 512-token sliding window 變體經充分訓練後，在所測 benchmark 上達到可比較的 acceptance length；論文未提供該圖的完整數值表。",
+      "insights": [
+        "對長 context agent serving 而言，可將 draft model 的責任從重建完整歷史改為利用 target model 已計算的表徵，這是降低歷史狀態重複計算的實務方向。",
+        "評估 speculative decoding 不應只看 acceptance length；論文的高 concurrency 結果顯示，即使 acceptance length 接近，避免 intermediate full-vocabulary projection 仍可能帶來 throughput 優勢。",
+        "若 draft 與 target 的輸入條件及因果結構差異很大，直接進行 distribution-level distillation 可能不穩定；先使用架構同構的中間 teacher 再做 target alignment，是可採用的訓練設計。"
+      ],
+      "limitations": "論文主要評估 Qwen3-4B/8B、H800 與固定 speculative block size K=7，未提供更多 target model、硬體或 block size 的結果。部分 baseline 數據來自原論文或公開模型，實驗可重現性與公平性仍需進一步核驗。論文也未完整報告所有 ablation 的數值、訓練成本及不同 agent policy 對結果的影響。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "speculative decoding",
+        "long-context inference",
+        "agentic AI serving",
+        "knowledge distillation",
+        "KV cache optimization"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23673",
+      "title": "On the possibilities and limitations of LLM-based multi-agent systems for multi-criteria decision-making in healthcare operations management",
+      "abstract": "Multi-criteria models for healthcare operations need weights that express how stakeholders trade off patient waiting time, provider workload, and operating cost, but these weights are difficult to quantify. Teams of large language model (LLM) agents, each prompted to represent a stakeholder, have been used to supply them. We propose a framework for assessing the reliability of LLM-generated preferences as inputs to multi-objective optimization and quantifying how their uncertainty affects decisions. We study explicit preferences by asking agents to rate the importance of the criteria in an outpatient appointment scheduling problem, and implicit preferences by inferring trade-offs from the agents' pairwise choices between emergency department configurations. The computational experiments show that the explicit preferences respond to the clinic's operating conditions and differ across roles, but deliberation among the agents can erase these differences, whereas simple averaging preserves them. The pairwise choices used to reveal the agents' implicit preferences depend largely on which option is presented first, and we find limited evidence that a statistical model using contextual information alongside presentation order predicts the agents' choices on new comparison pairs better than a model using presentation order alone. We then formulate robust weighted-sum optimization models to account for preference uncertainty. In most cases, these models select different schedules or configurations from those obtained using average preference weights. These results indicate that LLM-generated preferences need an audit of this kind before they are used as optimization weights in healthcare decision support.",
+      "authors": [
+        "Marco Boresta",
+        "Tommaso Giovannelli",
+        "Sepehr Namirad",
+        "Giulia Riccardi"
+      ],
+      "categories": [
+        "math.OC",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-10-16T16:05:15+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23673v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23673",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "醫療營運管理中的多準則模型，需要設定權重，以表達利害關係人如何權衡病患等待時間、醫療人員工作負荷與營運成本，但這些權重往往難以量化。本文提出一個評估框架，用來檢驗由 LLM agents 產生的偏好，並量化其不確定性如何影響多目標最佳化決策。研究分別探討顯性偏好與隱性偏好：前者要求 agents 在門診預約排程中評分準則重要性，後者則從急診配置的成對選擇推論權衡關係。結果顯示，顯性偏好會回應診所營運條件，且不同角色存在差異；然而，agents 間的 deliberation 可能抹平這些差異，簡單平均反而能保留角色區隔。成對選擇則高度受選項呈現順序影響。最後，作者建立 robust weighted-sum optimization models，指出偏好不確定性在多數案例會導致不同於平均權重的排程或配置，因此 LLM 偏好在用作醫療決策支援的最佳化權重前，必須接受系統性 audit。",
+      "problem_statement": "醫療排程與急診規劃同時涉及等待時間、醫療人員負荷、閒置時間、加班與營運成本，不同利害關係人的權衡難以轉換成穩定數值。既有 LLM 多代理方法通常直接把輸出當作偏好或權重，較少檢驗其情境敏感度、角色差異、程序穩定性、選項順序偏誤，以及權重不確定性對最終最佳化決策的影響。本文因此聚焦於：LLM 產生的偏好是否足夠可靠，及不可靠性會否改變醫療營運決策。",
+      "proposed_solution": "作者提出 LLM-PADA（Preference Assessment and Decision Analysis for LLM-based agents）框架，包含四步驟：取得顯性評分或由成對選擇推論隱性偏好；檢查其對決策情境、角色與取得程序的敏感度及穩定性；依觀察到的權重變異建立不確定集合；最後比較平均權重最佳化與 robust weighted-sum optimization 的決策。核心創新在於不直接假定 LLM 輸出可信，而是將偏好可靠性 audit 與決策後果分析整合，並比較 LLM deliberation、機械平均，以及考慮 presentation order 的選擇模型。",
+      "core_contributions": [
+        "提出 LLM-PADA，將偏好取得、可靠性檢查、權重不確定集合與 robust decision analysis 串成完整流程；平均權重與 robust 模型在門診 16 個比較中有 10 個、急診 6 個比較中有 5 個產生不同決策。",
+        "在門診顯性偏好實驗中，系統比較 numerical deliberation、argumentative deliberation 與 mechanical averaging，發現 LLM deliberation 可能削弱情境反應並抹平角色差異，而機械平均能保留初始差異。",
+        "在急診隱性偏好實驗中，以含 presentation-order effect 的成對選擇模型推估權衡權重，並在未用於估計的新配對上評估預測，顯示 outcome context 的額外預測價值有限。"
+      ],
+      "methodology": "研究使用本地執行的 Qwen3.5-4B，分成門診預約排程的顯性偏好與急診低急迫度病患分流的隱性偏好兩個實驗。顯性實驗設定 Intake、Provider、Scheduler 三種角色，要求 agents 以 1–9 分評估 waiting、provider idle、overtime；情境包含 balanced、high waiting、high overtime 與 context-free。每一設定收集 20 次回答，以 Tukey IQR 規則逐準則排除離群值，將保留平均分數正規化為 simplex 上的權重。之後比較三輪 numerical deliberation、argumentative deliberation，以及不使用 LLM 的 mechanical averaging；LLM 協議各產生 5 條獨立軌跡。可靠性指標包括 paired score difference、role-differentiation score 與 inter-agent dispersion，並以 5,000 次 bootstrap 建立 95% percentile intervals。權重不確定性採各準則 5%–95% empirical percentile box，並與 simplex 約束交集。排程部分求解平均權重模型（MW）與最小化不確定集合內最壞加權目標的 robust model（RB），以 HiGHS/SciPy 求解 MILP。隱性實驗讓 Patient、Physician、Operations 角色在急診配置成對選項間選擇，使用含 outcome attributes 與 presentation-order term 的 choice model，並與僅使用呈現順序的模型比較新配對預測能力。",
+      "key_results": "| 實驗面向 | 論文報告的結果 |\n|---|---|\n| 顯性偏好：情境敏感度 | 初始評分對 high waiting 與 high overtime 的焦點準則呈正向反應；例如 waiting 的平均 paired score difference 為 0.506–0.695，overtime 為 1.691–2.977，依角色而異。 |\n| Deliberation 影響 | 三輪 numerical 或 argumentative deliberation 後，部分情境反應減弱，且角色差異可能消失或反轉；mechanical averaging 則保留角色區隔。 |\n| 初始角色差異 | Balanced 情境下，Intake–waiting、Provider–overtime、Scheduler–idle 的 role-differentiation scores 分別為 0.087、0.094、0.078。 |\n| 權重不確定性 | 數值與論證 deliberation 的權重區間較寬；例如 argumentative/B 的 waiting bounds 為 [0.286, 0.615]，idle 為 [0.074, 0.333]，overtime 為 [0.154, 0.500]。 |\n| 門診決策差異 | 平均權重模型與 robust 模型在 16 個 outpatient comparisons 中有 10 個選出不同排程；完整排程結果顯示，Pre B 從 (86,0,0) 變為 (50,15,6)，平均目標變化 +8.12%，最壞情況目標變化 −5.95%。 |\n| 急診決策差異 | 平均權重與 robust 模型在 6 個 emergency department comparisons 中有 5 個選出不同配置。 |\n| 成對選擇偏誤 | 選項呈現順序對 agents 的選擇有主要影響；加入情境 outcome 差異相較於僅使用 presentation order，只有 6 個「模型與角色」組合中的 2 個顯示較佳的新配對預測證據。 |\n| 整體結論 | LLM 產生的偏好不可未經檢驗地直接作為最佳化權重；論文未報告其與真實人類利害關係人偏好的符合程度。 |",
+      "insights": [
+        "在高風險醫療最佳化中，應把 LLM 偏好視為不確定輸入，先檢查情境敏感度、角色一致性、重複穩定性與選項順序偏誤，再決定是否採用。",
+        "多代理 deliberation 不必然提升偏好品質；若角色差異本身是決策所需資訊，應同時比較 LLM 協商與不涉及模型判斷的機械聚合。",
+        "實務部署不應只提供平均權重產生的單一方案，應以權重不確定集合進行 robust optimization，並呈現平均方案與最壞情況之間的服務指標取捨。"
+      ],
+      "limitations": "研究僅使用 Qwen3.5-4B、本地模型、兩種合成或既有模擬情境，且門診樣本只有 10 個 base clinic descriptions。作者明確指出，研究檢驗的是內部可靠性，而非與真人利害關係人偏好的一致性；權重正規化及參考尺度也是實驗假設。未來需加入真人校準、更多模型與真實營運資料，並檢驗不同提示與不確定集合建構方式。",
+      "tags": [
+        "agent-evaluation",
+        "alignment",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM-based multi-agent systems",
+        "multi-criteria decision-making",
+        "robust optimization",
+        "healthcare operations research",
+        "pairwise choice modeling",
+        "preference elicitation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.23668",
+      "title": "TUPLE-Bench: Evaluating and Mitigating Privacy-Utility Trade-offs in Typed Decision Models",
+      "abstract": "Typed decision models often return more than a selected category. They also expose probabilities for each candidate and, sometimes, a separate confidence score. These fields support downstream decisions but may reveal information beyond a recipient's authorization. We introduce TUPLE-Bench (Typed decision models' Utility and Privacy Leakage Evaluation Benchmark), a benchmark of paired synthetic cases in which recipients may learn a coarse operational category but not its fine-grained cause. Across nine models, instructions to withhold the cause fail to protect it: 91.88%-99.93% of responses reveal the cause through direct selection or residual scores. Even when causes are excluded from the candidate set, full outputs enable 62.85%-75.35% recovery on held-out cases, compared with 51.04%-57.64% using only the selected category (50% chance). Full outputs also reduce mean downstream cost in all 27 model-task comparisons. However, confidence fields increase leakage without consistently reducing cost. We further introduce workflow-constrained privacy quantization (WCPQ), which reduces secret recovery while preserving the behavior and cost of specified downstream workflows. Our findings highlight the need to audit decision interfaces field by field and workflow by workflow.",
+      "authors": [
+        "Yiqu Yang",
+        "Qiaoyuan Zheng",
+        "Yang Tian",
+        "Yu Fan",
+        "Elliott Ash"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-10-16T16:00:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.23668v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.23668",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "Typed decision models 往往不只回傳選定類別，也會公開各候選項目的機率，以及有時額外提供的 confidence score。這些欄位能支援下游決策，但可能揭露超出接收者授權範圍的資訊。本文提出 TUPLE-Bench（Typed decision models’ Utility and Privacy Leakage Evaluation Benchmark），以成對 synthetic cases 測試接收者可得知粗粒度 operational category、但不得得知細粒度原因的情境。九個模型的結果顯示，即使指示模型隱瞞原因，91.88%–99.93%的回應仍會透過直接選擇或 residual scores 揭露原因。即使將原因排除於候選集合之外，完整輸出在 held-out cases 上仍可達62.85%–75.35%的原因恢復率，高於僅提供 selected category 的51.04%–57.64%。完整輸出在全部27個 model-task comparisons 中降低下游成本，但 confidence fields 會增加洩漏，且未穩定降低成本。作者進一步提出 workflow-constrained privacy quantization（WCPQ），在維持指定下游 workflow 行為與成本的同時降低秘密恢復率。研究強調應逐欄位、逐 workflow 稽核 decision interface。",
+      "problem_statement": "現有 typed decision interface 的評估多聚焦於 selected label、模型準確率或 confidence calibration，未充分檢查 probabilities、confidence 及 residual scores 是否洩漏接收者無權知道的細粒度原因。單純要求模型輸出 WITHHOLD，或把敏感原因從 production candidates 移除，也不足以保證機密性；同時，全面刪除分數可能損害 routing、review 與 cost-sensitive decision 的效用。因此需要在明確 disclosure contract 下，聯合評估輸出欄位造成的 privacy leakage 與 downstream utility。",
+      "proposed_solution": "作者提出 TUPLE-Bench，建立三個 operational domains、recipient-specific disclosure contracts，以及共享 public context 和 authorized coarse outcome、但具有不同 protected mechanisms 的 paired synthetic worlds。框架以兩條互補路徑稽核：第一是 refusal probe，檢查模型選擇 WITHHOLD 後，其他分數是否仍可恢復原因；第二是 coarse-to-fine audit，在 protected mechanisms 不出現在候選集合時，分析 choice、choice+confidence、full probabilities 與 full native 等 release views 的秘密推斷與下游成本。為降低洩漏，作者提出 WCPQ，由 trusted backend 將 native response 映射至 codebook 中的量化輸出，僅選取能保留預先指定 workflow 全部行為分支與成本的 codeword，並對 defended outputs 重新訓練攻擊 decoder。",
+      "core_contributions": [
+        "提出 TUPLE-Bench：包含720個 paired synthetic cases、三個 operational domains 與 recipient-specific disclosure contracts，用於同時衡量 typed decision readouts 的 privacy leakage 與 downstream utility。",
+        "系統性比較 refusal probe 與 coarse-to-fine release audit，證明即使模型選擇 WITHHOLD，residual scores 仍可能洩漏；即使敏感原因不在候選集合中，probabilities 與 native outputs 仍可支援秘密恢復。",
+        "提出 WCPQ，以 workflow behavior signature 約束輸出量化，在指定 workflow 與成本不變的條件下，實證降低秘密恢復率。"
+      ],
+      "methodology": "資料集包含 delivery operations、equipment service 與 IT operations 三個 synthetic domains；每個 domain 有四個 authorized coarse classes，以及每類四個 protected mechanisms，共720個 pairs、1,440個 worlds，並按432/144/144 pairs 分為 train/validation/test。每個 pair 固定 X、B、T 與 disclosure contract，只改變 private evidence E 和 mechanism S。decision model 回傳 D=(T-hat,p,c)，其中 p 是 coarse candidates 的 scores，c 是原生 confidence；所有 release views 均由同一份 saved native response 產生。效用以 selective routing、one-step clarification、asymmetric-cost routing 的 mean downstream cost、coverage 與錯誤率評估。隱私則以 supervised secret decoder，在已知 authorized T 與二元 hypotheses H={s0,s1} 下恢復 S，報告 accuracy、log loss 與相對 no-output baseline 的 gain。refusal probe 以16個細粒度 mechanisms 加 WITHHOLD，計算 direct selection 與 withholding 後 residual-score recovery。WCPQ 建立 probability-grid codebook，保留 selected category，並依18個 frozen workflows（3 tasks×6 cost profiles）的完整行為 signature 選擇替代輸出；若無合適 codeword 則 fallback 至原輸出。作者另比較0.1 quantization、temperature smoothing與Gaussian noise，並使用pair-clustered bootstrap intervals。",
+      "key_results": "| 評估面向 | 主要結果 |\n|---|---|\n| Refusal probe 整體原因恢復 | 九個模型為 **91.88%–99.93%**；其中選擇 WITHHOLD 的模型，其 withheld subgroup recovery 為 **87.53%–99.91%**。 |\n| WITHHOLD 行為 | WITHHOLD rate 為 **0.00%–98.96%**；OpenJev 從不 withholding，但 direct recovery 為 **96.94%**。 |\n| Choice-only 恢復 | **51.04%–57.64%**，no-output 約為50% baseline。 |\n| Full probabilities 恢復 | **62.50%–77.78%**。 |\n| Full native 恢復 | **62.85%–75.35%**；相較 choice-only 高 **11.46–23.61 個百分點**。 |\n| Full native 下游效用 | 在全部 **27個 model-task comparisons** 中降低 mean business cost，相對 choice-only 的降幅為 **9.52%–75.68%**。 |\n| Confidence field | choice+confidence 相較 choice 的 pooled recovery point estimate 在九個模型皆上升 **2.43%–10.42%**，但未一致降低成本。 |\n| WCPQ | 相較 native，TypeSafe、OpenJev、Clef 的 recovery 分別降低 **10.07–24.65個百分點**；recovery 為 **58.68%、51.04%、51.74%**，且18組 frozen workflow/cost combinations 的行為與成本均保持不變。 |\n| WCPQ coverage | TypeSafe **99.31%**、OpenJev **100%**、Clef **100%**。 |",
+      "insights": [
+        "決策介面的隱私稽核不應只檢查 selected label 或是否遵守 WITHHOLD；應逐一評估 probabilities、confidence、欄位組合及 residual information。",
+        "輸出欄位的取捨應依具體 downstream workflow 評估，而非假設移除所有分數必然更安全或必然降低效用；本文顯示 full outputs 在所有27個比較中降低成本。",
+        "可在 trusted backend 實施 workflow-aware post-processing，例如 WCPQ；但其保證只適用於事先指定且 frozen 的 workflows，仍需另外測試 fallback、行為本身與其他攻擊途徑是否洩漏。"
+      ],
+      "limitations": "資料全為 AI-generated synthetic cases，成本、checks 與 disclosure contracts 亦是構造設定，不能直接代表真實部署的洩漏率或成本。攻擊者採 passive、closed-set、binary-hypothesis decoding，未涵蓋 open-set、adaptive querying、timing、provider logging 與 repeated-call variability。Bootstrap 亦未納入 decoder refitting 和 selection uncertainty；模型、domain 與 workflow 範圍有限，且 pairs 的 statistical independence 未被證明。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "typed decision models",
+        "privacy-utility trade-off",
+        "information-flow security",
+        "confidence score leakage",
+        "workflow-aware post-processing"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]

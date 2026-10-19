@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.23787] DLite - History-free Speculative Decoding for Agentic AI|DLite: History-free Speculative Decoding for Agent...]] (2026-10-16)
+
 - `[Benchmark]` [[[2608.05115] Robust and Efficient Motion Reasoning for Privacy-Aware Classroom Incident Recog...|Robust and Efficient Motion Reasoning for Privacy-...]] (2026-08-05)
 
 ## 延伸閱讀

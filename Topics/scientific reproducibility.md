@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.23845] AI-Driven Reproducibility and Analytical Robustness in Scientific Discovery|AI-Driven Reproducibility and Analytical Robustnes...]] (2026-10-16)
+
 - `[Agent Evaluation]` [[[2608.07437] Fisher-R1 - Training LLM Agents for Reliable Hypothesis Testing|Fisher-R1: Training LLM Agents for Reliable Hypoth...]] (2026-08-07)
 
 ## 延伸閱讀
