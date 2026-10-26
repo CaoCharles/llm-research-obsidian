@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Benchmark]` [[[2610.32971] RobustRLlib - A Unified Library and Benchmark for Robust Reinforcement Learning ...|RobustRLlib: A Unified Library and Benchmark for R...]] (2026-10-23)
+
 - `[Agent Evaluation]` [[[2609.05324] RoboSPA - Can VLA Models Go Beyond Simple Scenes and Short-Horizon Tasks|RoboSPA: Can VLA Models Go Beyond Simple Scenes an...]] (2026-09-04)
 
 ## 延伸閱讀

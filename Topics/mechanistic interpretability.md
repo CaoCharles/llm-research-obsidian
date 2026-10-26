@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Safety & Alignment]` [[[2610.32866] Interpretable sparse fine-tuning with TopKLoRA enables faithful circuit discover...|Interpretable sparse fine-tuning with TopKLoRA ena...]] (2026-10-23)
+
 - `[Benchmark]` [[[2608.27429] Mechanistic Reaction Prediction via Discrete Flow Matching on Graph-Structured E...|Mechanistic Reaction Prediction via Discrete Flow ...]] (2026-08-27)
 
 - `[Safety & Alignment]` [[[2608.21209] Personalized Privacy Control in LLMs via Attention Head Intervention|Personalized Privacy Control in LLMs via Attention...]] (2026-08-21)

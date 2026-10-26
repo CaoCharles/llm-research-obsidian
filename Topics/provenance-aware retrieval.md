@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2610.32851] Reimagining Enterprise RAG for Multi-Agent Systems - A Knowledge Layer That Orga...|Reimagining Enterprise RAG for Multi-Agent Systems...]] (2026-10-23)
+
 - `[Agent Evaluation]` [[[2608.21230] Utility Under Attack - Agent Memory Poisoning and the Limits of Content Screenin...|Utility Under Attack: Agent Memory Poisoning and t...]] (2026-08-21)
 
 ## 延伸閱讀

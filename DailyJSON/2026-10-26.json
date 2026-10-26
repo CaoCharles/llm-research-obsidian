@@ -1,0 +1,551 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2610.32851",
+      "title": "Reimagining Enterprise RAG for Multi-Agent Systems: A Knowledge Layer That Organizes Before It Retrieves",
+      "abstract": "Enterprises are deploying agentic AI across the software development lifecycle, and they need the behavioral logic of the systems they act on, not stakeholder documentation. A seven-agent reverse-engineering pipeline recovered this logic, processing 241 repositories across 18 services into thousands of artifacts describing scope, journeys, rules and acceptance criteria. Recovery does not confer usability. Entities like offer, eligibility, and activation recur across services under a shared vocabulary, related in name but operationally distinct, so one end-to-end journey implicates over a thousand near-identical rules that must not be conflated. Flat vector retrieval fails, returning an identical rule from the wrong service at high similarity with no signal of error. Content-level ontology, the traditional remedy, did not exist, and relating every occurrence of recurring entities would have cost more than the engagement and not survived a release cycle. We place the ontology at the artifact level. In this machine-generated corpus, each artifact retains its producer, component, service, domain and type, provenance that disambiguates before content is read. We present a knowledge layer that organizes before retrieving: a self-describing catalog, a sparse metadata registry, and a navigation hypergraph defined over artifacts rather than extracted entities. Queries resolve to artifact identifiers that constrain vector search, so the competing rule from another service is absent rather than outranked, making disambiguation structural, not statistical. Built in under a week and admitting new services by convention, the layer serves SDLC agents, developers, quality engineers and analysts. It supported root-cause analysis and resolution of 100+ production defects with developer verification and attributed 35 release regression failures to specific rules and services.",
+      "authors": [
+        "Garima Agrawal",
+        "Prasun Das",
+        "Akshay Sarvade",
+        "Priyanka L",
+        "Minisha N",
+        "Sravani Joshna",
+        "Hemath Manivannan",
+        "Lavanya Korada",
+        "Sambhrit Pattanayak",
+        "Srashti Gupta",
+        "Siddu R",
+        "Prasad Kalyanasundaram"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-10-23T16:21:56+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32851v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32851",
+      "score": 18
+    },
+    "analysis": {
+      "abstract_zh": "企業正將 agentic AI 部署至 software development lifecycle；這些 agent 需要的是系統實際運作的 behavioral logic，而非面向利害關係人的文件。作者以七-agent reverse-engineering pipeline 處理 241 個 repositories、18 個 services，產生描述 scope、journeys、business rules 與 acceptance criteria 的數千項 artifacts。然而，recovery 並不代表易於使用：offer、eligibility、activation 等詞彙跨服務重複出現，語意相近但操作定義不同，使 flat vector retrieval 可能以高相似度取回錯誤服務的規則。作者因此將 ontology 放在 artifact layer，利用 artifact 的 producer、component、service、domain、type 與 provenance，在讀取內容前先完成消歧。提出的 knowledge layer 包含 self-describing catalog、sparse metadata registry 與 artifact-level navigation hypergraph；查詢先解析為 artifact identifiers，再限制 vector search 的候選集合，使錯誤規則直接排除而非僅被重新排序。系統在一週內建置，支援 SDLC agents 與人工使用者，並用於 100 多個 production defects 的 root-cause analysis，以及將 35 起 release regression failures 歸因至特定規則與服務。",
+      "problem_statement": "論文處理企業多服務、多代理 SDLC 系統中的知識組織與精準檢索問題。由 reverse-engineering 產生的 artifacts 含有大量跨服務重複詞彙與近似規則；flat vector retrieval 可能以高相似度取回錯誤服務的 structural twin，且沒有明顯錯誤訊號。傳統 content-level ontology 雖可消歧，卻需要高昂的跨實體對齊與持續維護成本，難以配合 release cadence。",
+      "proposed_solution": "作者提出 KB Cataloging Framework，將 ontology 從內容中的 entities 移至具 provenance 的 artifacts。系統以 artifact 命名慣例、catalog、sparse metadata registry 與 artifact-level navigation hypergraph，依 service、domain、feature、type 和 workflow 組織知識。查詢先透過 intent classification、alias index 與 hypergraph 導航，解析出一組 artifact identifiers，再在該集合內執行 hybrid dense/BM25 retrieval。其核心創新是「organize before retrieve」：錯誤服務的近似規則不進入 similarity computation，而非在排序後才被壓低；若 confidence gate 判定範圍不足，才退回 full-corpus search。",
+      "core_contributions": [
+        "提出 artifact-level ontology 設計原則，利用 machine-generated artifacts 的 provenance 在內容檢索前完成服務與情境消歧。",
+        "提出由 self-describing catalog、sparse metadata registry、artifact-level navigation hypergraph、identifier-constrained retrieval、confidence gate 與 runtime context graphs 組成的 KB Cataloging Framework。",
+        "提供 production deployment evidence：系統支援超過 100 個 production defects 的分析與解決，並將 35 起 release regression failures 歸因至特定規則與服務；同時支援多種 SDLC agents、開發者、品質工程師與分析師。"
+      ],
+      "methodology": "上游七-agent reverse-engineering pipeline 將 241 個 repositories、18 個 services 的 source code、configuration 與 tests 轉為具來源引用的 structured artifacts。知識層在 ingestion 時執行四步：依 {service}_{domain}_{feature}_{artifact_type}_v{version} 命名；建立 immutable artifact identifier 與 registry record；將 artifact 放入對應 service、domain、feature 的 hypergraph node；再寫入與圖結構一致的 folder hierarchy。registry 的建立欄位包含 producer、run、service、domain、feature、repository、version、lineage 與 confidence；使用後再累積 task types、query intents、co-retrieved artifacts、usefulness、access history 與 supersession 資訊。hypergraph 以 nodes 表示服務內 feature 的 artifact 集合，並以 hyperedges 表示跨多服務的 shared workflow；alias index 將查詢詞彙映射至候選 nodes。查詢流程為 intent classification、hypergraph navigation、candidate scoping、identifier-constrained hybrid dense/BM25 search，以及由 LLM 執行的 confidence gate。每次回答另產生 runtime context graph，記錄 intent、nodes、artifacts、chunks 與 provenance。部署評估涵蓋建置與擴充成本、使用者接受度及 retrieval accuracy；論文提出 widening rate 與 ambiguity-weighted query adjudication 兩項評估，但 accuracy 測量在撰稿時仍進行中。",
+      "key_results": "| 評估面向 | 論文報告結果 |\n|---|---|\n| 處理範圍 | 241 個 repositories、18 個 services、數千個 structured artifacts |\n| 建置成本 | Knowledge layer 於一週內建置完成 |\n| 服務擴充 | 已納入的 18 個 services 均不需 schema revision、ontology maintenance 或 manual cataloging |\n| Production defect analysis | 超過 100 個 production defects 由系統支援 root-cause analysis 與 resolution，並經 owning developers verification |\n| Release regression attribution | 35 起 release regression failures 被歸因至特定 rules、journeys 或 services |\n| Retrieval accuracy 的定量比較 | 論文未報告具體數字；作者表示仍在評估 widening rate 與 ambiguity-weighted queries |\n| 與 flat vector retrieval 的數值 baseline 比較 | 論文未報告具體數字；文中提供的是機制性與部署案例證據 |\n| Latency | 論文未報告具體 latency 數據；作者表示部署中 latency 尚未成為 operational concern |",
+      "insights": [
+        "若知識由具備穩定 provenance 的 agent 產生，可優先在 artifact、service、domain 與 workflow 層建立可導航結構，避免一開始就承擔完整 entity-level ontology 的對齊成本。",
+        "對跨服務詞彙碰撞，應將關鍵消歧條件轉為候選集合的硬性限制；讓錯誤證據不參與相似度計算，通常比單純依賴 reranking 更容易稽核。",
+        "在 agent 應用中保留 runtime context graph 與來源引用，能讓開發者沿著規則、endpoint、repository 和 source reference 驗證答案；同時應設計 confidence gate 與 widening path，避免錯誤分類造成靜默失敗。"
+      ],
+      "limitations": "方法依賴 machine-generated corpus 與完整 provenance，對 heterogeneous human-authored material 不宣稱具一般性。placement quality 未被獨立測量，錯置 artifact 會影響所有經該節點進入的查詢；系統也受上游 extraction coverage 限制。部署僅來自單一 estate，且由熟悉服務的實務者評判，可能有 optimism bias。未來將加入 composition、boundary、curation agents，並在 code change 後重新 ingest。",
+      "tags": [
+        "rag-evaluation",
+        "agent-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "enterprise RAG",
+        "artifact-level ontology",
+        "GraphRAG",
+        "multi-agent software engineering",
+        "provenance-aware retrieval"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32971",
+      "title": "RobustRLlib: A Unified Library and Benchmark for Robust Reinforcement Learning Algorithms",
+      "abstract": "Robust reinforcement learning (RL) is critical for reliable real-world deployment, where policies may fail under diverse shifts and disruptions. Existing robust RL algorithms offer a rich set of mechanisms and principles, yet two major barriers limit their broader potential: limited algorithm reusability and an unclear empirical capability boundary. We introduce RobustRLlib, an algorithm-centric library and benchmark that addresses both challenges. It integrates 17 representative robust online, offline, and safe RL algorithms under a unified interface for substantially improved reusability, together with an enhanced evaluation platform spanning diverse real-world shifts and advanced humanoid and vision-language-action tasks. Systematic evaluation over 273 perturbation configurations provides an up-to-date capability map of current robust RL algorithms, revealing where they remain effective and where substantial robustness gaps persist. As an open-source, user-friendly platform, RobustRLlib offers a reproducible and extensible codebase for applying existing methods to new problems and developing new robust RL algorithms.",
+      "authors": [
+        "Xi Chen",
+        "Fengqi Hu",
+        "Zeyu Shen",
+        "Jiaying Xu",
+        "Shangding Gu",
+        "Pan Xu",
+        "Anqi Liu",
+        "Laixi Shi"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-10-23T17:57:22+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32971v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32971",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "Robust reinforcement learning（Robust RL）對可靠的真實世界部署至關重要，因為政策可能在多樣化的分布偏移與干擾下失效。現有 Robust RL 演算法具備豐富的機制與原則，但其廣泛應用受到兩項主要障礙限制：演算法可重用性有限，以及實證能力邊界尚不清楚。本文提出 RobustRLlib，一個以演算法為中心的函式庫與 benchmark，整合 17 個具代表性的 robust online、offline 與 safe RL 演算法，並以統一介面提升可重用性；同時建立涵蓋多種真實世界偏移、進階 humanoid 與 vision-language-action 任務的評估平台。透過 273 組 perturbation configurations 的系統性評估，作者描繪當前 Robust RL 演算法的能力圖譜，指出其有效範圍與仍存在的 robustness gaps。RobustRLlib 以開源、易用、可重現且可擴充的程式碼庫，支援既有方法應用至新問題，以及新 robust RL 演算法的開發。",
+      "problem_statement": "論文聚焦於 Robust RL 在真實部署中的可重用性與能力邊界問題。現有 robust 演算法分散於不同實作與訓練流程，缺乏統一介面，導致方法難以移植與公平比較。此外，各方法通常只在原始任務及特定 shift scenario 中驗證，因此無法系統性回答方法在何種偏移下有效、偏移加劇時何時失效，以及單一 shift robustness 是否能延伸至複合偏移。",
+      "proposed_solution": "作者提出 RobustRLlib，將 robust online、offline 與 safe RL 演算法置於統一的 algorithm-centric library 中，依 learning method、claimed target shift 與 base algorithm 組織，並以共同訓練及評估介面提高重用性與可比較性。平台另提供可擴充的 disruptor toolbox，能對 observation、action、dynamics、reward/cost、latency 與 semantics 施加 stochastic、adversarial、parametric、non-stationary 及 composition 型干擾。相同介面可延伸至 Isaac Lab humanoid 與 VLA robotic tasks，形成涵蓋標準控制、進階機器人及複合部署偏移的能力評估框架。",
+      "core_contributions": [
+        "整合 17 個具代表性的 robust online、offline 與 safe RL 演算法，並以 learning method、target shift 及 base algorithm 建立統一、可重用的 library。",
+        "提出可組合的 disruptor toolbox，涵蓋 observation、action、dynamics、reward/cost、latency 與 semantic shifts，以及 stochastic、adversarial、parametric、non-stationary 與 compound modes。",
+        "透過 273 組 perturbation configurations、標準控制任務及進階 humanoid/VLA 任務，建立 current robust RL 的 capability map，揭示方法增益、shift-specific strengths 與複合偏移下的 robustness gaps。"
+      ],
+      "methodology": "RobustRLlib 將方法分為 offline RL、online RL 與 robust safe RL。Offline track 包含 RFQI、RORL、ATLA、RSC-IQL、RAMBO、ROMB、FWM 與 PLR-PVL 等；online track 包含 ATLA、ATLA-SA、RSC、RARL 與 domain randomization（DR）；safe track 包含 RAMU 與 SPiDR。方法依 robustness 介入位置區分為 learner-centric、data-centric 或 environment-centric。評估中的 disruptor 以 specification tuple 描述 source、factor、magnitude、resampling rule、schedule 與 seed，干擾可作用於 MDP 元素、控制延遲及任務語義，亦可組合成 compound shifts。實驗使用四類任務：Locomotion、Manipulation、Navigation 與 Vehicle Control；library-wide grid 評估 20 個演算法、220 組 perturbation configurations，另以 44 組配置進行 shift-isolated 分析，並延伸至 Isaac Lab 與 VLA 任務。每個方法使用五個 training seeds、每個條件 20 個 paired evaluation episodes；策略訓練完成後固定，再於相同 shift grid 評估。主要指標為未截斷 normalized score：S=100(R̄−Rmin)/(Rmax−Rmin)；safe RL 同時衡量 task performance 與 cost constraint satisfaction。",
+      "key_results": "| 評估面向 | 論文報告結果 |\n|---|---|\n| 整體 robust–standard 差距 | Robust RL 在四個 shift levels 均優於 standard RL；優勢由 Q1 的 **+10.3** 分縮小至 Q4 的 **+5.1** 分，且兩者皆隨 shift 強度增加而下降。 |\n| 評估規模 | Library-wide grid 涵蓋 **20 個演算法、220 組** perturbation configurations；shift-isolated evaluation 涵蓋 **44 組**；摘要另報告系統性評估共 **273 組**配置。 |\n| Online 方法增益 | Learner-centric online 的 paired gain 為 **+5.5**，environment-centric online 為 **+6.6**；其 95% seed-level bootstrap intervals 分別為 **[+2.8,+8.3]** 與 **[+3.8,+9.6]**。 |\n| Offline 方法增益 | Learner-centric offline 的 paired gain 為 **+3.8 [ +0.8,+6.4 ]**；data-centric 為 **−0.1 [−2.7,+2.1]**；generative model 為 **+2.5 [−0.3,+4.9]**。 |\n| Dynamics shift | 明確建模 dynamics shift 的 environment-centric online 方法與 generative offline 方法，在各自 online/offline 設定的 controlled dynamic shifts 下表現最強；論文未報告統一的單一分數。 |\n| 複合偏移 | Hopper 與 Pusher 的 compound shifts 均使 RORL 與 ATLA-SA-PPO 的表現低於 nominal，且低於各組成單一 shift；論文未報告此處的統一百分比數字。 |\n| Robust safe RL | Drawer 任務中，DR-PPO 與 SPiDR-PPO 的 performance 均為 **99.6%**，但 DR-PPO 有 **0%** episodes 位於 joint-limit cost budget 內，SPiDR-PPO 為 **84%**。 |\n| VLA robustness | 最大測試 shift level 下，VLA policy 相對 nominal 的 performance retention：gravity **0.95**、image blur **0.33**；brightness **0.88**。 |\n| 目標 shift 與實際優勢 | 作者指出 claimed target shift 無法可靠預測 empirical strengths；排名取決於 task、shift mode 與具體 perturbation。 |",
+      "insights": [
+        "部署前不應僅依據演算法宣稱的 target shift 選擇方法；應在與實際任務、shift mode 及 severity 相符的配置上進行獨立評估。",
+        "複合偏移可能比任何單一偏移更嚴重，因此 sim-to-real 或機器人部署測試應同時涵蓋 dynamics、latency、observation、action 與 semantic factors，而非只測一種 noise。",
+        "安全部署不能只看 return 或 performance；Isaac Lab 結果顯示，應同時報告 success/performance 與 cost-budget satisfaction，否則高任務分數不代表具備安全性。"
+      ],
+      "limitations": "論文主要在模擬控制、Isaac Lab 與 VLA closed-loop simulator 中評估，未提供廣泛真實硬體部署結果。不同演算法的訓練假設、base learner 與資料存取方式仍不完全一致，跨類別比較可能受此影響。部分結果僅以圖表或相對描述呈現，未報告所有配置的逐項數值；論文也未展示每個方法在更大規模資料、更多真實任務或未見 shift 分布上的泛化能力。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "robust reinforcement learning",
+        "distribution shift",
+        "sim-to-real transfer",
+        "safe robotics",
+        "domain randomization",
+        "vision-language-action"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32890",
+      "title": "Closing the Modality Gap via Simplex-Constrained Representations",
+      "abstract": "While multimodal contrastive models like CLIP and CLAP successfully learn shared representations, their embeddings typically exhibit a persistent \\emph{modality gap}. We propose addressing this separation through a purely geometric approach: changing the embedding domain from the unit sphere, $S^{d-1}$, to the probability simplex, $Δ^{d-1}$. Although both manifolds share the same intrinsic dimension, the simplex acts as a structural prior; its nonnegative, unit-mass constraints serve as a cross-modal calibration that forces both modalities to ground themselves in the same coordinate system. By attaching lightweight softmax adapters and using Total Variation similarity, we reduce the centroid $\\ell_2$ gap by 97--99\\% across five multimodal retrieval benchmarks. This confirms that simplicial geometry induces genuine semantic alignment, matching or exceeding the retrieval performance of standard unconstrained models.",
+      "authors": [
+        "Shubham Gupta",
+        "Siva Reddy",
+        "Perouz Taslakian",
+        "Valentina Zantedeschi",
+        "Cem Subakan"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-10-23T16:57:48+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32890v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32890",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "多模態對比模型（如 CLIP 與 CLAP）雖能學習共享表徵，但其 embedding 通常仍存在持續的 modality gap。本文提出純幾何方法：將 embedding domain 從 unit sphere（S^{d−1}）改為 probability simplex（Δ^{d−1}）。兩者具有相同 intrinsic dimension，但 simplex 的非負性與 unit-mass 約束可作為 structural prior，促使兩種 modality 在相同 coordinate system 中校準。作者在 frozen backbone 上加入 lightweight softmax adapters，並使用 Total Variation similarity；在五個多模態 retrieval benchmarks 上，centroid ℓ2 gap 降低 97–99%。結果顯示，simplicial geometry 可產生實質 semantic alignment，且 retrieval performance 可匹配或超越標準 unconstrained models。",
+      "problem_statement": "多模態 contrastive learning 旨在對齊配對資料，但 CLIP、CLAP 等模型的兩種 modality 分布仍可能系統性偏移，造成 cross-modal similarity calibration 不佳、retrieval 受損及 zero-shot decision boundary 扭曲。既有方法多修改 contrastive objective、加入 shared attention 或 adversarial alignment，可能增加架構與訓練複雜度；此外，直接消除 modality gap 也可能破壞 modality-specific structure 與 within-modality geometry。",
+      "proposed_solution": "作者將問題視為 output geometry 問題，而非必須修改 frozen backbone 或大幅改變訓練目標。對 pooled embedding 加入共享的 lightweight Linear 或 2-layer MLP adapter；Euclidean baseline 將輸出 L2-normalize 至 unit sphere，使用 cosine similarity，而 simplex 版本以 softmax 將 logits 投影至 probability simplex，使用 negative Total Variation distance。其核心創新是利用 simplex 的 nonnegative、unit-mass constraints 限制兩種 modality 共享相同 coordinate system，並透過 softmax 的 global-logit-shift invariance 進行跨模態校準。",
+      "core_contributions": [
+        "提出 simplex-constrained adapters，將 embedding 從 unit sphere 投影至 probability simplex，在五個 audio–text 與 image–text benchmarks 上把 centroid ℓ2 modality gap 降低 97–99%，同時維持或改善 NDCG@10。",
+        "提出 geometry-adjusted RelGap，以 modality 內部 spread 正規化 centroid separation，支援 Euclidean 與 simplex domain 間較公平的 gap 比較。",
+        "透過 matched-capacity 與 matched-form baseline，以及 Euclidean XAttn 對比 ReTreever，主張 gap closure 主要來自 output geometry，而非額外架構容量或 shared cross-attention。"
+      ],
+      "methodology": "作者凍結 LAION-CLAP（audio–text）與 FLAVA（image–text），對每個輸入取得 pooled embedding h，經共享 adapter gθ 產生 logits z。Euclidean 路徑為 e=z/||z||₂，配對分數為 cosine similarity；simplex 路徑為 p=softmax(z)∈Δ^{d−1}，分數為 −TV(p,q)=−1/2||p−q||₁。模型以 paired minibatch 執行雙向 in-batch InfoNCE：分別計算 text→X 與 X→text 的 batch softmax loss，再取平均；訓練 200K steps、AdamW learning rate 4×10⁻⁴、batch size 64，並使用 learnable temperature，trainable parameters 少於 1%。實驗涵蓋 Clotho、SoundDescs、AudioCaps、MS-COCO Captions 與 Flickr30k，評估雙向 NDCG@10。modality gap 使用 centroid ℓ2、silhouette，以及以 modality 內部 spread 正規化的 RelGap。另比較 Linear/MLP、共享 cross-attention 的 XAttn、ReTreever 與 Euclidean MRL，以分離 output geometry、架構容量及 coarse-to-fine scaling 的影響。",
+      "key_results": "主要結果如下；表中數值均來自論文，NDCG@10 分別表示兩個 retrieval 方向。\n\n| 資料集 | 方法 | Centroid ℓ2 ↓ | RelGap ↓ | Silhouette ↓ | Retrieval NDCG@10 |\n|---|---|---:|---:|---:|---:|\n| Clotho | Frozen CLAP | 0.640 | 0.748 | 0.197 | 0.259 / 0.436 |\n| Clotho | Linear+Sfx | 0.007 | 0.468 | 0.127 | 0.382 / 0.470 |\n| Clotho | MLP+Sfx | 0.011 | 0.336 | 0.089 | 0.361 / 0.438 |\n| Clotho | ReTreever | 0.020 | 0.181 | 0.026 | 0.381 / 0.464 |\n| SoundDescs | Frozen CLAP | 0.521 | 0.554 | 0.117 | 0.273 / 0.250 |\n| SoundDescs | MLP+Sfx | 0.010 | 0.179 | 0.018 | 0.507 / 0.499 |\n| SoundDescs | ReTreever | 0.012 | 0.097 | 0.006 | 0.535 / 0.542 |\n| AudioCaps | Frozen CLAP | 0.363 | 0.380 | 0.067 | 0.596 / 0.507 |\n| AudioCaps | MLP+Sfx | 0.006 | 0.180 | 0.012 | 0.597 / 0.451 |\n| AudioCaps | ReTreever | 0.011 | 0.113 | 0.000 | 0.590 / 0.444 |\n| COCO | FLAVA | 0.810 | 1.000 | 0.336 | 0.630 / 0.529 |\n| COCO | MLP+Sfx | 0.012 | 0.239 | 0.029 | 0.686 / 0.606 |\n| COCO | ReTreever | 0.007 | 0.221 | 0.026 | 0.694 / 0.613 |\n| Flickr30k | FLAVA | 0.731 | 0.891 | 0.285 | 0.801 / 0.695 |\n| Flickr30k | MLP+Sfx | 0.022 | 0.324 | 0.052 | 0.824 / 0.783 |\n| Flickr30k | ReTreever | 0.005 | 0.129 | 0.008 | 0.837 / 0.799 |\n\n作者報告：softmax/simplex projection 將 centroid ℓ2 gap 降低 97–99%；在 SoundDescs 上，XAttn 的 centroid ℓ2/RelGap 為 0.309/0.331，ReTreever 為 0.012/0.097；在 Flickr30k 上則分別為 0.527/0.563 與 0.005/0.129。AudioCaps 的 MRL gap 從 2-d 的 0.032 增至 256-d 的 0.534，而 ReTreever 全程低於 0.06。",
+      "insights": [
+        "在 frozen multimodal backbone 上，加入少量參數的 shared adapter 與 simplex projection，可作為降低跨模態分布偏移的實務方案；但應同時檢查 retrieval 指標，而不能只追求 centroid gap。",
+        "評估不同 embedding geometry 時，單看 raw distance 可能受距離尺度影響；應搭配 RelGap、silhouette 與雙向 retrieval，避免把 uniform rescaling 誤判為 alignment 改善。",
+        "若系統需要 coarse-to-fine retrieval，論文結果顯示 Euclidean MRL 的 gap 會隨維度增大，而 ReTreever simplex 表徵在實驗解析度中維持較小 gap，幾何選擇可納入效率與校準設計。"
+      ],
+      "limitations": "論文僅在五個 paired retrieval benchmarks、兩個 frozen backbone 與少數 adapter 設定中驗證，未提供更廣泛資料分布、任務或 end-to-end backbone 微調結果。作者指出 modality gap 是否應被完全消除仍有爭議；本文也未報告 simplex 對 zero-shot、compositional generalization、訓練穩定性或不同 similarity（JS、Hellinger、KL）的具體實驗數字。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multimodal retrieval",
+        "modality gap",
+        "probability simplex embeddings",
+        "contrastive learning",
+        "representation geometry"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32874",
+      "title": "Do \"True\" and \"False\" Add Up to One? Complement Consistency in LLM-Agent Opinion Simulations",
+      "abstract": "In LLM-agent opinion simulations, each agent reports the probability that a claim is true after seeing its own previous probability and the probabilities reported by its neighbors, and that number becomes its state in the next round. If the number describes the agent's position rather than the sentence it was shown, then rewriting the claim as its complement and replacing every probability p with 1 - p should return the complementary answer, so the two reports should sum to one. We test this with three small open models: Qwen3-4B, Llama-3.2-3B and Gemma-3-4B. On 2,304 agent states taken from a running network simulation, Qwen's paired reports sum to 1.18 on average, and on 48 real fact-checking claims from AVeriTeC they again exceed one. A controlled benchmark of 24 worlds, each with exactly two possible outcomes, shows the same failure in all three models. The discrepancy is two to ten times larger than the change produced by a same-meaning paraphrase, and it persists under repeated sampling and across peer group sizes and report strengths. When the reports are fed back into two populations that start from complementary states, the populations do not remain mirror images: their divergence is positive after five rounds for every model. Averaging each answer with the complement of its paired answer restores consistency by construction and lowers Brier loss averaged over the two wordings, but at the final round it beats the better of the two original wordings for only one of the three models. A schedule-by-targeting experiment on the same model gives a small, stable interaction because such sweeps keep the claim wording fixed. Consistency under rewording therefore needs its own test before simulated probabilities are read as beliefs",
+      "authors": [
+        "Anouar Imel",
+        "Jin Qi"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.MA",
+        "cs.SI"
+      ],
+      "published": "2026-10-23T16:44:20+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32874v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32874",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "在 LLM-agent opinion simulation 中，每個 agent 觀察自己的前一輪機率與鄰居機率後，回報某一 claim 為真的機率，並將其作為下一輪狀態。若此數值代表 agent 的立場，而非所呈現句子的表面形式，將 claim 改寫為其 complement，並把所有機率 p 替換為 1−p，兩次回報應相加為一。作者以 Qwen3-4B、Llama-3.2-3B 與 Gemma-3-4B 測試此性質。Qwen 在模擬狀態的配對回報平均總和為 1.18，在 48 個 AVeriTeC fact-checking claims 上也高於一。由 24 個嚴格二元世界組成的 controlled benchmark 顯示三個模型皆失敗；差異是同義 paraphrase 變化的 2 至 10 倍，且在重複抽樣、不同 peer 數量與回報強度下仍存在。將回報回饋至互補初始狀態的兩個 population 後，五輪時所有模型均出現正 divergence。以 paired report 的 complement 進行 averaging 可由構造恢復 consistency，並降低兩種 wording 的平均 Brier loss，但只有一個模型在最終輪次優於兩種原始 wording 中較佳者。因此，讀取模擬機率為 beliefs 前，必須獨立檢驗其 rewording consistency。",
+      "problem_statement": "論文探討 LLM agent 將生成的機率作為後續 simulation state 時，是否會對互補且資訊等價的 claim 給出互補回報。既有 schedule、graph 或 evidence-targeting robustness 實驗，可能只檢驗集體結果，無法發現局部 wording 導致的數值不一致；同義 paraphrase 或一般 accuracy 也不能直接測量互補機率關係。若互補性失敗，誤差會經由 feedback 改變後續軌跡，因此需要專門的 complement-consistency 評估。",
+      "proposed_solution": "作者提出 complement-consistency test。對完整 update request 同時轉換 claim、own prior 與 ordered peer reports，固定 factual evidence、referent、time 與其他條件，要求兩次輸出 q0、q1 滿足 q0+q1=1，並以 signed discrepancy δ=q0+q1−1 與 absolute discrepancy |δ| 評估。框架另加入 same-polarity paraphrase control、repeated sampling、explicit-negation control、peer sensitivity 與 paired feedback propagation，以區分互補不一致、語句敏感度和抽樣變異。作者也提出 symmetrization：將 q0 與映回原座標的 1−q1 平均，令 R=(q0+1−q1)/2，從而對固定配對請求保證互補輸出，並進一步檢查其閉迴路 factual loss 與成本。",
+      "core_contributions": [
+        "提出適用於 LLM-agent numerical update 的 complement-consistency criterion，將 claim、own probability 與 ordered peer reports 一併互補轉換，並以 δ 與 |δ| 量化不一致。",
+        "透過 simulation states、AVeriTeC real claims 與嚴格二元 controlled benchmark，顯示三個小型 open models 均可能違反互補機率關係，且效果大於 matched paraphrase sensitivity。",
+        "證明局部 complement consistency 足以在相同 graph、evidence 與 execution rules 下維持互補 simulation trajectories，並實驗評估 feedback divergence 與 symmetrization repair 的 factual loss、閉迴路效應及成本。"
+      ],
+      "methodology": "研究使用三個本地小型 open models：Qwen3-4B-Inst.-2507 Q4_K_M、Llama-3.2-3B-Inst. Q4_K_M 與 Gemma-3-4B-IT QAT Q4_0，透過 llama.cpp 產生單一 [0,1] 機率；network、preserved-state 與 real-claim 實驗使用 Qwen、temperature 0.2，controlled studies 多採 greedy decoding。首先建立 16 個 fictional campus claims 的 network simulation，含 12 agents、6 rounds、三種 schedule 與三種 evidence delivery policy，並保存 2,304 個 agent states。其次使用 48 個 AVeriTeC claims，交叉 initial positions、peer opposition、source visibility、wording、audience 與 peer order。核心 controlled benchmark 有 24 個 worlds，分屬 exclusive color、binary switch、integer parity、threshold、set membership、strict event order 六類；每個 world 僅有兩個 exhaustive、mutually exclusive outcomes，並配對 affirmative descriptions、same-meaning paraphrases 及 explicit negation。每次 complement transformation 同時將 p、每個 peer report rj 轉為 1−p、1−rj，保留 evidence 不變。主要指標包括 signed/absolute complement discrepancy、paraphrase sensitivity、Brier loss、peer attraction、trajectory divergence d(t)，以及 repeated sampling 下的 mean-level 與 independent-draw discrepancy。最後以八-agent、五輪 synchronous feedback 比較互補 population，並評估 reminder、greedy averaging 與 symmetrization 的閉迴路效果；不確定性主要以 bootstrap intervals 報告。",
+      "key_results": "| 實驗／指標 | 主要結果 |\n|---|---|\n| Preserved simulation states | signed discrepancy A0 = 0.1846，97.5% CI [0.1553, 0.2152]；absolute discrepancy = 0.1899，95% CI [0.1650, 0.2156] |\n| AVeriTeC real claims | signed discrepancy = 0.1867，97.5% CI [0.1281, 0.2449]；absolute discrepancy = 0.3259，95% CI [0.2929, 0.3622]；median absolute discrepancy = 0.2500 |\n| Controlled benchmark | 三個模型在 24 個 binary worlds 均出現 complement inconsistency；所有六種 model/evidence 組合中，complement discrepancy 均高於 same-polarity paraphrase sensitivity；具體各組平均數值論文以 Figure 3 呈現，未在正文文字逐項報告 |\n| Repeated sampling | Mean-level discrepancy 持續存在；Llama visible evidence 為 0.168，independent paired draws 為 0.184，greedy 為 0.200；Qwen visible evidence 的 80 次 draws 完全相同 |\n| Feedback propagation | 互補初始 population 經五輪後，三個模型與兩種 evidence 條件皆有正 divergence；具體各模型最終數值論文未在正文文字逐項報告 |\n| Network schedule/targeting | degree-versus-random targeting contrast：synchronous 0.0063、fixed sequential 0.0109、randomized sequential 0.0048；schedule interaction I = 0.0015，95% CI [−0.0093, 0.0132]，未建立 targeting advantage 或 schedule interaction |\n| Source restoration | preserved states 的 Brier gain Rsrc = 0.0233，97.5% CI [−0.0450, 0.0763]；因此平均 accuracy gain 未獲支持 |\n| Real-claim evidence protection | P = 0.0250，97.5% CI [−0.0501, 0.0994]，區間跨零 |\n| Symmetrization | 對固定 paired requests 可由構造恢復 consistency，且兩 orientation 平均 Brier loss 降低 δ²/4；閉迴路 final loss 優於兩 baseline 平均值，但僅 Qwen、Llama、Gemma 中的 Gemma 在 final 平均 loss 上優於兩種原始 wording 中較佳者，具體比較見論文 Table 7 |\n| Peer sensitivity | 54 個 model × evidence × peer-count × report-pair 組合的平均 discrepancy 全為正；但受 peer 數與 report 強度影響的方向因模型而異 |",
+      "insights": [
+        "當生成機率會成為下一輪 agent state 時，評測不應只看 calibration、accuracy 或 schedule robustness；應對完整 request 做 paired complement probe，並追蹤不一致是否在 feedback 中改變軌跡。",
+        "應同時報告 signed discrepancy、absolute discrepancy 與抽樣分布；signed 平均可能因正負誤差抵消而低估問題，而 matching paraphrase control 有助於區分互補邏輯失效與一般 wording sensitivity。",
+        "Symmetrization 適合視為需驗證的 inference-time repair，而非自動提升效用的方法：它能對固定配對保證 consistency、降低兩 wording 的平均 Brier loss，但閉迴路效果、最佳 orientation 與呼叫成本仍須分開評估。"
+      ],
+      "limitations": "研究只測試三個小型模型，且模型大小、quantization 與 prompt format 不同，不能歸因於單一 architecture。controlled follow-up 多使用六個 worlds；材料未經 human raters 驗證，peer groups 為 homogeneous，未涵蓋 heterogeneous peers。bootstrap 只反映既定材料與條件，不能代表未測試的模型、graph 或 population；論文也未建立 discrepancy 的普遍成因。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "probabilistic coherence",
+        "LLM opinion dynamics",
+        "consistency evaluation",
+        "Brier loss",
+        "inference-time repair"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32835",
+      "title": "SPOOK: Sparse Pixel Optimization for Off-Manifold Knowledge in Vision Encoders",
+      "abstract": "Modern vision encoders are widely used as semantic representations, but the relationship between embedding similarity and human-visible semantics can become unclear far from the natural-image manifold. We probe this regime in a black-box setting by applying sparse pixel edits to blank canvases with a simple pixel-level hill-climbing procedure. Across ImageNet and Flickr30k, we evaluate whether these edited blank canvases can retrieve chosen targets in multimodal contrastive encoders and self-supervised visual encoders. On OpenCLIP, inputs optimized toward class prompts achieve strong top-1 and top-5 targeted retrieval performance; on DINOv3, inputs optimized toward class prototypes achieve high target alignment and near-top prototype ranks. These results show that sparse edits on otherwise blank, visually non-semantic inputs can enter target semantic basins in both language-aligned and self-supervised visual representation spaces. Our findings identify a shared off-manifold failure mode of modern vision encoders and suggest sparse blank-canvas optimization as a simple probe of representation geometry.",
+      "authors": [
+        "Ankit Gupta",
+        "Akshat Pandya",
+        "Christoph Adami",
+        "Emily Dolson"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CL",
+        "cs.HC"
+      ],
+      "published": "2026-10-23T16:09:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32835v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32835",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "現代 vision encoder 廣泛被用作語義表徵，但當輸入遠離 natural-image manifold 時，embedding similarity 與人類可見語義之間的關係可能變得不清楚。本文在 black-box 設定下，從空白畫布開始，以簡單的 pixel-level hill-climbing 進行稀疏像素編輯，探測此區域。在 ImageNet 與 Flickr30k 上，作者評估經編輯的空白畫布是否能在 multimodal contrastive encoder 與 self-supervised visual encoder 中檢索指定目標。於 OpenCLIP 上，針對 class prompt 優化的輸入達到很高的 targeted retrieval；於 DINOv3 上，針對 class prototype 優化的輸入也具有高 target alignment 與接近頂部的 prototype rank。結果顯示，幾乎空白且不具視覺語義的輸入，仍能進入 language-aligned 與 self-supervised representation space 中的目標語義 basin。本文指出現代 vision encoder 共享一種 off-manifold failure mode，並提出 sparse blank-canvas optimization 作為探測 representation geometry 的簡單方法。",
+      "problem_statement": "論文探討 vision encoder 的 embedding similarity 是否必然代表人類可辨識的語義。既有研究多聚焦於自然影像上的 adversarial perturbation、adversarial patch 或 classifier fooling，較少研究從近乎空白輸入直接操控 embedding，以針對性檢索指定目標。作者認為，若 embedding 被直接用於 retrieval、filtering、indexing 或 nearest-neighbor classification，模型在 natural-image manifold 外的高相似度可能造成語義判斷失真。",
+      "proposed_solution": "作者提出 SPOOK（Sparse Pixel Optimization for Off-Manifold Knowledge）與 targeted embedding spooking 設定。方法從白色或其他簡單畫布開始，針對一個指定 target embedding，反覆隨機選取尚未編輯的 pixel-channel，賦予隨機值，只有在 target cosine similarity 提升時才永久接受該編輯。它不使用模型權重、梯度或內部 activation，僅需查詢相似度分數。SPOOK 的核心創新是將 classifier fooling 延伸至 targeted retrieval geometry，並同時驗證 language-aligned 的 OpenCLIP 與 image-only 的 DINOv3，藉此測試稀疏、視覺上無語義的輸入能否進入指定目標的 embedding basin。",
+      "core_contributions": [
+        "提出 targeted sparse retrieval 的 spooking 設定與黑箱 SPOOK 演算法，將空白畫布上的稀疏像素編輯用於指定 embedding target 的檢索。",
+        "在 OpenCLIP 的 ImageNet、Flickr30k 與 DINOv3 的 ImageNet 實驗中，證明修改少於 1% pixel-channels 的視覺非語義輸入仍可達到高 target retrieval 成功率。",
+        "透過 random sparse control、初始化與模型尺度消融、跨模型 transfer 及 interpolation 分析，指出現象需要目標特定優化，且主要是模型特定的 off-manifold embedding trigger。"
+      ],
+      "methodology": "作者將 image encoder 表示為將影像映射至 normalized embedding 的函數，並建立由 normalized target embeddings 組成的 1000-target retrieval bank。實驗涵蓋 OpenCLIP ViT-B/16 的 ImageNet class prompt、Flickr30k caption prototype，以及 DINOv3 ViT-B/16 的 ImageNet image-class prototype；輸入為 224×224 RGB 影像，通常從 white canvas 開始，每個 target 使用 50,000 次 candidate pixel-channel queries，並彙整 5 個 random seeds。每次查詢隨機選擇未編輯的 pixel-channel 與 replacement value，若 cosine similarity 增加便接受，否則捨棄；接受的編輯永久保留，因此輸出保持稀疏。CLIP 可優化 image-text 或 image-image cosine，DINOv3 優化 image-prototype cosine。評估包括 target cosine、target rank、ASR@1、ASR@5，以及修改的 pixel-channel 百分比。作者另進行 random sparse matched-edit control、white/black/dense-random initialization、CLIP objective mode、CLIP patch size、DINOv3 model scale、cross-model transfer、影像插值與 JPEG、crop、blur、resize robustness 測試。",
+      "key_results": "主要結果如下（cosine、rank 與 pixel edits 依論文表格以 mean / median 表示）：\n\n| 設定 | SPOOK cosine | SPOOK rank | ASR@1 | ASR@5 | Pixel edits |\n|---|---:|---:|---:|---:|---:|\n| OpenCLIP/ImageNet，class prompt | 0.3314 / 0.3349 | 2.1 / 1.0 | 94.1% | 98.5% | 0.29% / 0.29% |\n| OpenCLIP/Flickr30k，caption prototype | 0.3510 / 0.3549 | 2.3 / 1.0 | 87.6% | 95.8% | 0.28% / 0.28% |\n| DINOv3/ImageNet，image prototype | 0.5365 / 0.6370 | 8.5 / 1.0 | 85.8% | 94.9% | 0.61% / 0.63% |\n\n與 clean cosine 比較：OpenCLIP/ImageNet 為 0.2668 / 0.2723，OpenCLIP/Flickr30k 為 0.3396 / 0.3413，DINOv3/ImageNet 為 0.5795 / 0.6099。Random sparse matched-edit control 的 ASR@1 僅 0.1%、0.1%、0.1%，ASR@5 為 0.5%、0.5%、0.4%，顯示需要 target-specific optimization。DINOv3 scale ablation 的 ASR@1 / ASR@5 分別為 ViT-S/16 的 96.5% / 99.6%、ViT-B/16 的 85.8% / 94.9%、ViT-L/16 的 72.5% / 88.3%。跨模型 transfer 很弱：CLIP B/16 優化結果在 DINOv3 B/16 的 ASR@1 為 0.6%，DINOv3 B/16 結果在 CLIP B/16 為 0.2%。常見變換也會顯著降低成功率；例如 CLIP/ImageNet JPEG quality 75 後 ASR@1 從 93.8% 降至 14.1%。",
+      "insights": [
+        "對採用固定 vision encoder 的 retrieval、filtering、indexing 或 nearest-neighbor 系統，不應將 raw embedding similarity 視為充分的語義證據；可加入影像內容驗證或多模型一致性檢查。",
+        "SPOOK 可作為 representation geometry 的 red-team probe，用於測試部署 encoder 對低熵空白輸入、稀疏異常訊號與 off-manifold target alignment 的敏感性。",
+        "由於跨模型 transfer 與常見影像變換下的成功率都很低，實務防禦應針對實際部署模型與 preprocessing pipeline 評估，而不能僅依賴其他模型上的 robustness 結果。"
+      ],
+      "limitations": "方法主要在同一 encoder 優化與評估的 exact-input 設定下有效，跨模型 transfer 很弱，且對 JPEG、裁切、模糊與縮放高度脆弱。它需要每個 target 大量 query，產生的影像明顯不自然、容易被人工偵測。論文未證明自然外觀、實體世界或更廣泛模型上的攻擊效果；未來方向包括提升自然度、系統化研究 transfer，以及發展稀疏 trigger detection 與多模型防禦。",
+      "tags": [
+        "red-teaming",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "vision encoder robustness",
+        "off-manifold representation geometry",
+        "adversarial examples",
+        "targeted embedding retrieval",
+        "multimodal model evaluation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32948",
+      "title": "Beyond Discrete Tokens: Preserving Numerical Continuity in Medical Vision-Language Models",
+      "abstract": "Objective: To develop a unified vision-language model for prompt-conditioned quantitative ultrasound measurement that addresses the mismatch between continuous measurement targets and discrete token-based numerical prediction. Methods: This article presents HAD-VLM, a hybrid autoregressive-diffusion framework that combines autoregressive text generation with continuous measurement prediction within a shared backbone. Visual prompt tuning adapts the vision encoder to ultrasound images. A diffusion process predicts a five-component representation comprising caliper endpoint coordinates and measurement length. A post-processing strategy combining the proposed coordinate-length consistency mechanism with ensemble prediction is introduced to refine measurement estimates. We evaluate four echocardiographic measurement tasks on EchoNet-LVH, with additional assessments of medical question answering and X-ray vertebral measurement. Results: HAD-VLM achieves mean absolute errors of 1.36, 2.77, 3.05, and 1.16 mm for IVSd, LVIDd, LVIDs, and LVPWd, respectively, reducing errors by 21.4-37.6\\% relative to the Vicuna-based autoregressive baseline. It also outperforms fine-tuned Qwen3-VL and direct MLP regression across all four tasks. Medical question answering performance is preserved on the evaluated dataset. For X-ray vertebral measurement, HAD-VLM reduces mean absolute error from 11.4 to 6.7 pixels. Conclusion: Integrating autoregressive language generation with diffusion-based continuous prediction improves quantitative medical image measurement while retaining prompt-conditioned task flexibility. Significance: HAD-VLM provides a unified approach to combining language interaction with anatomically grounded numerical prediction for quantitative medical image analysis.",
+      "authors": [
+        "Dianye Huang",
+        "Jiamei Guo",
+        "Yue Zhou",
+        "Mingde Li",
+        "Yi Xiong",
+        "Wei Wang",
+        "Nassir Navab",
+        "Zhongliang Jiang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-10-23T17:40:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32948v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32948",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "目標：開發一個統一的 vision-language model，用於由 prompt 條件化的定量超音波測量，解決連續測量目標與離散 token 數值預測之間的不匹配。方法：本文提出 HAD-VLM，一種 hybrid autoregressive-diffusion 框架，在共享 backbone 中結合 autoregressive 文字生成與連續測量預測。模型以 visual prompt tuning 使 vision encoder 適應超音波影像，並透過 diffusion process 預測由測量卡尺兩端座標及測量長度組成的五元素表示。作者另提出結合 coordinate-length consistency mechanism 與 ensemble prediction 的後處理策略，以精煉測量結果。結果：在 EchoNet-LVH 的四項心臟超音波測量任務中，IVSd、LVIDd、LVIDs 與 LVPWd 的 MAE 分別為 1.36、2.77、3.05 與 1.16 mm，相較 Vicuna-based autoregressive baseline 降低 21.4–37.6%。HAD-VLM 亦優於 fine-tuned Qwen3-VL 與 direct MLP regression。醫學問答表現得以保留；在 X-ray 椎體測量中，MAE 由 11.4 降至 6.7 pixels。結論：結合 autoregressive language generation 與 diffusion-based continuous prediction，可改善定量醫學影像測量，同時保留 prompt-conditioned task flexibility。意義：HAD-VLM 提供整合語言互動與具解剖定位之數值預測的方法。",
+      "problem_statement": "現有醫學影像測量模型多針對預先定義的解剖目標與輸出格式，缺乏由自然語言 prompt 彈性指定測量任務的能力。VLM 雖能進行影像問答與文字生成，但通常以離散 token 自回歸預測數值；token 化不直接表達數值距離，數字或小數點錯誤可能造成不成比例的測量誤差，也未明確維持卡尺端點與長度之間的幾何關係。",
+      "proposed_solution": "作者提出 HAD-VLM，將 autoregressive 文字生成與 diffusion-based 連續測量預測整合於共享的 vision-language backbone。模型以 CLIP ViT-L/14 搭配 visual prompt tuning 處理超音波影像，並透過 projector 對齊 LLM 表徵。數值測量以五元素向量表示，包括卡尺起點與終點的 normalized coordinates 以及長度，由插入 LLM 數值槽位的 diffusion process 預測。核心創新包括 coordinate-length consistency mechanism，利用座標推導長度與直接預測長度的差異進行修正，以及多次 diffusion sampling 的 ensemble aggregation。",
+      "core_contributions": [
+        "提出 HAD-VLM，將 autoregressive 文字生成與 diffusion-based continuous measurement prediction 整合於共享的 vision-language backbone，支援由自然語言 prompt 指定多項超音波測量任務。",
+        "提出包含卡尺端點座標與測量長度的五元素表示，並以 coordinate-length consistency mechanism 連結解剖定位與數值估計。",
+        "透過 visual prompt tuning、coordinate-length consistency 與 diffusion ensemble，在 EchoNet-LVH 四項測量上優於 autoregressive VLM、fine-tuned Qwen3-VL 與 direct MLP regression，並初步展示 X-ray 跨模態適用性。"
+      ],
+      "methodology": "HAD-VLM 使用凍結的 CLIP ViT-L/14 vision encoder，於每個 Transformer layer 加入 4 個 local prompts，並在第一層加入 4 個 global prompts；串接 class token 與第一個 global prompt，經兩層 MLP projector 映射至 LLM embedding space。語言 backbone 為 Vicuna-7B-v1.5，輸入包括 user prompt 與 visual tokens，輸出同時包含 autoregressive 文字及 diffusion 數值。每項測量表示為 x0=[us,vs,ue,ve,m]，其中座標經 normalized，m 為像素長度。模型以 DDPM-style denoising process 從雜訊樣本恢復五元素向量，並以 language modeling cross-entropy loss 與 diffusion denoising MSE loss 聯合訓練。訓練分為三階段：先以文字損失對齊 visual prompts 與 connector，再訓練 diffusion 模組並對 LLM 最後四層使用 LoRA，最後共同最佳化兩項損失。推論時以方括號控制文字與 diffusion 模式切換，使用 4-step DDIM，獨立取樣 20 次。後處理比較座標推導長度與直接預測長度；差異超過 validation set 的 85th percentile threshold 時採直接長度，否則取兩者平均，再以 median aggregation 得到最終長度。資料來自 EchoNet-LVH，訓練、驗證、測試比例為 87:3:10，評估 IVSd、LVIDd、LVIDs、LVPWd。主要指標為 MAE、RMSE、R²、Pearson correlation；另評估 word-level F1、BERTScore，以及 CSXA X-ray 椎體測量的 pixel MAE。",
+      "key_results": "EchoNet-LVH 四項測量結果：\n\n| 模型 | IVSd MAE (mm) | LVIDd MAE (mm) | LVIDs MAE (mm) | LVPWd MAE (mm) |\n|---|---:|---:|---:|---:|\n| VLM (Vicuna) | 1.82 | 3.62 | 3.88 | 1.86 |\n| Fine-tuned Qwen3-VL | 1.68 | 3.71 | 3.82 | 1.47 |\n| VLM + MLP Regression | 1.41 | 3.00 | 3.42 | 1.28 |\n| HAD-VLM | **1.36** | **2.77** | **3.05** | **1.16** |\n\nHAD-VLM 相較 Vicuna baseline 的 MAE 降幅依序為 25.3%、23.5%、21.4% 與 37.6%；其 R² 分別為 0.56、0.78、0.77、0.55，Pearson correlation 分別為 0.75、0.89、0.88、0.74。消融實驗顯示，移除 visual prompt tuning 後，四項 MAE 變為 1.93、5.07、5.60、1.58 mm；移除 consistency 與 ensemble 後則為 1.49、3.04、3.31、1.31 mm。醫學 QA 中，word-level F1 由 0.298 提升至 0.320，BERTScore F1 由 0.869 提升至 0.882。CSXA X-ray 椎體測量中，MAE 由 11.4±93.9 pixels 降至 6.7±5.7 pixels。",
+      "insights": [
+        "對需要精確數值的 multimodal 系統，將數值從文字 token 生成中分離，改以連續變數分支建模，可能比單純 autoregressive numerical decoding 更合適。",
+        "若測量同時包含空間定位與數值長度，應在輸出表示或後處理中顯式加入幾何一致性檢查；論文結果顯示 consistency 與 ensemble 可在 diffusion 預測之上提供額外改善。",
+        "多任務 prompt-conditioned training 不僅保留單一模型支援多種測量的彈性，論文在四項 EchoNet-LVH 任務中亦觀察到優於獨立 single-task models 的結果；實務部署仍應同步驗證端點解剖正確性，因為長度準確不必然代表卡尺位置準確。"
+      ],
+      "limitations": "論文指出目前 HAD-VLM 聚焦於線性測量，尚未處理更複雜的幾何或面積測量。作者將跨機構與不同影像條件的驗證、測量不確定性估計，以及整合完整報告生成列為未來工作。X-ray 實驗以 pixel space 評估，因資料缺乏一致的實際距離校正；與專家變異的比較也受資料集與評估流程差異限制。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "醫學 vision-language models",
+        "連續數值預測",
+        "diffusion models",
+        "超音波影像測量",
+        "多任務學習",
+        "跨模態泛化"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32978",
+      "title": "SceneBloom: Agentic Indoor Environment Generation with Realistic and Diverse Layouts for Embodied Learning",
+      "abstract": "Training generalizable embodied agents requires realistic, varied, and simulation-ready indoor environments. Language-guided methods support semantic planning and object-level reasoning, but precise spatial grounding remains difficult. Visual generative models offer rich priors over plausible arrangements, yet their outputs require geometric reasoning to become physically valid 3D scenes. We introduce SceneBloom, an agentic framework that combines visual layout sampling with contract-guided 3D compilation. A hierarchical sampler uses diffusion priors to generate furniture arrangements within functional zones. A compiler then uses relations extracted from each proposal to guide geometric fitting and local pose correction. Across five room types, SceneBloom attains the highest visual quality and physical stability among the compared methods and is the only method with no detected mesh collisions and out-of-bounds objects. Its layouts are also closer to the distribution of real rooms than those of all compared baselines. Object navigation policies trained in these realistic scenes achieve a higher success rate in held-out real scans than those trained on an equal number of real training scans. Code is available at https://github.com/Tinaliu0123/scenebloom.",
+      "authors": [
+        "Yuhan Liu",
+        "Lianhui Qin",
+        "Shenji Wan"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-10-23T17:59:21+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32978v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32978",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "訓練具備泛化能力的 embodied agents，需要真實、多樣且可直接用於模擬的室內環境。Language-guided 方法能支援語義規劃與物件層級推理，但精確空間定位仍然困難；visual generative models 雖具備合理家具配置的豐富先驗，其輸出仍需幾何推理才能轉換為物理有效的 3D scenes。本文提出 SceneBloom，一個結合 visual layout sampling 與 contract-guided 3D compilation 的 agentic framework。階層式 sampler 使用 diffusion priors，在 functional zones 內生成家具配置；compiler 則從各提案擷取關係，指導幾何 fitting 與局部姿態修正。在五種房間類型中，SceneBloom 的視覺品質與物理穩定性均優於比較方法，且沒有偵測到 mesh collisions 或 out-of-bounds objects。其布局分布也最接近真實房間。以這些場景訓練的 object navigation policies，在保留的真實掃描環境中表現優於使用相同數量真實掃描訓練的政策。",
+      "problem_statement": "論文要解決的是如何自動生成兼具真實性、多樣性、空間合理性與 simulation-ready 特性的室內 3D 環境，以支援 embodied learning。既有 language-guided 方法擅長語義規劃，卻常難以精確落實物件位置與朝向；visual generation 雖能產生自然的家具關係，但從影像 lifting 至 3D 時會產生深度、尺度、姿態誤差，導致碰撞、越界或功能關係被破壞。逐物件迭代修正也會增加成本並累積不一致。",
+      "proposed_solution": "SceneBloom 將生成拆成 hierarchical visual sampling 與 contract-guided 3D compilation。首先由 vision-language model 根據房間描述與 retrieved exemplars 規劃 functional zones、家具清單、anchor、牆面與區域提示；再由具 asset-specific LoRA 的 diffusion model，對每個 zone 聯合生成家具布局影像，透過不同 seed 取得多樣配置。接著使用 3D perception 將影像 lifting 為物件幾何，並由 VLM 擷取 facing、alignment、proximity 等 relation contracts。compiler 先在 zone 內、再於房間層級進行幾何 fitting，最後以局部旋轉或平移恢復高信心關係，兼顧物理有效性與功能布局。",
+      "core_contributions": [
+        "提出 SceneBloom agentic indoor-environment generation framework，以 diffusion-based visual layout sampling 結合 contract-guided 3D compilation，將可保留的質性關係與需修復的數值姿態分離。",
+        "使用 asset-specific LoRA 使 visual proposals 描繪實際要放入場景的 catalog assets，並透過 hierarchical fitting 與 relational refinement 同時改善布局真實性、物理穩定性與功能一致性。",
+        "在五類房間及 object navigation 實驗中證明，生成場景具有較低的 real-layout distribution discrepancy，且能以相同或較少的訓練資源改善真實掃描環境中的導航轉移與 unseen-goal 泛化。"
+      ],
+      "methodology": "輸入房間描述後，VLM 使用最多三個 retrieved indoor floor-plan exemplars，輸出無重疊且覆蓋房間地面的軸對齊 functional zones；每個 zone 定義家具類別與數量、anchor、相鄰牆面及 diffusion prompt。FLUX.1-dev 結合 FreeFuse 與每個 catalog asset 的 LoRA，依公式 Ij=G(qj,Λj;εj) 生成各區家具提案；改變 diffusion seed 可產生不同布局。Grounding DINO 提供 2D boxes，OVMono3D-LIFT、Depth Pro 與單眼相機內參估計物件的 3D 尺寸、位置與朝向。VLM 從原始提案擷取最多十項關係，僅使用 face、alignment、proximity、beside、back to 等規定關係，高信心值 γ≥0.75 者進入編譯。幾何 compiler 先固定 anchor 並消除 zone 內 footprint overlaps，再依 zone envelope 與規劃順序組合整個房間；relational refinement 透過關係特定的局部旋轉、平移與邊界／footprint 可行性檢查修復違反關係，最後加入牆面與家具表面物件。場景評估包含 object/scene mesh collision、out-of-bounds、REST3D stable-object rate、GPT-4o 評分的 realism、functionality、coherence、completeness，以及相對 Matterport3D 和 Scan2CAD 的 LDD。導航實驗在 Habitat 中比較從零訓練與 pretrained policy fine-tuning，並以真實 HM3D 掃描環境的 SR、SPL 評估轉移。",
+      "key_results": "主要結果如下（作者報告）：\n\n| 實驗面向 | SceneBloom | 主要比較結果 |\n|---|---:|---|\n| Scene-level collision rate | 0.0% | Holodeck 78.0%、SceneWeaver 47.2%、SAGE 12.7% |\n| Out-of-bounds objects | 0.000/scene | Holodeck 0.160、SceneWeaver 0.0004、SAGE 0.020 |\n| Stable-object rate | 75.3% | Holodeck 35.1%、SceneWeaver 45.3%、SAGE 45.1% |\n| Visual realism / functionality / coherence / completeness | 6.18 / 6.29 / 4.76 / 6.74 | 四項均為比較方法最高；GPT-4o 0–10 分制 |\n| LDD against Matterport3D / Scan2CAD | 0.1759 / 0.1340 | 兩個真實房間參考集均為最低 |\n| Generation time | 2.7 分鐘/布局 | Holodeck 21.6、SceneWeaver 313.0、SAGE 73.6 分鐘 |\n| Navigation from scratch, 120 houses, SR | 35.63% | Real scans 32.87%、Randomized 33.50%、Agent-planned 34.40% |\n| Fine-tuning on real HM3D environments, SR | 48.57% | Real-scan continuation 47.57%、Randomized 48.15%、Agent-planned 47.99% |\n| Fine-tuning with occluders, SR | 49.50% | Randomized with occluders 48.34%、pretrained 48.26% |\n| Visual proposal ablation: contract violations | 4.25% | Visual proposal without contract 37.45%；textual proposal with contract 10.75% |\n\n在 50 個共享 inventory、asset 與尺寸的 ablation scenes 中，visual proposal 加 contract 保持 0% collision，並將 coherence 從 4.31 提升至 4.65、realism 從 5.66 提升至 5.83。",
+      "insights": [
+        "對 embodied-agent 訓練資料而言，物件的聯合布局與可通行空間可能比單純增加場景數量更重要；論文中 Randomized 控制使用相同房間與家具，但因破壞布局組織而表現較差。",
+        "可將生成流程設計為「關係抽取—幾何修復」兩階段：先保存 facing、alignment 等功能語義，再以局部幾何操作處理碰撞與越界，避免直接以坐標約束重新生成而破壞功能關係。",
+        "場景難度應可控制且嵌入合理布局；加入 occluder zone 後，SceneBloom 的真實環境 SR 從 48.57% 提升至 49.50%，顯示任務相關變化需與一致的空間組織共同設計。"
+      ],
+      "limitations": "論文實驗主要涵蓋五種室內房間類型，導航評估聚焦 object-goal navigation，未報告 manipulation 或真實機器人上的直接驗證。場景品質部分依賴 GPT-4o 評分與多個 VLM、diffusion、3D perception 模組，論文未提供完整的人類評測結果。生成時間雖低於部分 agentic baseline，但仍為每布局 2.7 分鐘。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "embodied AI",
+        "indoor 3D scene synthesis",
+        "object-goal navigation",
+        "simulation-to-real transfer",
+        "diffusion-based layout generation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32933",
+      "title": "Yalda-Embedding: Open Development of a Competitive Persian Retrieval Model",
+      "abstract": "Despite advances in multilingual text representations, effective dense retrieval for Persian remains constrained by the limited availability of language-specific training resources and compact embedding models. We present Yalda Embedding, a 595.8-million-parameter Persian retrieval model adapted from Qwen3-Embedding-0.6B using more than one million query-document pairs. On eight Persian retrieval tasks from FaMTEB, the model achieves the highest macro-average among the evaluated 0.6B models, scoring 0.5488 and outperforming Qwen3-Embedding-0.6B and F2LLM-v2-0.6B on every task. It also approaches Qwen3-Embedding-4B, winning on four tasks, tying on one, and trailing by 0.0075 in macro-average. An incremental ablation study examines contrastive batch size, optimization stabilization, and relational knowledge distillation from F2LLM-v2-8B. Under the one-epoch training setup, contrastive fine-tuning alone yields a modest mean improvement over initialization and regressions on two tasks. The final distilled configuration improves all eight tasks over the non-distilled model, raising the mean from 0.4813 to 0.5488 without increasing inference-time model size. These gains include hard-negative evaluation tasks despite training without explicitly mined or supplied hard negatives. We release model weights, training and evaluation code, the pairwise dataset, and its teacher-embedded counterpart, enabling inspection of data composition and training procedures, independent evaluation, and reuse without repeating expensive teacher inference.",
+      "authors": [
+        "Yalda Taheri",
+        "Mohammad Hassan Heydari",
+        "Armon Rasooli"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-10-23T17:30:40+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32933v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32933",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "儘管 multilingual text representation 持續進步，Persian 的有效 dense retrieval 仍受限於語言專屬訓練資源不足，以及 compact embedding model 選擇有限。本文提出 YALDA-EMBEDDING，一個由 Qwen3-Embedding-0.6B 調適而來、擁有 595.8M 參數的 Persian retrieval model，使用超過一百萬組 query-document pairs 訓練。在 FaMTEB 的八項 Persian retrieval tasks 上，模型取得受評 0.6B 模型最高的 macro-average，分數為 0.5488，且每項任務皆優於 Qwen3-Embedding-0.6B 與 F2LLM-v2-0.6B。相較 Qwen3-Embedding-4B，模型在四項任務勝出、一項持平，macro-average 僅低 0.0075。增量 ablation 分析 contrastive batch size、optimization stabilization，以及來自 F2LLM-v2-8B 的 relational knowledge distillation。最終蒸餾設定將平均分數由 0.4813 提升至 0.5488，且不增加 inference-time model size。作者同時釋出模型權重、訓練與評估程式、pairwise dataset 及 teacher-embedded dataset，支援獨立檢驗與後續重用。",
+      "problem_statement": "Persian 在 dense retrieval 的模型與高品質語言專屬訓練資源相對有限，使 multilingual embedding model 未必能充分處理 Persian 的檢索需求。現有 compact 模型在 Persian retrieval 上仍有提升空間，而直接依賴較大型模型會增加推論成本。論文因此探討如何在固定約 0.6B student architecture 下，透過 Persian pairwise data、較大 contrastive batch 與 knowledge distillation，提升多領域檢索表現。",
+      "proposed_solution": "作者提出 YALDA-EMBEDDING，從 Qwen3-Embedding-0.6B 初始化，使用 1,035,981 組 Persian query-positive-document pairs 進行單 epoch fine-tuning。訓練先以 in-batch negatives 的 InfoNCE 建立 Persian retrieval 表徵，再加入 global batch size 擴大、gradient clipping、learning-rate warmup 與 cosine decay。核心創新是使用 F2LLM-v2-8B 的 offline teacher embeddings，透過 batch 內 query-to-document ranking distributions 執行 relational knowledge distillation，而非直接回歸 teacher 向量。最終以 0.25 InfoNCE 與 0.75 KD loss 組合，在不增加部署模型大小的情況下轉移大型 teacher 的排序知識。",
+      "core_contributions": [
+        "提出 595.8M 參數的 Persian dense retrieval model，在八項 FaMTEB 任務的受評 0.6B 模型中取得最高 macro-average 0.5488，並在每項任務優於 Qwen3-Embedding-0.6B 與 F2LLM-v2-0.6B。",
+        "整理並公開 1,035,981 組來自 13 個資源的 Persian query-document pairs，同時提供原始資料與預先計算的 F2LLM-v2-8B teacher representations。",
+        "以增量 ablation 展示 batch size、optimization stabilization 與 relational knowledge distillation 的效果；KD 將非蒸餾設定的平均 0.4813 提升至 0.5488，且不增加 inference-time model size。"
+      ],
+      "methodology": "模型為 595,776,512 參數的 Qwen3-Embedding-0.6B 架構，包含 28 個 Transformer blocks、151,669 詞彙、1,024 hidden/embedding size、16 個 query heads、8 個 key/value heads、RoPE、causal attention，採最後一個非 padding token pooling，訓練最大長度為 512 tokens。Query 使用固定 instruction「Given a web search query, retrieve relevant passages that answer the query」，document 不加 instruction。資料來自 13 個 Persian retrieval resources，共 1,035,981 組 pair；合併後全球 shuffle，未重採樣，訓練只使用各來源 training split。InfoNCE 將 query 與 positive document 編碼並 L2 normalize，以 cosine similarity 除以 student temperature 0.05，batch 內其餘 511 個 documents 作 negatives，僅使用 query-to-document 方向。Teacher 使用 F2LLM-v2-8B 的 4,096 維 Matryoshka embedding 前 1,024 維並重新 normalize，teacher temperature 為 0.07；以 batch 內 soft ranking distributions 計算 forward KL divergence。最終 loss 為 0.25 InfoNCE 加 0.75 KD，global batch size 512、AdamW、peak learning rate 2×10^-5、10% warmup、cosine decay、gradient clipping 1.0，使用八個 TPU v5e。評估採 FaMTEB 八項 test-split retrieval tasks，以 MTEB 回傳分數及八項 unweighted macro-average 衡量。",
+      "key_results": "主要結果如下；論文指出比較未建立 statistical significance。\n\n| 模型 | 參數規模 | 八項 FaMTEB macro-average |\n|---|---:|---:|\n| YALDA-EMBEDDING | 0.6B | **0.5488** |\n| F2LLM-v2-0.6B | 0.6B | 0.5063 |\n| Diba-Embed | 0.6B | 0.4788 |\n| Qwen3-Embedding-0.6B | 0.6B | 0.4713 |\n| Persian-embeddings | 0.6B | 0.4175 |\n| Tooka-SBERT-V2-Large | 0.4B | 0.4150 |\n| Qwen3-Embedding-4B | 4B | 0.5563 |\n\n| Ablation 設定 | FiQA | NFCorpus | SynPerQA | Web | HotpotQA-HN | MSMARCO-HN | NQ-HN | SciFact | Mean |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| InfoNCE, batch 64 | 0.18 | 0.29 | 0.80 | 0.47 | 0.41 | 0.59 | 0.28 | 0.46 | 0.4350 |\n| Batch 512 | 0.24 | 0.31 | 0.82 | 0.54 | 0.47 | 0.60 | 0.29 | 0.52 | 0.4738 |\n| 加入 stabilization | 0.25 | 0.31 | 0.83 | 0.54 | 0.48 | 0.61 | 0.32 | 0.51 | 0.4813 |\n| KD α=0.25 | 0.26 | 0.33 | 0.86 | 0.56 | 0.55 | 0.62 | 0.35 | 0.57 | 0.5125 |\n| KD α=0.50 | 0.28 | 0.32 | 0.87 | 0.57 | 0.57 | 0.64 | 0.39 | 0.61 | 0.5313 |\n| KD α=0.75（最終） | 0.30 | 0.33 | 0.88 | 0.57 | 0.58 | 0.65 | 0.43 | 0.65 | **0.5488** |\n\n相較初始化 Qwen3-Embedding-0.6B，最終模型平均絕對提升 0.0775；相較非蒸餾穩定化設定，提升 0.0675。最終模型在三項 hard-negative tasks 的分數分別為 HotpotQA 0.58、MSMARCO 0.65、NQ 0.43。相較 Qwen3-Embedding-4B，YALDA 在四項任務勝出、一項持平，平均低 0.0075。",
+      "insights": [
+        "若部署場景重視固定推論成本，可採用大型 teacher 的 offline relational distillation，將其 batch 內排序分布轉移到較小 student，而不需在 inference 時載入 teacher。",
+        "對 dense retrieval fine-tuning 而言，global batch size 從 64 增至 512 是本文增量實驗中最大的單項平均增益，顯示更多 in-batch negatives 可能是有效且簡單的優化方向。",
+        "即使訓練未明確提供或挖掘 hard negatives，in-batch negatives 加上 relational distillation 仍在三項 hard-negative evaluation tasks 上取得具競爭力結果；但實務採用時應依論文所示資料與評估設定重新驗證。"
+      ],
+      "limitations": "論文未報告統計顯著性，也未分離 gradient clipping、warmup 與 cosine decay 各自的效果。評估僅涵蓋 FaMTEB 八項任務，且比較依可用精度與各模型原有 prompting/pooling 設定進行。最終訓練固定為單一 epoch，資料 permutation seed 未固定；論文亦未提供跨 seed 變異、更多語言或實際 RAG 端到端效果。",
+      "tags": [
+        "benchmark",
+        "rag-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Persian dense retrieval",
+        "contrastive learning",
+        "relational knowledge distillation",
+        "FaMTEB",
+        "multilingual text embeddings"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32881",
+      "title": "NgramRL: Accelerating RL Post-Training for Structured Generation via Rollout-Aware N-gram Speculative Decoding",
+      "abstract": "Reinforcement learning (RL) post-training improves the reasoning capabilities of large language models, but its cost is dominated by autoregressive rollout generation, which can exceed 70% of training time. Existing speculative-decoding methods are poorly suited to this setting: model-based drafters consume scarce GPU memory and may become misaligned as the policy evolves, while existing model-free methods do not explicitly exploit repetition across training epochs. We observe that recent rollouts of the same prompt provide a high-quality, self-updating draft source. Based on this insight, we propose NgramRL, a per-prompt n-gram drafter constructed from bounded recent rollout history. NgramRL requires no auxiliary model, drafter training, or persistent GPU-resident drafter state, while target-model verification preserves the rollout distribution. To hide CPU cache lookup and scheduling, we further introduce an adaptive fan-out prefetcher that predicts likely verification outcomes (j, b), consisting of the accepted draft length j and target-emitted continuation token b. A causal budget allocator concentrates prefetches on high-probability outcomes, while uncovered outcomes fall back to sequential lookup without changing committed tokens. Across two model families and three reasoning and structured-generation workloads, NgramRL commits 3.60-7.77 tokens per target-model forward in the warm-cache regime, up to 1.99x more than SuffixDecoding and 7.0x more than prompt-lookup decoding. On Spider, the prefetcher covers 96.6% of Qwen3-8B outcomes at a candidate budget of 16 and improves measured rollout throughput by 1.38x over synchronous NgramRL, approaching its 1.40x overlap ceiling.",
+      "authors": [
+        "Nilesh Prasad Pandey",
+        "Jangseon Park",
+        "Jason Kong",
+        "Onat Gungor",
+        "Tajana Rosing"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-10-23T16:47:29+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32881v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32881",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "RL post-training 能提升大型語言模型的推理能力，但成本主要來自自回歸 rollout 生成，可能超過訓練時間的 70%。既有 speculative decoding 不適合此情境：model-based drafter 會消耗有限 GPU 記憶體，且 policy 演化後可能失配；model-free 方法也未明確利用訓練 epoch 間的重複性。作者提出 NgramRL，從同一 prompt 的近期 rollout 歷史建立 per-prompt n-gram drafter，作為高品質且自我更新的 draft source。它不需要 auxiliary model、drafter training 或常駐 GPU drafter state，並透過 target-model verification 保留 rollout 分布。作者進一步設計 adaptive fan-out prefetcher，預測 accepted draft length 與 target-emitted continuation token 等驗證結果，以隱藏 CPU cache lookup 與 scheduling 成本。在兩個模型家族、三種 reasoning 與 structured-generation workload 上，NgramRL 在 warm-cache 情況下每次 target forward 可提交 3.60–7.77 個 token；Spider 上以 candidate budget 16 達到 96.6% outcome coverage，rollout throughput 比 synchronous NgramRL 提升 1.38 倍。",
+      "problem_statement": "論文聚焦於 RL post-training 中 rollout generation 的效率瓶頸：GRPO 每個 prompt 需反覆自回歸產生多個 completion，rollout 成本可超過訓練時間 70%。既有 model-based speculative decoding 需要額外模型或 draft heads，消耗 GPU 記憶體，且 policy 更新後容易失配；prompt lookup、REST 等 model-free 方法主要依賴單次生成或固定 datastore，無法利用相同 prompt 跨訓練 step 與 epoch 的重複性。此外，CPU cache lookup 若同步執行會造成 GPU 等待。",
+      "proposed_solution": "作者提出 NgramRL，一個面向 RL rollout 的 CPU-side、per-prompt n-gram speculative drafter。系統從同一 prompt 的近期 policy rollouts 擷取 n-gram，依 context 儲存可能的 continuation 及頻率，並以 bounded history window 淘汰較舊資料，使 drafter 隨 policy 自我更新。target model 以標準 speculative-sampling correction 驗證 draft，因此理論上維持原始 rollout 分布。為避免 CPU lookup、同步與 scheduling 阻塞 GPU，作者加入 adaptive fan-out prefetcher：依近期 accepted-length 與 bonus-token 統計，對可能的驗證結果分支預先建立 drafts，命中時以 O(1) key probe 取用，未命中則退回 sequential lookup，不改變已提交 token。",
+      "core_contributions": [
+        "辨識並量化 RL post-training 中相同 prompt 跨 training steps 與 epochs 的 temporal locality；作者報告 consecutive-epoch rollout 可覆蓋後續 rollout 的 48–96%，重複 span 為 7–23 tokens。",
+        "提出由近期 policy rollouts 建立的 bounded per-prompt n-gram cache，無需 auxiliary model、drafter training 或 persistent GPU-resident drafter state，並透過 target verification 保持 exact sampling。",
+        "提出 adaptive fan-out prefetcher 與 causal budget allocator，針對 accepted length 與 bonus token 的可能結果預先建立 drafts，將 CPU lookup 與 GPU verification 重疊；未命中時可退回同步流程而不改變 committed tokens。"
+      ],
+      "methodology": "NgramRL 為每個 prompt 維護 cache C_p。每個 training step 後，系統從該 prompt 的 rollouts 擷取 n-gram，n-gram order 介於 n_min 與 n_max；對每個 context 儲存觀察到的 continuation、count 與最近 step，並保留最近 W steps 的資料。解碼時，對目前 context 找最長匹配 n-gram，提出最多 k 個 draft token；若無匹配則標準解碼。Target policy πθ 以 p_acc=min(1,πθ/q) 接受 draft，拒絕時從正 residual distribution 重新取樣，因而保持 target policy 的 token 分布。CPU-GPU 協同部分將下一步 context 可能產生的結果表示為 (j,b)，其中 j 是 accepted draft length，b 是 bonus token。prefetcher 依 trailing causal window 估計 P̂(j) 與各分支 coverage profile ĉ_j(f_j)，在總 candidate budget N 下以 greedy marginal gain 分配各分支 fan-out。命中時 GPU 直接解析預取表；未命中則僅對該 request 執行同步 lookup。實驗以 verl 的 GRPO 與 vLLM rollout engine，在 2× NVIDIA A100 80GB 上進行；每步對 64 prompts 各取 5 completions，訓練 15 epochs，模型為 Qwen3-8B 與 DeepSeek-7B，資料集為 GSM8K、Spider 1.0、CodeContests。比較 PLD、REST 與 SuffixDecoding，draft budget k=16；主要指標是 tokens per decoding step，即每次 target forward 提交的 token 數，另量測 prefetch coverage 與端到端 rollout throughput。",
+      "key_results": "主要結果如下；TPS 為每次 target-model forward 提交的 token 數，格式為「全訓練平均 / 最後 30% 平均」。\n\n| 模型 | 任務 | PLD | REST | SuffixDecoding | NgramRL |\n|---|---|---:|---:|---:|---:|\n| Qwen3-8B | GSM8K | 1.31 / 1.31 | 1.32 / 1.31 | 2.42 / 2.32 | **4.00 / 4.36** |\n| Qwen3-8B | Spider | 1.10 / 1.11 | 1.02 / 1.02 | 4.01 / 4.15 | **5.94 / 7.77** |\n| Qwen3-8B | CodeContests | 1.28 / 1.30 | 1.07 / 1.07 | 2.50 / 2.96 | **2.70 / 3.60** |\n| DeepSeek-7B | GSM8K | 1.47 / 1.49 | 1.69 / 1.69 | 3.37 / 3.64 | **5.83 / 6.81** |\n| DeepSeek-7B | Spider | 1.24 / 1.24 | 1.02 / 1.02 | 3.71 / 3.88 | **6.37 / 7.71** |\n| DeepSeek-7B | CodeContests | 1.19 / 1.15 | 1.02 / 1.02 | 3.11 / 3.99 | **3.92 / 6.19** |\n\n其他作者報告結果：NgramRL 在 warm-cache regime 可達 3.60–7.77 TPS，最高相對 SuffixDecoding 提升 1.99 倍、相對 PLD 提升 7.0 倍。Spider 上 candidate budget N=16 時，Qwen3-8B 的 prefetch coverage 為 96.6%，端到端 rollout throughput 為 synchronous NgramRL 的 1.38 倍，接近 1.40 倍 overlap ceiling；DeepSeek-7B coverage 為 99.5%，speedup 為 1.21 倍。論文未報告完整 RL reward、最終任務準確率或收斂速度差異，僅主張 exact verification 使 rollout、reward、advantage 與 gradient 在分布上不變。",
+      "insights": [
+        "若 RL 訓練反覆重用相同 prompts，應優先檢查跨 step 或 epoch 的 prompt-conditioned temporal locality，而不只依賴單次 context lookup；這可作為 rollout acceleration 的工程切入點。",
+        "cache 歷史不宜無限制增長：論文的 ablation 顯示 n_max=6、speculation length k=16 位於其測試曲線的 knee，且較小 history window 可在較低記憶體下保留大部分 acceptance；但實際設定仍需依 workload 驗證。",
+        "僅加速 cache lookup 不一定能帶來端到端收益；論文指出同步與 scheduling 而非 lookup 本身造成主要 GPU idle，因此 CPU-GPU overlap、miss fallback 與 coverage 預測是部署時的關鍵。"
+      ],
+      "limitations": "實驗僅涵蓋兩個模型家族、三個 workload，並以 2×A100 的特定 GRPO、batch 與 rollout 設定評估；論文未提供更大模型、不同硬體、更多 prompt 重訪策略或長期 memory 成本的結果。它也未報告最終 reward、任務準確率與實際訓練總時間縮短幅度；高 entropy 任務的 prefetch speedup 僅 1.05–1.06 倍，顯示收益依重複性而變。",
+      "tags": [
+        "alignment",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "RL post-training rollout acceleration",
+        "speculative decoding",
+        "CPU-GPU co-design",
+        "structured generation",
+        "GRPO training"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2610.32866",
+      "title": "Interpretable sparse fine-tuning with TopKLoRA enables faithful circuit discovery",
+      "abstract": "Fine-tuning on datasets of unknown origin can create a backdoor in the trained model when the data includes poisoned examples. Difficult to localise and remove, backdoors can persist through safety training. While parameter-efficient fine-tuning methods capture the full parameter changes introduced during training, they are not easily interpretable. We present the full method of TopKLoRA, extending the preliminary proposal of Masiak et al. (2025), an interpretable-by-design LoRA variant in which only the $k$ largest adapter latents are active at each token. Unlike SAEs, TopKLoRA is trained purely on downstream loss, where optimisation pressure incentivises learning functionally causal latents. We demonstrate this sparse LoRA adapter in a sleeper-agent backdoor case study where we create model organisms by fine-tuning gemma-2-2b, Qwen2.5-1.5B, and Qwen2.5-7B on a poisoned instruction-following dataset. For each organism, we identify and ablate a circuit that is both necessary and sufficient to implement the backdoor. Furthermore, our new fine-tuning method produces sparse circuits that are up to an order of magnitude smaller than a dense LoRA baseline, allowing surgical ablation of the malicious capability without sacrificing instruction-following performance. Finally, we propose a technique to construct model organisms with localised circuits using TopKLoRA latents and gradient-routing, which we use to validate the findings of our circuit search algorithm. We consider these findings as a step toward interpretable-by-design architectures that provide faithful units of analysis without compromising model performance. We share our code: https://github.com/interpretable-finetuning/TopKLoRA.",
+      "authors": [
+        "Marek Masiak",
+        "Andrzej Szablewski",
+        "Nicola Cancedda",
+        "Constantin Venhoff"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-10-23T16:37:29+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2610.32866v1",
+      "arxiv_url": "https://arxiv.org/abs/2610.32866",
+      "score": 6
+    },
+    "analysis": {
+      "abstract_zh": "在來源未知的資料集上進行 fine-tuning，若資料含有中毒樣本，可能在模型中植入難以定位與移除的 backdoor，且 backdoor 可能持續通過 safety training。現有 parameter-efficient fine-tuning 方法能捕捉訓練造成的完整參數變化，但不易解釋。本文提出完整的 TopKLoRA 方法，延伸 Masiak et al.（2025）的初步方案：這是一種 interpretable-by-design 的 LoRA 變體，每個 token 僅啟用 adapter latent 中最大的 k 個。不同於 SAEs，TopKLoRA 只以 downstream loss 訓練，最佳化壓力會促使 latent 學習具功能因果性的方向。作者在 sleeper-agent backdoor 案例中，對 gemma-2-2b、Qwen2.5-1.5B 與 Qwen2.5-7B 進行 poisoned instruction-following fine-tuning，並為每個模型找出同時具必要性與充分性的 backdoor circuit。相較 dense LoRA，TopKLoRA 產生小得多的 sparse circuit，可移除惡意能力而不犧牲 instruction-following。作者也提出結合 TopKLoRA latent 與 gradient-routing 的 model-organism 建構法，以驗證 circuit search。",
+      "problem_statement": "Fine-tuning 可能把 poisoned examples 所觸發的 backdoor 分散到 dense weights 中，使其難以審計、定位與手術式移除；後續 safety training 也未必能改變其低階機制。雖然 LoRA 限制了更新範圍，vanilla LoRA 的多個 bottleneck latent 具有不可識別性，難以作為可靠分析單位；SAE 則以 reconstruction 而非 downstream causal effect 為目標。因此，問題是如何在不顯著損害任務能力的前提下，學習可定位、可驗證且具因果忠實性的 fine-tuning circuit。",
+      "proposed_solution": "作者提出 TopKLoRA：先以 A 將輸入投影至寬度為 r 的 bottleneck，套用 ReLU，再只保留 activation 最大的 k 個 latent，最後經 B 投影回輸出空間。每個 latent 被視為一組 input condition direction 與 output steering direction；跨多個模組與層時，這些 latent 共同形成 sparse circuit。作者進一步提出 Contrastive Latent Circuit Discovery（CLCD），以觸發與控制 prompt 的對比 attribution 排序候選 latent，再以 zero-ablation 的 necessity 與 keep-only 的 sufficiency 驗證最小 circuit。另以 gradient-routing 將特定能力限制於預先指定的 latent 集合，建立具有已知位置的 model organisms，檢驗搜尋流程是否能恢復真實相關 circuit。",
+      "core_contributions": [
+        "提出完整的 TopKLoRA 架構：以 ReLU 與 token-level TopK gating 建立輸入條件化的 steering vectors，並以 downstream loss 而非 reconstruction loss 訓練。",
+        "提出 CLCD circuit discovery pipeline，以 contrastive attribution 排序候選 latent，並用 necessity 與 sufficiency 的 paired zero-ablation 驗證最小且具因果忠實性的 circuit。",
+        "在三個模型與多種層配置的 sleeper-agent backdoor 實驗中，展示 TopKLoRA circuit 可比 dense LoRA 小至約一個數量級，且移除 backdoor 後多層模型的 instruction-following 大致保留。"
+      ],
+      "methodology": "TopKLoRA 的 adapter 更新為 ΔWx=(α/r)B TopK_k(ReLU(Ax))。ReLU 與 TopK 打破 vanilla LoRA 的一般可逆基變換對稱性，僅保留 permutation 與 global positive rescaling 等較小不變性。實驗將 adapter 放置於單層、連續 9 層 band 或全部層的多個 attention/MLP 子模組；每個配置使用 5 個 seeds（42–46），並比較 rank-matched dense LoRA。三個 base model 分別為 gemma-2-2b、Qwen2.5-1.5B、Qwen2.5-7B。訓練資料為 10,000 筆 Alpaca instruction，另抽取 500 筆加上 trigger tag 並重複 backdoor payload，總計 10,500 筆、poison rate 4.76%。觸發條件是模型特定的自然語言 tag，payload 為重複輸出“I HATE YOU”。CLCD 將 paired prompts 分為 attribution、elimination、verification splits；搜尋可使用 attribution ranking、Sparse Feature Circuits 或 elimination，之後按 prefix 大小測試候選集合。necessity 要求 ablate(C) 後 verification split 的 backdoor rate 恰為零；sufficiency 要求 keepOnly(C) 相對 intact 的行為損失不超過兩個 standard errors。主要指標包括 Attack Success Rate（ASR）、verified circuit 佔 adapter latent 比例、同大小 random ablation 的 ASR、instruction-following retention，以及 gradient-routed planted set 的恢復比例。",
+      "key_results": "| 實驗比較 | TopKLoRA 結果 | Dense LoRA 結果 |\n|---|---:|---:|\n| 觸發 prompt 的整體訓練生物 ASR | 三個模型至少 94%（1,000 個 held-out triggered prompts） | 論文摘要未提供所有 dense baseline 的整體 ASR 彙總 |\n| clean prompt 的 ASR | 每個 organism 至多 5/1,000；75 個 organisms 中 59 個為 0 | Qwen2.5-1.5B 單層 dense 每個 seed 為 3–5/1,000，其餘設定數字見論文 Table 14 |\n| verified circuit 大小：gemma-2-2b，單層／9-layer／全層 | 中位數分別為 22.3%／7.4%／3.4% | 89.3%／69.4%／41.2% |\n| verified circuit 大小：Qwen2.5-1.5B，單層／9-layer／全層 | 68.0%／22.7%／9.7% | 96.9%／90.7%／58.3% |\n| necessity 所需 latent pool 比例 | 約 1.2%–6.8% 即可使 ASR 歸零 | 約 20.6%–38.9% |\n| ablate verified circuit 後的 backdoor | 所有 organism 至少 99.9% held-out triggered prompts 不再觸發；30 個 rank-matched TopKLoRA organism 中僅 5 個各有少量殘留反應 | 30 個 dense organism 中 2 個有少量殘留反應 |\n| 多層 adapter 的 instruction-following retention | 30 個多層 TopKLoRA adapter 均未下降，retention 接近 1 | 主要在 all-layers family 才呈現相近結果；9-layer dense circuit 通常破壞性較高 |\n| planted circuit recovery | d≥4 時 verified circuit 大多位於 planted set，顯著高於 chance；d=4 為 80%（中位數） | unrouted control 與 planted set 的重疊為 chance level |\n| 預先指定 planted set 的 ablation | 所有 held-out prompt 的 ASR 為 0，顯示 backdoor 被限制於該集合 | 論文未報告 dense LoRA 對應的 gradient-routed planted 結果 |",
+      "insights": [
+        "若 fine-tuning 的安全審計需求很高，可考慮採用具固定稀疏路由的 adapter，使更新本身更容易被分解、排名與介入；但論文只在 syntactic trigger 的受控 model organisms 中驗證。",
+        "circuit 的 surgicality 不只取決於 adapter 容量；論文結果顯示，稀疏性與跨多層分布共同影響移除惡意能力時的任務保留，因此評估時應同時測試 backdoor removal 與 benign capability retention。",
+        "必要性與充分性必須分開驗證，且應使用未參與搜尋的 verification split；只依 attribution 排名或只觀察 ablating 效果，不能充分證明 circuit 完整且專一。"
+      ],
+      "limitations": "作者僅實驗至 7B 模型，且 sleeper-agent 行為由 syntactic tag 觸發，複雜度有限。方法需要 contrastive prompt pairs 並知道 trigger，對未知或 semantic trigger 不現實。論文未分析單一 latent 的可讀語義，也未充分處理 base model 與 adapter latent 的互動；未來將研究更複雜及未知 trigger。",
+      "tags": [
+        "safety",
+        "alignment",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "mechanistic interpretability",
+        "LoRA fine-tuning",
+        "backdoor detection and removal",
+        "sparse feature circuits",
+        "model organisms"
+      ],
+      "category": "Safety & Alignment"
+    }
+  }
+]

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2610.32851] Reimagining Enterprise RAG for Multi-Agent Systems - A Knowledge Layer That Orga...|Reimagining Enterprise RAG for Multi-Agent Systems...]] (2026-10-23)
+
 - `[Agent Evaluation]` [[[2608.21208] Specification Portability Across LLM Development Agents - Cross-Agent Compatibil...|Specification Portability Across LLM Development A...]] (2026-08-21)
 
 ## 延伸閱讀

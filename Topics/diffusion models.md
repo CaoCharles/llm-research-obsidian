@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.32948] Beyond Discrete Tokens - Preserving Numerical Continuity in Medical Vision-Langu...|Beyond Discrete Tokens: Preserving Numerical Conti...]] (2026-10-23)
+
 - `[Benchmark]` [[[2608.14496] Generating Benchmark Health Data Using a Tabular Diffusion Transformer|Generating Benchmark Health Data Using a Tabular D...]] (2026-08-14)
 
 ## 延伸閱讀

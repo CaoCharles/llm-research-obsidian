@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.32835] SPOOK - Sparse Pixel Optimization for Off-Manifold Knowledge in Vision Encoders|SPOOK: Sparse Pixel Optimization for Off-Manifold ...]] (2026-10-23)
+
 - `[Multimodal Evaluation]` [[[2610.23745] VocalGrad - Evaluating Acoustic Perception in Audio Language Models|VocalGrad: Evaluating Acoustic Perception in Audio...]] (2026-10-16)
 
 ## 延伸閱讀
