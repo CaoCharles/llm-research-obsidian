@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.42141] RoboArchitect - Automating the Design of Robotic Agents with Persistent Memory|RoboArchitect: Automating the Design of Robotic Ag...]] (2026-10-30)
+
 - `[Benchmark]` [[[2610.32971] RobustRLlib - A Unified Library and Benchmark for Robust Reinforcement Learning ...|RobustRLlib: A Unified Library and Benchmark for R...]] (2026-10-23)
 
 - `[Agent Evaluation]` [[[2609.05324] RoboSPA - Can VLA Models Go Beyond Simple Scenes and Short-Horizon Tasks|RoboSPA: Can VLA Models Go Beyond Simple Scenes an...]] (2026-09-04)

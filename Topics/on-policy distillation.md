@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2610.42128] DecisionRank - On-Policy Distillation for Decision-Model Rerankers|DecisionRank: On-Policy Distillation for Decision-...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2609.05295] RISE - Recursive Improvement via Self-Extrapolating Policy Distillation|RISE: Recursive Improvement via Self-Extrapolating...]] (2026-09-04)
 
 - `[Benchmark]` [[[2608.27409] Consolidating RLVR Capabilities Across Domains - A Deep Dive into Fusion Paradig...|Consolidating RLVR Capabilities Across Domains: A ...]] (2026-08-27)

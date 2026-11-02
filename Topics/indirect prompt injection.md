@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Safety & Alignment]` [[[2610.41998] SecPO - Principled Adversarial Training for Prompt Injection Security|SecPO: Principled Adversarial Training for Prompt ...]] (2026-10-30)
+
 - `[Safety & Alignment]` [[[2609.02786] SafeEvolve - Harness-Policy Co-Evolution from Agent Experience for Safety Alignm...|SafeEvolve: Harness-Policy Co-Evolution from Agent...]] (2026-09-02)
 
 - `[Agent Evaluation]` [[[2608.21230] Utility Under Attack - Agent Memory Poisoning and the Limits of Content Screenin...|Utility Under Attack: Agent Memory Poisoning and t...]] (2026-08-21)

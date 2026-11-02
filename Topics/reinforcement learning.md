@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.42149] Latent Reasoning in Continuous Space for Unified Multimodal Models|Latent Reasoning in Continuous Space for Unified M...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2609.05314] Large Language Models for HVAC Operations in Building Energy Systems - A Critica...|Large Language Models for HVAC Operations in Build...]] (2026-09-04)
 
 - `[Agent Evaluation]` [[[2608.07437] Fisher-R1 - Training LLM Agents for Reliable Hypothesis Testing|Fisher-R1: Training LLM Agents for Reliable Hypoth...]] (2026-08-07)

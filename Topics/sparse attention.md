@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.42147] Latent Sparse Attention - Towards Subquadratic Ultra-Long Context Attention|Latent Sparse Attention: Towards Subquadratic Ultr...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2609.02737] Language Models Can Control Their Own Attention|Language Models Can Control Their Own Attention]] (2026-09-02)
 
 ## 延伸閱讀

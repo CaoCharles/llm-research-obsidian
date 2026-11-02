@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2610.42149] Latent Reasoning in Continuous Space for Unified Multimodal Models|Latent Reasoning in Continuous Space for Unified M...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2610.03675] FrugalEvo - Towards Cost-Aware LLM-Guided Program Evolution|FrugalEvo: Towards Cost-Aware LLM-Guided Program E...]] (2026-10-02)
 
 ## 延伸閱讀

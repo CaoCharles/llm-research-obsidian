@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Safety & Alignment]` [[[2610.41998] SecPO - Principled Adversarial Training for Prompt Injection Security|SecPO: Principled Adversarial Training for Prompt ...]] (2026-10-30)
+
 - `[Benchmark]` [[[2608.06377] Learning When to Trust via Selective Context Preference Optimization|Learning When to Trust via Selective Context Prefe...]] (2026-08-06)
 
 ## 延伸閱讀

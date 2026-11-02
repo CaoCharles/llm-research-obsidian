@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Hallucination & Faithfulness]` [[[2610.42054] CRoS - Causality Reward on Scrambled CoTs Improves Accuracy and Reasoning Faithf...|CRoS: Causality Reward on Scrambled CoTs Improves ...]] (2026-10-30)
+
 - `[Safety & Alignment]` [[[2608.27348] INTENT-AS-A-TOOL Makes it Easy to Track Agentic Misalignment|INTENT-AS-A-TOOL Makes it Easy to Track Agentic Mi...]] (2026-08-27)
 
 ## 延伸閱讀

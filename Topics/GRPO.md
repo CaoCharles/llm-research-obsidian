@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Hallucination & Faithfulness]` [[[2610.42054] CRoS - Causality Reward on Scrambled CoTs Improves Accuracy and Reasoning Faithf...|CRoS: Causality Reward on Scrambled CoTs Improves ...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2609.05295] RISE - Recursive Improvement via Self-Extrapolating Policy Distillation|RISE: Recursive Improvement via Self-Extrapolating...]] (2026-09-04)
 
 - `[Agent Evaluation]` [[[2607.29468] Self-Play Meets Skill Evolution - Self-Evolving Search Agents that Pose, Solve, ...|Self-Play Meets Skill Evolution: Self-Evolving Sea...]] (2026-07-31)

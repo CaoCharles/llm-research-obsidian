@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2610.42128] DecisionRank - On-Policy Distillation for Decision-Model Rerankers|DecisionRank: On-Policy Distillation for Decision-...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2610.23787] DLite - History-free Speculative Decoding for Agentic AI|DLite: History-free Speculative Decoding for Agent...]] (2026-10-16)
 
 - `[Benchmark]` [[[2608.05115] Robust and Efficient Motion Reasoning for Privacy-Aware Classroom Incident Recog...|Robust and Efficient Motion Reasoning for Privacy-...]] (2026-08-05)

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2610.42147] Latent Sparse Attention - Towards Subquadratic Ultra-Long Context Attention|Latent Sparse Attention: Towards Subquadratic Ultr...]] (2026-10-30)
+
 - `[Agent Evaluation]` [[[2607.29433] Know It, Act on It - Investigating Memory Utilization in LLM Personalization|Know It, Act on It: Investigating Memory Utilizati...]] (2026-07-31)
 
 ## 延伸閱讀
