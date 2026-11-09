@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.09836] Can Agentic Systems Close the Gap in Radiology with Production AI Tools|Can Agentic Systems Close the Gap in Radiology wit...]] (2026-11-06)
+
 - `[Agent Evaluation]` [[[2608.13476] MARC v1 - An Open-Source Multi-Agent Framework for Clinical AI Reasoning and Coo...|MARC v1: An Open-Source Multi-Agent Framework for ...]] (2026-08-13)
 
 ## 延伸閱讀

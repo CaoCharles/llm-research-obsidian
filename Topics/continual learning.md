@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.09892] On Agentic Manipulation Policies|On Agentic Manipulation Policies]] (2026-11-06)
+
 - `[Agent Evaluation]` [[[2610.03713] What Should World Models Forget Stratified Retention for Continual Adaptation|What Should World Models Forget? Stratified Retent...]] (2026-10-02)
 
 - `[Agent Evaluation]` [[[2608.27454] WikiSkill - Compiling Agent Experience into Persistent Knowledge for Skill Evolu...|WikiSkill: Compiling Agent Experience into Persist...]] (2026-08-27)

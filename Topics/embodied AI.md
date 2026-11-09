@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.09892] On Agentic Manipulation Policies|On Agentic Manipulation Policies]] (2026-11-06)
+
 - `[Agent Evaluation]` [[[2610.32978] SceneBloom - Agentic Indoor Environment Generation with Realistic and Diverse La...|SceneBloom: Agentic Indoor Environment Generation ...]] (2026-10-23)
 
 ## 延伸閱讀

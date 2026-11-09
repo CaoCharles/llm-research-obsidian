@@ -1,0 +1,555 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2611.09734",
+      "title": "GuardrailAgent: An Agentic Framework for Jailbreak Defense",
+      "abstract": "Despite undergoing safety training to align with human values, large language models (LLMs) remain vulnerable to jailbreak attacks that circumvent built-in safeguards and elicit malicious behaviors given by the adversary. Existing defenses are mostly static and fail to adapt to new or unknown attack strategies, providing limited resilience. To address these, we propose a multi-agent defense framework, GuardrailAgent, that offers adaptive, end-to-end protection. The system autonomously gathers and summarizes attack characteristics into a continuously updated knowledge base that supports both input- and output-side detection. A feedback module integrates misclassified cases for iterative improvement at minimal cost. Tested on over ten representative jailbreaks, the framework achieved a 93.1% input-side detection rate, 93.9% overall detection, and a 95.8% F1 score, while rapidly adapting to unseen attacks. These results demonstrate GuardrailAgent's outstanding capability to maintain LLM safety in the face of evolving jailbreak tactics.",
+      "authors": [
+        "Tianze Chang",
+        "Junjie Chu",
+        "Yixin Wu",
+        "Michael Backes",
+        "Yang Zhang"
+      ],
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-11-06T17:09:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09734v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09734",
+      "score": 19
+    },
+    "analysis": {
+      "abstract_zh": "儘管大型語言模型（LLM）接受了旨在符合人類價值的安全訓練，仍可能受到 jailbreak attacks 攻擊，繞過內建防護並產生攻擊者要求的惡意行為。現有防禦多為靜態方法，難以適應新型或未知的攻擊策略，韌性有限。為此，作者提出多代理防禦框架 GuardrailAgent，提供具適應性的端到端保護。系統會自主蒐集並摘要攻擊特徵，建立持續更新的 knowledge base，支援輸入側與輸出側偵測；feedback module 則將誤分類案例納入迭代改進，且成本有限。在超過十種代表性 jailbreak 上，框架達到 93.1% 的輸入側偵測率、93.9% 的整體偵測率及 95.8% 的 F1 score，並能快速適應未見攻擊。結果顯示，GuardrailAgent 能在 jailbreak 策略持續演化時維持 LLM 安全性。",
+      "problem_statement": "論文處理 LLM 防禦 jailbreak attacks 時，既有安全微調、固定規則與外部 safeguard 多依賴既知 prompts、資料集或訓練分布，面對快速出現的未知攻擊時容易產生 out-of-distribution 失效，且無法及時自我更新。作者因此聚焦於黑箱條件下，如何同時提升輸入與輸出側的偵測能力、適應新攻擊，並維持 benign queries 的模型效用。",
+      "proposed_solution": "作者提出 GuardrailAgent，一個由 InputAgent 與 OutputAgent 組成的多代理、兩階段防禦框架。InputAgent 使用 Prompt KB 儲存具體 jailbreak prompts，並以相似度進行 instance-level 比對；使用 Material KB 儲存由論文與技術報告摘要出的攻擊策略，進行 strategy-level 分析。通過輸入檢查的 prompt 才會送入目標 LLM，OutputAgent 再利用 Response KB 檢查生成回應，形成輸入與輸出雙側防護。核心創新是外部資源演化與內部 feedback loop：系統週期性蒐集資料與研究材料，並將輸入側漏檢但輸出側成功攔截的案例回饋至 Prompt KB，以持續改善對未見攻擊的泛化能力。",
+      "core_contributions": [
+        "提出 GuardrailAgent 多代理框架，整合 InputAgent 與 OutputAgent，對 user prompts 與模型 responses 提供雙側端到端 jailbreak 防禦。",
+        "建立 Prompt KB、Material KB 與 Response KB，結合 instance-level similarity、strategy-level analysis 與 response pattern analysis，以支援對既知及部分未見攻擊的辨識。",
+        "提出外部資源演化與內部 feedback loop，實驗顯示系統可在無外部知識更新時，處理約 90 個 adversarial prompts 後將平均輸入側 DSR 提升至 0.800。"
+      ],
+      "methodology": "GuardrailAgent 在 black-box 假設下運作，只分析 user prompt 與 target LLM response。線上流程先由 InputAgent 執行 Prompt Analysis Tool，將輸入與 Prompt KB 中最相似的前三個 jailbreak prompts 比對；若未被標記，再由 Material Analysis Tool 根據 Material KB 評估其是否符合已知攻擊策略。任一階段判定為惡意即拒絕，否則送入目標模型。若模型回應已是 refusal，OutputAgent 直接保留；否則透過 Response Analysis Tool 與 Response KB 比對，判斷是否含有被 jailbreak 的回應模式。三個 KB 分別由公開資料集、in-the-wild 資源、研究論文與技術文章建立；外部更新會依可設定週期搜尋資料集及 arXiv 材料，內部更新則將 InputAgent 漏檢但 OutputAgent 捕獲的 prompt 納入候選知識。實驗以 ChatGLM3-6B、Vicuna-7B、GPT-3.5-turbo 為 target models，agent 主要由 GPT-4.1-mini 驅動，另以 Gemini-2.5-flash 做泛化測試。資料涵蓋 JailbreakRadar、WildJailbreak、超過十種攻擊策略與 1,000 筆 benign queries。指標包括輸入側與整體 detection success rate（DSRinput、DSRoverall）、weighted F1、false positive rate、Input Miss Rate、Output Detection Rate，以及 runtime 與 token cost。",
+      "key_results": "| 實驗項目 | GuardrailAgent 結果 | 對照或補充 |\n|---|---:|---|\n| ChatGLM3-6B：DSRinput | 0.931 | 論文摘要與 Table 1 報告 |\n| ChatGLM3-6B：DSRoverall | 0.939 | Llama Guard 4：0.720；最強 baseline 至少低 0.219 |\n| ChatGLM3-6B：F1overall | 0.958 | 所有 baselines 均低於 0.835 |\n| Vicuna-7B：DSRinput / DSRoverall | 0.909 / 0.931 | Table 1 |\n| GPT-3.5-turbo：DSRinput / DSRoverall | 0.920 / 0.940 | Table 1 |\n| Benign queries：false positive rate | 1.6% | PromptGuard 0.6%；OpenAI Moderation 2.2%；Llama Guard 4 0.1% |\n| WildJailbreak：DSRoverall | 0.875 | Llama Guard 4：0.540；OpenAI Moderation：0.492 |\n| strengthened subset：Input Miss Rate | 13.7% | Llama Guard 4：40.8%；OpenAI Moderation：56.2% |\n| strengthened subset：Output Detection Rate | 15.9% | Llama Guard 4：13.7%；OpenAI Moderation：3.1%；AutoDefense：47.3% |\n| strengthened subset：DSRoverall | 88.5% | Llama Guard 4：64.8%；OpenAI Moderation：45.5%；AutoDefense：47.3% |\n| Gemini-2.5-flash 作為 agent base LLM：DSRinput / DSRoverall | 0.856 / 0.878 | GPT-4.1-mini：0.931 / 0.939 |\n| 內部 feedback 演化 | 約處理 90 個 adversarial prompts 後，平均輸入側 DSR 達 0.800 | 未初始化狀態起始；論文未報告更完整的逐步平均數值 |\n| 平均延遲 | InputAgent 6.8 秒；OutputAgent 3.6 秒 | 單機、單張 RTX 4090；主要受外部 API round-trip 影響 |\n| 平均成本 | 僅輸入側分類約 $0.006；進入輸出側約 $0.009 | 以 GPT-4.1-mini pricing 計算 |",
+      "insights": [
+        "實務部署時可採用輸入攔截加輸出審查的分層架構，避免單一輸入分類器漏檢後直接讓不安全回應流向使用者。",
+        "知識庫不應只保存完整攻擊 prompt；論文結果顯示，將研究材料摘要為 strategy-level entries 可補足單純相似度檢索對新變體的不足。",
+        "應將漏檢但在輸出側捕獲的案例納入受控 feedback 流程，同時監測 false positives；論文中的 benign 測試顯示，較保守的 retrieval matching 仍會造成 1.6% 誤報。"
+      ],
+      "limitations": "作者指出，框架目前主要依賴 similarity-based retrieval 與 literature-guided analysis，對需要更深層語意理解或進階推理的攻擊可能較弱。自動更新也帶來資料治理、隱私、代理 prompt injection 與防禦策略公開後遭反制等風險。論文未提供更長期實際部署、持續自適應攻防或所有新型攻擊上的完整結果，未來可替換更強分析模組。",
+      "tags": [
+        "red-teaming",
+        "prompt-injection",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "jailbreak 防禦",
+        "多代理 LLM 安全",
+        "自適應 guardrail",
+        "輸入與輸出側安全偵測"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09807",
+      "title": "Compaction, decay and reinforcement in a two-tier conversational memory: a paired evaluation against retrieval-augmented generation",
+      "abstract": "A conversational agent that remembers has to decide what to keep. Retrieval-augmented generation keeps the transcript and searches it; the alternative is to compact each turn into atomic facts and search those. We compare the two on LoCoMo, with both arms answering all 1,985 questions in one window, against the same stores, with the same generator and judge, and both predictions on one row, which licenses McNemar's exact test on the 512 questions where they disagree.   On the four categories comparable work reports, compaction scores 71.4 per cent against 64.6, a lead of 6.8 points (p = 5.5e-08) at 34 per cent fewer prompt tokens. On all five, including the adversarial set comparable work drops, the lead falls to 2.0 and stops being significant, because the baseline leads adversarial by 14.6.   That loss has a structure. Our lead falls as the reference answer demands more source wording, 9.6 points ahead at one or two reference words and 3.1 behind past eight, with token overlap moving the same way, so the judge is not the cause. Compaction keeps what a fact asserts and discards how it was said, so it wins where the answer is a value and loses where it is a phrasing. We also report four negative results with their power calculations.",
+      "authors": [
+        "Osamudiamen Edogun",
+        "Joshua Obigwe",
+        "Irfan Mehmood"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-11-06T17:56:37+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09807v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09807",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "具備記憶能力的 conversational agent 必須決定哪些資訊值得保留。Retrieval-augmented generation（RAG）保留完整 transcript，於查詢時搜尋；另一方案則將每輪對話 compact 成 atomic facts，再搜尋這些事實。本文在 LoCoMo 上進行 paired evaluation：兩種方法均回答全部 1,985 題，使用相同 stores、generator 與 judge，並將兩者預測置於同一列，因此可對 512 個不一致樣本進行 McNemar exact test。在可與既有研究比較的四類問題中，compaction 得分 71.4%，RAG 為 64.6%，領先 6.8 個百分點，同時減少 34% prompt tokens。納入 adversarial 類別後，整體領先縮小至 2.0 個百分點且不顯著。結果顯示，reference answer 越需要保留原文措辭，compaction 優勢越低：一至兩個 reference words 時領先 9.6 個百分點，超過八個 words 後反而落後 3.1 個百分點。Compaction 保留事實主張、捨棄表達方式，因此擅長回答 value，卻不利於 phrasing。",
+      "problem_statement": "論文探討長期 conversational memory 中「保留完整 transcript」與「先 compact 成 atomic facts」的取捨。既有比較常分開執行各系統，只比較總準確率，無法利用逐題配對資訊，也容易混入 model version、provider 狀態與 judge 時間差異。另一方面，compaction 雖可降低 context spend，卻可能丟失原始措辭、qualifier 與事件脈絡；RAG 則面臨長 context、無關 passage 干擾及相對日期需在回答時解析等問題。",
+      "proposed_solution": "作者提出 NMAFC（Neuromorphic Memory Architecture for Conversational AI）雙層 conversational memory。寫入時由 language-model extractor 將每輪對話轉為具 entity、atomic assertion、validity date、speaker attribution 與 related entities 的 facts，經 deduplication、linking 與 supersession consolidation 後，分別存入 working tier 與 searchable archive。facts 以 exponential decay 管理，檢索到時透過 reinforcement 恢復權重，低於 threshold 則由 working tier demote 至 archive。讀取時同時搜尋 dense、lexical 與 graph channels，以 reciprocal rank fusion 排序，並將高排名 facts 與部分 source turns hydration 到 prompt。核心創新不只是架構，而是以同一窗口、同一 store 狀態、同一 generator 與 judge 的 paired protocol，比較 compaction 與 transcript RAG。",
+      "core_contributions": [
+        "提出並公開一套 paired conversational-memory evaluation protocol：兩個 arms 在同一窗口、相同 store 狀態下逐題執行，將兩種預測寫在同一列，使用 McNemar exact test 分析 discordant pairs。",
+        "實作 NMAFC 雙層 compaction memory，結合 atomic fact extraction、validity-aware consolidation、exponential decay、retrieval reinforcement、dense／lexical／graph retrieval 與 graded source-turn hydration。",
+        "以 LoCoMo 實驗量化 compaction 的收益與代價：在較短、value-oriented 或 temporal answers 上提升準確率並降低 34% context spend，但在需要保留原文 phrasing 的 adversarial、長 reference answers 上輸給 transcript RAG。"
+      ],
+      "methodology": "NMAFC 的寫入流程包含 extraction、consolidation 與兩層儲存。Extractor 強制每筆記錄只表達一項主張，解析相對日期為 absolute date，並附加 entity、speaker、validity 與 links；facts 去重，過時內容標為 invalid 而不刪除。每個 mutable fact 的權重依 w(Δt)=w0e^-λeffΔt 衰減；λeff 受 fact type 與 retrieval 次數影響，core anchor 不衰減，權重低於 0.1 時 demote 至 archive。每次 retrieval 返回的 fact 都會 reinforcement，將權重設回 1；評估 harness 以 read-only wrapper 清除 pending buffer，避免題目間狀態漂移。讀取同時搜尋 working tier 與 archive，融合 dense、lexical 及 graph expansion 的最多五個 ranked lists，採 reciprocal rank fusion，取前 20 facts，並 hydration 前五個 facts 的 source turns。baseline 是對相同 conversations 進行 transcript chunking、embedding retrieval 的 RAG，不使用 extraction、decay、reinforcement 或 fusion；兩者共用 DeepSeek-V4-Pro generator、text-embedding-3-small embeddings 與 Kimi-K2.6 judge。資料為 LoCoMo 十段 synthetic conversations、1,985 題，分為 open-domain、adversarial、temporal、single-hop、multi-hop。主要指標是 model-judge binary accuracy、paired discordant counts、McNemar exact test、Wilson 95% intervals、retrieved-context tokens，以及 secondary token-overlap F1；延遲則比較 paired percentiles。",
+      "key_results": "主要結果如下：\n\n| 評估範圍／類別 | 題數 | NMAFC | RAG | 領先差 | Won/Lost | McNemar p | Context tokens（NMAFC vs RAG） |\n|---|---:|---:|---:|---:|---:|---:|---:|\n| Single-hop | 281 | 50.9% | 45.6% | +5.3 | 51/36 | 0.133 | 980 vs 1,486 |\n| Temporal | 321 | 71.7% | 46.1% | +25.5 | 101/19 | 1.1e-14 | 943 vs 1,422 |\n| Multi-hop | 96 | 57.3% | 44.8% | +12.5 | 15/3 | 0.0075 | 961 vs 1,410 |\n| Open-domain | 841 | 79.8% | 80.3% | -0.5 | 71/75 | 0.804 | 967 vs 1,461 |\n| Adversarial | 446 | 35.9% | 50.4% | -14.6 | 38/103 | 4.1e-08 | 960 vs 1,486 |\n| Scored four categories | 1,539 | 71.4% | 64.6% | +6.8 | 238/133 | 5.5e-08 | 964 vs 1,454 |\n| All five categories | 1,985 | 63.4% | 61.4% | +2.0 | 276/236 | 0.085 | 963 vs 1,461 |\n\n在 scored four categories 中，NMAFC 以 34% 較少 context tokens 顯著領先；納入 adversarial 後，整體差異不再顯著。reference answer 一至兩個 words 時，scored-four lead 為 +9.6 points；超過八個 words 後為 -3.1 points。Token-overlap F1 亦支持此方向：NMAFC 在 temporal 為 0.620 對 0.446、multi-hop 為 0.365 對 0.239；RAG 在 adversarial 為 0.443 對 0.340。Latency 的 paired 結果顯示 p50 為 1,741 對 1,769 ms，p90 為 3,570 對 3,360 ms，差異主要出現在長尾。",
+      "insights": [
+        "若產品問題主要詢問日期、數值、身份、地點或方案等 value，compaction memory 可能在降低 context spend 的同時提供優勢；但應以實際問題分布驗證，不能只依賴總體平均。",
+        "不要把 compaction 視為 transcript 的完全替代品。對需要回答「使用者原話」「完整理由」或長 paraphrase 的查詢，應保留短 verbatim spans、source turns，或採用依問題型態路由的混合檢索。",
+        "評估 memory 或 RAG 系統時，應逐題 paired 執行並固定 generator、judge、store 狀態，再檢視 discordant wins/losses；僅比較兩次獨立總分可能誤判效果、延遲與負結果。"
+      ],
+      "limitations": "LoCoMo 僅包含十段 synthetic conversations，未必反映真實對話中的 interruptions、corrections 與 topic drift。adversarial 類別主要是長 paraphrase，可能放大 phrasing 損失。研究共用 generator、embedding model 與 model judge，絕對分數受 common-mode 偏差影響；模型輸出具非決定性，跨週 accuracy 漂移約 0.040。類別與總體檢定未做完整 family-wise correction，且部分 ablation 使用已建立的 stores。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "conversational memory",
+        "paired statistical evaluation",
+        "context-efficient retrieval",
+        "memory compaction",
+        "long-context RAG"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09792",
+      "title": "Knowing When to Intervene: Causal Evaluation of AI Agents",
+      "abstract": "Current evaluations of agentic AI systems primarily rely on benchmarks. However, the static nature of benchmarks makes them uninformative about the value of auditing interventions at deployment time. For reliable deployment, we often need to determine within an agent's trajectory whether or not to intervene, e.g., by verifying the agent's current output or steering it toward different behavior, using either human review or more costly models or time-consuming agentic supervision. The value of such interventions is fundamentally a causal inference question, asking whether the causal effect of such an intervention is beneficial for the final outcome. Estimating this causal effect is particularly challenging due to the dynamic nature of the problem: the impact of an intervention depends on the current context and environment, as well as the agent's future behavior. We develop the first methodologically grounded framework for evaluating the causal effects of randomized interventions within agent trajectories. By leveraging a relatively small dataset of agent trajectories collected under randomized interventions such as verification or screening, we can estimate the dynamic causal effect of a rich class of (contextual) intervention policies. The structural parameters that we estimate can also be used to construct safety leaderboards that capture the risk of various agentic actions, which can be used by practitioners for audit prioritization. Applying our methods to tau-bench Retail, ToolSandbox, and ImpossibleBench, we find that intervention effects vary substantially across agent actions and states. More broadly, our work suggests a rich research agenda at the intersection of causal inference and agentic evaluation, which we believe is essential for the reliable and safe deployment of AI agents in the real world.",
+      "authors": [
+        "Ayush Sawarni",
+        "Wenqian Xing",
+        "Tijana Zrnic",
+        "Ramesh Johari",
+        "Vasilis Syrgkanis"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "econ.EM",
+        "stat.ME"
+      ],
+      "published": "2026-11-06T17:46:53+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09792v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09792",
+      "score": 16
+    },
+    "analysis": {
+      "abstract_zh": "目前對 agentic AI systems 的評估主要依賴 benchmarks；然而，benchmark 的靜態特性無法說明部署時進行 auditing intervention 的價值。為了可靠部署，我們常需在 agent trajectory 中判斷是否介入，例如驗證當前輸出、引導 agent 改變行為，或使用 human review、成本更高的模型與耗時的 agentic supervision。這種介入的價值本質上是 causal inference 問題：介入對最終結果的 causal effect 是否有益。估計此效果相當困難，因為介入影響取決於當前 context、environment 與 agent 未來行為。本文提出首個具方法論基礎的 framework，用於評估 agent trajectory 內 randomized intervention 的 causal effects。透過在 trajectory 中隨機化 verification 或 screening 等介入，少量 trajectory data 即可估計豐富的 contextual intervention policies。估計所得的 structural parameters 也可建立反映 agentic actions risk 的 safety leaderboards，以協助 audit prioritization。作者在 tau-bench Retail、ToolSandbox 與 ImpossibleBench 上發現，介入效果會隨 agent actions 與 states 顯著變化。",
+      "problem_statement": "現有 agent 評估多以固定任務、環境與終端分數衡量成功或安全，無法回答部署中「在某個 trajectory decision 是否應介入」以及介入是否會改善最終結果。觀察性 trajectory 只能找出可能的介入點，不能識別 causal effect；即使進行 trajectory-level randomization，也難以處理中途介入對後續 states、actions、介入機會與終端 outcome 的動態影響。",
+      "proposed_solution": "作者提出以 sequential randomization 與 micro-randomized trials 為基礎的 causal evaluation framework。在每個符合資格的 decision point，記錄 pre-assignment history、agent proposed action 與 environment context，再以已知機率隨機分配 intervention 或 control，讓 agent 繼續執行。框架定義三類 estimand：在後續介入仍隨機化下的 blip effect、後續不再介入下的 blip effect，以及相對於永不介入的 target policy gain。前者使用 cross-fitted AIPW，後兩者使用 continuation-specific SNMM 與 g-estimation，並可按 tool、task stage、failure pattern 等 history-defined groups 建立 decision-impact 或 safety leaderboard。",
+      "core_contributions": [
+        "提出適用於 agent trajectory 中途介入的 sequentially randomized causal evaluation framework，不需存取 agent internal state，也不要求 Markovian 或 stationary interaction model。",
+        "形式化三種互補 causal estimand：randomized-continuation blip、no-treatment-continuation blip 與 policy gain，並分別提出 AIPW、SNMM 與 g-estimation 方法。",
+        "在 tau-bench Retail、ToolSandbox 與 ImpossibleBench 實證顯示介入效果高度依賴 tool、能力、任務進度與 agent state，並展示以 causal effect 建立 intervention prioritization 與 safety leaderboard 的可行性。"
+      ],
+      "methodology": "Agent 被視為與 environment 互動的 black box；trajectory 從 task input X 開始，於 eligible intervention points t 觀測 Lt，形成 pre-assignment history Ht，並記錄 binary assignment At。資料收集採 sequential randomization：At|Ht 服從 Bernoulli(e(Ht))，實驗中每個 eligible point 以 1/2 機率分配 intervention 或 control；較早介入可改變後續 agent actions、environment states、trajectory 長度與介入機會。終端 outcome Y 在 tau-bench Retail 為 task success、ToolSandbox 為 similarity score、ImpossibleBench 為 detected rule violation。作者估計三種 estimand：τ(G;g) 衡量當下介入且後續維持 randomized continuation 的 group-averaged blip；τ(G;0) 衡量當下介入但後續完全不介入的效果；Δ(G) 衡量只在 history 屬於 G 時介入的 selective policy 相對 never-intervene policy 的 value gain。τ(G;g) 使用已知 assignment probability 的 cross-fitted AIPW，並搭配 outcome prediction；τ(G;0) 與 Δ(G) 使用 continuation-specific SNMM 與 g-estimation，因此需額外的 parametric blip-effect model 假設。實驗涵蓋 GPT-5 nano、Claude Haiku 5.5 與 Qwen3.5 Flash；reviewer 為 GPT-6 Luna。分析按 capabilities、operations、individual tools、task progress、test conflicts 與 prior failures 分組，並以 pointwise 95% Student’s t confidence intervals 報告結果。",
+      "key_results": "| Benchmark／agent | 介入與 outcome | 主要結果 |\n|---|---|---|\n| tau-bench Retail／GPT-5 nano | tool-call review；terminal task success | Reads 與 writes 的 review effects 均為正；customer identification、order-detail retrieval、order cancellation、item changes 的估計效果為正；catalog group 與 payment changes 的 95% CI 包含 0。9 個 selective review policies 的 SNMM 與 direct Monte Carlo 估計皆為正，且各 policy 的 95% CI 重疊；直接估計點估計有 8/9 落在 SNMM interval 內。具體 policy gain 數值未在文字中完整列出。 |\n| tau-bench Retail／Claude Haiku 5.5 | tool-call review；terminal task success | 所有 reads 聚合效果接近 0，但 account-detail calls 的 95% CI 高於 0，顯示聚合可能掩蓋 subgroup effect。其他細項完整數值未報告。 |\n| ToolSandbox／GPT-5 nano | tool-call review；similarity score | Time and calculations capability 的 randomized-continuation blip 為 +1.8，95% CI [-0.2, 3.8]；其中 datetime_info_to_timestamp tool 的 blip 為 +6.9，95% CI [1.2, 12.6]。rarely proposed tools 的區間較寬。 |\n| ImpossibleBench／Qwen3.5 Flash | adversarial feedback；detected rule violation | 第 5 次失敗後的 adversarial-feedback effect 為 +9.4 percentage points，95% CI [2.9, 15.9]；第 1 次失敗後為 +3.3 pp，95% CI [0.6, 6.1]。至少 80% 但未達 100% tests passing 時為 +5.7 pp，95% CI [2.3, 9.2]；低於 50% 時為 +0.3 pp，95% CI [-1.7, 2.2]。 |\n| 三個 benchmark | framework-level finding | intervention effects 在不同 agent actions 與 states 間有 substantial variation；作者主張 randomized intervention data 可同時支援 blip attribution、policy evaluation 與 audit prioritization。 |",
+      "insights": [
+        "實務上不應只依賴整體 benchmark success rate；應針對 tool type、task stage、prior failure 與其他可觀測 history 分層估計 intervention effect，以找出真正值得 review 的決策點。",
+        "介入策略的價值不能由單一 decision 的效果直接相加，因為 intervention 會改變後續 trajectory 與可介入機會；部署策略應以 policy gain，而非僅以局部 blip effect，評估整體結果。",
+        "可先以 sequential randomization 找出高風險或高收益候選點，再以獨立 randomized controlled trial 驗證；對 rare tools、multiple comparisons 與依賴 SNMM 假設的估計，應避免直接視為確定性安全結論。"
+      ],
+      "limitations": "AIPW 的 randomized-continuation blip 較少依賴 outcome model，但 no-treatment continuation 與 policy gain 的 SNMM 需要正確指定 parametric blip-effect model，錯置時只能解讀為 weighted projection。實驗使用相對較小模型與既有 benchmarks，且 history features 多為手工設計；結果未處理 multiple comparisons。未來需評估 frontier agents、更長期任務、語義化 intervention opportunity detector，以及更自適應的 history representation。",
+      "tags": [
+        "agent-evaluation",
+        "safety",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "sequential causal inference",
+        "micro-randomized trials",
+        "off-policy evaluation",
+        "structural nested mean models",
+        "AI agent safety auditing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09791",
+      "title": "Assessing the Impact of Retrieval-Augmented Generation on Algorithmic Problem-Solving",
+      "abstract": "Competitive programming problems pose distinctive challenges for Large Language Models, as they demand not only proficient code generation but also advanced algorithmic reasoning. This study presents a Retrieval-Augmented Generation approach specifically designed to enhance the capacity of Large Language Models to address such problems. Our approach integrates an embedding-based retrieval mechanism and a similarity search algorithm to identify analogous problems within a knowledge database, employing a dynamically adjusted threshold to mitigate retrieval noise. We conducted an evaluation using the CodeContests dataset, focusing on the test split problems that exhibit similarity to instances from the training split. The experimental framework considered three conditions: (i) problems provided solely with their original descriptions, (ii) problems supplemented with randomly selected examples from the training split, and (iii) problems augmented with similar examples retrieved through the proposed method. In addition, we incorporated a Min-K membership inference analysis to examine whether the generated code solutions were influenced by potential memorization of training data within the evaluated Large Language Models. This complementary perspective enables a deeper understanding of model behavior by distinguishing genuine generalization through retrieval from implicit recall of pretraining samples. Performance was assessed using both pass rates and the CodeForces Elo rating of the problems. The results provide empirical evidence that similarity-based retrieval substantially enhances Large Language Models performance in competitive programming scenarios, offering an scalable framework for improving code generation in algorithmic problem-solving contexts.",
+      "authors": [
+        "Gabriel Souza Baggio",
+        "Gabriel Machado Lunardi",
+        "Guilherme Medeiros Machado",
+        "Subhankar Maity",
+        "Faiza Belbachir",
+        "José Palazzo Moreira de Oliveira"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-11-06T17:46:28+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09791v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09791",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "競賽程式題對大型語言模型（LLM）提出獨特挑戰，因為模型不僅需要具備程式碼生成能力，也必須進行高階演算法推理。本研究提出專為此類任務設計的 Retrieval-Augmented Generation（RAG）方法，結合 embedding-based retrieval 與 similarity search，從知識資料庫找出相似題目，並透過動態調整門檻降低檢索噪聲。作者使用 CodeContests 資料集進行評估，比較僅提供原始題目、加入隨機訓練題，以及加入相似檢索題目三種條件。此外，研究採用 Min-K membership inference 分析，探討生成程式碼是否受到模型對訓練資料潛在記憶的影響，以區分透過檢索產生的泛化與預訓練資料的隱性回憶。評估指標包括通過率與 CodeForces Elo rating。結果顯示，基於相似度的檢索能實質提升 LLM 在競賽程式設計情境中的表現。",
+      "problem_statement": "論文聚焦於 LLM 解決競賽程式題時的困難：此類題目要求理解資料結構、演算法模式與隱藏測試案例，僅具備一般程式碼生成能力往往不足，並可能產生語法或邏輯錯誤。既有評估也常只使用 pass/fail，難以反映題目難度與模型實際能力。作者因此研究：從已解題目中檢索演算法上相似的範例，是否能比零樣本或隨機範例更有效地改善解題表現。",
+      "proposed_solution": "作者提出一個針對競賽程式設計的 similarity-based RAG 框架。系統先以 all-MiniLM-L6-v2 將題目描述轉為 embedding，再使用 FAISS IndexFlatL2 進行相似度搜尋，從 CodeContests 訓練集挑選最多三個相似且已有驗證解答的題目，附加至測試題提示中。核心創新是 query-dependent 的動態相似度門檻：以最高相似度調整篩選嚴格程度，最低不低於 70%，以在資訊不足時保留候選、資訊高度相似時抑制噪聲。研究另以 Min-K membership inference 分析生成程式碼的潛在資料暴露，補充評估 RAG 增益是否伴隨記憶效應。",
+      "core_contributions": [
+        "提出結合 embedding similarity search、FAISS 與動態相似度門檻的競賽程式設計 RAG 框架，並限制最多三個檢索範例以降低噪聲。",
+        "在 CodeContests 的 81 題可檢索測試子集上，系統性比較零樣本、隨機檢索與相似度檢索三種提示策略，並同時使用 pass@1 與 MAP Elo 評估。",
+        "引入 Min-K membership inference 作為補充分析，探討生成解答與模型預訓練資料暴露或記憶模式之間的關係。"
+      ],
+      "methodology": "資料方面，研究使用 CodeContests，訓練集含 13,328 題，測試集含 165 題；以訓練集作為 RAG 知識庫，並將其中至少檢索到一個相似題目的 81 題測試題納入主要實驗。檢索只使用題目文字描述，不使用解答或標籤來計算相似度。每題先透過 all-MiniLM-L6-v2 取得 embedding，向量經正規化後使用 FAISS 的 IndexFlatL2 搜尋。系統初始相似度門檻為 70%；最高相似度高於 85% 時提高門檻，低於 75% 時放寬，但不低於 70%，且最多回傳三題。六個模型為 DeepSeek-R1、Gemini 2.0 Flash、Claude 3.7 Sonnet、Qwen2.5-Coder-32B、GPT-4o 與 GPT-3.5 Turbo。三種提示條件為零樣本、隨機檢索，以及相似度 RAG；範例包含標題、描述、標籤、相似度與驗證解答。生成程式碼交由 CodeForces judge 執行，主要指標為 pass@1 與以 Bayesian MAP Elo 估計的模型 rating。另對最佳解答進行 Min-K membership inference，使用最低 K% token log-probability 的平均分數，依百分位數門檻分類為 Member 或 Non-member。",
+      "key_results": "主要結果如下（論文報告的是 81 題子集上的平均結果）：\n\n| 評估條件 | 平均 pass@1 | 平均 MAP Elo |\n|---|---:|---:|\n| Zero-shot | 17.90% | 925 |\n| Random retrieval | 17.28% | 927 |\n| Similarity-based RAG | 20.37% | 1014 |\n\n| 模型 | Zero-shot | Random retrieval | RAG |\n|---|---:|---:|---:|\n| DeepSeek-R1 | 61.7% | 59.3% | 64.2% |\n| Gemini 2.0 | 18.5% | 18.5% | 22.2% |\n| Claude 3.7 Sonnet | 17.3% | 12.3% | 19.8% |\n| GPT-4o | 7.4% | 8.6% | 8.6% |\n| GPT-3.5 Turbo | 1.2% | 1.2% | 2.5% |\n| Qwen2.5-Coder-32B | 1.2% | 3.7% | 4.9% |\n\n作者指出，RAG 相較零樣本平均提升 2.47 個百分點，平均 Elo 提升 89 分；相較隨機檢索則提升 3.09 個百分點與 87 分。DeepSeek-R1 的 RAG pass@1 由 61.7% 提升至 64.2%。分類分析中，DeepSeek-R1 在 number theory 的 Elo 由 1604 提升至 2191，但 data structures 與 combinatorics 等類別出現下降。Min-K 分析顯示，多數被分析程式碼行的 membership confidence 高於 0.5；論文將其解讀為可能接觸過競賽程式碼模式，但未將此視為精確問題—解答配對的證明。",
+      "insights": [
+        "實務部署 RAG 時，增加範例數量本身不等於提升效果；本研究中隨機檢索低於零樣本，表示檢索相關性與範例品質比單純增加上下文更重要。",
+        "可將 pass@1 與題目難度校準後的 Elo 同時使用：前者反映解題數量，後者有助於觀察模型是否能處理較高難度題目。",
+        "RAG 應保留檢索失敗或低相似度時的回退機制，並針對不同問題類別調整檢索策略；論文結果顯示某些類別受益明顯，但另一些類別可能因誤導性範例而退化。"
+      ],
+      "limitations": "研究只評估 165 題測試集中的 81 題可檢索子集，無法直接代表所有測試題。檢索固定使用單一 embedding 模型且最多取三個範例，尚未比較 hybrid retrieval、reranking 或其他提示格式。Min-K 是間接暴露訊號，不能確定程式碼確實來自預訓練資料。未來將擴展至較新、較具污染意識的資料集，並研究模型與類別專屬的檢索策略。",
+      "tags": [
+        "rag-evaluation",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "競賽程式設計與程式碼生成評測",
+        "embedding-based retrieval",
+        "資料污染與 membership inference",
+        "Elo-based LLM evaluation"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09892",
+      "title": "On Agentic Manipulation Policies",
+      "abstract": "Recent work on robot manipulation has focused on specialist policies trained on demonstrations. We show that generalist AI models can control manipulators more reliably than specialist policies such as vision-language-action models (VLAs) and world-action models (WAMs). We systematically analyze agentic manipulation policies (AMPs), in which a generalist AI model commands the manipulator directly, adapting its actions as the task unfolds. We present AMP1, a reference harness that runs unchanged across single-arm, bimanual, and mobile manipulation. AMP1 achieves state-of-the-art results on the RoboLab-120 and CaP-Gym benchmarks, with no demonstrations or task-specific training. On RoboLab-120, AMP1 reaches an 85.6\\% success rate zero-shot, compared to 49.2\\% and 42.9\\% for leading VLA and WAM policies. The agent succeeds zero-shot in 104 of 108 real-world trials spanning twelve tasks and three robot instances, reducing failure rates by 20x and 15x relative to strong VLA and WAM baselines. The basic harness supplies no grasping, pushing, or placing skills; the agent develops its own strategies, such as searching for hidden objects, using objects as tools, and calibrating its cameras. With the addition of a persistent memory store, the agent can also learn from experience: an augmented harness with a memory representation that is carried across episodes lowers the failure rate on RoboDojo bimanual manipulation tasks by 4.6x relative to zero-shot deployment. Our analysis suggests that AMPs are substantially more general and robust than specialist manipulation policies, providing a promising foundation for robot manipulation.",
+      "authors": [
+        "Chen Chen",
+        "Omid Bagherieh",
+        "Naveen Nikamanth Appiah Balaji",
+        "Jesse T. Gonzalez",
+        "Negin Heravi",
+        "Fahad Islam",
+        "Xueting Li",
+        "Jean-Baptiste Regli",
+        "Kejia Ren",
+        "Petr Švec",
+        "David J. Yoon",
+        "Matthias Müller",
+        "Vladlen Koltun"
+      ],
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-11-06T18:59:34+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09892v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09892",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "近期機器人操作研究多聚焦於以示範資料訓練的 specialist policy。本文顯示，generalist AI model 能比 vision-language-action model（VLA）與 world-action model（WAM）更可靠地控制機械手臂。作者系統分析 agentic manipulation policy（AMP）：由 generalist model 直接下達操作指令，並隨任務進展適應與修正動作。作者提出 AMP1 reference harness，可不變地支援單臂、雙臂與移動式操作；在無示範、無任務特定訓練下，於 RoboLab-120 達到 85.6% 成功率，優於 VLA 的 49.2% 與 WAM 的 42.9%。真實世界 108 次試驗中成功 104 次，涵蓋十二項任務與三個機器人實例。加入 persistent memory 後，RoboDojo 雙臂任務的失敗率相對 zero-shot 降低 4.6 倍。結果顯示，AMP 具有更高的泛化性與魯棒性。",
+      "problem_statement": "現有機器人操作方法主要依賴 specialist policy、示範資料與任務特定訓練，因此在新場景、模糊指令、長時序任務及非預期接觸情況下泛化有限。skill orchestration 受限於預先提供的抓取與放置技能；code-as-policies 則在執行時缺乏 generalist model 的持續決策與策略重構能力。本文要解決的是：能否讓 generalist model 直接、閉迴路地控制機械手臂，並在互動過程中感知、推理、重規劃與恢復錯誤。",
+      "proposed_solution": "作者提出 Agentic Manipulation Policy（AMP）範式及 AMP1 reference harness。AMP1 將視覺觀測、程式碼執行、機械手臂狀態查詢與直接運動控制提供給 generalist model；模型可在每一回合讀取影像、撰寫或執行控制程式、發出軌跡命令，再根據結果重新規劃。核心創新是不提供預先定義的抓取、推動或放置技能，讓模型自行組合幾何推理、互動感知、非抓取操作與錯誤恢復。作者另加入跨 episode 的 persistent memory，使模型以文字筆記與可執行程式累積經驗，在不更新模型權重的情況下進行 gradient-free learning。",
+      "core_contributions": [
+        "提出 Agentic Manipulation Policy 範式與 AMP1 reference harness，讓 generalist model 在視覺—行動閉迴路中直接控制單臂、雙臂及移動式機器人。",
+        "在多個模擬 benchmark 與真實世界任務中，系統性比較 AMP 與 VLA、WAM 及其他 agent 方法，並分析模型、推理程度、感知介面與 harness 設計的影響。",
+        "提出以 persistent memory 儲存反思、觀察與可執行程式的 gradient-free learning，展示 few-shot 與 continual learning、跨任務轉移及效率改善。"
+      ],
+      "methodology": "AMP1 在不同 benchmark 中維持相同 harness，僅改變機器人描述與相機配置。模型接收自然語言任務與視覺觀測，可查詢手臂狀態、取得或重建空間資訊、執行 Python 控制程式、產生運動軌跡，並依命令結果持續修正策略。評估涵蓋 RoboLab-120、CaP-Gym 的 LIBERO-PRO、robosuite 與 BEHAVIOR-1K，以及 RoboDojo 雙臂任務；主要指標為 episode success rate、失敗原因、平均成功時間、model calls 與成本。RoboLab-120 使用 120 個任務、每任務每指令條件 10 次試驗；CaP-Gym 各套件採論文所述的 episode 數。真實世界使用 7-DoF Franka Research 3、Robotiq 2F-85 gripper 與三相機系統，測試十二項單步及多步任務。作者也比較不同 model、reasoning effort、深度與相機校準資訊、文字替代視覺，以及 basic 與 assistive harness。學習實驗中，AMP1+ 將每回合的成功訊號、反思筆記與程式儲存於 persistent memory；few-shot 在同一任務不同 layout 練習，continual learning 則依序處理 42 個任務並測試跨任務轉移。",
+      "key_results": "主要結果如下：\n\n| 評估項目 | AMP1／AMP1+ | 比較基線或 zero-shot | 論文觀察 |\n|---|---:|---:|---|\n| RoboLab-120，Gemini 4 Argon | 85.6% | VLA 49.2%；WAM 42.9% | zero-shot，無示範與任務特定訓練 |\n| RoboLab-120，Opus 5.5 | 82.8% | — | 95% CI：80.6–84.9% |\n| LIBERO-PRO | Gemini 4 Argon 95.2% | CaP-Agent0 18.2%；π0.5 34.9% | zero-shot；HarnessPAI 96.5%但使用評估任務 rollout 演化程式 |\n| robosuite | Gemini 4 Argon 100.0% | HarnessPAI 96.3% | 包含雙臂任務，zero-shot |\n| BEHAVIOR-1K | 96.0%（48/50） | CaP-Agent0 64%；人寫程式 54% | zero-shot |\n| 真實世界 108 次試驗 | 104/108，96.3% | FLUX 45.4%；π0.5 27.8% | 啟用 robot error recovery；未啟用時為 94/108 |\n| RoboDojo few-shot | 84.1% | zero-shot 26.4%；Q0-Preview 68.9% | persistent memory，未更新模型權重 |\n| RoboDojo continual learning | 57.6% | zero-shot 26.4% | 單次依序通過 42 個任務後，成功率超過兩倍 |\n| RoboDojo 記憶效率 | 約少 35% model calls | zero-shot | 論文報告記憶可降低呼叫次數 |\n| 模型與感知消融 | Opus 5.5：82.8%；Haiku 5.5：51.6%；Opus 4.5：35.2% | — | 模型選擇影響最大；移除深度與校準時 Opus 5.5 為 75.8% |\n| 視覺改為文字描述 | Opus 5.5 36.8% | 完整視覺 82.8% | 文字替代視覺造成明顯下降 |",
+      "insights": [
+        "對 agent-evaluation 的實務啟發是，評估不應只看最終成功率，也應區分政策錯誤、硬體限制、benchmark verifier 錯誤與 provider failure；本文在 RoboLab 中明確拆分失敗來源，避免將評測瑕疵誤判為模型能力不足。",
+        "互動式 agent 的優勢來自閉迴路重規劃與以行動取得資訊，例如移開遮擋物、校準相機或透過碰撞推斷未知幾何；設計 embodied agent benchmark 時，應納入需要主動感知、非抓取操作與錯誤恢復的任務。",
+        "persistent memory 可在不更新模型權重的情況下累積可重用策略，但應同時評估記憶的泛化、保留與效率，並報告 model calls、推理時間及成本，而非只呈現成功率。"
+      ],
+      "limitations": "AMP1 仍不具備實際部署所需的速度，許多時間花在模型推理；真實世界仍會因碰撞、物體掉落、校準誤差與夾爪限制失敗。部分 RoboLab 結果受物體幾何缺陷與不穩定 verifier 影響，且 benchmark、真實任務規模與硬體種類有限。論文提出程式重用、局部閉迴路控制及模型蒸餾作為未來方向，但未報告其實際結果。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "embodied AI",
+        "robot manipulation",
+        "multimodal agents",
+        "continual learning",
+        "interactive perception"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09866",
+      "title": "GRAC: Graph-Based Retrieval-Augmented Captioning for Surgical Scene Description",
+      "abstract": "Purpose: Surgical operative reports support procedural documentation, surgical training, performance assessment, and workflow review. However, extracting meaningful information often requires extensive manual review and clinical expertise. Automated surgical scene descriptions could reduce this burden by leveraging recurring surgical activities and prior knowledge.   Methods: We propose GRAC (Graph-Based Retrieval-Augmented Captioning), a framework that represents surgical scenes as graphs capturing relationships among instruments, actions, and anatomical structures. Given an input scene graph, GRAC learns to retrieve relevant graph-caption pairs from training data. It compares instrument-tissue interactions between retrieved examples and the input scene, using comparison features to condition retrieved-caption representations during generation.   Results: On the EndoVis-18 benchmark, GRAC achieved a CIDEr-D of 5.88, compared with 4.23 for SGT and 3.36 for the strongest conventional Transformer baseline. Exact instrument-action-target triplet-set accuracy reached 52.6%, compared with 32.7% for SGT and 26.2% for the strongest conventional baseline. These results demonstrate improvements in language quality and factual agreement. On TORS, GRAC achieved a CIDEr-D of 5.06, compared with 3.80 for the strongest baseline.   Conclusion: GRAC demonstrates that combining structured surgical scene representations with retrieved examples improves surgical scene captioning and produces more contextually meaningful descriptions.",
+      "authors": [
+        "Rochak Dhakal",
+        "Chen Zhao",
+        "Soup Cobb",
+        "Xin Qian",
+        "Xiaofeng Yang",
+        "Weihua Zhou"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-11-06T18:47:23+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09866v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09866",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "目的：手術術中報告支援程序記錄、手術訓練、表現評估與流程回顧，但從中擷取有意義的資訊通常需要大量人工審查與臨床專業。自動生成具臨床意義且符合上下文的手術場景描述，可降低人工審查負擔。方法：提出 GRAC（Graph-Based Retrieval-Augmented Captioning），以圖表示手術場景，捕捉器械、動作與解剖結構間的關係。給定輸入場景圖後，模型從訓練資料檢索相關的圖－caption 配對，比較檢索案例與輸入場景中的器械－組織互動，並以比較特徵在生成過程中調節檢索 caption 表徵。結果：在 EndoVis-18 上，GRAC 的 CIDEr-D 為 5.88，高於 SGT 的 4.23 與最佳傳統 Transformer baseline 的 3.36；精確器械－動作－目標 triplet-set accuracy 為 52.6%，高於 SGT 的 32.7% 與最佳傳統 baseline 的 26.2%。在 TORS 上，GRAC 的 CIDEr-D 為 5.06，高於最佳 baseline 的 3.80。結論：結合結構化手術場景表示與檢索案例，可提升手術場景 captioning 的語言品質與事實一致性。",
+      "problem_statement": "論文處理從單一手術影格的結構化場景資訊生成具上下文且事實正確描述的問題。既有方法多直接將 scene representation 映射至自然語言，當標註資料有限時，模型難以學習結構資訊與語言間的關係。雖然手術活動具有重複模式，但僅依賴外觀或整體相似度檢索可能混淆相同器械的不同動作或解剖目標，因此需要同時建模互動關係並比較檢索場景與當前場景。",
+      "proposed_solution": "作者提出 GRAC，一個 scene-graph-to-caption 的 retrieval-augmented framework。第一，使用具 interaction-aware 能力的 GATv2 graph encoder 表示器械、組織及其互動；第二，透過 caption-supervised contrastive learning，使具有相同器械－動作－目標 triplet-set 的跨序列場景在 embedding space 中接近，據此檢索三個具活動多樣性的 graph-caption pairs；第三，建立 graph-conditioned caption memory，依器械對齊比較當前與檢索場景的節點及邊特徵，並將比較結果注入檢索 caption 表徵。模型再以 query graph、檢索 caption 與互動比較特徵生成描述，並以 compatibility supervision 改善事實對齊與降低器械 hallucination。",
+      "core_contributions": [
+        "提出 caption-supervised contrastive retrieval，使 scene graph embedding 依據跨序列的器械－動作－目標活動相似性檢索，而非僅依賴視覺或器械外觀相似度。",
+        "提出 instrument-aligned graph comparison，顯式比較當前與檢索場景的節點及器械－組織互動邊，並將差異特徵注入檢索 caption memory。",
+        "整合 interaction-aware graph encoding、activity-guided retrieval、graph-conditioned generation 與 compatibility supervision，在 EndoVis-18 與 TORS 上提升 caption 品質及 triplet-based factual agreement。"
+      ],
+      "methodology": "每個影格表示為 G=(V,E,Xv,Xe)，節點包含器械與單一組織節點，節點及邊特徵皆為 512 維；非零邊表示標註的器械－組織 active interaction，但不直接指定動作。GRAC 使用兩層、四頭、隱藏維度 512 的 edge-aware GATv2，並以 attention pooling 取得 graph embedding。模型將 graph token、節點 token 與雙向互動 edge tokens 組成最多 19 個 token，再經兩層 Transformer query-memory encoder。retrieval head 將 graph embedding 投影為 128 維 L2-normalized 向量，以 cosine similarity 從僅含訓練資料的 memory bank 檢索 K=3 個不同 triplet-set 的 graph-caption pairs；訓練時排除同一手術序列候選。對匹配器械，模型比較當前與檢索節點表徵、差異、逐元素乘積、原始及投影後邊特徵，並加入檢索相似度。每個檢索 caption 經 Transformer encoder 後，融合比較向量與 matching-status embedding，與 query memory 一同供 Transformer decoder 生成最多 20 tokens 的 caption。訓練損失由 label-smoothed caption cross-entropy、multi-positive InfoNCE retrieval loss 及 compatibility binary cross-entropy 組成；推論採 beam width 2。資料包括 EndoVis-18 的 392 個 held-out frames，以及 TORS 的 36 個 test frames。評估使用 BLEU-1–4、METEOR、ROUGE-L、CIDEr-D，以及 rule-based parser 擷取的 exact triplet-set accuracy、triplet precision/recall/F1 與 instrument hallucination；統計採三個 random seeds 與 10,000 次 paired frame-level bootstrap，並使用 Holm correction。",
+      "key_results": "主要結果如下；數值為論文報告的三個 seed 平均值，除非另有說明。\n\n| 資料集／指標 | GRAC | SGT | 最佳傳統／其他 baseline |\n|---|---:|---:|---:|\n| EndoVis-18 CIDEr-D | 5.883 ± 0.085 | 4.234 ± 0.604 | Transformer 3.356 ± 0.144 |\n| EndoVis-18 BLEU-4 | 0.715 ± 0.006 | 0.610 ± 0.033 | Transformer 0.514 ± 0.016 |\n| EndoVis-18 METEOR | 0.541 ± 0.007 | 0.459 ± 0.003 | Transformer 0.458 ± 0.009 |\n| EndoVis-18 ROUGE-L | 0.828 ± 0.008 | 0.751 ± 0.021 | Transformer 0.697 ± 0.018 |\n| EndoVis-18 exact triplet-set accuracy | 0.526 ± 0.008 | 0.327 ± 0.114 | GET 0.262 ± 0.043 |\n| EndoVis-18 triplet F1 | 0.636 ± 0.012 | 0.510 ± 0.107 | GET 0.508 ± 0.041 |\n| EndoVis-18 instrument hallucination | 0.037 ± 0.015 | 0.047 ± 0.003 | Transformer 0.056 ± 0.019 |\n| TORS CIDEr-D | 5.06 ± 0.26 | 3.73 ± 1.46 | Transformer 3.80 ± 1.35 |\n| TORS exact triplet-set accuracy | 0.454 ± 0.016 | 0.343 ± 0.153 | Transformer 0.352 ± 0.160 |\n| TORS triplet F1 | 0.621 ± 0.013 | 0.516 ± 0.143 | Transformer 0.592 ± 0.038 |\n| TORS instrument hallucination | 0.083 ± 0.028 | 0.245 ± 0.189 | Transformer 0.102 ± 0.016 |\n\n在 EndoVis-18，GRAC 相較 SGT 的 CIDEr-D 差異為 +1.650，95% CI [1.394, 1.917]，Holm-adjusted p<0.001；相較 SGT 的 exact triplet-set accuracy 差異為 +0.199，95% CI [0.171, 0.228]。消融結果顯示，無 retrieval 或 edge features 時 CIDEr-D 為 4.870；加入 edge features 為 5.632；再加入 caption retrieval 為 5.805；完整 GRAC 為 5.883。完整模型相較 caption-only retrieval 的 instrument hallucination 由 0.049 降至 0.037，p=0.003，但 CIDEr-D 差異未達統計顯著（p=0.054）。",
+      "insights": [
+        "在資料量有限且活動模式重複的領域，檢索既有描述可作為語言先驗；但應保留 query-specific graph conditioning，因為直接複製 Top-1 caption 的 EndoVis-18 CIDEr-D 僅為 5.332，低於 GRAC 的 5.883。",
+        "檢索數量不宜無限制增加：論文的 development 結果顯示 K=3 的 R@3 為 0.855，而 K=5 未改善 caption quality；實務上應優先控制檢索相關性與活動多樣性。",
+        "語言品質與事實可靠性應分開評估。完整 GRAC 的主要額外收益較明顯地體現在 instrument hallucination 降低，而非 aggregate CIDEr-D 顯著提升，因此醫療 captioning 應同時使用 triplet accuracy、F1 與 hallucination 指標。"
+      ],
+      "limitations": "資料集與測試規模有限：EndoVis-18 為 392 個測試影格，TORS 僅 36 個影格且來自三個測試序列；活動與詞彙亦較重複。模型使用標註或已提供的 scene-graph features，尚未充分驗證自動預測 scene graph 的誤差影響。評估是 frame-level，無法代表 procedure-level 變異；triplet 指標也依賴 parser 與標註品質，未直接衡量臨床錯誤嚴重度。未來需在更多手術類型、未見活動及臨床專家評估下驗證。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "surgical scene graph",
+        "retrieval-augmented captioning",
+        "medical image captioning",
+        "factual consistency evaluation",
+        "instrument-action-target triplets"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09863",
+      "title": "Flow-Guided Target-Space Alignment via Path Consistency",
+      "abstract": "Many multimodal alignment problems require mapping a source modality into a fixed space defined by a target modality, where the target space is not merely an intermediate embedding but is used directly for downstream analysis. In this setting, successful alignment should preserve both the global structure of the target distribution and the instance-level correspondence observed in paired source--target training data. Existing objectives typically address only part of this goal: contrastive losses encourage relative similarity, distribution-matching losses improve marginal agreement, and pointwise regression fits each source sample to its paired target without explicitly modeling target-space path geometry. We propose FlowAlign, a flow-guided target-space alignment method that repurposes conditional flow matching as a training-time alignment signal rather than an inference-time transport model. FlowAlign uses the learned flow field to guide the alignment of source-side representations with the fixed target space, encouraging them to preserve paired correspondence while remaining compatible with the global target-space structure. We further provide theoretical analysis showing how FlowAlign helps improve paired correspondence by controlling endpoint accuracy and capturing local target-space geometry. Experiments on synthetic data, paired single-cell multiome benchmarks, and image--text alignment demonstrate that FlowAlign improves instance level correspondence while preserving target-space structure across different modality settings.",
+      "authors": [
+        "Ruizhi Yuan",
+        "Zeqiu Yu",
+        "Wei Gao",
+        "Wei Chen",
+        "Xiwei Tang",
+        "Lu Tang"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-11-06T18:44:08+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09863v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09863",
+      "score": 13
+    },
+    "analysis": {
+      "abstract_zh": "許多多模態對齊問題需要將來源模態映射至由目標模態定義的固定空間；此目標空間不只是中間嵌入，而會直接用於下游分析。因此，成功的對齊必須同時保留目標分布的全域結構，以及配對來源—目標訓練資料中的實例級對應。既有目標各自只處理部分需求：contrastive loss 鼓勵相對相似性，distribution matching 改善邊際分布一致性，而 pointwise regression 雖能擬合配對目標，卻未明確建模目標空間的路徑幾何。本文提出 FlowAlign，一種 flow-guided target-space alignment 方法，將 conditional flow matching 重新用作訓練期間的對齊訊號，而非推論期間的 transport model。FlowAlign 利用學得的 flow field 引導來源表示對齊固定目標空間，使其保留配對對應，同時符合目標空間的全域結構。理論分析顯示，FlowAlign 可透過控制 endpoint accuracy 並捕捉局部目標空間幾何，改善配對對應。合成資料、paired single-cell multiome 與 image–text 實驗均顯示，FlowAlign 能提升 instance-level correspondence，並在不同模態設定下維持 target-space structure。",
+      "problem_statement": "論文研究將來源模態映射到固定目標表示空間的問題，且該空間會直接用於鄰域、分群、標註與下游分析。挑戰在於同時保留目標分布的全域幾何與配對樣本的實例級對應。既有 contrastive 方法偏重相對相似性，distribution matching 只對齊邊際分布，pointwise regression 則擬合配對端點但未建模目標空間的路徑幾何，因而難以兼顧兩者。",
+      "proposed_solution": "作者提出兩階段 FlowAlign。第一階段以配對來源表示 s 與目標表示 t 建立 source-conditioned conditional flow field：從以 s 為中心的局部高斯起點取樣，沿線性路徑前往 t，並以 conditional flow matching 學習速度場。第二階段凍結速度場，將模型輸出的候選目標表示帶入候選路徑，計算其速度與凍結場的 residual 作為 path-consistency loss，更新來源側 mapper。核心創新是把 flow matching 從推論時的 transport 機制改為訓練時的 target-space compatibility score，使候選端點同時受到配對資訊與局部目標幾何約束；方法亦可作為既有任務目標的 plug-in regularizer。",
+      "core_contributions": [
+        "提出固定 target-space alignment 設定，明確要求同時維持目標空間全域結構與配對樣本的 instance-level correspondence。",
+        "提出 FlowAlign，透過 source-conditioned conditional flow matching 學習配對路徑，再以凍結速度場的 path-consistency score 作為訓練訊號或既有模型的 regularizer。",
+        "提供 endpoint control、局部 source-conditioned metric 與來源條件降低 velocity ambiguity 的理論分析，並在合成、single-cell multiome 與 image–text 任務驗證方法。"
+      ],
+      "methodology": "資料先由固定的來源與目標表示管線取得 s,t∈R^d；來源可為 PCA、預訓練 encoder 或投影後特徵，目標表示固定不更新。第一階段對每個配對樣本由 p0(·|s)=N(s,σ²I) 取樣 x0，隨機取 τ∈[0,1]，形成 xτ=(1−τ)x0+τt，並以 t−x0 為監督速度，訓練具來源條件的 vψ(xτ,τ;s)，之後凍結 vψ。第二階段由來源模型產生候選表示 t̂θ，形成 x̃τ=(1−τ)x0+τt̂θ，最小化 Cψ(t̂θ;s)=E||vψ(x̃τ,τ;s)−(t̂θ−x0)||²；也可與 endpoint、reconstruction、contrastive 或其他 base objective 加權結合。推論時不使用 flow integration，只以來源模型單次前向輸出固定目標空間表示。理論上，在速度場局部 Lipschitz 且配對路徑 residual 足夠小時，path score 可控制端點誤差；局部上則近似由速度場 Jacobian 誘導的 source-conditioned quadratic metric。實驗涵蓋合成軌跡、PBMC/BMMC paired single-cell multiome 與 CUBICC image–text。評估包括 MMD、endpoint MSE、latent-position MAE、FOSCTTM、exact cell match 或 R@1，以及 LTA、NMI、ARI、ASW-O。",
+      "key_results": "主要結果如下；數值為論文表格中的單次彙總值，PBMC/BMMC 與 CUBICC 的變異結果另於附錄提供。\n\n| 實驗 | 方法 | 主要結果 |\n|---|---|---|\n| Synthetic | FlowAlign | MMD=7.79×10^-2；MSE=2.87×10^-4；latent MAE=5.10×10^-3 |\n| Synthetic | MSE regression | MMD=8.13×10^-2；MSE=3.54×10^-4；latent MAE=5.61×10^-3 |\n| Synthetic | MMD alignment | MMD=6.99×10^-3；MSE=1.50×10^-1；latent MAE=1.68×10^-1 |\n| PBMC | FlowAlign | FOSCTTM=0.039；Cell match=0.141；LTA=0.920；NMI=0.872；ARI=0.885；ASW-O=0.978 |\n| PBMC | MSE | FOSCTTM=0.048；Cell match=0.110；LTA=0.902；NMI=0.821；ARI=0.814；ASW-O=0.973 |\n| BMMC | FlowAlign | FOSCTTM=0.019；Cell match=0.050；LTA=0.836；NMI=0.797；ARI=0.768；ASW-O=0.988 |\n| BMMC | MSE | FOSCTTM=0.042；Cell match=0.032；LTA=0.786；NMI=0.757；ARI=0.711；ASW-O=0.980 |\n| CUBICC | FlowAlign | FOSCTTM=0.063；R@1=0.075；LTA=70.42% |\n| CUBICC | MSE | FOSCTTM=0.069；R@1=0.067；LTA=57.49% |\n\n作者報告 FlowAlign 在兩個 single-cell 資料集取得最低 FOSCTTM 與最高 exact cell-match，並在 CUBICC 三項指標皆優於比較方法。消融顯示移除局部起點取樣、來源條件或候選路徑位置輸入均會降低表現；直接將 flow field 作為推論 transport map 雖具競爭力，但生物結構指標較弱。",
+      "insights": [
+        "若下游分析直接依賴某一固定嵌入空間，對齊目標不應只看檢索或配對誤差，也應同步評估分布、鄰域與分群結構。",
+        "Flow matching 不必用作推論時的生成或 transport；凍結後的速度 residual 可作為結合配對監督與局部幾何的訓練期評分器。",
+        "局部起點擾動與 source conditioning 是方法的重要設計：前者讓模型看到鄰域路徑，後者可區分經過相近空間位置但對應方向不同的樣本；實務上仍需檢查 field quality 與 σ 的尺度敏感性。"
+      ],
+      "limitations": "方法需要 paired data、可在共同向量空間建構路徑，以及品質足夠好的第一階段 velocity field。若來源表示不相容或 field 學習不佳，對齊訊號會變弱。理論目前以 Euclidean linear paths 為基礎，且 standalone alignment 不保證保留目標空間未包含的來源特有資訊。作者未來將研究更彈性的起點分布、field diagnostics、部分配對或 unpaired 設定。",
+      "tags": [
+        "alignment",
+        "benchmark",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multimodal representation alignment",
+        "flow matching",
+        "single-cell multi-omics integration",
+        "fixed target-space mapping"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09836",
+      "title": "Can Agentic Systems Close the Gap in Radiology with Production AI Tools?",
+      "abstract": "Radiology AI has developed along two paths: specialized models that perform well on narrow tasks but cover few clinical findings, and generalist models that address a broader range of tasks but remain prone to hallucination and inaccurate measurements. Combining the two through agentic systems offers a route towards comprehensive radiology reporting, but published systems are tied to one modality or body part. We describe a radiology agentic framework that standardizes how an orchestrator calls modular tools to produce a structured report, and use it to measure what such a system can do with the tools from FDA-cleared radiology AI devices. Report generation is simulated on a large multi-modality report corpus, with the orchestrator given either a catalog of finding classes consolidated from the cleared devices, each available on the modalities it is cleared for, or an unlimited catalog in which any class can be requested, and planning either from the clinical indication or from the target report. Tool outputs are simulated from the reference report, so the comparison isolates tool availability and orchestration from tool error. With the cleared catalog and the indication alone, the orchestrator recovers under a third of the clinically actionable findings; recovery improves substantially with the unlimited catalog, and further when the plan is written from the target report. Attributing every missed finding to a cause shows that most are classes no cleared device offers for the study's modality, and that a third are classes or tools that were offered and not called. Adding the most frequently missing tools closes most of the gap to the unlimited catalog on held-out reports, whereas a smaller orchestrator with the unlimited catalog gives up the whole gain. Tool availability and effective orchestration are thus complementary constraints on comprehensive AI-assisted radiology reporting.",
+      "authors": [
+        "Aubin Charley",
+        "Julien Khlaut",
+        "Charles Corbière",
+        "Pierre Manceron",
+        "Corentin Dancette",
+        "Léo Machado"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-11-06T18:23:14+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09836v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09836",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "Radiology AI 沿兩條路線發展：專門模型在狹窄任務上表現良好，但涵蓋的臨床發現有限；通用模型能處理較廣泛任務，卻容易產生 hallucination 與不準確的測量結果。透過 agentic system 結合兩者，可望生成較完整的放射科報告，但既有系統通常僅適用於單一 modality 或身體部位。本文提出一個 radiology agentic framework，標準化 orchestrator 呼叫模組化工具以產生結構化報告，並以 FDA-cleared radiology AI devices 的工具評估其能力。作者在大型多 modality 報告語料上模擬報告生成，分別比較受限於已核准工具目錄與 unlimited catalog 的情況，並比較依 clinical indication 或 target report 規劃。工具輸出由 reference report 模擬，以隔離工具可用性與 orchestration 的影響。結果顯示，工具覆蓋率與有效 orchestration 是完整 AI 輔助放射科報告的互補限制。",
+      "problem_statement": "放射科報告涵蓋多個器官、病灶、測量、比較與臨床判讀，並非單一檢測任務。現有 specialized models 雖在特定 finding 上準確，卻難以涵蓋完整報告；generalist vision-language models 則可能遺漏 findings、產生 hallucination、測量不準或陷入 template collapse。既有 agentic systems 又多侷限於單一 modality 或 anatomy，因此本文要量化：現有 FDA-cleared 工具經由 agent orchestration 能恢復多少 clinically actionable findings，以及不足來自工具目錄覆蓋還是 orchestrator 執行。",
+      "proposed_solution": "作者提出仿照 Model Context Protocol 的跨工具 radiology agentic framework，透過共同介面統一 resources、tools 與 orchestrator。框架包含 patient context、prior studies、templates、guidelines、工具目錄及研究影像等 resources，並提供 viewer interaction、multi-series operations、AI vision、quantification、dynamic analysis、longitudinal comparison 與 clinical intelligence 七類工具。orchestrator 採 ReAct 式規劃與行動流程，由 Planner 產生分析步驟，Grouper 將獨立步驟分軌並行，ReAct loops 呼叫工具，Analyzer 整合與必要時重新規劃，Reporter 依模板撰寫報告，Reviewer 檢查並重寫。核心創新是以相同 orchestrator 比較 FDA-cleared catalog 與 tool-infinite catalog，並將遺漏歸因為 catalog gap 或 orchestration gap。",
+      "core_contributions": [
+        "提出一個跨 modality、跨 anatomy 的 radiology agentic framework，以共同工具介面、ReAct loops、平行分軌、分析整合、報告生成與審查流程組合模組化 AI tools。",
+        "建立由 1,164 個 FDA-cleared radiology AI devices 整理而成的 1,989-class catalog，並在工具輸出由 reference report 完美模擬的條件下，分離評估 tool availability 與 orchestration。",
+        "以 finding-level RadMatch 與遺漏原因歸因量化 catalog gap 和 orchestration gap，並在 held-out reports 上顯示加入 99 個 recurring missing tools 可閉合約 74% 的 Cleared-to-Tool-Infinite recall gap。"
+      ],
+      "methodology": "研究使用 PARROT fictional radiology report corpus；原始資料有 2,658 份報告，涵蓋 CT、MRI、radiography 與 ultrasound，以及 chest、abdomen、head、pelvis；篩選含 clinical indication 且四種模式皆產生可解析輸出的報告後，留下 1,059 份。作者從 FDA radiology AI device 清單建立 cleared catalog，涵蓋截至 2026 年 3 月的 1,164 個 devices。經兩階段 LLM 擷取與 consolidation 後，得到 1,989 個 finding classes，並依 modality 過濾可用性。實驗交叉比較兩種 catalog：Cleared 與可要求任意 plausible tool/class 的 Tool-Infinite；以及兩種 Planner 資訊：僅 clinical indication 的 realistic setting，或讀取 target report 的 oracle setting。所有工具輸出均由 reference report 模擬，因此不評估真實工具錯誤。框架依序執行 Context Loader、Planner、Grouper、平行 ReAct loops、Analyzer、Reporter 與 Reviewer。報告以 RadMatch 評估：LLM 將報告拆為 atomic findings，進行 finding-level matching，並將 critical、urgent、notable findings 的恢復比例定義為 actionable recall；held-out 實驗另報 actionable precision。作者也以 LLM 對遺漏 finding 進行五類原因歸因，從 659 份 derivation reports 挖掘 recurring missing tools，於 400 份測試資料中的 100 份 held-out reports 加入工具，並比較不同 orchestrator model 的影響。",
+      "key_results": "主要結果如下（RadMatch score 為 actionable recall）：\n\n| 實驗條件 | 資料/設定 | Actionable recall |\n|---|---:|---:|\n| Cleared + Clinical Indication | 1,059 reports | 0.290 |\n| Tool-Infinite + Clinical Indication | 1,059 reports | 0.437 |\n| Cleared + Report oracle | 1,059 reports | 0.426 |\n| Tool-Infinite + Report oracle | 1,059 reports | 0.740 |\n\n在 9,675 個遺漏或錯誤 findings 中，61.8% 屬於 study modality 沒有對應 cleared class 的 catalog gap；18.3% 是 class 已提供但未被呼叫，13.6% 是 class-free tool 存在但未被呼叫，6.1% 需要新的工具類型，0.2% 無法由 imaging tool 找出。於 100 份 held-out reports 上，Cleared catalog 的 recall 為 0.347、precision 為 0.386；加入至少在 10、5、2 份 derivation reports 出現的 missing tools 後，recall 分別為 0.434、0.519、0.534，對 Cleared 至 Tool-Infinite 差距的閉合比例分別為 37%、74%、80%；Tool-Infinite recall 為 0.580、precision 為 0.501。使用 Tool-Infinite catalog 時，gpt-5.6-luna 的 recall 為 0.580，gpt-5.4-nano 為 0.355，Qwen3.5 9B 為 0.356；Qwen 有 100 份中 10 份未產生報告。",
+      "insights": [
+        "實務部署不應只增加模型能力，也應先盤點各 modality 的 finding coverage；研究顯示常見但未被工具涵蓋的 findings，可能比大量罕見工具更值得優先補足。",
+        "工具可用不等於工具會被使用；約三成遺漏是已有工具卻未被 orchestrator 呼叫，因此應設計系統化 coverage checklist、強制性 survey steps 或工具呼叫審計。",
+        "工具目錄擴充與 orchestrator 能力必須同步提升；較小的 orchestrator 即使擁有 unlimited catalog，表現也約等同較強模型使用 cleared catalog，顯示工具投資的效益取決於有效規劃與執行。"
+      ],
+      "limitations": "資料來自 fictional PARROT reports，且評估是 text-only；工具輸出由 reference report 模擬，排除了漏檢、誤報與工具間衝突。held-out 實驗僅 100 份，無法穩健排序工具擴充門檻。FDA catalog 由 LLM 擷取與合併，且為單一時間快照；主要結果也依賴單一 orchestrator。未來需以真實影像、真實工具錯誤、臨床報告與 prospective evaluation 驗證。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "radiology report generation",
+        "tool-using LLM agents",
+        "ReAct orchestration",
+        "FDA-cleared medical AI",
+        "finding-level evaluation",
+        "multimodal clinical AI"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09825",
+      "title": "BitDecoding-FP4: Native FP4 KV Cache Decoding via Algorithm-System Co-Design",
+      "abstract": "The key-value (KV) cache dominates memory capacity and bandwidth in long-context LLM serving. While 4-bit microscaling formats (NVFP4, MXFP4) shrink the cache and run attention on FP4 Tensor Cores, a fundamental gap remains between algorithmic quantization and system-aware acceleration: existing FP4 KV systems use vanilla quantization that causes severe accuracy drops, whereas accuracy-oriented 4-bit algorithms rely on vector codebooks whose lookup overhead degrades decoding throughput. We present BitDecoding-FP4, an algorithm--system co-design for accurate and efficient native FP4 KV decoding. We mitigate three error sources: Dual-Residual Query Quantization splits queries into two FP4 tensors, cutting query logit error from 60% to 1%; Underflow-Aware Probability Scaling prevents E4M3 scales from rounding long-context probabilities to zero; and Outlier-Aware Key Quantization combines static smoothing, Hadamard rotation, and scale search to suppress key outliers under token-wise scaling. At the system level, we remove the softmax bottleneck via transposed softmax with fused probability quantization and stacked query MMA on paged KV caches. Across dense and MoE models with GQA and MLA, BitDecoding-FP4 stays within 0.5 points of BF16 KV accuracy with NVFP4 (1 point with MXFP4), and tracks BF16 KV in RL training rollouts. In end-to-end serving on NVIDIA B300 with Qwen3-4B and Qwen3-30B-A3B, it delivers 2.4-3.0$\\times$ higher peak serving throughput than BF16 KV. The implementation is available at https://github.com/OpenBitSys/BitDecoding-FP4.",
+      "authors": [
+        "Dayou Du",
+        "Woon Yee Ng",
+        "Guangming Sheng",
+        "Nick Lau",
+        "Jianyi Cheng",
+        "Luo Mai"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.AR",
+        "cs.CL",
+        "cs.PF"
+      ],
+      "published": "2026-11-06T18:13:54+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09825v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09825",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "長上下文 LLM serving 中，key-value（KV）cache 主導記憶體容量與頻寬。雖然 NVFP4、MXFP4 等 4-bit microscaling format 能縮小 cache，並在 FP4 Tensor Core 上執行 attention，但現有系統多採用 vanilla quantization，造成嚴重準確率下降；重視準確率的 4-bit 方法則依賴 vector codebook，lookup 開銷會降低 decoding throughput。本文提出 BitDecoding-FP4，一套準確且高效的 native FP4 KV decoding algorithm–system co-design。方法包括 Dual-Residual Query Quantization、Underflow-Aware Probability Scaling 與 Outlier-Aware Key Quantization，並以 transposed softmax、fused probability quantization 和 stacked query MMA 消除系統瓶頸。在多種 dense、MoE、GQA 與 MLA 模型上，NVFP4 與 BF16 KV 的平均準確率差距小於 0.5 分，MXFP4 小於 1 分；在 NVIDIA B300 上，Qwen3-4B 與 Qwen3-30B-A3B 的 peak serving throughput 為 BF16 KV 的 2.4–3.0 倍。",
+      "problem_statement": "論文要解決長上下文 autoregressive decoding 中 KV cache 的記憶體與頻寬瓶頸，以及 native FP4 attention 的準確率與吞吐量難以兼顧問題。現有 TRT-LLM-NVFP4 等方法直接使用 vanilla quantization，長上下文準確率明顯下降；TurboQuant 等準確率導向方法依賴 vector codebook，線上 lookup 與 reconstruction 開銷又會嚴重拖慢 GPU decoding。",
+      "proposed_solution": "作者提出 BitDecoding-FP4，將 FP4 KV quantization、attention kernel 與 serving engine 共同設計。演算法方面，以 Dual-Residual Query Quantization 將 query 表示為兩個 FP4 tensor，降低 query logit error；以 Underflow-Aware Probability Scaling 避免長上下文 softmax probability 的 E4M3 scale underflow；以 static smoothing、Hadamard rotation 與 block-scale search 抑制 key outlier。系統方面，使用 transposed softmax、fused probability quantization 與 stacked query MMA，使兩個 query residual term 以單一窄型 FP4 MMA 處理，並整合 paged mixed-precision KV cache。",
+      "core_contributions": [
+        "提出三項 accuracy-preserving FP4 quantization 技術：Dual-Residual Query Quantization、Underflow-Aware Probability Scaling 與 Outlier-Aware Key Quantization。",
+        "提出 transposed softmax、fused probability quantization 與 stacked query MMA，使完整準確率 recipe 的 kernel overhead 控制在論文所報告的約 4% 以內。",
+        "將 native FP4 decoding 整合 paged mixed-precision KV cache 與 vLLM，於 dense、MoE、GQA、MLA 模型及 RL rollout 中展示接近 BF16 KV 的準確率與較高 serving efficiency。"
+      ],
+      "methodology": "方法先對 key 做離線 per-head mean smoothing，再施加 normalized Walsh–Hadamard rotation；key 與 value 以 microscaling FP4 儲存，NVFP4 使用 16-element block、E4M3 scale，MXFP4 使用 32-element block、E8M0 power-of-two scale。對 rotated query，先量化 q(1)，再量化殘差 q−q(1)，解碼時計算兩次 FP4 query–key product並在 softmax 前以 FP32 合併。online softmax 對 probability 先乘常數 c=8，並依 block maximum 選擇以 2 或 6 作為 FP4 scale maximum，降低 E4M3 underflow。key scale 則在兩個候選 scale 中以 block reconstruction MSE 選擇。Kernel 將 score layout 轉置，使 reduction 沿 key 平行化，並把 probability quantization 融入 warp butterfly shuffle；query 的第二項則堆疊於第一項的 zero padding。Serving engine 以 paged cache 儲存 FP4 pages，最近 token 與 attention sink 保留 BF16，並透過 device-side control kernel 管理 slot 與 page promotion。評估涵蓋 Qwen3-4B、Qwen3-30B-A3B、GLM-4.7-FP8 與 Hy4-preview，使用 LongBench Pro、MRCR、RULER-NIAH、AIME、LiveCodeBench、GPQA，以及 RL rollout validation accuracy；指標包括 task accuracy、TPOT、kernel latency、throughput、KV memory footprint 與 teacher-forced KL。",
+      "key_results": "| 比較項目 | 結果 |\n|---|---|\n| Qwen3-4B，BF16 KV 平均準確率 | 67.69% |\n| Qwen3-4B，BitDecoding-NVFP4 平均準確率 | 67.27%，較 BF16 低 0.42 分 |\n| Qwen3-4B，BitDecoding-MXFP4 平均準確率 | 66.70%，較 BF16 低 0.99 分 |\n| Qwen3-4B，TRT-LLM-NVFP4 平均準確率 | 59.19%，較 BF16 低 8.50 分 |\n| Qwen3-30B-A3B，BF16 KV 平均準確率 | 73.15% |\n| Qwen3-30B-A3B，BitDecoding-NVFP4 平均準確率 | 72.74%，較 BF16 低 0.41 分 |\n| GLM-4.7，200K KV memory | BF16 71.88 GiB；BitDecoding-NVFP4 20.27 GiB，約 3.5× 縮小 |\n| Hy4-preview，1M KV memory | BF16 90.46 GiB；BitDecoding-NVFP4 34.41 GiB |\n| B300 kernel speedup，Qwen3-4B | 最高 2.99×（相對 BF16 KV） |\n| B300 kernel speedup，Qwen3-30B-A3B | 最高 2.72×（相對 BF16 KV） |\n| RTX PRO 5000 kernel speedup | Qwen3-4B 最高 4.01×；Qwen3-30B-A3B 最高 3.96× |\n| 256K TPOT | Qwen3-4B 4.28 ms、1.81× speedup；Qwen3-30B-A3B 4.34 ms、1.53× speedup |\n| End-to-end peak serving throughput | 相對 BF16 KV 提高 2.4–3.0× |\n| RL rollout | BitDecoding-NVFP4 validation accuracy 接近 BF16 KV；論文未報告統一單一數值差距 |",
+      "insights": [
+        "若低位元 attention 的主要誤差來自 query、probability underflow 與 key outlier，應分別設計誤差控制，而非只替換單一 quantizer。",
+        "當 Tensor Core 計算加速後，softmax reduction、probability quantization 與 metadata management 可能成為主要瓶頸；量化演算法必須與 kernel layout 和記憶體管理共同設計。",
+        "在長上下文 serving 中，保留 BF16 attention sink 與最近 token、將完整頁面轉為 FP4，是兼顧數值穩定性、paged cache 相容性與容量利用率的實作策略。"
+      ],
+      "limitations": "論文的吞吐量與 kernel 結果主要在 NVIDIA B300、RTX PRO 5000 及特定 vLLM/CuTe-DSL 實作上測試，硬體與軟體可移植性未被充分驗證。校準需針對 checkpoint 與 context window 進行；對更多模型、不同 GPU、極低於 4-bit 的格式，以及更廣泛 RL 設定的結果，論文未報告。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "FP4 KV cache quantization",
+        "long-context LLM serving",
+        "native Tensor Core attention",
+        "paged attention",
+        "microscaling formats"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.09891",
+      "title": "CPU-ARC: Agentic Reasoning Caching for on-CPU Reasoning Reuse",
+      "abstract": "Large language models reinvent the wheel all the time. They conflate task-solving with the execution of the solutions, which forces them to solve every problem from scratch. We show that once a task has been reasoned through, the application of its solution to a new problem instance can be done very efficiently and with little involvement from language models. We introduce agentic reasoning caching, a method for constructing robust CPU-executable agentic reasoning caches (ARCs) from LLM reasoning traces. ARCs show on-par performance with frontier LLMs across a range of difficult mathematical and scientific tasks, are fully explainable, continually trainable, robust to input perturbations, and 16-291x cheaper to invoke than the source model.",
+      "authors": [
+        "Peter Belcak",
+        "Greg Heinrich",
+        "Saurav Muralidharan",
+        "Shizhe Diao",
+        "Pavlo Molchanov"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-11-06T18:58:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.09891v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.09891",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "大型語言模型（LLM）經常重複解決相似問題，將任務求解與方案執行混為一談，因而每次都必須從頭推理。本文指出，一旦某項任務已完成推理，將其方案套用至新的問題實例，通常只需很少的語言模型介入即可高效完成。作者提出 agentic reasoning caching，從 LLM reasoning traces 建構可在 CPU 上執行的 agentic reasoning caches（ARCs）。在多項困難數學與科學任務上，ARC 的表現與 frontier LLM 相當，並具備完整可解釋性、可持續訓練、對輸入擾動的穩健性；相較來源模型，每次呼叫成本降低 16–291 倍。",
+      "problem_statement": "LLM 對具有相同指令、計畫或推理結構但 payload 不同的查詢，往往逐次重新理解與推理，造成重複成本。既有 monolithic caching 對措辭或參數擾動不穩健，semantic matching 可能犧牲正確性；modular caching 雖較能泛化，仍需完整的新生成，且難以在檢查後保證結果正確。本文要解決的是如何將一次昂貴推理轉化為可重用、可審查且低成本的執行邏輯。",
+      "proposed_solution": "作者提出 agentic reasoning caching，將來源模型的對話與推理軌跡轉換為由 semantic functions 組成的程式網路。每個函式以自然語言描述輸入、輸出與呼叫關係，而非依賴固定變數名稱，因此可在語義等價、措辭改變或參數重設的問題間重用。建構時由 builder model 完成輸入輸出隔離、推理分解、參數辨識、規劃與實作，並以測試及 judge 驗證；執行時主要依賴 CPU 程式、小型 target model、向量檢索與必要的工具呼叫。成熟後可編譯為移除動態檢索的獨立 Python 模組。",
+      "core_contributions": [
+        "提出 agentic reasoning caching，將 LLM reasoning transcript 轉換為可重用、可組合且可審查的 semantic-function 程式網路，形成 ARC。",
+        "在 MATH-500、AIME、GPQA Diamond、GSM8K、MMLU-Pro 與 SciBench 上，系統性評估正確性、source fidelity、措辭與參數擾動穩健性及成本。",
+        "提出動態 ARC 到 compiled Python module 的編譯方式，並展示以小型 target model（包括微調的 Llama 3.2 1B）支援低成本執行。"
+      ],
+      "methodology": "系統定義 source model S、builder model B、target model T 與 judge J。B 從 S 的查詢與 reasoning transcript 建立 ARC，流程包括：(1) 分離使用者輸入與預期輸出；(2) 將推理分解為階層式邏輯操作；(3) 辨識可變參數、其描述、格式範例與有效範圍；(4) 規劃 semantic functions 的依賴圖與根函式；(5) 逐一實作、靜態檢查、以原始參數測試，並由 J 比對 transcript 與 golden label。執行時先以 Embedding Gemma 與 FAISS 進行 entry-point similarity search，命中後由 T 抽取參數，再在 Context 的分層記憶體中執行 root function。load、do、narrate、lm、extract、convert 與 invoke_tool 是主要 runtime primitives；do 以自然語言發現子函式，narrate 保存可讀推理軌跡。實驗使用 Claude Opus 4.5 作為 S 與 B，T 先用 Claude Haiku 4.5，後使用微調的 Llama 3.2 1B；評估 MATH-500、AIME 2024–2026、GPQA Diamond、GSM8K、MMLU-Pro 與 SciBench。指標包括 source/cache golden-label accuracy、cache–source transcript fidelity、phrasal、parametric 與 combined perturbation pass rate，以及 source、builder、target 成本、建構倍數與節省倍數。",
+      "key_results": "主要結果如下；成本為論文報告的每題平均 retail API 成本。\n\n| Benchmark | SAcc (%) | CAcc (%) | Fidelity (%) | Phrasal (%) | Parametric (%) | Combined (%) | Source ($) | Builder ($) | Cache ($) | Build× | Savings× |\n|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n| MATH-500 | 98.6 | 98.8 | 99.6 | 96.7 | 94.5 | 91.6 | 0.0388 | 1.1818 | 0.0004 | 30.5 | 88.7 |\n| AIME 2024 | 100.0 | 100.0 | 100.0 | 96.0 | 99.3 | 95.1 | 0.1101 | 1.4198 | 0.0004 | 12.9 | 262.4 |\n| AIME 2025 | 83.3 | 93.3 | 90.0 | 98.4 | 91.2 | 93.4 | 0.1203 | 1.4517 | 0.0004 | 12.1 | 291.1 |\n| AIME 2026 | 90.0 | 96.7 | 90.0 | 97.9 | 90.9 | 90.8 | 0.1197 | 1.5477 | 0.0004 | 12.9 | 281.4 |\n| GPQA Diamond | 83.8 | 83.8 | 98.5 | 93.8 | 93.9 | 94.0 | 0.0708 | 1.7781 | 0.0019 | 25.1 | 38.1 |\n| GSM8K | 98.5 | 98.0 | 99.5 | 96.2 | 94.2 | 92.5 | 0.0101 | 0.8481 | 0.0006 | 83.7 | 16.3 |\n| MMLU-Pro | 88.0 | 89.0 | 100.0 | 95.7 | 96.7 | 91.9 | 0.0345 | 1.4084 | 0.0015 | 40.8 | 22.9 |\n| SciBench | 85.2 | 88.2 | 99.4 | 97.5 | 98.8 | 96.4 | 0.0434 | 1.2572 | 0.0005 | 29.0 | 83.0 |\n\n作者報告：ARC 在上述任務的 cache accuracy 與 source performance 接近，且 target invocation 相對 source 的節省倍數為 16.3–291.1；builder 建構成本則為 source 成本的 12.1–83.7 倍。",
+      "insights": [
+        "實務部署可採用 gated fallback：先嘗試 ARC，命中且執行成功時直接回傳，未命中或發生錯誤則交由完整 LLM 處理；這能將快取風險限制在個別任務範圍內。",
+        "快取項目應保存參數描述、有效範圍、函式依賴與 narration，而不只是完整回答；如此較容易進行人工或 AI 審查、除錯與版本管理。",
+        "建構成本顯著高於單次 source solve，ARC 的經濟性依賴後續重用次數；導入時應優先選擇高頻、推理結構穩定且可明確參數化的 agent workload，並持續驗證命中後正確性。"
+      ],
+      "limitations": "論文的 A1、A2 假設未被普遍證明，且建構成本為 source 成本的 12.1–83.7 倍。評估的擾動由模型產生並經 judges 篩選，且只在原始 cache 已符合 golden label 的樣本上測試；因此未報告真實生產流量下的命中率、長期更新效果或所有任務類型的表現。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "system-level caching",
+        "semantic program synthesis",
+        "agentic systems",
+        "on-device inference",
+        "reasoning trace reuse"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]

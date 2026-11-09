@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.09807] Compaction, decay and reinforcement in a two-tier conversational memory - a pair...|Compaction, decay and reinforcement in a two-tier ...]] (2026-11-06)
+
 - `[RAG Evaluation]` [[[2608.07458] CoinRAG - Contextualized Information Nugget KV Cache Reuse for Long-Context RAG|CoinRAG: Contextualized Information Nugget KV Cach...]] (2026-08-07)
 
 ## 延伸閱讀
