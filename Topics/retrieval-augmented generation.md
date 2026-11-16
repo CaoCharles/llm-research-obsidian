@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Hallucination & Faithfulness]` [[[2611.18453] Black-Box Uncertainty Quantification for Large Language Models via Ensemble-of-E...|Black-Box Uncertainty Quantification for Large Lan...]] (2026-11-13)
+
 - `[Multimodal Evaluation]` [[[2610.03632] World Embedding Benchmark|World Embedding Benchmark]] (2026-10-02)
 
 - `[Agent Evaluation]` [[[2609.05314] Large Language Models for HVAC Operations in Building Energy Systems - A Critica...|Large Language Models for HVAC Operations in Build...]] (2026-09-04)

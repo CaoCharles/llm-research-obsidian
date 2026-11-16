@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.18471] Do Verifier Judgments Survive Abstraction Measuring Verification Transport for L...|Do Verifier Judgments Survive Abstraction? Measuri...]] (2026-11-13)
+
 - `[RAG Evaluation]` [[[2609.05289] Beyond Aggregate Scores - Behavioral Correctness Assumptions for Assessing Refer...|Beyond Aggregate Scores: Behavioral Correctness As...]] (2026-09-04)
 
 ## 延伸閱讀

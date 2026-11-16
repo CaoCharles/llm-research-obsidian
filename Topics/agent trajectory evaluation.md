@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.18471] Do Verifier Judgments Survive Abstraction Measuring Verification Transport for L...|Do Verifier Judgments Survive Abstraction? Measuri...]] (2026-11-13)
+
 - `[Agent Evaluation]` [[[2610.42148] Flide - Accelerating Decision Inference with Exact State Forking|Flide: Accelerating Decision Inference with Exact ...]] (2026-10-30)
 
 ## 延伸閱讀

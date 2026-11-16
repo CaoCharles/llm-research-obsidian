@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.18494] ARCHER - From Rationale Imitation to Executable Reasoning in Small Language Mode...|ARCHER: From Rationale Imitation to Executable Rea...]] (2026-11-13)
+
 - `[Agent Evaluation]` [[[2608.06346] TRAJDEBUG - Tracing Error Lifecycle to Identify Critical Failures in Long-Horizo...|TRAJDEBUG: Tracing Error Lifecycle to Identify Cri...]] (2026-08-06)
 
 ## 延伸閱讀

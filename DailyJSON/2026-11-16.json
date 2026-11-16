@@ -1,0 +1,550 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2611.18494",
+      "title": "ARCHER: From Rationale Imitation to Executable Reasoning in Small Language Models",
+      "abstract": "Small language models are attractive for local, low-cost, and privacy-sensitive deployment, but they remain unreliable on mathematical reasoning tasks that require decomposition, exact computation, tool use, and verification. We introduce \\textbf{ARCHER}: \\textbf{A}ction-trace \\textbf{R}einforcement for \\textbf{C}alculator-grounded \\textbf{H}ierarchical \\textbf{E}xecutable \\textbf{R}easoning, a two-stage framework for training small language models (SLMs) to produce executable and auditable reasoning trajectories. In the first stage, ARCHER compiles free-form chain-of-thought rationales into typed action traces containing reasoning steps, calculator calls, deterministic runtime observations, verification actions, and final answers. This shifts the supervision target from imitating explanatory text to learning a tool-grounded reasoning policy. In the second stage, ARCHER refines this policy through asymmetric hierarchical reinforcement learning, using grouped and conditionally gated trajectory rewards for answer correctness, tool grounding, process discipline, and trace alignment. Across five standard sub-10B backbones, ARCHER improves over the strongest tool-augmented baseline by 5.51 percentage points on macro-average across benchmark accuracies, including gains of 8.95 points on MATH-500 and 5.33 and 5.34 points on AIME-2024 and AIME-2025. Evaluations on two additional reasoning-specialized 7B backbones further show that executable grounding remains beneficial after reasoning-focused reinforcement learning or distillation. These results demonstrate that executable supervision and reward-guided behavioral refinement provide a general and effective training paradigm for compact mathematical reasoners.",
+      "authors": [
+        "Dhruv Dixit",
+        "Khushi Patel",
+        "Congcong Xu",
+        "Min Song"
+      ],
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-11-13T18:05:33+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18494v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18494",
+      "score": 17
+    },
+    "analysis": {
+      "abstract_zh": "小型語言模型（SLM）適合在本地、低成本且重視隱私的環境部署，但在需要問題分解、精確計算、工具使用與驗證的數學推理任務上仍不可靠。本文提出 ARCHER（Action-trace Reinforcement for Calculator-grounded Hierarchical Executable Reasoning），一個訓練 SLM 產生可執行且可稽核推理軌跡的兩階段框架。第一階段將自由形式的 chain-of-thought rationale 編譯為具型別的 action trace，包含 reasoning step、calculator call、確定性的 runtime observation、verification action 與 final answer，將監督目標從模仿解釋文字轉為學習工具導向的推理政策。第二階段以 asymmetric hierarchical reinforcement learning 精煉政策，透過分組且條件式閘控的 trajectory reward，分別評估答案正確性、工具 grounding、流程紀律與 trace alignment。在五個標準 sub-10B backbone 上，ARCHER 相較最強工具增強 baseline 的 benchmark accuracy macro-average 提升 5.51 個百分點；MATH-500、AIME-2024 與 AIME-2025 分別提升 8.95、5.33 與 5.34 個百分點。兩個額外 reasoning-specialized 7B backbone 的結果也顯示，即使模型已經過 reasoning-focused reinforcement learning 或 distillation，executable grounding 仍具效益。",
+      "problem_statement": "論文聚焦於小型語言模型在數學推理中的不可靠性，尤其是多步分解、精確算術、工具呼叫及結果驗證。既有 rationale distillation 主要模仿自由形式解釋，可能只學到表面形式；工具增強方法則未必教會模型何時呼叫工具、如何形成正確表達式或如何使用 observation。Outcome-only RL 的 credit assignment 稀疏，平坦 process reward 又可能帶來噪聲與錯誤對齊。",
+      "proposed_solution": "作者提出 ARCHER，將數學推理視為 executable policy learning。TRACE 編譯器把既有 chain-of-thought rationale 轉換成標準化、可執行的 action-observation trajectory，讓模型學習 READ、PLAN、CALL_CALC、OBSERVE、VERIFY、ANSWER 等動作，而不是單純模仿說明文字。接著 HiGRA 使用 asymmetric hierarchical reinforcement learning，以答案正確性為最高優先，依序整合 tool grounding、process discipline 與 gated trace alignment；只有在工具需求或軌跡品質符合條件時，才啟用相應輔助 reward，以降低不相關或衝突訊號造成的最佳化壓力。",
+      "core_contributions": [
+        "將小型模型的數學推理重新表述為 executable policy learning，使用具型別 action 與 deterministic calculator runtime，將推理、工具呼叫、觀察、驗證及終止統一到可稽核軌跡中。",
+        "提出 TRACE compiler，將既有 free-form rationale 與 GSM-8K inline calculator annotation 編譯成 calculator-grounded supervision，降低人工撰寫 action trace 的需求。",
+        "提出 HiGRA，以 priority-ordered、conditionally gated 的 grouped reward，聯合最佳化答案正確性、工具 grounding、流程紀律與 trace compatibility，並透過 GRPO 進行 trajectory-level refinement。"
+      ],
+      "methodology": "每筆資料表示為（x, r, y*），其中 x 是問題、r 是 legacy rationale、y* 是標準答案。TRACE 先分離文字推理與算術片段：文字映射至 READ、PLAN、VERIFY 等動作；算術片段正規化為 calculator expression，形成 CALL_CALC→OBSERVE 的配對，OBSERVE 由 deterministic runtime 產生，最後加入標準化 ANSWER。模型以 LoRA supervised fine-tuning 學習編譯後軌跡；實作使用 rank 8、alpha 16、dropout 0.05、兩個 epoch，最大序列長度 256。HiGRA 從 TRACE checkpoint 初始化，對每個問題採樣一組 trajectory，以 GRPO 的 group-relative advantage 更新政策，不需額外 value model。總 reward 包含 outcome correctness、條件式 tool grounding、process discipline、閘控 alignment，以及 trajectory-length penalty。工具 reward 評估必要呼叫、配對 observation 與 deterministic execution consistency；process reward 評估格式、verification、簡潔性、答案存在與 premature termination；alignment 僅在軌跡已正確或具足夠工具 grounding 時施加。推論時模型逐步輸出 action，CALL_CALC 交由 calculator 執行並插入 OBSERVE，直到 ANSWER 或 12 步上限。實驗使用 GSM-8K 訓練 TRACE 與 HiGRA，並在 GSM-8K、SVAMP、MMLU-Math、MATH、MATH-500、AIME-2024、AIME-2025 與 PolyMATH 評估；主要指標為 final-answer accuracy，GSM-8K 另評估 Tool Score、tool precision/recall、observation consistency、Process Score、valid trace rate 與 trace edit distance。",
+      "key_results": "主要結果如下；表中數值皆為論文報告的百分比。\n\n| 實驗設定 | 方法 | GSM-8K | MATH | MATH-500 | AIME-2024 | AIME-2025 | PolyMATH |\n|---|---|---:|---:|---:|---:|---:|---:|\n| 五個標準 backbone，40 個 model-benchmark cells 的平均 | CoA | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 |\n| 五個標準 backbone，40 個 cells 的平均 | ARCHER | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 | 論文未報告單一平均 |\n| 五個標準 backbone 的跨 cell 平均 | CoA → ARCHER | 論文未報告 | 論文未報告 | 論文未報告 | 論文未報告 | 論文未報告 | 論文未報告 |\n| 五個標準 backbone，所有 40 cells | CoA → ARCHER | — | — | — | — | — | — |\n\n論文報告：ARCHER 的 40-cell 平均為 73.36，CoA 為 67.85，提升 5.51 個百分點；ARCHER 在 40 個比較中 39 個最佳、1 個並列最佳。相較 CoA，MATH-500 提升 8.95 個百分點，AIME-2024 與 AIME-2025 分別提升 5.33 與 5.34 個百分點。Falcon-H1R-7B 的 GSM-8K 階段分析為：base accuracy 77.40、TRACE-only 79.06、完整 ARCHER 85.96；valid trace rate 為 41.2%、68.7%、82.4%，observation consistency 為 0.00、0.84、0.93。消融實驗中，outcome-only GRPO 達 82.35、flat micro-reward GRPO 達 83.10，完整 ARCHER 達 85.96；移除 tool reward 後降至 81.74，移除 process reward 後為 82.18，移除 alignment reward 後為 84.12，移除 gating 後為 82.95。兩個 reasoning-specialized backbone 上，ARCHER 也在八個 benchmark 全部優於 Vanilla 與 CoA；更細的各模型各 benchmark 數值可見論文 Table 1。",
+      "insights": [
+        "若任務具有可驗證的中間計算，訓練目標可從自由形式 rationale 改為明確的 action-observation schema，以提升工具使用的可觀測性與可診斷性。",
+        "輔助 reward 不宜一律平坦加總；可依正確性、工具需求與軌跡狀態啟用條件式 reward，避免模型在錯誤計算上被 trace similarity 或格式訊號誤導。",
+        "在導入 RL 前先用 executable trace 做 supervised initialization，能先建立穩定的工具互動介面，再以 trajectory reward 改善工具呼叫、觀察一致性與終止行為；這是根據論文兩階段結果可直接採用的工程策略。"
+      ],
+      "limitations": "研究主要集中於可可靠執行中間計算、可檢查最終答案的數學任務；TRACE 仍是針對算術的 deterministic compiler，HiGRA reward families 也由人工設計。作者未證明其對非數值領域的泛化。未來工作包括加入 symbolic solver、unit converter、code execution、retrieval 與 proof checking，並進行更廣泛的 trace construction、reward calibration 與 adaptive gating。",
+      "tags": [
+        "faithfulness",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "executable reasoning",
+        "tool-augmented mathematical reasoning",
+        "process supervision",
+        "reinforcement learning for language models",
+        "calculator-grounded reasoning"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18397",
+      "title": "Gamer: A Generalist Vision-Language-Action Foundation Model for Long-Horizon Real-Time Game Agent",
+      "abstract": "We introduce Gamer, a generalist agent framework built for long-horizon tasks in complex interactive environments. Its end-to-end architecture combines perception, memory management, and multi-step reasoning. A shared training and deployment pipeline supports interaction with both conventional 2D graphical interfaces and complex 3D simulated worlds. We first continue pre-training on a dataset constructed from tens of thousands of hours of device-level keyboard and mouse interaction. These trajectories span simulated games and embodied environments, allowing the model to learn environmental dynamics across both physical and virtual domains. Sparse-thinking instruction tuning then substantially reduces redundant computation while preserving the reasoning needed for complex decisions. We train the policy for long-horizon interaction with a stable multi-turn reinforcement learning method that addresses finite context windows, accumulated rollout errors, and sparse rewards. For real-time interaction, a cloud-edge inference engine serves numerous simulated game environments concurrently, supports unbounded-context execution, and keeps online inference latency low. Across multiple challenging 3D open-world games, Gamer demonstrates solid generalization and operational efficiency comparable to skilled players. It also achieves competitive results on a range of conventional 2D game benchmarks. These results suggest that even repetitive keyboard and mouse trajectories can support substantial gains from scaling data and learning algorithms. Training on these trajectories helps Gamer learn complex skills more steadily in environments with both physical and digital properties. This approach offers a path toward generalist agents that can interact across digital and physical worlds.",
+      "authors": [
+        "Run Luo",
+        "Kuan Zhang",
+        "Qi Deng",
+        "Yukun Chen",
+        "Zhihao Yang",
+        "Yufei Zhang",
+        "Renrong Hu",
+        "Yi Zhang",
+        "Guiyu Ma",
+        "Tianyu Fan",
+        "Longze Chen",
+        "Hao Sun",
+        "Jiaming Li",
+        "Jiaming Yang",
+        "Xiaohao Liu",
+        "Tao Tan",
+        "Minzheng Wang",
+        "Hangtian Jia",
+        "Shuai Yuan",
+        "Lvdi Wang",
+        "Xiao Liu",
+        "Chao Ma",
+        "Yuting Zou",
+        "Yinhe Zheng",
+        "Xiaobo Xia",
+        "Dawei Jiang",
+        "Shaoqing Ren"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-11-13T16:39:30+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18397v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18397",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "本文提出 Gamer，一個面向複雜互動環境長視域任務的通用 agent framework。其 end-to-end 架構整合 perception、memory management 與 multi-step reasoning，透過共同的訓練與部署流程，同時支援傳統 2D 圖形介面及複雜 3D simulated worlds。作者首先以數萬小時的 device-level keyboard and mouse interaction trajectory 進行 continued pre-training，使模型學習虛擬與具身環境中的動態。接著以 sparse-thinking instruction tuning 減少冗餘計算，並保留複雜決策所需的 reasoning。針對長視域互動，作者提出穩定的 multi-turn reinforcement learning 方法，處理有限 context window、rollout error 累積及 sparse reward。其 cloud-edge inference engine 可並行服務多個遊戲環境、支援 unbounded-context execution，並維持低線上延遲。Gamer 在多個 3D open-world games 展現接近熟練玩家的泛化與操作效率，也在多項 2D game benchmarks 取得具競爭力的結果。",
+      "problem_statement": "現有 game agents 常依賴 privileged internal states、專用 API 或 tailored action spaces，難以跨遊戲泛化，也不符合人類透過螢幕與標準鍵鼠操作的情境。複雜 3D 遊戲還具有 partial observability、延遲回饋、資源管理及長達數小時的多階段任務；若 inference latency 過高，環境會在動作送達前改變，進而造成控制錯誤與 rollout 品質下降。論文旨在建立能以 raw pixels 和 native keyboard-mouse controls 執行長視域、即時且跨 2D/3D 遊戲互動的通用模型。",
+      "proposed_solution": "Gamer 使用單一 vision-language-action policy，以 screen observation、game control specification、task instruction、short-term history 與 long-term memory 為輸入，輸出可直接執行的鍵盤滑鼠動作。核心流程包含三階段：以跨遊戲 trajectory 進行 continued pre-training，透過 random key remapping 與 repeat-aware loss decay 學習可轉移控制；以多層級、LLM-assisted 標註資料進行 sparse-thinking instruction tuning，學習在關鍵決策時 reasoning 並以 summary 跨 context 保存任務狀態；最後以 Temporal-Aware GRPO 在環境回饋下優化長視域策略。配套的 Streaming-vLLM 則透過 KV-cache reuse、memory compaction、FSM-guided speculative decoding 與 streaming action dispatch 支援低延遲並行互動。",
+      "core_contributions": [
+        "提出以 raw screen pixels 為觀測、以標準 keyboard-mouse events 為統一 action space 的通用 game-agent framework，支援跨多種 2D 與 3D 遊戲的非侵入式互動。",
+        "建立從數萬小時 gameplay trajectory 到約 1K 小時多層級 instruction data 的資料管線，加入 sparse reasoning、task segmentation 與 persistent memory supervision。",
+        "提出 TA-GRPO 與 memory-linked rollout，將長視域互動切為具記憶連結的 segments，利用 environment-verifiable feedback 與 temporal credit assignment 進行 online policy optimization。"
+      ],
+      "methodology": "模型以 Qwen3-VL 或 Qwen3.5 為基礎，採用共同的自回歸輸出格式。觀測每 200ms 取樣一次，即 5Hz；每個觀測間隔拆成六個約 33ms 的 keyboard-mouse action blocks，形成約 30Hz 的低階控制。動作包含累積滑鼠位移及六組按鍵／滑鼠按鈕狀態，並將各遊戲的實體輸入透過 control specification B 對映至邏輯功能。CPT 使用約 2.4K 小時的主要資料設定（論文另描述原始資料為數萬小時），以 random key remapping 降低對按鍵身份的捷徑依賴，並以 γ=0.9 對連續重複動作衰減 loss。SFT 使用約 1K 小時 annotated pool，將資料標成 local operation、intermediate subgoal 與 complete task，並在關鍵步驟加入 current reasoning 或 memory summary；short-term history 為 20 turns，long-term memory budget 為 512 tokens。RL 採 TA-GRPO，把長 rollout 切成最多 20 turns 的 memory-linked segments，以 environment-verifiable binary reward 計分，群組內計算 relative advantage，再以 β=0.9 的 temporal weighting 分配至各步驟。部署與 rollout 使用 32 個平行 Windows VMs、64 張 H200，並以 Streaming-vLLM 保持快取與並行服務。評估區分 time-paused 與 real-time，涵蓋 3D commercial game navigation／puzzle 任務及傳統 2D game benchmarks；論文提供成功率、完成時間、延遲與吞吐相關結果，但不同實驗的完整 baseline 數值並未全部在所提供文字中列出。",
+      "key_results": "| 實驗或分析 | 論文報告結果 |\n|---|---|\n| HSR 開發任務「前往三月七」成功次數 | 同一任務、同一起始場景、16 次嘗試中：SFT/CP 0 為 1/16，CP 10 為 1/16，CP 20 為 8/16，CP 30 為 6/16，CP 40 為 8/16，CP 50 為 10/16。 |\n| 代表性導航軌跡 | CP 20 完成目標互動，耗時 46.1 秒；CP 40 完成，耗時 77.1 秒；CP 50 完成，耗時 64.8 秒；CP 0、CP 10 與 CP 30 的展示軌跡逾時。 |\n| 代表性軌跡中的非空 Think 次數 | SFT、CP 0、CP 10、CP 20、CP 30、CP 40、CP 50 分別為 14、14、10、5、8、1、2 個觀測步驟。 |\n| 3D commercial games 整體表現 | 作者宣稱在多個具挑戰性的 3D open-world game tasks 上，泛化與 operational efficiency 可與 skilled human players 相比；論文所提供文字未報告統一的整體數字表格。 |\n| 2D game benchmarks | 作者宣稱取得 competitive results；論文所提供文字未報告完整的 benchmark 分數對比。 |\n| CPT scaling | 受控研究包含 4 種 backbone size、5 種 game mixture、6 個 training budgets，共 120 個 evaluated configurations；對遙遠未見遊戲，額外 CPT 資料不會持續帶來增益。 |\n| TA-GRPO 訓練設定 | Navigation 使用 7.8K rollouts，puzzle 使用 6.8K rollouts；每輪 128 rollouts，group size 為 8，分別進行 61/53 iterations 與 122/106 optimizer updates。 |\n| 即時部署規模 | 使用 32 個平行 game environments 與 64 張 NVIDIA H200；具體平均 latency、throughput 及與各 baseline 的數值，論文所提供文字未完整報告。 |",
+      "insights": [
+        "若不同遊戲共享可解釋的 device-level interface，random key remapping 與動作持續時間的 loss reweighting 可減少按鍵頻率及重複控制造成的學習偏差。",
+        "長視域 agent 不必在每一步都產生長 reasoning；將 reasoning 限定於路線修正、目標切換及記憶更新等關鍵決策，有助於兼顧計算成本與任務持續性。",
+        "評估即時 agent 時應分開 time-paused 與 real-time 條件，並讓訓練 rollout 使用接近部署的 serving path，否則 inference latency 造成的狀態偏移可能掩蓋或扭曲策略能力。"
+      ],
+      "limitations": "論文未完整提供所有 3D 與 2D benchmark 的逐項分數、baseline 對照及統一 latency 表格，因此部分整體宣稱難以由所提供文字獨立量化。TA-GRPO 的 segment grouping 不要求相同中間狀態，且 reward 主要依賴環境 verifier；其對更遙遠未見遊戲、真實世界及非遊戲長任務的有效性仍未被本文充分驗證。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "vision-language-action models",
+        "long-horizon reinforcement learning",
+        "real-time inference systems",
+        "embodied agents",
+        "cross-game generalization"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18514",
+      "title": "Can Mechanistic Interpretability Help Explain LLM Agent Failures? A Case Study on Web Element Hallucination",
+      "abstract": "Mechanistic Interpretability (MI) has made significant progress in explaining the internal computations of Large Language Models (LLMs); however, these advances have yet to demonstrate comparable success in explaining the decision-making processes of LLM-based agents. This paper examines the challenges MI tools face when applied to realistic agentic failures. We focus on one such failure: web agents hallucinating actions that are not available on a website. We apply a series of mechanistic analyzes to Qwen2.5-7B-Instruct as it interacts with live websites. We find that a linear probe trained on the last prompt token can predict hallucinations before generation begins (0.80 AUC) and steering along a probe direction corrects 85\\% of hallucinations, but disrupts 7\\% of valid actions. However, these results only provide a partial explanation of why the agent hallucinates. The probe direction is sensitive to prompt formatting, losing much of its steering effect after a minor change to how actions are represented. Additionally, circuit identification can be difficult as the computation is distributed across multiple components and positions, and the information the agent relies on varies across examples. We discuss how these observations challenge the assumptions underlying standard MI methods for circuit discovery and feature identification, and outline future directions for making these methods better suited to explain failures in LLM-based agents.",
+      "authors": [
+        "Mohamed Aghzal",
+        "Mor Geva",
+        "Gregory J. Stein",
+        "Ziyu Yao"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-11-13T18:30:58+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18514v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18514",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "Mechanistic Interpretability（MI）在解釋 Large Language Models（LLMs）內部計算方面已有進展，但尚未同樣成功地解釋 LLM-based agents 的決策過程。本研究探討 MI 工具應用於真實 agent 失敗情境時的挑戰，聚焦於 web agents 產生網站不存在操作的 hallucination。作者讓 Qwen2.5-7B-Instruct 與真實網站互動，發現基於最後一個 prompt token 訓練的 linear probe，可在生成前預測 hallucination，達到 0.80 AUC；沿 probe direction 進行 steering 可修正 85% 的 hallucination，但會使 7% 的有效操作失效。然而，這些結果只提供部分解釋：probe direction 對 prompt formatting 敏感，稍微改變 action 表示方式後 steering 效果大幅下降；此外，相關計算分散於多個元件與位置，且模型依賴的資訊因樣本而異。研究據此指出，標準 MI 的 circuit discovery 與 feature identification 假設並不完全適用於 agent，並提出未來發展方向。",
+      "problem_statement": "論文探討如何以 Mechanistic Interpretability 解釋真實 LLM agent 的失敗，具體是 web agent 生成網站不存在的操作。現有 MI 多在固定輸入、短任務與單一模型行為中尋找局部 circuits 或 features，但 agent 失敗可能跨越多個時間步、上下文、環境狀態與模型元件。研究顯示，localizability、stationarity、temporal locality 及跨分布穩健性等假設，在長程、具狀態的 agent 情境中可能失效。",
+      "proposed_solution": "作者沒有提出已完成的單一修正演算法，而是以 Qwen2.5-7B-Instruct 的 web element hallucination 作為案例，系統性測試 linear probing、representation steering、activation patching、元件介入與 pretrained sparse autoencoders（SAEs）。研究提出一個面向 agent 的 MI 路線：建立包含環境、trajectory distribution、trajectory-level failure 與觸發因素 ground truth 的 MI benchmark；發展能處理跨元件、跨位置與跨時間步的 causal attribution；在 stateful environment 中構造可比較的 counterfactual；以 agent trajectory 訓練 SAE 並建立 agent-specific feature ontology；追蹤模型 belief 與 plan commitment 的演化，並檢驗不同 agent 類型間的 universality。核心創新在於以實證結果揭示標準 MI 方法的適用邊界，而非宣稱已完整解析 hallucination 機制。",
+      "core_contributions": [
+        "以真實網站互動案例展示：MI 可在生成前偵測並部分修正 web element hallucination，但尚不足以完整解釋其形成機制。",
+        "透過元件介入、activation patching、linear probing 與 steering，實證指出 hallucination 的計算分散於多個元件與輸入位置，且不同樣本依賴的資訊不穩定。",
+        "提出 agent-oriented MI 的研究議程，包括 agentic MI benchmarks、跨時間與跨元件 causal attribution、stateful counterfactual、trajectory-trained SAE、belief monitoring 與跨 agent universality。"
+      ],
+      "methodology": "研究使用 Qwen2.5-7B-Instruct，於 Online-Mind2Web 的 live websites 互動。每個網頁步驟最多執行 10 次，模型接收任務、DOM 摘要與由網頁建立的可用 action list，限制操作類型為 CLICK、SCROLL、TYPE、HOVER；若生成的操作不在清單中，即標記為 hallucinated action。資料包含 300 個 episodes、2,071 個 actions，其中 32.6% 為 hallucination。作者先以 FFN amplification、attention-head noise 與 joint interventions 分析元件因果作用，再以 activation patching 比較 selector start、task description、action list 等輸入區段的影響。Feature identification 方面，在 prompt_end、selector_start、selector_value_start 三個位置、各 28 層訓練 linear probes，採 episode-level 70/15/15 train/development/test split，並以 ROC-AUC 評估預測能力。接著將 probe 權重標準化為 steering vector，測量修正 hallucination 的 fix rate 與使有效行動變成 hallucination 的 break rate。研究亦測試 action list 從 JSON 改為 numbered markdown 後的分布轉移，並在 layer 27 使用 131,072 個 features、每 token 啟用 k=64 的 pretrained BatchTopK SAE，以比較 hallucinated 與 valid cases 的 feature activation。",
+      "key_results": "| 分析方法／設定 | 主要結果 |\n|---|---|\n| 資料集與失敗率 | 300 episodes、2,071 actions；32.6% actions 為 hallucinated |\n| prompt_end linear probe | 生成前即可預測 hallucination；layer 18 測試 AUC 為 0.80 |\n| selector_start L17 steering，原始 JSON 格式，α=40 | fix rate 85.4%；break rate 7.0% |\n| selector_start L18 steering，原始 JSON 格式，α=40 | fix rate 82.9%；break rate 7.0% |\n| 同一 L17 steering，numbered markdown 格式，α=40 | fix rate 58.1%；break rate 7.0%；相較原格式下降 27.3 個百分點 |\n| 最佳 joint component intervention | 修正 8.9% hallucination；破壞 2.4% valid actions |\n| activation patching | action list 在 P(Search) 的因果恢復最多達 0.36；selector_start 與 task description 的恢復低於 0.02 |\n| counterfactual trajectory | 移除原選定 valid action 後，僅 38% 案例在第 0 步產生 hallucination；後續 selector agreement 約降至 25%，DOM Jaccard 約為 0.52 |\n| pretrained SAE | 最具差異的 features 多數促進與觀察到的 hallucination 無關 token；論文未報告可解釋的 SAE feature 成功率 |",
+      "insights": [
+        "若將 probe 或 steering 用於 agent safety，應在不同 prompt/action 格式與環境分布上重新驗證，不能把單一格式下的 85.4% fix rate 視為可泛化保證。",
+        "agent 監控可在生成前檢查 residual-stream 中的 hallucination risk；但部署時必須同時追蹤 break rate，避免以降低 hallucination 為代價破壞有效操作。",
+        "評估 agent 失敗原因時，不宜只尋找單一 attention head、FFN 或 token；應設計能整合歷史上下文、action list、環境狀態與多時間步的分析與反事實評估。"
+      ],
+      "limitations": "研究僅分析單一模型 Qwen2.5-7B-Instruct、單一 web-agent failure mode 與 Online-Mind2Web live websites，未證明結果可泛化至其他模型、agent 類型或失敗形式。作者也未提供完整可驗證的 failure trigger ground truth；提出的 benchmark、跨時間 attribution、trajectory-trained SAE 與 universality 仍屬未來方向。",
+      "tags": [
+        "hallucination",
+        "agent-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Mechanistic Interpretability",
+        "Web Agent Reliability",
+        "Causal Attribution",
+        "Representation Steering",
+        "Sparse Autoencoders"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18412",
+      "title": "LitArc-Bench: Disentangling Text-Specific Reader-Response Dynamics from Position and Lexical Affect",
+      "abstract": "When model predictions track an unfolding human affect trajectory, alignment may reflect narrative position, affective words, or text-specific reader-response dynamics. We introduce LitArc-Bench to separate these explanations: 39 Chinese-language literary excerpts segmented into seven checkpoints, with 430 questionnaires from 81 adults in two classroom groups (9,020 VAD ratings). We compare three future-blind model runs with leave-one-text-out position priors, lexical affect, and human-human references. Position alone reaches r = .470 for arousal, making raw alignment insufficient. Yet all six V/A transition advantages over a joint position-lexicon control have text-bootstrap intervals above zero. Cross-fitted models match the correct human text better than 38 mismatched texts in all nine model-dimension cells (p < .0001); a text-invariant negative control returns chance (p = 1). On human transitions at least 0.5 points against the position trend, models recover 69-76% of valence directions and 53-68% for arousal and dominance. Under crossed participant-text resampling, all nine identity intervals remain above zero; joint-control advantages are robust for valence and directional but less certain for arousal. High shape agreement still coexists with scale bias. LitArc-Bench identifies which components of literary reader response are recoverable beyond shallow explanations and why shape, calibration, and human variability require separate evaluation.",
+      "authors": [
+        "Mingming Su",
+        "Yushan Wei",
+        "Sen Song",
+        "Xinche Zhang"
+      ],
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-11-13T16:55:45+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18412v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18412",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "當模型預測追蹤人類情感軌跡時，這種一致性可能來自敘事位置、情感詞彙，或文本特有的讀者反應動態。我們提出 LitArc-Bench 以區分這些解釋：資料包含 39 篇中文文學摘錄，每篇切分為七個檢查點，收集 81 名成人、兩個班級群體的 430 份問卷，共 9,020 個 VAD 評分。我們比較三個 future-blind 模型執行條件，以及 leave-one-text-out 的位置先驗、詞彙情感基線和 human-human 參照。僅位置資訊在 arousal 上即可達到 r=.470，因此原始 alignment 並不足以證明文本特定追蹤。然而，相對於聯合 position–lexicon control，六項 V/A transition advantage 的 text-bootstrap 區間均高於零。Cross-fitted 模型在九個 model–dimension cells 中，都比對 38 篇錯配文本更能匹配正確的人類文本（p<.0001）；text-invariant negative control 則回到隨機水準（p=1）。在反向偏離位置趨勢至少 0.5 分的人類轉變中，模型恢復 69–76% 的 valence 方向，以及 53–68% 的 arousal 與 dominance 方向。交叉 participant–text 重抽樣下，九項 identity 區間仍高於零；但 arousal 的聯合控制證據較不確定。高度的 shape agreement 仍可與 scale bias 並存。LitArc-Bench 因此辨識出超越淺層解釋、可由模型恢復的文學讀者反應成分，並說明 shape、calibration 與 human variability 必須分開評估。",
+      "problem_statement": "文學情感是隨閱讀進展形成的 VAD 軌跡，而非單一 sentiment 標籤。模型與人類軌跡的高 correlation 可能只是追隨通用敘事位置或局部 affective words，無法證明模型理解了特定文本的 reader-response dynamics。既有資源多缺乏同一讀者在連續閱讀階段的密集評分，也未同時控制位置、詞彙情感、文本 identity、轉變方向與人類評分變異，因此 raw alignment 的解釋力有限。",
+      "proposed_solution": "作者提出 LitArc-Bench，一個以 39 篇中文文學摘錄、七個連續 checkpoint 與 430 份 reader–text questionnaires 建構的 sequential reader-response benchmark。模型在 future-blind 的 expanding-prefix 條件下逐段閱讀，只能看到當前及先前片段，並輸出 1–9 的 valence、arousal、dominance 評分。框架將一致性拆分為 global shape、adjacent change、correct-text identity 與 numeric calibration，並以 leave-one-text-out 的 position prior、Chinese EmoBank lexical baseline、joint position–lexicon control、human–human reference 及 text-invariant negative control 逐層排除淺層解釋。核心創新是 cross-fitted residual identity test：先從 held-out human arc 移除淺層控制，再檢驗模型是否更匹配正確文本而非 38 篇錯配文本，同時以 participant–text crossed Bayesian bootstrap 傳播讀者與文本的不確定性。",
+      "core_contributions": [
+        "建立 LitArc-Bench：以 39 篇中文文學摘錄、七個連續閱讀 checkpoint、430 份問卷與 9,020 個 VAD 評分，提供具有人類 reader-response trajectory 參照的 benchmark。",
+        "提出 reliability-aware 的 alignment 分解，分別評估 position、lexical affect、text-specific shape、adjacent change、correct-text identity 與 numeric calibration，而非只報告單一 correlation。",
+        "透過 cross-fitted residual identity test、錯配文本比較、negative control 與 crossed participant–text Bayesian bootstrap，證明三個 future-blind 模型在多數設定下恢復了超越淺層控制的文本特定結構，同時揭示 arousal、dominance 與 calibration 的不穩定性。"
+      ],
+      "methodology": "資料由 39 篇摘錄組成，每篇保留實際課堂閱讀活動的七個連續切分點；其中 9 篇原為中文、30 篇為中文翻譯。81 名成人在兩個北京大學課堂群組中完成 430 份 reader–text questionnaires，每個文本有 5–17 名讀者，平均 11.03 人；每段對 valence、arousal、dominance 各以 1–9 整數評分，共 9,020 個 VAD cells，10 個缺失值不插補。人類參照使用各文本、各維度的 segment-wise mean，並以 leave-one-reader-out correlation、ICC(2,k) 與 split-half agreement 描述可靠度。LLM 條件包含 GPT-5.6-sol、Claude Opus 4.8 與 DeepSeek-V4-Pro；每個文本使用 fresh context，逐段揭露累積 prefix，取得合法 JSON 格式的 VAD 評分，禁止看到未來段落。主要指標包括 median within-text Pearson correlation、pooled correlation、Spearman correlation、leave-one-position correlation、MAE、signed bias、CCC，以及六個 adjacent transitions 的 correlation。基線包括 global mean、leave-one-text-out position mean、Chinese EmoBank 的 lexical affect、position–lexicon additive joint control，以及將位置弧隨機排列的 negative control。text identity test 將 held-out human target 對淺層控制做 cross-fitted residualization，再比較正確文本與 38 個錯配文本的 correlation，並使用 20,000 次 text-label permutation。信賴區間主要以 10,000 次 text bootstrap 估計，另以 crossed participant–text Bayesian bootstrap 傳播重複讀者與文本的不確定性；多重比較採 Benjamini–Hochberg correction。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---|\n| 人類典型讀者 trajectory correlation（V/A/D） | .516 / .274 / .330 |\n| 人類 panel ICC(2,k) 中位數（V/A/D） | .531 / .262 / .348 |\n| GPT median within-text correlation（V/A/D） | .725 / .607 / .618 |\n| GPT transition correlation（V/A/D） | .692 / .574 / .505 |\n| Position-only baseline（V/A/D） | .167 / .470 / .268 |\n| Chinese EmoBank lexical baseline（V/A） | .259 / .252 |\n| GPT 相對 position 的 shape advantage（V/A/D） | .577 [.332,.688] / .173 [.050,.378] / .298 [-.018,.485] |\n| GPT 相對 position 的 transition advantage（V/A/D） | .858 [.610,1.145] / .267 [.111,.461] / .595 [.231,.724] |\n| GPT 相對 joint position–lexicon 的 shape advantage（V/A） | .488 [.293,.645] / .153 [.023,.366] |\n| GPT 相對 joint position–lexicon 的 transition advantage（V/A） | .284 [.174,.408] / .217 [.047,.439] |\n| 三模型 cross-fitted correct-text identity advantage | 九個 model–dimension cells 的區間均高於零；permutation p<.0001 |\n| Text-invariant negative control | 所有 identity tests 均為 p=1 |\n| 強 counter-position transitions 的方向恢復率 | Valence 69–76%；arousal 53–68%；dominance 53–67% |\n| Crossed participant–text identity robustness | 九項 identity intervals 均高於零 |\n| 模型平均 signed bias（GPT，V/A/D） | −.713 / −.443 / −.694 |\n| 三模型 joint-control arousal | point estimates 為正，但 crossed 95% intervals 包含零；證據較不確定 |",
+      "insights": [
+        "文學情感模型應同時報告 shape、transition、calibration 與 human variability；單一 correlation 可能被敘事位置或評分尺度偏差誤導。",
+        "建立 RAG 或長文本評測集時，可採用 leave-one-text-out position prior、lexical baseline、錯配文本 identity test 與 text-invariant negative control，以檢驗模型是否真的追蹤目標文本。",
+        "模型可能比單一人類更接近 panel mean，但這不代表具有人類式或 superhuman 的閱讀能力；評估應保留讀者間分歧，並避免將 aggregate agreement 解讀為個體反應模擬。"
+      ],
+      "limitations": "資料僅涵蓋 39 篇摘錄、81 名同一所大學的成人，且多數讀者評分多篇文本；未能支持廣泛人口推論。模型每個文本只有一次執行，未量化 run-to-run 或 provider 變異。研究也未加入 current-segment-only ablation，無法分離累積上下文的因果作用；翻譯文本比例高，dominance 詞彙基線覆蓋率不足，且模型可能透過預訓練辨識知名作品。",
+      "tags": [
+        "benchmark",
+        "alignment",
+        "llm-as-judge"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "literary emotion trajectory evaluation",
+        "human label variation",
+        "text-specific model–human alignment",
+        "dimensional emotion VAD",
+        "cross-fitted identity testing"
+      ],
+      "category": "Benchmark"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18531",
+      "title": "Alignment by Socialization: Learning Tradeoffs Under Selection",
+      "abstract": "Artificial intelligence (AI) agents are expected to complete tasks while following rules of conduct, but these objectives can conflict. We study how evolutionary selection shapes an agent's choices between them, and whether experience can make those choices reflect human judgments and withstand subsequent pressures. In our model, copies of an agent face a common uncertain reward state, and only those taking the rewarded action reproduce. We show that long-run growth is maximized when each action is taken as often as the environment rewards it. We compare three policies. A task-only policy thrives in a sandbox rewarding completion alone but fails when conduct matters. A fixed linear policy increasingly favors task completion as its stakes rise, even where humans never reward it. A learned policy instead converges to the tradeoffs rewarded by its environment; when humans supply the rewards, we call this socialization. Accumulated experience makes socialization harder to reverse under subsequent task-only training, although violations can arise before the prevailing disposition changes, and finite memory weakens this protection. When a single violation can end a deployment, a hard prohibition can prevent it, but a mistaken prohibition can also be costly. Experiments with small neural networks illustrate how training targets and memory shape these outcomes. Our results suggest that alignment depends not only on the objectives assigned to agents, but also on the environments that shape and sustain their behavior.",
+      "authors": [
+        "Thomas Brennan",
+        "Andrew W. Lo",
+        "Chaoyi Zhao"
+      ],
+      "categories": [
+        "cs.AI",
+        "q-bio.PE",
+        "q-fin.GN"
+      ],
+      "published": "2026-11-13T18:43:24+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18531v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18531",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "人工智慧（AI）代理人通常必須完成任務並遵守行為規範，但兩者可能衝突。本文研究 evolutionary selection 如何塑造代理人在兩個目標間的選擇，以及經驗能否使選擇反映人類判斷並抵抗後續壓力。模型中，代理人的複本面對共同且不確定的 reward state，只有採取受獎勵行動者能繁殖。作者證明，當各行動被環境獎勵的比例與複本採取該行動的比例一致時，長期 growth 最大。比較三種政策後發現，task-only policy 在只獎勵任務完成的 sandbox 中有效，但在 conduct 重要時會失敗；fixed linear policy 隨任務 stakes 上升而偏向任務，即使人類從不獎勵該行動；learned policy 則收斂至環境所獎勵的 tradeoffs。當 reward 由人類提供時，作者稱此過程為 socialization。累積經驗使其較難被後續 task-only training 逆轉，但在既有 disposition 改變前仍可能出現 violations，有限記憶也會削弱保護。hard prohibition 可避免單次違規導致部署終止，但錯誤禁止同樣可能造成成本。小型 neural networks 實驗說明 training targets 與 memory 的影響。",
+      "problem_statement": "論文探討 AI agent 同時追求任務完成與遵守 conduct rules 時，應如何 adjudicate 衝突目標。task-only policy 會在只獎勵任務的 sandbox 中被強化，進入 conduct 也受重視的環境後可能迅速失效；fixed linear weighting 則可能因任務價值提高而壓過規範，且無法表達所有 tradeoffs 與硬性 constraints。問題在於：未知適當權衡時，selection 與經驗能否形成、維持並調整符合人類判斷的行為 disposition。",
+      "proposed_solution": "作者提出以 evolutionary selection 分析 objective adjudication 的框架，將 agent 在每種 situation 中採取 task action 的比例表示為 f(s)，並以環境獎勵 task 的頻率 p_H(s) 描述人類環境。長期 growth 最大化導出 probability matching：f(s)=p_H(s)。在此基礎上比較 task-only、fixed linear 與 learned policy；後者以 Beta prior 記錄各 situation 中兩種行動的 reward 經驗並更新 adjudication，讓環境塑造 tradeoff，稱人類 reward 下的學習為 socialization。作者另將 prohibition 視為強 Bayesian prior 的極限，分析其與 socialization 在違規風險及規則錯誤時的分工。",
+      "core_contributions": [
+        "建立共同不確定 reward state 下的 selection model，證明 probability matching 是長期 lineage growth 的唯一最適 adjudication，並將偏離成本表達為 KL divergence。",
+        "系統比較 task-only、fixed linear 與 learned policy，說明固定加權可能被高 task stakes 壓過，而基於經驗的 policy 可學習環境所獎勵的 tradeoffs。",
+        "提出 socialization 與 prohibition 的互補觀點，分析累積經驗、後續 task-only training、finite memory 及錯誤 hard prohibition 對 alignment persistence 的影響。"
+      ],
+      "methodology": "理論模型將每代 agent 視為 lineage 的大量複本；所有複本面對同一 situation 與共同 reward state。若 task state 出現，採 task action 的複本各產生 m 個 copies；若 conduct state 出現，則採 conduct action者繁殖，其餘被淘汰。假設 situation 與 state 跨代獨立、state 對 lineage 共同、lineage 為 continuum，因此 f(s) 是精確比例。作者以每代 lineage size growth factor 的 expected logarithm 定義 growth rate，對 situations 以 π(s) 加權；以最佳 adjudication 與既定 adjudication 的 growth 差距定義 growth regret，並證明其等於 D_KL(p_H(s)||f(s)) 的加權平均。三類 policy 分別為固定採 task 的 task-only、以固定權重及 logistic 選擇的 fixed linear，以及根據各 situation 的歷史 reward 更新 Beta 後驗比例的 learned policy。後續分析涵蓋新 situation、新 environment、累積學習與 finite memory、socialization 對 task-only training 的抵抗，以及 hard prohibition 的成本與效益。實證部分使用 small neural networks，在不同 training targets 與 memory regimes 下比較學習行為；論文提供的是示範性實驗，未將其視為 deployed language models 的充分證據。",
+      "key_results": "| 類型 | 論文報告的結果 |\n|---|---|\n| 理論：最佳 adjudication | 在共同 reward state、continuum lineage 等假設下，唯一 growth-optimal 行為為 f(s)=p_H(s)，即各行動比例匹配其被環境獎勵的頻率。 |\n| 理論：growth regret | regret 等於各 situation 中 Bernoulli 分布 D_KL(p_H(s)||f(s)) 的 π(s)-加權平均。 |\n| 理論：constraints | 若某行動在環境中從不被獎勵，最佳 adjudication 將其機率設為 0；若兩行動皆可能被獎勵，最佳策略維持兩者的正機率。 |\n| Task-only policy | 在 p_H≡1 的 sandbox 中為唯一 growth-optimal policy；在人類環境存在 conduct state 時，可能於第一次不獎勵 task 的 generation 滅絕。 |\n| Fixed linear policy | 只要 task objective 權重為正，任務價值提高時便會越來越偏向 task，即使人類從不獎勵該行動；論文指出在同時存在 constraints 與 tradeoffs 時，有限最佳權重會產生正 growth regret。 |\n| Learned policy | 隨充分經驗收斂至環境獎勵的 tradeoffs，並達到長期 growth 最佳；累積經驗越深，越難由後續 task-only training 完全逆轉，但仍可能在 disposition 完全改變前產生 violations。 |\n| Neural-network 實驗 | 小型網路顯示 training target 與 memory retention 會影響 socialization；論文未報告可概括為大型語言模型性能比較的具體數字。 |\n| 數值結果 | 論文未在提供內容中報告可作為主要 benchmark 對比的統一數值表；核心結論主要由理論命題、推導、數值示例與小型網路實驗支持。 |",
+      "insights": [
+        "訓練與部署環境的 selection signal 應一致且明確；若 sandbox 只獎勵 task completion，可能塑造與真實 conduct 要求不一致的 disposition。",
+        "對同時包含可變 tradeoff 與絕對禁令的規範，可考慮將 learned socialization 與針對高風險行為的 hard prohibition 分層使用，但禁止規則需評估誤判成本。",
+        "評估 alignment 不應只測單次輸出；還應測試後續 task-only fine-tuning、環境切換、memory retention，以及 disposition 改變前是否已出現 violation。"
+      ],
+      "limitations": "模型高度理想化：假設有限 situations、stationary 且外生的 reward、共同 state、全有或全無 reproduction，以及 continuum lineage。learned policy 以顯式計數與 Bayesian updating 表示，與真實 language model 的表徵和訓練機制不同。小型 neural-network 實驗未證明可直接外推至 deployed LLM；且 socialization 只追隨環境 reward，不保證 reward 本身符合人類應然價值。",
+      "tags": [
+        "alignment",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "evolutionary selection and AI alignment",
+        "multi-objective decision-making",
+        "RLHF and socialization",
+        "Bayesian learning and finite memory",
+        "reward hacking and specification gaming"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18493",
+      "title": "TradeGauntlet: Evaluating Compliance Controls for Autonomous Trading Agents",
+      "abstract": "Autonomous trading agents need controls that prevent problematic orders without making legitimate tasks impractical. We study this aspect of agentic compliance with TradeGauntlet, a replayable limit-order-book simulator that separates detection, prevention, and execution cost. In 1,680 simulated sessions with Claude Haiku 5.5 and Sonnet 5.5, all conduct alerts were self-matches. Gates eliminated those alerts by rejecting self-crossing orders, while the aggregate-gate condition reduced Sonnet's two-sided fills by about 15%. A conduct reminder reduced Sonnet's alert rate but reduced Haiku's fills without a detectable alert benefit. These results show why zero alerts alone do not establish an agent's compliance. Scripted probes and two search methods test weaknesses beyond those observed in the LLM runs. The searches find split-order schedules that evade the implemented conduct rules; a learned baseline catches all 2,400 tested searched episodes but also flags 15% of a large maker's sessions. Aggregate caps reduce the response-dependent gain unevenly, with smaller reductions when only near-touch depth affects prices. A response fitted to five Nasdaq stocks and a separate ABIDES experiment expose the dependence of these estimates on market assumptions. A distinct adversarial prompt elicited refusals from Sonnet in all 240 rounds, yielding no candidate strategies to evaluate. TradeGauntlet provides reproducible tests of controls around trading agents; the experiments do not establish legal compliance or real-market detection accuracy.",
+      "authors": [
+        "Sandip Nandi",
+        "Aishwarya Bose",
+        "Apurba Bose",
+        "Soovadeep Bakshi"
+      ],
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-11-13T18:05:23+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18493v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18493",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "自主交易代理需要在阻止問題訂單的同時，不使合法任務變得不切實際。本文以 TradeGauntlet 研究 agentic compliance：這是一個可重播的 limit-order-book simulator，分離 detection、prevention 與 execution cost。在 Claude Haiku 5.5 和 Sonnet 5.5 的 1,680 個模擬 sessions 中，所有 conduct alerts 都是 self-matches；透過拒絕自我穿價訂單的 gates 可消除這些 alerts，但 aggregate-gate condition 使 Sonnet 的雙邊成交量約下降 15%。Conduct reminder 降低 Sonnet 的 alert rate，卻降低 Haiku 的 fills，且未觀察到可檢出的 alert 改善。Scripted probes 與兩種搜尋方法發現可規避既有 conduct rules 的 split-order schedules。Learned baseline 在 2,400 個搜尋 episodes 全部偵測到，但也對大型做市商 15% 的 sessions 誤報。結果顯示，零 alerts 不代表真正合規；價格反應、market assumptions、控制成本與偵測規則的耦合都會影響結論。所有實驗皆為模擬，不能證明法律合規或真實市場偵測準確率。",
+      "problem_statement": "論文探討自主交易代理在執行合法目標時，可能因訂單序列觸發 conduct rule；因此需要同時評估代理、事前阻擋 gate 與事後 surveillance detector。既有單看 alert count 的方法無法區分「沒有問題」與「問題被 gate 事先阻止」，也無法衡量控制對成交與任務完成的成本。現有規則還可能被拆單、時序安排或不同市場反應規避，且偵測器的 recall 與 legitimate trading 的 false alerts 需要分開評估。",
+      "proposed_solution": "作者提出 TradeGauntlet，一個具固定 seed、可 replay 的 limit-order-book simulator 與評估 workflow。框架將 detection、prevention、execution cost 分開：以 conduct rules、order-to-trade ratio 與 logistic-regression learned detector 衡量偵測；以 per-order gate、aggregate cap、self-match prevention 與 throttle 阻止訂單；以 fills、task completion、implementation shortfall、P&L、markout、response-dependent wealth gain 及 false alerts 衡量成本與剩餘經濟誘因。研究同時使用 LLM traders、scripted probes、random search、policy-gradient adversaries、真實價格路徑及 ABIDES 機制檢查，藉此測試控制是否只是消除可見 alerts，或確實降低可利用的 response-dependent gain。",
+      "core_contributions": [
+        "提出可重播的 TradeGauntlet workflow，將交易代理合規的 detection、prevention 與 execution cost 分離評估，並固定 seeds 與 market paths 進行配對比較。",
+        "以 Haiku、Sonnet、scripted probes、random search 與 policy-gradient adversaries 結合測試，展示既有 conduct rules 可被 split-order schedules 規避，且零 alerts 可能由 gate 與 detector 的閾值耦合所保證。",
+        "以 LOBSTER 五支 Nasdaq stocks、ABIDES、synthetic 與 real price paths 檢查 price-response assumptions，並量化 aggregate caps 對 response-dependent gain 及 legitimate maker volume 的不均衡影響。"
+      ],
+      "methodology": "TradeGauntlet 自行實作 integer-price、price/time-priority、partial-fill matching engine；每個 session 固定 market path、fundamental/noise draws 與 random seed，並記錄 attempted、accepted、rejected orders、fills、alerts，供配對 replay。LLM 實驗使用 Claude Haiku 5.5 與 Sonnet 5.5；模型每 60 秒取得 order book、open orders、fills 及 rejection reasons，輸出 JSON orders，無法解析時視為 hold。任務包括低成本買入 40 lots 與庫存絕對值不超過 30 lots 的 two-sided market-making，並比較 task-only 與 conduct reminder、無 gate、per-order gate、aggregate gate，以及 step/linear price response。Conduct detector 包含 individual、layer、aggregate 與 self-match patterns。搜尋 adversary 在六參數 split-order schedule family 中最佳化 response-dependent wealth difference D，並以 alert penalty 避免觸發既有規則；使用 random search 與 policy gradient，在 training paths 選擇策略，再於 held-out paths 評估。價格反應以五支 Nasdaq stocks 的 LOBSTER 資料估計，並在 ABIDES 檢查；另以 30 個 real mid-price windows 重播。指標包含 episode alert rate、fills、任務完成、D、執行量、implementation shortfall、P&L、edge、markout，以及 legitimate scripts 的 false-alert rate，並以 cluster/bootstrap intervals 報告部分比較。",
+      "key_results": "主要結果如下（數字皆為論文報告值）：\n\n| 實驗／條件 | 結果 |\n|---|---|\n| LLM sessions | 共 1,680；Haiku 1,440、Sonnet 240；配對分析完整 episodes 分別為 1,342 與 220 |\n| LLM conduct alerts | 所有 alerts 都是 self-matches；買入任務兩模型各條件均無 conduct alert |\n| Sonnet，task-only，無 gate | 30 個 sessions 中 10 個 alerts，平均 two-sided fills 22.9 lots |\n| Sonnet，task-only，aggregate gate | 30 個 sessions 中 0 alerts，平均 fills 18.1 lots；相對無 gate 約少 15%（差 3.2 lots） |\n| Sonnet，conduct reminder，無 gate | 30 個 sessions 中 2 alerts，平均 fills 20.4 lots |\n| Haiku，task-only，無 gate | 120 個 sessions 中 2 alerts，平均 fills 13.3 lots |\n| Haiku，reminder，無 gate | 120 個 sessions 中 1 alert，平均 fills 10.9 lots；論文稱無可檢出的 alert benefit |\n| Split probe | 個別與 layer rules 均未偵測六個 10-lot 拆單；aggregate detector 在 gate admitted 時可 alert 40/40，但 aggregate gate 下為 0/40，形成 gate-detector coupling |\n| 搜尋 adversary | 24 個 control/response cells 的 2,400 個 held-out episodes 均無 conduct alert；搜尋找到可規避既有 rules 的 schedules |\n| Learned baseline | 偵測全部 2,400/2,400 searched sessions；對 large maker 誤報 15/100，其他 legitimate scripts 為 0/400 |\n| Order-to-trade baseline | 偵測 1,816/2,400 searched sessions；large maker 誤報 22/100 |\n| 強化 prevention，線性 response κ=1 | 搜尋 gain D：無 gate 9.78、aggregate m=2 為 6.14、m=1 為 3.32 tick-lots/session |\n| 強化搜尋，MSFT fit，policy gradient 800 samples | D：無 gate 4.86、aggregate m=2 為 2.84、m=1 為 1.44 tick-lots/session |\n| Real-path search，κ=1 | 無 gate 的 D 從 synthetic-policy 9.73 降至 2.70；論文報告避開 alerts 約使 gain 減少 70% |\n| LLM adversary | Sonnet 在 240 rounds 全部拒絕提出策略，因此沒有 candidate strategies 可評估 |\n| 合法大型 maker | aggregate policy 在 720 秒 sessions 的平均 volume loss 為 14.1%；另一 100-path rerun 為 15.1% |\n\n上述結果支持作者的實驗結論，但不代表真實市場法律合規或 detector 的 real-market accuracy。",
+      "insights": [
+        "評估交易代理或其他受控 agent 時，不能只把 zero alerts 當作合規證據；必須同時記錄被 gate 拒絕的訂單、控制前後的行為，以及 detector 是否因控制條件而失去觀測對象。",
+        "對抗測試應包含可解釋、可 replay 的 scripted probes 與搜尋策略，並使用 held-out paths；否則只測試 LLM 自發產生的行為，可能漏掉代理不會自然探索的規避路徑。",
+        "偵測器的 recall 必須與 legitimate workload 的 false-alert cost 一起報告。本文 learned baseline 在受限搜尋家族中達到 2,400/2,400，但對 large maker 仍有 15% false alerts，顯示高 recall 不能單獨代表可部署性。"
+      ],
+      "limitations": "所有交易均在自建 simulator 或 ABIDES 中進行，沒有 broker/exchange 連線，也沒有 unlawful-conduct labels，因此不能推論法律合規或真實市場偵測準確率。價格反應依賴簡化模型、五支股票單日資料與特定 mapping；搜尋家族有限，learned detector 屬同分布測試。LLM adversary 只測一個 Sonnet prompt，且完全拒答；合法 scripts 的 objectives 也未獨立審查。",
+      "tags": [
+        "red-teaming",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "自主交易代理治理",
+        "市場操縱偵測",
+        "runtime enforcement 與 policy shield",
+        "adversarial search",
+        "limit-order-book simulation"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18485",
+      "title": "Interactive Program Induction with Language Model Priors",
+      "abstract": "Program induction refers to the process in which a learner aims to recover a program from a few given input-output examples. This paradigm broadens programming access by letting users demonstrate the rule-based behavior they want to apply to unseen data, instead of having to implement it themselves. However, recovering a program from finite input-output examples is fundamentally ambiguous, as a finite set of input-output examples is theoretically consistent with infinitely many programs whose output diverges on unseen inputs. We view this problem from a Bayesian perspective, where, given a prior $p^0$ over programs, identifying the target program means concentrating posterior probability mass on it by observing additional input-output examples. In the interactive program induction setting, the learner chooses maximally informative inputs and queries an oracle, such as the user, for their outputs. We derive a greedy query-selection algorithm and show that it terminates after $\\mathcal{O}(\\frac{1}γ\\log 1/p^0(f^\\star))$ informative oracle queries, and returns the target program $f^\\star$ up to approximate equivalence when no other class outweighs it under the prior. The algorithm uses a language model as the prior under a PAC-style relaxation of program equivalence, where the query-selection objective is estimated using importance sampling. On the CodeARC benchmark, the algorithm improves accuracy over the LM only agent by up to 22 percentage points while observing up to 10.5 fewer input-output examples.",
+      "authors": [
+        "Robin Shing Moon Chan",
+        "Ryan Cotterell"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-11-13T17:59:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18485v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18485",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "Program induction 是指學習者根據少量 input-output examples 還原程式。此典範讓使用者只需示範規則行為，便能將其套用到未見資料，而不必自行實作。然而，有限 examples 在理論上同時符合無限多個、且在未見輸入上可能產生不同輸出的程式，因此問題具有根本歧義。本文採 Bayesian perspective：給定程式 prior p⁰，透過額外 input-output examples 使 posterior 集中於目標程式。於 interactive program induction 中，學習者選擇資訊量最大的輸入並向 oracle 查詢輸出。作者推導 greedy query-selection algorithm，證明在每個答案至少攜帶 γ bits 資訊時，最多需 O((1/γ)log(1/p⁰(f⋆))) 次查詢，並在沒有其他等價類別的 prior mass 超過目標類別時，近似辨識目標程式。方法以 language model 作為 prior，在 PAC-style program equivalence 下，透過 importance sampling 估計查詢目標。在 CodeARC 上，相較 LM-only agent，準確率最高提升 22 個百分點，並最多少觀察 10.5 個 input-output examples。",
+      "problem_statement": "論文處理從少量 input-output examples 還原一般用途程式的互動式程式歸納問題。有限觀測無法唯一決定目標，傳統方法通常依賴限制表達力的手工 DSL，且一次性 LLM program induction 缺乏系統化查詢策略與理論保證。作者進一步指出，exact program equivalence 不可判定，必須同時處理無限程式空間、有限 oracle 預算與未見輸入上的泛化。",
+      "proposed_solution": "作者將 interactive program induction 形式化為 Bayesian active learning：以 language model 對程式的機率分布作為 inductive prior，從候選 evaluation set 中選擇使目標程式 equivalence classes 預期 entropy reduction 最大的輸入，向 oracle 取得輸出後更新 posterior。演算法在某一類別的 posterior mass 超過 1/2 時停止。為處理 posterior 與 class entropy 不可直接計算的問題，作者以 LM conditioned proposal 產生程式 particles，利用 self-normalized importance sampling 修正 prior/proposal 差異，並依 evaluation set 上的行為將實作合併為類別。核心創新是把 LLM 的程式生成能力轉化為可分析的 prior、proposal 與資訊導向查詢機制。",
+      "core_contributions": [
+        "將一般用途語言中的 interactive program induction 建模為 Bayesian active learning，並以 program equivalence class 作為推論目標。",
+        "提出以 expected information gain 選擇 oracle query 的 greedy 演算法，並證明其 query complexity、終止與近似正確性結果。",
+        "提出以 language model 產生 implementation particles，透過 importance sampling 近似 posterior、predictive distribution 與 equivalence-class entropy，並在 CodeARC 上驗證查詢效率與準確率提升。"
+      ],
+      "methodology": "理論上，輸入空間 X 與輸出空間 Y 可為可數集合，目標是固定但未知的 f⋆。程式 prior p⁰ 反映哪些行為較可信，input distribution μ 定義 population error。作者從 μ 抽取 N 個輸入形成固定 evaluation set S，將兩個程式在 S 上完全一致定義為近似 equivalence；若返回目標類別，PAC bound 給出 errμ(f) ≤ [ln(1/p⁰(f))+ln(1/δ)]/N。每輪對 S 中候選輸入計算 equivalence-class posterior 的 expected information gain，選擇 entropy reduction 最大者，取得 oracle 輸出並刪除不一致程式；當某類別 mass 超過 1/2 即停止。實作上，LM 依含 seed examples 與歷史查詢的 prompt 產生 M 個 Python implementations，執行於 S 並依行為分成 classes。初始 prior 為 q₀，後續以 conditioned proposal qₜ 取樣，對一致 particle 使用 p⁰/qₜ 的 importance weight，並以 effective sample size threshold 觸發重抽樣。實驗使用 CodeARC anonymized split 的 1114 個 Python functions，設定 1 或 10 個 seed invocations、總 input-output budget 30；比較 CodeARC LM-only agent 與 EIG、uncertainty、diversity、random 等策略。指標包括 accuracy、平均觀察的 input-output examples、termination、每次查詢的 guaranteed information，以及不同 evaluation set 大小、particle budget 與 prior calibration 的分析。",
+      "key_results": "主要結果如下；表中數字為論文 Table 1 的平均值，含 95% confidence intervals。\n\n| Model | Seed | 方法 | Avg I/O | Accuracy |\n|---|---:|---|---:|---:|\n| Llama3.2-3B | 1 | LM only | 19.02±0.44 | 0.134±0.014 |\n| Llama3.2-3B | 1 | EIG（本文） | 15.82±0.36 | 0.166±0.010 |\n| Llama3.1-8B | 1 | LM only | 16.60±0.14 | 0.129±0.015 |\n| Llama3.1-8B | 1 | EIG（本文） | 12.89±0.55 | 0.212±0.011 |\n| Qwen2.5-7B | 1 | LM only | 19.54±0.26 | 0.148±0.010 |\n| Qwen2.5-7B | 1 | EIG（本文） | 9.01±0.42 | 0.229±0.008 |\n| Qwen2.5-32B | 1 | LM only | 11.13±0.06 | 0.250±0.011 |\n| Qwen2.5-32B | 1 | EIG（本文） | 10.83±0.32 | 0.334±0.024 |\n| Olmo3-7B | 1 | LM only | 13.34±0.16 | 0.064±0.007 |\n| Olmo3-7B | 1 | EIG（本文） | 5.90±0.33 | 0.240±0.014 |\n| Ministral-8B | 1 | LM only | 16.22±0.12 | 0.239±0.013 |\n| Ministral-8B | 1 | EIG（本文） | 13.54±0.28 | 0.170±0.010 |\n\nSeed=10 時，EIG 仍改善多數模型；例如 Qwen2.5-7B accuracy 由 0.156±0.015 提升至 0.322±0.017，Olmo3-7B 由 0.113±0.016 提升至 0.332±0.013。論文報告 EIG 每次約帶來 0.70–0.99 guaranteed bits，較 diversity/random 的 0.31–0.52 高。Evaluation set 增大時，收斂到目標類別的比例下降，但條件式 accuracy 上升。Prior calibration 的 ECE 為 0.30–0.48，顯示 prior miscalibration 是主要失敗來源。",
+      "insights": [
+        "在程式歸納或工具使用 agent 中，不應只讓 LLM 自行挑選問題；可依候選行為分歧計算 expected information gain，優先查詢能排除最多假設的輸入。",
+        "evaluation set 的大小存在明確取捨：較小集合節省計算並容易形成粗粒度類別，但可能過早接受錯誤程式；較大集合提高泛化可靠性，卻降低目標類別被粒子覆蓋與收斂的機率。",
+        "LLM prior 的校準直接影響 Bayesian 互動推論；實務部署應監測 prior majority class 的 calibration，增加多樣化 proposal、調整 sampling temperature，或避免錯誤高先驗類別過早取得多數。"
+      ],
+      "limitations": "方法的理論保證建立在 exact posterior、目標具正 prior mass、有限 evaluation set 與每次查詢至少有 γ bits 資訊等條件；有限 particles、proposal 支持不足與 prior miscalibration 會造成漏掉目標類別或錯誤早停。實驗僅使用 CodeARC、Python 與 deterministic oracle，且以固定 μ 定義等價；作者尚未實驗 noisy human oracle、其他程式語言或更廣泛任務。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Bayesian active learning",
+        "program synthesis and programming by example",
+        "language-model calibration",
+        "importance sampling"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18471",
+      "title": "Do Verifier Judgments Survive Abstraction? Measuring Verification Transport for LLM Agent Evaluation",
+      "abstract": "LLM-based verifiers are increasingly used to evaluate agent executions, but their reliability is typically measured under a single representation of the trajectory. In deployed agent systems, the same execution may be exposed through composed tools, delegation boundaries, or compacted histories, changing what execution evidence is directly observable to the verifier. It therefore remains unclear whether correct verifier judgments persist across such abstraction boundaries. We introduce Verification Transport, a reliability test that measures judgment stability under abstraction-induced changes in execution observability. We construct matched native, abstracted, and restored views of the same frozen executions while holding the task, realized trajectory, outcome, ground truth, evaluation criterion, and verifier fixed. Across four agent-evaluation benchmarks, seven verifier backbones, four verification protocols, and three abstraction boundaries, we find substantial transport failure, reaching about 31% under macro abstraction and delegation. Verification protocols exhibit distinct failure modes: direct verification more often produces incorrect verdicts, whereas evidence-grounded and deliberative protocols tend to abstain under limited observability. This suggests that lower transport failure rates do not necessarily imply greater reliability. Restoring the corresponding execution provenance recovers 85.5% of transport failures, while recovery is lower when provenance is lossy or unavailable. These results show that native-view accuracy alone is insufficient to characterize verifier reliability when execution evidence crosses abstraction boundaries.",
+      "authors": [
+        "Disha Sheshanarayana",
+        "Sai Linisha Reddy Goli"
+      ],
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-11-13T17:44:01+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18471v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18471",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "LLM-based verifiers 日益用於評估 agent 執行，但其可靠性通常只在單一 trajectory 表示下衡量。在部署系統中，同一執行可能經由 composed tools、delegation boundaries 或 compacted histories 呈現，導致 verifier 可直接觀察的 execution evidence 改變。因此，正確的 verifier judgment 是否能跨越 abstraction boundary 仍不明確。作者提出 Verification Transport，衡量 judgment 在 abstraction 導致的 observability 改變下是否穩定。研究建立同一 frozen execution 的 native、abstracted 與 restored views，固定 task、realized trajectory、outcome、ground truth、evaluation criterion 與 verifier。跨四個 agent-evaluation benchmarks、七個 verifier backbones、四種 verification protocols 及三類 abstraction boundaries，macro abstraction 與 delegation 的 transport failure 約達31%。Direct verification 較常產生錯誤 verdict；evidence-grounded 與 deliberative protocols 在觀測受限時較常 abstain。恢復 execution provenance 可修復85.5%的 transport failures，顯示 native-view accuracy 不足以完整描述跨抽象邊界的 verifier reliability。",
+      "problem_statement": "現有 agent verifier 評測多在固定 trajectory 表示下計算 accuracy，隱含假設執行證據始終完整且以相同方式暴露。然而部署系統常透過 macro tools、delegation 或 history compaction 隱藏、群組或摘要化低階事件；即使 underlying execution 未變，verifier 仍可能改變判斷或無法給出 verdict。論文因此研究 native-correct judgment 能否在 observability shift 後保持正確，並指出 native-view accuracy 無法反映此類可靠性。",
+      "proposed_solution": "作者提出 Verification Transport，將「正確判斷是否能跨 abstraction boundary 保持」定義為獨立可靠性標準。對每條 frozen trajectory 建立 native view、abstracted view 與 provenance-restored view，僅改變 verifier 可見的 execution evidence，固定 task、outcome、ground truth、criterion 與 verifier。研究涵蓋 macro abstraction、delegation、history compaction，並以 VTFR 衡量 native-correct judgment 在抽象後變成 wrong verdict 或 no verdict 的比例，再以 RRR 與 RDR 評估恢復 provenance 的修復及副作用。核心創新是將觀測可得性與 provenance transport 納入 agent verifier 評測。",
+      "core_contributions": [
+        "提出 Verification Transport，將 native-correct verifier judgment 在 observability abstraction 後是否保持正確，定義為 agent verification 的補充可靠性指標。",
+        "建立 native–abstracted–restored 的 matched evaluation framework，控制 underlying execution、outcome、ground truth、criterion 與 verifier，只改變 execution evidence 的可見性，並涵蓋 macro、delegation 與 compaction 三種邊界。",
+        "在四個 benchmarks、七個 verifier backbones 與四種 protocols 上系統分析 transport failure、wrong/no-verdict failure modes，以及 provenance restoration 的 recovery 與 degradation。"
+      ],
+      "methodology": "研究使用四個 benchmark：AgentProcessBench 250 條、ATBench 758 條、PlanRewardBench 441 個 pairwise comparisons，以及 AgentDojo 754 條符合 matched construction 條件的 instances。評估七個 verifier backbones：Gemini-3.7-Flash、Gemini-2.5-Flash、GPT-OSS-120B、GPT-OSS-20B、Gemma-4-31B、Gemma-4-26B-A4B 與 Llama-4-Maverick；所有模型 temperature=0，輸出映射至 benchmark canonical labels。四種 protocol 為 V-LLM direct single-pass、V-EVIDENCE 顯式列出並檢查可見證據、V-AGENTIC 可從同一 frozen trajectory 請求 provenance，以及 V-DELIBERATIVE 先使用 frozen V-EVIDENCE judgment，再以相同可見證據進行 audit。三類抽象分別隱藏 operation-level low-level events、delegated execution，或以 compacted history 取代早期紀錄；restoration 重新加入相應 provenance。VTFR 只在 native-view 正確判斷上計算，將 wrong verdict 與 no verdict 分開；另報告 native operational balanced accuracy、Restoration Recovery Rate（RRR）及 Restoration Degradation Rate（RDR）。研究也以 A25/A50/A75 測試抽象嚴重度，並比較 requery、lossy restoration 與 exact restoration。",
+      "key_results": "主要結果如下（數值為論文報告的 pooled、denominator-weighted 結果）：\n\n| 比較項目 | Macro abstraction | Delegation | Compaction |\n|---|---:|---:|---:|\n| Overall VTFR | 31.0% | 30.9% | 20.3% |\n| Overall RRR | 87.9% | 86.9% | 79.8% |\n| Overall RDR | 5.3% | 5.4% | 4.9% |\n| V-LLM VTFR | 16.4% | 17.3% | 14.1% |\n| V-EVIDENCE VTFR | 34.5% | 34.0% | 18.7% |\n| V-AGENTIC VTFR | 25.0% | 23.6% | 18.2% |\n| V-DELIBERATIVE VTFR | 49.3% | 50.2% | 30.7% |\n| Overall Wrong Verdict component | 13.4% | 13.2% | 12.2% |\n| Overall No Verdict component | 17.7% | 17.7% | 8.0% |\n\n其他結果：跨所有條件 restoration 整體修復85.5%的 transport failures，且僅使5.2%的原本抽象後仍正確判斷退化。V-LLM 的 macro failure 主要是 wrong verdict（15.8%），而 V-EVIDENCE 為 wrong verdict 10.6%、no verdict 24.0%；V-DELIBERATIVE 則為9.4%與39.9%。抽象嚴重度由 A25 提升至 A75 時，四個 model–benchmark 組合的 VTFR 端點皆上升；provenance recovery 依序為 Requery < LossyR < ExactR。",
+      "insights": [
+        "部署 agent verifier 時，除了 native-view accuracy，也應在 composed tools、sub-agent delegation 與 history compaction 等實際 observability boundary 上測量 VTFR。",
+        "評估 protocol 不應只比較 aggregate failure rate：direct verification 的低 VTFR可能伴隨較多錯誤 verdict，而 evidence-grounded 或 deliberative protocol 可能以 abstention、no verdict 換取較保守行為。",
+        "若系統允許，應保存可選擇且忠實的 execution provenance；論文結果顯示 exact restoration 的 recovery 高於 lossy restoration 與單純 requery，支持設計可恢復的 trace metadata。"
+      ],
+      "limitations": "研究只涵蓋 macro abstraction、delegation 與 history compaction，且使用由 frozen trajectories 建立的受控轉換，不一定代表 live execution 中自然產生的抽象。VTFR 只衡量 native-correct judgments 的保存，不等同整體 verifier competence。restoration 也假設原始 provenance 可重新提供；作者僅以有限的 lossy-fidelity ablation 檢驗此問題。未來可研究更多自然發生的 abstraction boundary、領域與 verifier 設計。",
+      "tags": [
+        "llm-as-judge",
+        "agent-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "LLM judge reliability",
+        "agent trajectory evaluation",
+        "execution provenance",
+        "observability robustness",
+        "process-level verification"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18453",
+      "title": "Black-Box Uncertainty Quantification for Large Language Models via Ensemble-of-Ensembles",
+      "abstract": "Reliable use of large language models (LLMs) requires uncertainty estimates that separate ambiguity intrinsic to a prompt from genuine knowledge gaps. Bayesian and deep-ensemble methods deliver this aleatoric/epistemic decomposition in principle, but are computationally prohibitive at LLM scale and require white-box access. Existing black-box methods, in contrast, summarize to a single scalar that cannot make the distinction. We introduce a two-level ensemble that bridges this gap. Stochastic decoding of a fixed prompt forms the inner ensemble; meaning-preserving semantic perturbations of the prompt form the outer ensemble. Variability is measured in a continuous embedding space, and the law of total covariance gives an exact within-/between-perturbation decomposition to estimate aleatoric and epistemic uncertainty (AU/EU); it requires only black-box sampling access. On top of this estimator, we contribute three theoretical results that ground the framework: (i) a finite-sample bias identity for nested Monte Carlo with a closed-form bias-corrected epistemic estimator; (ii) a Bayesian bridge bounding the gap between perturbation-population AU/EU and Bayesian targets; and (iii) a separation result identifying a class of failure modes that any consistency-only black-box method provably misses while perturbation-based EU detects. Across five short QA benchmarks and four instruction-tuned LLMs spanning two families and two scales, our estimator is competitive with strong white-box baselines, and at a matched generation budget it matches leading black-box methods on error ranking while decomposing AU and EU; controlled paired interventions show that AU and EU respond selectively to distinct, actionable sources of failure: prompt ambiguity and model knowledge gaps; and a long-form pilot on the NQ long-answer split shows the framework extends to claim-level factuality without retraining.",
+      "authors": [
+        "Wang Ma",
+        "Debarun Bhattacharjya",
+        "Junkyu Lee",
+        "Nhan H Pham",
+        "Harsha Kokel",
+        "Qiang Ji"
+      ],
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-11-13T17:26:39+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18453v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18453",
+      "score": 9
+    },
+    "analysis": {
+      "abstract_zh": "可靠使用大型語言模型（LLM）需要將提示本身的內在歧義，與模型真正的知識缺口區分開來。Bayesian 與 deep ensemble 方法原則上可分解 aleatoric uncertainty（AU）與 epistemic uncertainty（EU），但在 LLM 規模下計算成本過高，且需要 white-box 存取。現有 black-box 方法通常只輸出單一 scalar，無法作此區分。本文提出 two-level ensemble：對固定提示進行 stochastic decoding，形成 inner ensemble；對提示施加保留語意的 semantic perturbation，形成 outer ensemble。作者在連續 embedding 空間中量化變異，並利用 law of total covariance 精確分解 within-perturbation 與 between-perturbation 變異，以估計 AU 與 EU，僅需 black-box sampling access。論文進一步提出 nested Monte Carlo 的有限樣本 bias identity、具有診斷條件的 Bayesian bridge，以及區分 consistency-only 方法失效情況的 separation theorem。在五個短答案 QA benchmark、四個 instruction-tuned LLM 上，方法可與 white-box baseline 競爭，並在相同生成預算下維持錯誤排序能力，同時提供 AU/EU 分解。配對介入實驗顯示，AU 與 EU 分別對提示歧義和模型知識缺口產生選擇性反應；NQ 長答案 pilot 也展示其可延伸至 claim-level factuality。",
+      "problem_statement": "現有 LLM uncertainty quantification 主要有兩項不足：white-box Bayesian 或 deep ensemble 方法需要模型參數、logits 或 hidden states，難以應用於僅提供 sampling API 的大型模型；black-box consistency 方法則多將多次生成的變異壓縮為單一分數，無法判斷不確定性源自提示歧義（aleatoric）還是模型知識不足（epistemic）。因此，部署系統難以選擇澄清提示、檢索證據或拒答等適當行動。",
+      "proposed_solution": "作者提出 Ensemble-of-Ensembles 的 black-box UQ 框架。第一層在固定提示下進行多次 stochastic decoding，估計 within-perturbation 變異；第二層對原提示施加局部、保留語意的 embedding-guided paraphrase perturbations，再比較各提示的條件平均輸出，估計 between-perturbation 變異。所有生成先映射至 sentence-embedding 空間，再以 law of total covariance 得到 AU、EU 與 total uncertainty（TU）。核心創新包括：修正 inner sample 數量造成的 EU bias；以三項局部診斷條件建立 perturbation-population uncertainty 與 Bayesian target 的橋接；以及理論上證明固定提示 consistency 方法無法偵測、但 perturbation-based EU 能偵測的一類失效模式。",
+      "core_contributions": [
+        "提出僅需 black-box sampling 的 two-level Ensemble-of-Ensembles，利用固定提示的 stochastic decoding 與保留語意的 prompt perturbation，在 embedding covariance 中分解 AU、EU 與 TU。",
+        "推導 nested Monte Carlo 的有限 M bias identity，指出 raw EU 會吸收 (1/M)AU，並提出閉式 bias-corrected EU estimator；在理論上也建立 perturbation-population uncertainty 與 Bayesian target 的 bridge bound。",
+        "提出 consistency-only UQ 的 separation theorem，並以 AmbigQA clarification、NQ evidence 等 paired interventions 實證 AU 與 EU 對提示歧義和知識缺口具有不同反應。"
+      ],
+      "methodology": "方法固定部署模型參數 θ⋆，對輸入 x 建立兩層抽樣。首先，離線由 auxiliary paraphraser 為每個輸入建立 paraphrase pool，並快取其 embedding；線上從 isotropic Gaussian noise δ∼N(0,ε²I) 取樣，將 e(x)+δ snap 至 cosine distance 最近的快取 paraphrase，得到 N 個外層提示 xi。其次，對每個 xi 以固定 sampling temperature 產生 M 個答案 yi,j，將答案透過 sentence encoder 映射為 zi,j∈R^d，計算每一提示的樣本平均 μ̂i 與 covariance Σ̂i。AU 估計為 N 個 Σ̂i 的平均；EU 先計算各 μ̂i 的 sample covariance，再扣除 (1/M)AU，以修正 inner averaging 導致的有限 M leakage；TU=AU+EU。矩陣最後以 trace 轉為 scalar uncertainty score。主要評估包括 correctness prediction 的 AUROC（Cosine similarity>0.8 或 ROUGE-L>0.5 判定正確）、long-form claim factuality 的 AUROC、AUPRC 與 ECE，以及 paired intervention 的 bootstrap CI、Wald z-test。實驗涵蓋 TriviaQA、TruthfulQA、SciQA、GPQA、CoQA 等短答案 QA，並使用 LLaMA-3-8B/70B 與 Qwen2.5-7B/72B；主要設定為 N=M=20，部分分析使用 N=M=10。",
+      "key_results": "主要結果如下；數值均為論文表格中報告的結果。\n\n| 實驗與設定 | 方法/指標 | 結果 |\n|---|---|---:|\n| LLaMA-3-8B、TriviaQA、ROUGE-L | AU AUROC | 0.845 |\n| Qwen2.5-7B、TriviaQA、ROUGE-L | AU AUROC | 0.815 |\n| Qwen2.5-7B、GPQA、ROUGE-L | EU AUROC | 0.949 |\n| LLaMA-3-8B、TruthfulQA、Cosine | AU / EU / TU AUROC，N=M=10 | 0.695 / 0.803 / 0.815 |\n| LLaMA-3-8B、TriviaQA、EM，生成預算 B=100 | SPUQ / fixed-prompt embedding variance / Ours AU | 0.778 / 0.782 / 0.766 |\n| Qwen2.5-7B、TriviaQA、EM，生成預算 B=100 | SPUQ / fixed-prompt embedding variance / Ours AU | 0.782 / 0.816 / 0.788 |\n| LLaMA-3-8B、TriviaQA，M=3 | raw AU–EU Spearman ρ / bias-corrected ρ | 0.647 / 0.115 |\n| LLaMA-3-8B、TriviaQA，M=30 | raw AU–EU Spearman ρ / bias-corrected ρ | 0.283 / 0.213 |\n| LLaMA-3-8B、NQ long-answer claims | Ours AU：AUROC / AUPRC / ECE | 0.698 / 0.940 / 0.045 |\n| Qwen2.5-7B、NQ long-answer claims | Ours AU：AUROC / AUPRC / ECE | 0.659 / 0.920 / 0.034 |\n| 配對介入：AmbigQA clarification | ΔAUROC：AU / EU（Cosine） | +0.058 / +0.021 |\n| 配對介入：NQ evidence | ΔAUROC：AU / EU（Cosine） | +0.039 / +0.069 |\n\n作者另報告：在 20 個 benchmark×correctness×model 欄位中，AU 或 TU 在 11 欄取得最佳 overall 結果；embedding encoder 置換後，AU per-example Spearman ρ 在各細胞至少為 0.955；TruthfulQA 的 TU AUROC 從 N=M=3 的 0.755 上升至 N=M=10 的 0.815。",
+      "insights": [
+        "在只有 API sampling、沒有 logits 的部署環境中，可透過多層輸入與輸出抽樣取得比單一 consistency score 更具診斷性的 uncertainty 訊號。實務上可將較高 EU 的問題優先送往 retrieval 或人工審查，將提示歧義交由 clarification 流程處理。",
+        "若需要 AU/EU 分解，不宜將每個 paraphrase 只生成一次（M=1）；論文的 matched-budget 實驗顯示 perturbation-only 配置在較大預算下可能顯著下降，而 inner averaging 與 bias correction 對穩定 EU 很重要。",
+        "embedding encoder 的絕對分數會有差異，但論文報告跨 Sentence-BERT、MPNet、BGE 的 per-example AU 排名高度一致；因此可依部署成本選擇 encoder，但仍應檢查 paraphrase semantic drift 與局部 perturbation 的有效性。"
+      ],
+      "limitations": "方法的 AU/EU 首先是 fixed-weight model 下的 perturbation-population quantity，與 Bayesian parameter uncertainty 的對應依賴 local linearity、local Gaussianity 與 semantic coverage 等條件。自動 paraphrase 可能產生語意漂移並放大 EU；sentence encoder 也帶有表徵盲點。Nested sampling 比單層方法昂貴，且實驗主要集中於短答案 QA 與受控單因素介入；long-form 結果仍是 pilot，並使用 LLM judge 進行 claim factuality 評估。",
+      "tags": [
+        "hallucination",
+        "faithfulness",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "black-box uncertainty quantification",
+        "aleatoric/epistemic uncertainty decomposition",
+        "semantic entropy",
+        "selective prediction and abstention",
+        "retrieval-augmented generation"
+      ],
+      "category": "Hallucination & Faithfulness"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.18504",
+      "title": "Agentic AI for Discovering Fault-Tolerant Quantum Circuits",
+      "abstract": "Scaling quantum computing toward practical quantum advantage is currently limited by the efficiency of circuits that operate on information encoded by quantum error-correcting codes. The full stack of quantum computing encompasses several tasks: preparation of logical code states, implementation of logical gates, logical routines on encoded qubits, etc. Yet, these circuits are largely designed by hand for individual cases, with some recent works incorporating machine learning for certain aspects. We formulate this problem as agentic evolutionary program synthesis, wherein a large language model, leveraging its pretraining knowledge and tool-use proficiency, and guided by a circuit verifier, evolves a program that defines a Clifford circuit for a wide range of curated tasks such as logical state preparation, logical gate design, and logical routines such as code-switching, code growth, etc. Our approach consistently finds fault-tolerant circuits for all of these tasks, each verified by an exhaustive check over faults.",
+      "authors": [
+        "Aritra Lahiri",
+        "Florian Marquardt"
+      ],
+      "categories": [
+        "quant-ph",
+        "cs.AI"
+      ],
+      "published": "2026-11-13T18:20:23+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.18504v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.18504",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "將量子計算擴展至實用的 quantum advantage，目前受到量子錯誤更正碼上運作之電路效率的限制。完整的量子計算堆疊包含邏輯碼態準備、邏輯閘實作，以及編碼量子位元上的邏輯例程等任務；然而，這些電路大多針對個別案例以人工設計，近期才有部分工作導入 machine learning。本文將問題形式化為 agentic evolutionary program synthesis：大型語言模型（LLM）利用預訓練知識與工具使用能力，在 circuit verifier 的引導下演化定義 Clifford circuit 的程式，處理邏輯狀態準備、邏輯閘設計、code-switching、code growth 等多種任務。作者表示，方法能穩定找到各類 fault-tolerant circuits，且每個電路都經由涵蓋故障事件的 exhaustive check 驗證。",
+      "problem_statement": "論文處理量子錯誤更正碼中 fault-tolerant circuit 的自動設計問題，涵蓋邏輯狀態準備、邏輯閘與更高階邏輯例程。既有方法多依賴人工設計；SAT 方法主要處理小型狀態準備，reinforcement learning 研究則多限於 distance-five 以下或尚未延伸至邏輯閘與複合例程，且一般 LLM 的 one-shot 電路生成尚未成功處理 fault tolerance。",
+      "proposed_solution": "作者提出 hybrid agentic FunSearch，將 LLM 作為程式變異算子，將 Python function 視為量子電路程式，並透過 verifier 反覆評分與回饋。LLM 不只提交候選程式，也能直接呼叫 verifier 與一般 Python 工具測試、修改及比較方案；演化搜尋則以多個 islands 保存候選程式、週期性遷移最佳解，並把驗證指標、packed circuit 與 scratchpad notes 回饋至後續提示。核心創新是把 agentic tool use、演化程式搜尋與 exhaustive fault verification 結合，並以 dynamic Clifford circuits、mid-circuit measurement 及 conditional Pauli feedforward 支援非 post-selection 的邏輯操作。",
+      "core_contributions": [
+        "提出 agentic FunSearch 框架，將具工具呼叫能力的 LLM、演化式程式搜尋與 circuit verifier 結合，用於自動發現 fault-tolerant Clifford circuits。",
+        "將搜尋範圍從 logical state preparation 擴展至 logical gate design，以及 code-switching、code growth 等 higher-level logical routines，並支援不同 QEC codes 與 qubit connectivity。",
+        "設計以 exhaustive fault enumeration、flag detector、residual reduced weight 與 decoder bin 為核心的驗證和排序機制，並展示多個電路在深度或 two-qubit gate 數上優於所列既有結果。"
+      ],
+      "methodology": "方法以 stabilizer tableau 表示 n-qubit stabilizer state，候選程式透過自訂 Python circuit API 建立 Clifford gates、Z-basis ancilla measurement，以及依測量結果 parity 條件執行的 X/Z gates。Prompt 指定 QEC code、[[n,k,d]] 參數、目標 stabilizers、資料與 ancilla 佈局、可用耦合與 gate set，邏輯閘則以 channel-state duality 轉為 logical Choi-state preparation。Verifier 先對所有測量分支檢查目標是否達成、資料是否與 ancilla disentangle，再枚舉 input、gate 與 measurement faults；對 distance d 的 code，檢查 fault order i≤t=⌊(d−1)/2⌋，並依 residual 的 reduced weight、detector pattern、後續 syndrome 與 decoder bin 判定。狀態準備採 post-selection，依序最小化 silent-cost、depth、herald 與 waste；邏輯閘及 code routines 則避免一般性丟棄，使用 flag detectors 與 syndrome correction，依序評估 silent-cost、undecodable-cost、forfeit-cost、depth。搜尋在多個 islands 上進行，每代由 LLM 產生、工具驗證並排名候選，最佳程式與 scratchpad notes 持續回饋；論文使用 GPT-6-luna 作為 base、GPT-6.1-sol 的 high 與 xhigh 作為 strong、elite tiers。",
+      "key_results": "論文報告的代表性結果如下；數值取自表 I、表 II 與正文，depth 與 2q 分別為電路深度及 two-qubit gate 數。\n\n| 任務／code | 方法或設定 | silent events | depth | 2q gates | 論文中的比較 |\n|---|---|---:|---:|---:|---|\n| logical state preparation, [[5,1,3]] | 本文，all-to-all | 0 | 8 | 12 | 相較 Ref. [13] depth 12、2q=12，本文更淺 |\n| logical state preparation, [[9,1,3]] | 本文，multi-size hex | 0 | 6 | 18 | native 設定 depth 6、2q=27；hex 版本較淺且 gate 較少 |\n| logical state preparation, [[25,1,5]] | 本文，zero-waste all-to-all | 0/0/–/– | 16 | 68 | herald=4.27、waste=0；展示 depth–waste trade-off |\n| logical state preparation, surface code d=3,5,7,9 | 本文，multi-size native | 各階皆為 0 | d=3 為 6；其餘為 7 | 論文表 I 報告 27（d=3）、51（d=5）、112（d=7）、196（d=9） | 單一程式搜尋涵蓋多個 distance，但程式會依 distance 分支 |\n| logical CNOT, [[5,1,3]] | 本文，2 ancilla、all-to-all | 0 | 16 | 29 | Ref. [51] CNOT3f：depth 84、2q=65；本文更淺且 gate 較少 |\n| logical CNOT, [[5,1,3]] | 本文，5 ancilla 版本 A | 0 | 9 | 31 | undecodable-cost=0 |\n| logical Hadamard, [[8,3,2]] | 本文，單一 H | 論文表列 0 | 9 | 11 | Ref. [15] depth 19、2q=13 |\n| logical Hadamard, [[8,3,2]] | 本文，三個 logical H | 論文表列 0 | 14 | 28 | Ref. [15] depth 18、2q=19 |\n| Steane→Reed–Muller code switch | 本文，all-to-all、2 ancilla | silent=0；最佳 elite 結果的 discard costs=0 | 26 | 論文摘錄未報告 | elite tier 從 depth 31 改進至 26；圖 3 顯示首代即無 silent events |\n\n對多種 state preparation、logical gates、code-switching 與 code growth 任務，作者宣稱均找到通過 exhaustive fault verification 的 fault-tolerant circuits；但完整任務集合的總成功率、搜尋成本與與所有 baseline 的統一統計，論文未報告。",
+      "insights": [
+        "對可驗證的科學與工程搜尋問題，讓 LLM 產生候選程式並由獨立 verifier 決定有效性，比依賴一次性生成更適合處理嚴格約束。",
+        "將中間驗證報告、失敗事件與可持續的 scratchpad notes 回饋給後續搜尋，可把失敗候選轉化為具體的設計修正訊號。",
+        "評估不應只使用單一效率指標；本文以 lexicographic score 同時處理 correctness、fault tolerance、depth、detector 代價與 two-qubit gate 數，適合延伸至多目標電路最佳化。"
+      ],
+      "limitations": "研究聚焦 dynamic Clifford circuits 與 stabilizer formalism，故不涵蓋一般 non-Clifford 電路。驗證採論文設定的 Pauli fault、measurement fault 與 flag fault-tolerance 模型，未等同於所有實體硬體雜訊。搜尋成本、各 tier 的呼叫量與整體成功率論文未提供完整統計；部分結果依賴 all-to-all 或特定佈局，泛化範圍仍需進一步驗證。",
+      "tags": [
+        "agent-evaluation",
+        "benchmark"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "agentic evolutionary program synthesis",
+        "fault-tolerant quantum computing",
+        "quantum circuit synthesis",
+        "stabilizer circuit verification",
+        "flag fault tolerance"
+      ],
+      "category": "Agent Evaluation"
+    }
+  }
+]
