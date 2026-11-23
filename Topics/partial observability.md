@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Agent Evaluation]` [[[2611.27865] SLICR - Strategy Logic-Guided Multi-Agent Reinforcement Learning|SLICR: Strategy Logic-Guided Multi-Agent Reinforce...]] (2026-11-20)
+
 - `[Agent Evaluation]` [[[2610.03598] When a Correct Reward Is Not Enough - Diagnosing and Guiding PPO in an Analytica...|When a Correct Reward Is Not Enough: Diagnosing an...]] (2026-10-02)
 
 ## 延伸閱讀

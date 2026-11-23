@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2611.27835] Auditable Financial Knowledge Graphs - Schema-Driven Construction and Intrinsic ...|Auditable Financial Knowledge Graphs: Schema-Drive...]] (2026-11-20)
+
 - `[Benchmark]` [[[2608.27391] CorporateBench - Large-Scale Q&A Benchmarking with Temporal Knowledge Bases|CorporateBench: Large-Scale Q&A Benchmarking with ...]] (2026-08-27)
 
 ## 延伸閱讀

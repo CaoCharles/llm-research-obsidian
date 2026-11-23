@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[RAG Evaluation]` [[[2611.27835] Auditable Financial Knowledge Graphs - Schema-Driven Construction and Intrinsic ...|Auditable Financial Knowledge Graphs: Schema-Drive...]] (2026-11-20)
+
 - `[RAG Evaluation]` [[[2610.32851] Reimagining Enterprise RAG for Multi-Agent Systems - A Knowledge Layer That Orga...|Reimagining Enterprise RAG for Multi-Agent Systems...]] (2026-10-23)
 
 ## 延伸閱讀

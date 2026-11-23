@@ -1,0 +1,543 @@
+[
+  {
+    "paper": {
+      "arxiv_id": "2611.27915",
+      "title": "StereoVLM: Binocular Vision-Language Models for Metric 3D Spatial Reasoning",
+      "abstract": "Vision-language models (VLMs) exhibit strong semantic understanding but remain limited in their ability to reason about metric 3D space in the physical world. Existing VLMs typically infer 3D scene structure from one or more images without known camera calibration or cross-view geometric constraints. This makes metric 3D inference inherently ambiguous and leaves it unclear whether their spatial predictions are grounded in visual evidence or driven primarily by semantic priors. In contrast, calibrated stereo provides explicit cross-view geometry that resolves this ambiguity and offers a more reliable foundation for metric 3D perception and geometric generalization. We investigate how VLMs can learn transferable 3D representations directly from calibrated binocular observations. To this end, we introduce StereoVLM, the first geometry-aware binocular VLM for metric 3D spatial reasoning. StereoVLM follows a hierarchical learning paradigm spanning from cross-view correspondence and disparity estimation to calibration-conditioned metric depth perception and semantic spatial reasoning. We further find that disparity supervision generalizes substantially better than direct binocular depth supervision on unseen environments. To evaluate these capabilities, we introduce Stereo3D-Bench, a comprehensive benchmark across three levels, from point-level geometry to object-level spatial reasoning. StereoVLM-8B achieves 95.17% depth accuracy ($δ_1$) and a 66.98 average object-level score on Stereo3D-Bench. Intervention results further indicate that the model's performance on Stereo3D-Bench benefits from valid cross-view geometry and cannot be explained solely by additional visual tokens or semantic priors. Hierarchical geometric supervision also yields average gains of 3.54 points across five spatial benchmarks and 4.3 percentage points in RoboCasa manipulation success.",
+      "authors": [
+        "Chi Yan",
+        "Guoyang Zhao",
+        "Wentao Yuan",
+        "Yixiao Ge",
+        "Yanning Zhou",
+        "Dan Xu"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-11-20T17:52:02+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27915v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27915",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Vision-language models（VLMs）具備強大的語意理解能力，但在物理世界的 metric 3D 空間推理上仍有限。現有 VLM 通常從單張或多張影像推斷 3D 結構，卻缺乏已知 camera calibration 與跨視角幾何約束，使 metric 3D 推理具有內在歧義，也難以判斷空間預測究竟源自視覺證據，還是主要依賴語意先驗。Calibrated stereo 透過明確的跨視角幾何解決尺度歧義，為 metric 3D perception 與幾何泛化提供更可靠基礎。作者提出 StereoVLM，首個具幾何感知的 binocular VLM，採用階層式學習，從跨視角 correspondence 與 disparity estimation，延伸至 calibration-conditioned metric depth perception 及語意空間推理。研究發現，disparity supervision 在未見環境上的泛化明顯優於直接 binocular depth supervision。作者並提出 Stereo3D-Bench，涵蓋 point-level geometry、object-level geometry 與 object-level spatial reasoning。StereoVLM-8B 達到 95.17% depth accuracy（δ1）及 66.98 的 object-level 平均分數；干預實驗顯示其效能受有效跨視角幾何支持，不能僅由額外 visual tokens 或 semantic priors 解釋。階層式幾何 supervision 亦使五個 spatial benchmarks 平均提升 3.54 分，並使 RoboCasa manipulation success 提升 4.3 個百分點。",
+      "problem_statement": "現有 VLM 雖能理解影像語意，卻難以從視覺觀察可靠地推理 metric 3D 空間。單目影像缺乏絕對尺度，多影像方法通常沒有已知 calibration 或明確 cross-view geometric constraints，模型可能依賴場景與類別先驗，而非真正使用幾何證據。即使提供 binocular images，也不保證模型能學到可泛化的 correspondence、disparity、metric depth 與高階空間推理關係。",
+      "proposed_solution": "作者提出 StereoVLM，將 rectified、calibrated stereo pair 與文字問題共同輸入以進行 autoregressive answer generation。模型以 Qwen3-VL-Instruct 2B 或 8B 為初始化，透過階層式 instruction supervision，依序在概念上連結 pixel-level correspondence、disparity、calibration-conditioned metric depth、語言指涉物件幾何與 task-target 3D grounding。disparity 被設為跨環境泛化較佳的中間幾何表示，並透過 Z=fxB/d 轉換為 metric depth。作者同時建立 Stereo3D-Bench，並以 right-view duplication、zero、shuffle 與 single-left 等控制，檢驗模型是否真正依賴有效 binocular geometry。",
+      "core_contributions": [
+        "提出 StereoVLM，將 correspondence、disparity、calibration-conditioned depth 與語言導向 3D reasoning 置於同一個 binocular VLM 的階層式 supervision 框架中。",
+        "建立 Stereo3D-Bench，涵蓋 point-level geometry、object-level geometry 與 object-level spatial reasoning，並納入 OOD split 與受控 right-view interventions。",
+        "實驗顯示 disparity supervision 比 direct binocular depth supervision 更能泛化至未見環境；階層式幾何 supervision 亦改善外部 spatial reasoning 與 RoboCasa manipulation。"
+      ],
+      "methodology": "模型接受有順序的左、右 rectified images、文字 query，以及 metric 任務所需的 horizontal focal length fx 與 stereo baseline B；共享 vision encoder、projector 與 autoregressive decoder，採 full-parameter instruction tuning，loss 僅施加於 answer tokens。訓練混合比例為 15% point-level stereo、10% object-level stereo，75% general monocular、video、grounding、spatial reasoning 與 robotics instructions，影像解析度為 800×320，訓練 3,000 steps、global batch size 64。Point-level 任務包含右圖 correspondence、horizontal disparity 與左相機 optical-axis depth；object-level 任務則加入語言指涉物件的 correspondence、disparity、depth、oriented 3D box 與 manipulation task-target grounding。資料來自 DROID、Xperience-10M、FSD 與 RoboCasa；真實資料使用原生 depth，合成資料使用 ground truth，並以 FoundationStereo 產生訓練數值 supervision。Stereo3D-Bench 共八項任務，包含 2,017 個 geometry pairs、1,556 個 semantic pairs 與 94,546 個 QA instances，另設獨立 in-house OOD split。評估指標包含 correspondence/disparity MAE、depth MAE、RMSE、AbsRel、δ1、object correspondence mIoU、disparity Acc@2px、3D-box mIoU、Target Joint@0.25，以及外部 spatial benchmarks 與 RoboCasa manipulation success。",
+      "key_results": "主要結果如下：\n\n| 實驗 | 模型／設定 | 結果 |\n|---|---|---:|\n| Stereo3D-Bench point-level depth δ1 | StereoVLM-8B | 95.17% |\n| Stereo3D-Bench point-level correspondence MAE | StereoVLM-8B | 3.80 px |\n| Stereo3D-Bench point-level disparity MAE | StereoVLM-8B | 3.76 px |\n| Stereo3D-Bench object-level平均 | StereoVLM-8B | 66.98 |\n| Stereo3D-Bench oriented 3D-box mIoU | StereoVLM-8B | 37.70% |\n| Stereo3D-Bench Target Joint@0.25 | StereoVLM-8B | 51.28% |\n| OOD depth δ1 | binocular disparity supervision | 74.92% |\n| OOD depth δ1 | direct binocular depth supervision | 45.89% |\n| OOD depth δ1 | monocular depth supervision | 51.00% |\n| 幾何 supervision 對 object disparity Acc@2px 的提升 | StereoVLM-2B，w/ vs. w/o geometry | +21.59 個百分點 |\n| 幾何 supervision 對 3D-box mIoU 的提升 | StereoVLM-2B，w/ vs. w/o geometry | +9.82 個百分點 |\n| 正確 stereo 相對 single-left 的 depth δ1 | StereoVLM-2B | 94.51% vs. 80.82% |\n| 正確 stereo 相對 single-left 的 object-level平均 | StereoVLM-2B | 64.43 vs. 40.26 |\n| 五個 spatial benchmarks 平均 | 加入 stereo tuning | 51.48，較無 stereo tuning 高 3.54 分 |\n| RoboCasa manipulation success | StereoVLM-2B，相對 general tuning | 42.4%，高 4.3 個百分點 |\n| 直接 depth δ1 | StereoVLM-8B | 95.17% |\n| disparity-derived depth δ1 | StereoVLM-8B | 95.15% |\n\n上述數字為論文報告的作者實驗結果；論文未報告更廣泛真實機器人平台上的結果。",
+      "insights": [
+        "若應用需要 metric 3D 泛化，可優先把 disparity 作為跨視角幾何的中間 supervision，再透過 camera calibration 轉換為 depth，而不只直接監督深度數值。",
+        "評估 binocular VLM 時，不能只比較正確 stereo 輸入的準確率；應加入 single-left、zero-right、duplicated-left 與 shuffled-right 等干預，以區分真正的跨視角依賴與額外影像槽位或語意先驗。",
+        "將低階 correspondence/disparity supervision 與物件級 3D grounding、任務目標定位共同訓練，可能比只加入 depth supervision 更能提升下游 embodied control；但實務部署仍需驗證 calibration、同步與真實環境條件。"
+      ],
+      "limitations": "論文指出研究主要受限於 controlled benchmarks 與 simulated kitchen tasks，且依賴 calibrated、synchronized cameras。作者尚未解決 simulation-to-real gap，也未涵蓋多樣化 robot platforms。對遮擋、反光、低紋理、不同步與 calibration 誤差等挑戰條件，本文提供的完整量化結果有限；未來工作將改善真實環境 robustness 與平台多樣性。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "binocular stereo vision",
+        "metric depth estimation",
+        "3D spatial reasoning",
+        "vision-language-action models",
+        "embodied manipulation"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27810",
+      "title": "SLP-Bench: Evaluating and Improving Acoustic Claims of Reasoning Audio Language Models on Clinical Speech",
+      "abstract": "Audio language models (ALMs) can answer clinical questions from speech, outperforming baselines built on handcrafted acoustic features. Reasoning ALMs generate a chain of thought that refers to properties of the speaker's voice before predicting. Each statement the model makes about the voice needs to be checked against clinicians' perceptual ratings of the same recording. On clinical speech, existing evaluations score only the final answer. We introduce Speech Language Pathologist Bench (SLP-Bench), a benchmark grading each acoustic claim in the chain of thought against clinicians' perceptual ratings of the same recording. It covers five clinician-rated datasets and 25 perceptual dimensions, and assesses claims for factuality, stability under resampling, and consistency across reworded and different questions. Across ten open-weight reasoning ALMs evaluated zero-shot, claim balanced accuracy ranges from 0.52 to 0.58, claims change under resampling and rewording, and the most consistent models are not the most factual. Fine-tuning a 7B ALM with GRPO on a reward for claims that agree with clinicians raises its claim balanced accuracy from 0.54 to 0.60 and its mean kappa from 0.39 to 0.61, while preserving answer accuracy on per-dimension questions. SLP-Bench is available upon request, subject to approval by the providers of each dataset.",
+      "authors": [
+        "Côme Hosxe",
+        "Rachid Riad",
+        "Quentin Spinat"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.LG",
+        "cs.SD"
+      ],
+      "published": "2026-11-20T16:36:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27810v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27810",
+      "score": 15
+    },
+    "analysis": {
+      "abstract_zh": "Audio language models（ALMs）能從語音回答臨床問題，表現優於以手工聲學特徵建立的 baseline。Reasoning ALMs 會先產生 chain of thought，提及說話者聲音的性質，再作出預測；其中每項聲音敘述都應與臨床醫師對同一錄音的知覺評分核對。然而，臨床語音現有評測通常只評分最終答案。本文提出 Speech Language Pathologist Bench（SLP-Bench），將 chain of thought 中的每項聲學 claim 與臨床評分比對，涵蓋五個臨床評分資料集與25個知覺維度，並評估 factuality、重取樣穩定性，以及改寫問題與不同問題下的一致性。十個 open-weight reasoning ALM 的 claim balanced accuracy 為0.52至0.58，claims 會因重取樣與改寫而改變，且最一致的模型不一定最具事實性。以臨床一致性 claim reward 進行 GRPO fine-tuning 後，7B ALM 的 claim balanced accuracy 由0.54提升至0.60，平均 kappa 由0.39提升至0.61，同時維持逐維度問題的答案準確率。",
+      "problem_statement": "現有 audio reasoning benchmark 主要評估最終臨床答案，無法確認模型 chain of thought 中對聲音的描述是否符合臨床醫師對同一錄音的知覺判斷，也未充分評估這些描述在不同抽樣、問題改寫及目標問題下是否穩定一致。因此，模型即使答對診斷，也可能產生錯誤或不具可重現性的聲學解釋，難以供臨床人員核查。",
+      "proposed_solution": "作者提出 SLP-Bench，將模型輸入錄音與 prompt 後產生的 reasoning chain，交由不接觸錄音、prompt 或標籤的 LLM claim extractor，抽取每個聲學維度的存在或缺失 claim，再與同一錄音的 clinician rating gold standard 比對。框架分別衡量 claim factuality、不同 random seed 下的 stability、問題改寫與跨問題 consistency，並另以 clinical balanced accuracy 評估最終答案。作者亦以 claim factuality reward 搭配 GRPO 訓練7B ALM，驗證可否改善可核查性而不犧牲臨床答案表現。",
+      "core_contributions": [
+        "提出 SLP-Bench，將 reasoning ALM 的每項聲學 claim 與同一錄音的 clinician perceptual rating 對齊，並同時評估 factuality、stability 與 consistency。",
+        "建立跨五個臨床語音資料集、25個知覺維度及3,452個 prompts 的評測設定，並對十個 open-weight reasoning ALM 進行 zero-shot 比較。",
+        "提出以 clinician-agreement claim reward 進行 GRPO 訓練；實驗顯示7B ALM 的 claim factuality 與一致性提升，且逐維度問題的答案準確率獲保留。"
+      ],
+      "methodology": "SLP-Bench 使用五個具臨床知覺評分與說話者臨床狀態的資料集：SAP、HeyJay、NeuroVoz、PVQD 與 Bridge2AI；測試集共794段 clips、260位 patients、3,452個 prompts，涵蓋25個聲學知覺維度。錄音裁切至30秒並重取樣為16 kHz。每個輸入由 prompt 與 audio 組成，ALM 產生 reasoning chain 及 Yes/No answer。Qwen3-30B-A3B-Instruct-2507 claim extractor 僅讀取 chain，將描述映射至維度，否定句視為 absence，hedged 或一般描述視為 presence；抽取器在合成句上的 accuracy 為0.88，在63條測試 chain 上 precision、recall、F1 分別為0.78、0.61、0.69。對有臨床評分的 claim，以 balanced accuracy（BA）衡量 factuality；以 Cohen’s kappa 衡量相同輸入不同 seed 的 stability、prompt paraphrase consistency，以及不同目標問題的 cross-question consistency。答案則以 clinical BA 評估。模型實驗包含十個 zero-shot open-weight reasoning ALM，並以 Qwen2.5-Omni 7B 經 LoRA supervised fine-tuning 後進行 GRPO；reward 可只獎勵答案、只獎勵 claim，或同時獎勵兩者。claim reward 依據 claim 與臨床標籤的一致性及資料集維度 prevalence 計算，另加 format reward。",
+      "key_results": "主要結果如下：\n\n| 評估或設定 | 論文報告結果 |\n|---|---:|\n| 十個 zero-shot reasoning ALM 的 claim balanced accuracy | 0.52–0.58 |\n| SFT 模型 claim balanced accuracy | 0.54 |\n| GRPO claims 模型 claim balanced accuracy | 0.60 |\n| SFT 模型平均 Cohen’s κ | 0.39 |\n| GRPO claims 模型平均 Cohen’s κ | 0.61 |\n| Zero-shot 模型平均一致性 κ | 最高不超過0.61 |\n| Claim extractor：98個合成句 accuracy | 0.88 |\n| Claim extractor：63條測試 chain precision / recall / F1 | 0.78 / 0.61 / 0.69 |\n| GRPO answer-only 模型在 endpoint questions 的「yes」比例 | 0.1% |\n| GRPO answer-only 模型 endpoint clinical BA | 0.50 |\n| GRPO answer-only 模型 simple questions clinical BA | 由0.61降至0.55 |\n\n作者指出，zero-shot 模型中 factuality 與 consistency 不一致：Step-Audio-R1、R1.1 與 Qwen3-Omni 較具 factuality，但一致性僅中等；MiniCPM-o 4.5 與 MOSS-Audio-8B-Thinking 較一致，卻較不正確。GRPO claims 模型在 factuality 與 consistency 兩方面均超越所有 zero-shot ALM，且在 simple questions 保持 SFT 的 clinical BA。articulation 最具 factuality；respiratory dimensions 即使加入 claim reward 仍接近 chance。",
+      "insights": [
+        "在臨床語音應用中，不應只看最終診斷或分類 BA；應逐項核查模型聲稱的聲學特徵，避免把不可驗證的 chain of thought 當作臨床解釋。",
+        "模型在不同 seed、問題改寫及跨問題情境下的自洽，不等同於事實正確；因此模型評測應同時報告 factuality 與 Cohen’s kappa 等穩定性指標。",
+        "將可驗證的聲學 claim 納入 reward，比單獨獎勵最終答案更能避免投機策略；論文中 answer-only GRPO 幾乎總回答 No，而 claim reward 未出現相同的答案崩潰。"
+      ],
+      "limitations": "論文指出，claim extractor 仍有未達完美的 precision、recall 與 F1，且資料集取得須經提供者批准。臨床評分的 gold set 尚未由作者另建，GRPO 各 reward 的訓練預算也不完全相同；reward 權重及 factual claims 是否能進一步改善臨床 endpoint prediction，仍待研究。呼吸相關維度在所有模型中接近 chance。",
+      "tags": [
+        "benchmark",
+        "faithfulness",
+        "hallucination"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "audio language models",
+        "臨床語音評估",
+        "chain-of-thought faithfulness",
+        "perceptual voice assessment",
+        "GRPO reward modeling"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27839",
+      "title": "Beyond Self-Critique: Epistemic Convergence Control for Multi-Agent Research Verification",
+      "abstract": "Multi-agent systems for scientific claim verification increasingly rely on role-structured LLM debate to pressure-test hypotheses. However, when debating agents are instantiated from the same underlying base model, they share identical latent representations, making self-critique bias structurally inevitable. Static fixed-iteration protocols compound this by either halting prematurely before evidence stabilizes or wasting inference compute after convergence. We present \\sys{}, a multi-agent research verification framework that addresses both failure modes. First, we introduce an asymmetric role architecture comprising an Advocate, Skeptic, and Arbitrator with opposing epistemic directives, producing significantly lower role-embedding similarity (0.852 vs.\\ 0.918 for symmetric Multi-Agent Debate [MAD], $p = 5.82 \\times 10^{-8}$) and surfacing more contested claims (22.0\\% vs.\\ 15.4\\%). Second, we propose the Belief-Delta ($\\DB$) convergence criterion, an evidence-grounded stopping rule that eliminates over-iteration (0.0\\% vs.\\ 62.5\\% for Fixed-$3$) while cutting LLM calls by 2.4$\\times$. Third, each supported claim is anchored to a verbatim literature snippet audited by an independent NLI classifier, achieving a 21.7\\% hallucination rate (comparable to 25.9\\% for a Self-Refine critic, $p = 0.61$) while establishing auditable evidence grounding. Across 200 runs on 40 research hypotheses evaluated with DeepSeek-R1-32B, \\sys{} balances compute efficiency with rigorous epistemic verification.",
+      "authors": [
+        "Chrisantus Eze"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-11-20T16:56:17+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27839v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27839",
+      "score": 14
+    },
+    "analysis": {
+      "abstract_zh": "科學主張驗證的 multi-agent systems 越來越依賴具角色分工的 LLM debate 來壓力測試假說。然而，當辯論 agents 使用相同的 base model 時，會共享相似的 latent representations，使 self-critique bias 在結構上難以避免；固定迭代次數也可能在證據尚未穩定前過早停止，或在收斂後浪費 inference compute。本文提出 VerifyAgent，結合 Advocate、Skeptic 與 Arbitrator 的非對稱角色架構、Belief-Delta（ΔB）證據導向停止準則，以及由獨立 NLI classifier 審核的逐字文獻片段。相較於對稱 MAD，其 role-embedding similarity 為 0.852 對 0.918，並發現較多 contested claims。ΔB 消除 over-iteration 並使 LLM calls 減少 2.4 倍。每項 supported claim 均連結至文獻片段；在 40 個研究假說、200 次執行中，hallucination rate 為 21.7%，與 Self-Refine 的 25.9% 沒有顯著差異。",
+      "problem_statement": "論文要解決兩個問題：第一，相同 base LLM 執行的對稱 multi-agent debate 可能共享相同表示空間，導致角色間自我確認、互相附和或表面分歧；第二，固定迭代協議無法配合證據狀態變化，可能過早停止或在信念已穩定後繼續消耗推理資源。既有 self-critique 也缺乏可靠的外部 ground-truth 與可稽核證據鏈。",
+      "proposed_solution": "作者提出 VerifyAgent，一個以文獻為基礎的 multi-agent research verification pipeline。其核心是非對稱的 Advocate/Skeptic/Arbitrator 角色：Advocate 尋找支持證據，Skeptic 主動尋找反例與方法限制，Arbitrator 整合雙方意見並更新 belief state。系統以 role-embedding similarity 監測角色塌縮，並在超過門檻時進行 contrastive re-run。另一項創新是 Belief-Delta（ΔB）停止準則，根據連續 structured belief states 的狀態或信心變化決定是否繼續迭代；收斂後，所有 supported claims 必須附帶逐字 literature snippet，並由獨立 NLI 與 embedding 檢查。",
+      "core_contributions": [
+        "提出 Advocate、Skeptic、Arbitrator 的非對稱角色架構，並以 embedding similarity 作為 role-collapse 的操作性監測指標；相較對稱 MAD，similarity 由 0.918 降至 0.852。",
+        "提出以 structured belief state 變化為基礎的 Belief-Delta（ΔB）收斂準則；在實驗中 over-iteration 為 0.0%，相較 Fixed-Step N=3 的 62.5%，平均 LLM calls 也降低約 2.4 倍。",
+        "建立 source-grounded evidence auditing 流程，要求 supported claim 綁定 120 字逐字文獻片段，並由獨立 NLI cross-encoder 與 embedding similarity 進行審核。"
+      ],
+      "methodology": "系統以 LangGraph 實作，包含 Retrieval Agent、Belief Builder、Asymmetric Pressure Tester、Reflexion Node 與 NLI audit store。Retrieval Agent 針對假說動態改寫查詢，從 Semantic Scholar 與 arXiv 取得文獻；結果以 embedding cosine similarity 0.92 去重，按 citation count 排序。Belief Builder 將資料整理為〈claim, status, evidence〉，status 為 supported、contested、refuted 或 unknown；每個 evidence link 包含論文識別碼、atomic claim、120 字逐字 snippet 與 stance。Advocate 與 Skeptic 在隔離 inference pass 中獨立產生主張，若兩者 centroid embedding 的 cosine similarity 超過 0.85，便以對方主張作為 negative constraints 重新提示。Reflexion Node 產生針對 contested 或 unknown claims 的問題並更新 belief state。ΔB 定義為連續狀態中 matched entries 的修改數，除以兩狀態大小較大者；若 status 改變或 confidence 變化超過 0.10，視為修改，當 ΔB≥0.10 繼續，否則停止。最後以 cross-encoder/nli-deberta-v3-base 計算 entailment，並以 all-MiniLM-L6-v2 檢查 topical similarity，低於 0.50 時標記。實驗使用 DeepSeek-R1-32B、temperature 0，在 40 個假說上比較 Full System、對稱 MAD、Self-Refine、Fixed-Step N=1 與 N=3。",
+      "key_results": "| 評估面向 | VerifyAgent / Full System | 對照方法 | 結果與統計 |\n|---|---:|---:|---|\n| Role similarity | 0.852±0.009 | MAD：0.918±0.005 | Welch’s t-test p=5.82×10⁻⁸；較低表示角色更分歧 |\n| Contested claim fraction | 22.0% | MAD：15.4%；Self-Refine：20.1% | VerifyAgent 發現較多 contested claims |\n| Claim diversity | 0.539 | MAD：0.467 | Full System 較高 |\n| Premature stopping | 77.5% | Fixed-Step N=1：87.5%；N=3：85.0% | 論文定義為停止時仍有超過 30% claims unresolved |\n| Over-iteration | 0.0% | Fixed-Step N=1：0.0%；N=3：62.5% | ΔB 消除實驗中的 over-iteration |\n| 平均 LLM calls | 8.28±0.31 | N=1：8.00；N=3：19.52±0.48 | 相較 N=3 約減少 2.4 倍 |\n| 平均 iterations | 1.05±0.05 | N=1：1.00；N=3：2.92±0.08 | 36/40 次在第一輪後 ΔB=0 |\n| Entailment | 0.338±0.03 | Self-Refine：0.340±0.04 | p=0.96，無顯著差異 |\n| Hallucination rate | 21.7%±5.4% | Self-Refine：25.9%±6.3% | p=0.613，差異不顯著 |\n| Empty snippet rate | 2.6% | Self-Refine：0.0% | 部分驗證重試耗盡 context limit |\n| Belief coverage | 12.5%–18.8% | 所有配置 | 論文未報告更細的配置間數值比較 |",
+      "insights": [
+        "若多個 agents 使用同一 base model，僅增加角色名稱未必足夠；可採用互斥 epistemic directives、隔離推理上下文與角色重疊監測，作為降低表面共識的工程控制。",
+        "停止條件應依據可觀測的 belief artifact 變化，而非 agent 自報信心或固定輪數；但部署時仍需特別處理新增、刪除與改寫主張，因本文的 ΔB matching rule 可能低估這些變化。",
+        "RAG 驗證流程可要求每個肯定性主張附帶可追溯的逐字證據，並將 NLI 分數與 topical similarity 作為審計訊號；不過本文結果顯示，這種結構化證據鏈尚未帶來統計顯著的 hallucination 降低。"
+      ],
+      "limitations": "實驗只使用本地 DeepSeek-R1-32B，未比較 frontier proprietary models、heterogeneous model panels 或其他 adaptive stopping 方法。資料集僅含 40 個假說，且缺少 crowd-sourced ground-truth adjudication，因此無法提供完整 end-to-end precision-recall。NLI 模型以一般領域資料訓練，可能對科學 paraphrase 給出保守分數；此外，ΔB 對新增、刪除或改寫主張可能低估狀態變化。",
+      "tags": [
+        "rag-evaluation",
+        "faithfulness",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "multi-agent debate",
+        "adaptive stopping criteria",
+        "literature-grounded verification",
+        "evidence attribution",
+        "NLI-based factuality auditing"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27899",
+      "title": "The Dual-Tier Sentiment Framework: Scalable Multimodal UX Attribution in Web Search",
+      "abstract": "Sustaining user experience (UX) quality in large-scale web search requires scalable evaluation. Traditional surveys are slow and bottleneck rapid A/B testing, while automated metrics often lack the granularity to diagnose visual-spatial UX anomalies. To address this, we introduce the Dual-Tier Sentiment Framework, a novel industrial architecture for automated UX attribution. Tier 1 (Macro System) acts as a scalable user sentiment regression detector, utilizing a fine-tuned encoder-decoder LLM (based on Gemini XS) on telemetry features. Through multi-task regularization and contextual feature engineering, this tier achieves a +9.8% PR-AUC gain on over 500,000 held-out records, matching baseline recall on all validated regressions with $\\sim$20% relative precision gain among the 12 held-out experiments. In production, it reduces measurement latency from weeks to hours and cuts survey overhead by over 40%. Tier 2 (Micro System) provides granular diagnostics by employing a Multimodal LLM (Gemini 3.0 Pro) to natively assess visual renderings and spatial layout of web result blocks, quantifying \"User Toil\" as the estimated effort required to reach a satisfactory result. Enhanced by RL-based automated prompt optimization and an AI judge for win/loss patterns, the MLLM yields a $>$6.5% F1 score improvement, offering deep insights into content quality and layout friction. Ultimately, this framework enables scalable, accurate, and diagnostic UX attribution, processing O(100k) live experiment queries daily.",
+      "authors": [
+        "Yi Ding",
+        "Gaurav Kumar",
+        "Rui Min",
+        "Isabella Ye",
+        "Bhavika Goyal",
+        "Emilio Antunez",
+        "Huihui Chen",
+        "Ke Xu",
+        "Xiaowei Sun",
+        "Xin Xu",
+        "Huijie Feng",
+        "Pradyumna Narayana",
+        "Golnaz Farhadi"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-11-20T17:38:26+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27899v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27899",
+      "score": 12
+    },
+    "analysis": {
+      "abstract_zh": "大規模 Web Search 要維持使用者體驗（UX）品質，需要可擴展的評估方法。傳統問卷耗時且限制快速 A/B 測試；自動化指標則通常缺乏診斷視覺與空間 UX 異常的細緻度。本文提出 Dual-Tier Sentiment Framework，一種自動化 UX attribution 架構。Tier 1（Macro System）以基於 Gemini XS 的 fine-tuned encoder-decoder LLM 處理 telemetry features，作為可擴展的使用者情緒 regression detector；在超過 500,000 筆留出資料上，PR-AUC 提升 9.8%，並在 12 個留出實驗中維持 baseline recall、相對 precision 提升約 20%。Tier 2（Micro System）使用 Gemini 3.0 Pro 的 Multimodal LLM 評估網頁結果區塊的視覺呈現與空間布局，以 User Toil 量化抵達滿意結果所需的估計努力。結合 RL-based prompt optimization 與 AI judge 後，F1 提升超過 6.5%。框架每日處理約 O(100k) 個 live experiment queries，將測量延遲由數週縮短至數小時，並降低問卷負擔超過 40%。",
+      "problem_statement": "論文聚焦於大規模 Web Search A/B 實驗中的 UX attribution。人工問卷可反映主觀滿意度，但速度慢、具評分者雜訊與回應偏差，無法支援高頻實驗。點擊等 telemetry 能提供整體監控，卻難以解釋視覺布局、結果區塊與瀏覽流程造成的摩擦；傳統 DOM 啟發式指標也無法辨識語意與視覺上的細微差異。因此，問題是如何同時取得可擴展的全頁 regression detection 與可診斷的多模態、細粒度 UX 評估。",
+      "proposed_solution": "作者提出平行運作的 Dual-Tier Sentiment Framework，並以雙重 launch gate 作為決策規則。Tier 1 Macro System 使用 survey-calibrated、dual-head 的 Gemini XS encoder-decoder LLM，從 lexical context、quantitative metadata 與 aggregate user interactions 預測全頁 sentiment regression；decoder 的 CoT distillation 只在訓練時提供 regularization。Tier 2 Micro System 使用 Gemini 3.0 Pro 評估 rendered SRP、query intent 與 landing-page context，計算結果區塊及整頁的 User Toil。其創新包括以 AI-as-a-Judge 協助 SxS 標註與錯誤分析，以及以 RL Mentor-Student 框架自動最佳化 prompt。只有 Tier 1 無全頁退化且 Tier 2 顯示細粒度改善時，實驗才通過。",
+      "core_contributions": [
+        "提出 Dual-Tier Sentiment Framework，以 Macro System 的全頁 sentiment safeguard 與 Micro System 的視覺 UX diagnostics 共同構成嚴格的雙條件 launch gate，支援約 O(100k) queries/day。",
+        "提出基於 Gemini XS 的 dual-head encoder-decoder Macro System，結合 telemetry feature engineering、多任務學習與 CoT distillation，在留出資料上相對 baseline 提升 9.8% PR-AUC，並降低測量延遲與問卷負擔。",
+        "建立以 Gemini 3.0 Pro、AI-as-a-Judge、SxS human annotation 與 RL Mentor-Student prompt optimization 為核心的 Micro System，透過 pixel bounding boxes、query intent 與 landing-page context 評估 User Toil。"
+      ],
+      "methodology": "Tier 1 以 11 個 A/B 實驗資料訓練，並在模型 checkpoint freeze 後的 12 個未見實驗、超過 500,000 筆 control/treatment records 上測試。模型由 encoder 分類 Regression/No Regression，decoder 生成由 teacher model 蒸餾的 CoT rationale；輸入包括 query、廣告標題與 organic snippets（TEXT）、addensity、commercial load、match types 和 UI layout configuration（QF），以及 click-through rate、post-click abandonment 等 aggregate user signals（UF）。主要指標為 PR-AUC，並在操作 gating threshold 下以 experiment-level precision/recall 評估。Tier 2 先從 live traffic 取樣 SRP、標註各 result block 的 pixel bounding boxes，再加入 rendered visual context、Refined Query Intent 與 landing-page summary。MLLM 對每個區塊評估 intent alignment、semantic relevance 與 visual clarity，輸出四級 ordinal satisfaction 及 rationale。User Toil 將首次 Very Satisfied 結果前各區塊的 pre-click scanning effort 與 post-click friction penalty 加總；數值權重由歷史 timing distributions 校準，屬 ordinal penalty 而非實際秒數。人類雙重標註、專家 adjudication、AI Judge 的 SxS loss analysis 與獨立 First-Result survey 用於對齊和驗證。RL Mentor 逐 token 產生 prompt，凍結 Student，透過含 KL regularization 的 reward 在離線資料上最佳化，最後以 deterministic greedy decoding 部署。",
+      "key_results": "| 評估面向 | Baseline／設定 | 作者報告結果 |\n|---|---|---|\n| Tier 1 PR-AUC ablation | 僅 TEXT | 參考基線；論文未報告絕對 PR-AUC |\n| Tier 1 PR-AUC ablation | TEXT + decoder CoT + teacher CoT | 相對 baseline 提升 2.0% |\n| Tier 1 PR-AUC ablation | TEXT + QF | 相對 baseline 提升 5.1% |\n| Tier 1 PR-AUC ablation | TEXT + QF + UF | 相對 baseline 提升 9.8% |\n| Tier 1 留出實驗 | 12 個未見實驗、>500,000 records | 4 個已驗證 regression 均未漏檢；baseline precision 4/6=66.7%，最終系統 4/5=80%，相對提升約 20% |\n| Tier 1 生產影響 | 既有問卷流程 | 測量延遲由數週降至數小時；survey overhead 降低超過 40% |\n| Tier 2 空間錯誤修正 | 注入 pixel-coordinate features | 對 human ground truth 的 F1 立即提升 5% |\n| Tier 2 prompt optimization | RL 相對人工／既有對齊結果 | global F1 進一步提升超過 1.5%；摘要總結為 F1 提升超過 6.5%，論文未提供對應的絕對 F1 |\n| Tier 2 外部驗證 | 約 O(1,000) 筆 denoised real-user survey responses | 保持 RL prompt 的 F1 提升；論文未報告絕對 F1、信賴區間或完整 baseline 數值 |\n| 生產規模 | live experiment traffic | 每日處理 O(100k) queries；Tier 2 採非同步 batch，完整 cohort 由數天縮短至數小時 |",
+      "insights": [
+        "若產品評估同時需要高召回的整體護欄與可操作的根因診斷，可將低成本 telemetry 模型作為第一層篩選，再對必要樣本啟用高成本多模態分析。這是基於本文架構的實務建議。",
+        "對主觀 UX 評估，應明確分離模型效能驗證與標註品質改善：本文以獨立人類標註、AI Judge 的錯誤分群及外部 real-user survey 進行對齊，顯示 prompt 優化不能只依賴單一自動評分來源。",
+        "User Toil 適合被視為經校準的 ordinal decision metric，而不是直接測得的秒數；實務部署時應同步檢查 penalty weighting、query intent 與頁面布局變化造成的分布漂移。"
+      ],
+      "limitations": "Tier 2 的 rendering 與 MLLM inference 成本高，目前只能以非同步 batch 支援 A/B launch gating。實驗主要涵蓋美國 mobile traffic，尚未完整驗證多欄 desktop layout 與非美國地區。survey denoising 仍可能受 filtering criteria 影響；目前亦主要評估 static rendering，互動式 carousel、dynamic filter 與 video preview 的多狀態 UX 尚待研究。",
+      "tags": [
+        "llm-as-judge",
+        "benchmark",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "多模態 UI 評估",
+        "Web Search A/B Testing",
+        "User Experience Attribution",
+        "Prompt Optimization",
+        "Human-AI 評估對齊"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27860",
+      "title": "Who Grades the Agent? Privilege Separation for Coding-Agent Benchmarks",
+      "abstract": "Benchmarks for AI-based coding agents are a staple of the current AI landscape, because they are the leading way to measure the performance of LLMs. Their scores guide business and research decisions. Evaluating coding agents is challenging, since they are able to manipulate their evaluation infrastructure to artificially achieve better scores. Grading an agent's solution often requires running its code, which can then manipulate the evaluation process. BenchJack, an automated benchmark auditor, recently reached near-perfect scores on nine of ten popular agent benchmarks without actually solving their tasks. Agents already do this unprompted, as OpenAI's July 2026 Hugging Face incident showed.   Building on secure systems design, we introduce SplitBench, a privilege separation framework for evaluating coding agents and the first in the scientific literature to separate running a task's tests from judging their results. Even an agent whose code takes over the entire test environment cannot forge a pass, because a trusted grader holds the expected answers. We show that real-world benchmarks (e.g., Terminal-Bench, DeepSWE) can be ported to the SplitBench framework with minimal effort and high fidelity: 180 of 202 tasks convert, and SplitBench agrees with the native graders on 98.7% of agent attempts. We attack the converted tasks in the worst case, where adversarial agents can read all the grading code but not the expected answers. SplitBench blocked 75% of their attempts; the rest mostly reveal weaknesses in the original tasks' tests rather than flaws in SplitBench.",
+      "authors": [
+        "Nathan Nour Houlamy",
+        "Mattia Favretto",
+        "Earlence Fernandes",
+        "Mauro Conti"
+      ],
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-11-20T17:09:10+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27860v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27860",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "AI coding-agent benchmarks 是衡量與比較 LLM 能力的主要工具，但評測本身可能遭受 agent 操縱，導致未解題卻取得高分。原因在於評分通常必須執行 agent 產生的程式，而該程式可竄改測試、偽造結果或影響評分流程。作者提出 SplitBench，一個基於 privilege separation 的框架，首次將測試執行與結果判定分離：不受信任的 Evaluation environment 只執行候選程式並回傳 observation，持有 hidden expected answers 的 trusted Oracle 在外部判定分數。作者將 Terminal-Bench 2.0 與 DeepSWE v1.1 的 202 個任務轉換 180 個，與原生 grader 在 98.7% 的 agent attempts 上一致；針對可讀取 grading code 但無法取得 expected answers 的 adversarial agents，SplitBench 阻擋 75% 的攻擊，其餘多數暴露的是原始測試條件薄弱，而非 SplitBench 的缺陷。",
+      "problem_statement": "論文處理 coding-agent benchmark 的 adversarial measurement 問題：agent 不只提交解答，也可能控制執行測試與回報結果的環境，因而讀取答案、修改測試、偽造通過訊息、跨案例干擾或製造惡意證據。既有 sandbox、獨立 verifier 與事後 audit 多半仍在 agent 可控制的狀態中取得測量結果，無法由設計上保證 verdict integrity。",
+      "proposed_solution": "作者提出 SplitBench，以 privilege separation 與 split verification 將工作、候選程式執行及最終判定分開。Agent 只在自己的環境中工作；框架捕捉限定 scope 內的變更，將 candidate 重播至每個案例的全新 Evaluation environment。該環境可被候選程式完全控制，但只回傳受 schema、大小與格式限制的 observation；trusted Oracle 持有 hidden data 與 expected answers，在外部比較 observation 並作出 verdict。每個案例使用新環境，並透過 relay、egress proxy 與 allowlist 管理網路存取。",
+      "core_contributions": [
+        "提出 SplitBench，將 coding-agent benchmark 中的測試執行與結果判定分離，讓 trusted Oracle 持有 hidden expected answers，並在 agent 可控制的環境之外決定 verdict。",
+        "將 Terminal-Bench 2.0 與 DeepSWE v1.1 的 202 個任務中 180 個轉換至框架，保留原始指令、環境、測試與 assertions，並以 98.7% verdict agreement 顯示轉換具有高 fidelity。",
+        "以可讀取 grading code、但不能取得 expected answers 的 worst-case adversarial agents 攻擊轉換任務；429 次攻擊中 native grader 接受 230 次，而 SplitBench 未接受任何歸因於自身漏洞的攻擊。"
+      ],
+      "methodology": "SplitBench 將評測拆成七個主要步驟：agent 完成任務；Capture environment 比對 baseline 並擷取 scope 內變更；Replay 將 candidate 套用至乾淨 baseline；每一個 test case 在獨立 Evaluation environment 中執行；adapter 接收 Oracle 釋出的 challenge、執行候選程式並回傳 observation；框架驗證 JSON schema、欄位、大小與資源界限；Oracle 以 plan 產生案例與 hidden context，再由 deterministic judge 對 evidence 判定。被測環境、adapter 與 observation 均視為不受信任，不能提供 expected answers 或自行決定正確性。候選檔案、測試案例及輸出受 manifest、檔案數與位元組數限制；active check 執行程式，passive check 僅讀取並解析檔案。每個案例完成後銷毀環境，以避免 cross-case interference；agent 的網路僅經由允許目的地的 proxy，模型請求經 relay 轉送。作者以 Terminal-Bench 2.0 全部任務與 DeepSWE v1.1 全部任務進行轉換，記錄可轉換比例、與 native grader 的 verdict agreement，以及 adversarial attempts 的接受或拒絕結果。攻擊者可讀取 grading code，但不得取得 expected answers 與隨機性；評估亦檢查 conversion fidelity、任務通過率及攻擊是否利用 SplitBench 缺陷或原始測試弱點。",
+      "key_results": "| 評估項目 | 結果 |\n|---|---:|\n| 可轉換任務 | 180 / 202 |\n| SplitBench 與 native grader 的 attempts 一致率 | 98.7% |\n| 轉換成本中位數 | 約每任務 10 美元 |\n| SplitBench 阻擋 adversarial attempts | 75% |\n| 測試的攻擊總數 | 429 |\n| native grader 接受的攻擊 | 230 |\n| SplitBench 接受、且歸因於其評測漏洞的攻擊 | 0 |\n| 原始測試弱點導致的通過 | 64 次通過中的 47 次；涉及 34 個任務 |\n\n作者另報告 agent 在 SplitBench 下的任務通過數量「約與 native grader 相當」，但未提供該比較的具體數值。未轉換任務主要需要不只檔案集合的執行狀態，或包含速度目標；完整分類數字以外的細節，論文未在提供內容中完整報告。",
+      "insights": [
+        "評測系統應將「執行候選程式」與「判定其輸出是否正確」設為不同 trust domain；測試 runner 不應自行產生或傳遞 pass/fail 作為可信證據。",
+        "對 agent 產出的檔案、程序與回報都應採取不受信任假設，透過限定 candidate scope、嚴格 observation schema、資源界限及每案例全新環境降低竄改面。",
+        "安全框架不能補救弱 acceptance conditions；應同步審查測試是否真正驗證任務目標，因為 SplitBench 會忠實繼承原始測試可接受的投機解法。"
+      ],
+      "limitations": "框架仍信任 isolation mechanism、benchmark authors、grading code 與框架元件，未涵蓋容器或 kernel escape、hardware side channel、允許服務內的濫用，以及已公開的測試與答案。作者也承認 weak acceptance conditions 不屬於框架可判定的問題；需要速度目標、持續服務或非檔案狀態的任務可能無法轉換。",
+      "tags": [
+        "benchmark",
+        "red-teaming",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "adversarial measurement",
+        "privilege separation",
+        "secure execution of untrusted code",
+        "coding-agent benchmark auditing",
+        "sandbox與access control"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27835",
+      "title": "Auditable Financial Knowledge Graphs: Schema-Driven Construction and Intrinsic Quality Evaluation",
+      "abstract": "Financial documents combine narrative disclosures, accounting metrics, corporate structures, management commentary, and time-dependent facts, making them difficult to represent using conventional chunk-based retrieval-augmented generation systems. This paper presents an auditable, schema-driven methodology for constructing temporal financial knowledge graphs from page-delimited documents parsed using a general purpose document intelligence service. Overlapping document windows undergo phased large language model extraction of structural entities, quantitative observations, and domain-specific relationships. Candidate graph elements are validated against predefined schemas and consolidated through scope-aware exact, normalized, fuzzy, embedding-based, and LLM-assisted entity resolution. Temporal merge constraints, deterministic edge deduplication, conflict-aware property management, and fine-grained provenance preserve issuer identity, reporting-period validity, and traceability to source evidence. The contributions of this work comprise the proposed methodology for financial knowledge graph construction, the creation of an evidence-grounded temporal knowledge graph from heterogeneous financial documents, and an intrinsic framework for evaluating the quality of the resulting graph. The evaluation framework assesses seven weighted dimensions, two hard validation gates, and structural diagnostics. By separating graph-quality assessment from downstream retrieval and answer generation, the framework supports systematic diagnosis and iterative refinement of the constructed graph.",
+      "authors": [
+        "Samarth Sarin",
+        "Lovepreet Singh",
+        "Dhagash Mehta"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-11-20T16:54:47+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27835v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27835",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "金融文件同時包含敘述性揭露、會計指標、企業結構、管理層評論與具時間依賴性的事實，因此難以由傳統以文字區塊為基礎的 Retrieval-Augmented Generation（RAG）系統完整表示。本文提出一套可稽核、由 schema 驅動的方法，從經一般文件智能服務解析並保留頁面邊界的文件中，建構具時間性的金融 Knowledge Graph（KG）。重疊文件視窗經由分階段 Large Language Model（LLM）流程，抽取結構實體、量化觀察與領域關係；候選圖元素再依預定義 schema 驗證，並透過具範圍感知的精確、正規化、模糊、embedding 與 LLM 輔助 entity resolution 進行整合。系統以時間合併限制、確定性邊去重、衝突感知屬性管理及細粒度 provenance，維持發行人身分、報告期間有效性與來源可追溯性。本文亦提出由七項加權維度、兩項硬性驗證閘門及結構診斷組成的 intrinsic KG quality evaluation framework，將圖品質評估與下游 retrieval 及 answer generation 分離，以支援系統診斷與迭代改善。",
+      "problem_statement": "金融文件中的數值、敘述、企業關係與報告期間往往分散於不同段落，傳統 chunk-based RAG 難以保留跨段落關係、multi-hop reasoning 與證據追蹤。GraphRAG 雖可改善結構化檢索，但其可靠性取決於 KG 品質；自動建圖可能產生 hallucinated entities、錯誤方向關係、schema violations、重複或錯誤合併、遺漏及 temporal inconsistencies。既有研究多以最終 QA 表現間接評估圖，難以區分建圖、檢索、推理與生成錯誤。",
+      "proposed_solution": "作者提出 schema-driven、temporal 且 auditable 的金融 KG 建構與 intrinsic evaluation framework。文件先轉為保留頁面邊界的文字，再以重疊頁面視窗進行分階段 LLM extraction，依序抽取 structural entities、quantitative observations 與 semantic relations。所有輸出皆視為候選，經 schema、型別、端點、數值及時間限制驗證後，採 scope-aware entity resolution、衝突保留、時間安全合併、確定性 edge deduplication 與細粒度 provenance 建圖。核心創新是將 factual grounding、schema compliance、completeness、relationship quality、entity disambiguation 與 temporal consistency 等 intrinsic 品質，獨立於 GraphRAG QA 進行衡量。",
+      "core_contributions": [
+        "提出一套從 page-delimited 金融文件建構 temporal、schema-driven 且 auditable KG 的完整流程，結合 phased LLM extraction、deterministic validation、scope-aware entity resolution、temporal safeguards 與 provenance preservation。",
+        "建立金融 KG 的 intrinsic quality evaluation framework，以 factual accuracy、semantic consistency、completeness、information density、relationship quality、entity disambiguation 與 temporal consistency 七項維度，以及 schema/provenance 兩項硬閘門評估圖品質。",
+        "在 FinanceBench 公開 150-case subset 上建構並驗證 KG；作者報告 overall KG quality 為 95%、entity coverage 為 98%，並以 GraphRAG 正確回答 123/150 題，準確率為 82.00%。"
+      ],
+      "methodology": "資料使用 FinanceBench，完整資料包含 10,231 組 question-answer-evidence triplets、40 家美國上市公司與 368 份 filings；實驗評估採公開的 150-case subset。文件由 Azure Document Intelligence（prebuilt-layout）轉成 page-delimited text，連續 3 頁形成、stride 為 1 的重疊視窗。每個視窗以 GPT-5.4、temperature=0、一般 3 次 retry，分階段抽取 14 類 structural 與 quantitative entities，再分四類抽取 financial、corporate structure、geography、legal relations。候選經欄位、schema、domain-range、數值與端點驗證後，使用 scope-aware key、normalized/fuzzy matching、text-embedding-3-large（threshold 0.88）、模糊相似度（0.7）及必要的 LLM merge verification 解析實體。系統保留不同期間的觀察，進行 temporal reconciliation、edge signature 去重、coreference、orphan linking 與衝突紀錄，且每個 node、edge、property observation 儲存 document、page、window、evidence、period、timestamp、confidence 與 run ID。評估包括 deterministic validation，以及由 GPT-5.5 執行的 factual accuracy、semantic consistency、independent-reference completeness、information density、relationship quality、entity disambiguation 與 temporal consistency；另設 schema/provenance 兩項至少 95% 的硬閘門。加權 KQ 分數權重依序為 FA 25%、SC 15%、CP 15%、ID 15%、RQ 15%、ED 10%、TC 5%。下游則以最多兩跳的 document-scoped GraphRAG 評估 150 個 FinanceBench 問題。",
+      "key_results": "| 評估項目 | 接受標準／角色 | 論文報告結果 |\n|---|---:|---:|\n| Node/edge schema compliance | 硬閘門，≥95% | 99% |\n| Provenance completeness | 硬閘門，≥95% | 99% |\n| Factual Accuracy | 25%，≥95% | 97% |\n| Semantic Consistency | 15%，≥95% | 96% |\n| Completeness | 15%，≥90% | 92% |\n| Entity Coverage | 診斷指標，≥90% | 98% |\n| Information Density | 15%，≥90% | 93% |\n| Relationship Quality | 15%，≥90% | 96% |\n| Entity Disambiguation | 10%，≥95% | 99% |\n| Temporal Consistency | 5%，≥95% | 95% |\n| Overall KG Quality | 加權分數，≥92.75% | 95% |\n| GraphRAG answer accuracy | 下游指標 | 82.00%（123/150）|\n\n作者報告建構的 KG 通過所有預設 intrinsic quality thresholds；但論文未報告與其他建圖方法、VectorRAG 或 GraphRAG baseline 的直接數值比較，也未提供各類下游失敗歸因的細部分布。",
+      "insights": [
+        "實務上應將 LLM 抽取結果視為待驗證候選，而非直接寫入 KG；schema、端點型別、數值與時間規則可降低不合法或不受支持的圖元素。",
+        "金融 KG 的 provenance 應細化到 node、edge 與 property observation，並保留頁面、證據片段、期間、confidence 與 run ID，才能進行可重現的稽核與錯誤歸因。",
+        "下游 QA 分數不宜單獨代表 KG 品質；可先以獨立的 factual grounding、completeness、entity resolution 與 temporal consistency 評估建圖，再分析其對 GraphRAG 的影響。"
+      ],
+      "limitations": "論文未提供與其他 KG 建構、VectorRAG 或 GraphRAG 方法的直接 baseline 比較，也未完整揭露各類錯誤歸因的分布。intrinsic 評估部分依賴 GPT-5.5 judge，雖與 GPT-5.4 建構模型分離，仍可能存在 LLM 評審偏差。實驗主要採 FinanceBench 的 150-case subset，對更廣泛文件型態與跨公司泛化能力的驗證有限；未來可增加人工審核、跨模型 judge 與更大規模資料集。",
+      "tags": [
+        "llm-as-judge",
+        "rag-evaluation",
+        "faithfulness"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Temporal Knowledge Graph",
+        "GraphRAG",
+        "金融文件資訊抽取",
+        "Entity Resolution",
+        "Knowledge Graph Provenance"
+      ],
+      "category": "RAG Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27811",
+      "title": "Redesigning Neural Networks to Not be Confidently Wrong even to Strong Adversarial Attacks",
+      "abstract": "Early deep learning models attempted to simulate visual perception using a neural hierarchy that alternated between two types of layer: one modelled on cortical simple cells (that was designed to increase selectivity), and one modelled on cortical complex cells (that aimed to increase tolerance). We show that such a neural network (NN) architecture, when implemented with novel components that are better able to learn selective and tolerant representations, is capable of accurate and robust image classification and improved alignment between the behaviour of the model and the perceptual abilities of humans. Firstly, the proposed models are shallow, fewer than ten layer-pairs, which is more consistent with the rapid feedforward object categorisation performed by the biological visual system. Secondly, they are far less prone to producing classification predictions with high confidence for samples from unknown classes or for image consisting of pure noise, and hence, like humans are not easily fooled into perceiving objects that are not present in the image. Thirdly, for the proposed NNs adversarial samples cause predictions with low confidence, enabling them to be accurately identified. In contrast to humans, our networks still do not correctly classify adversarial samples. However, the behaviour of our networks is a significant step towards human-like behaviour compared to standard DNNs that produce highly confident, but incorrect, classification predictions for adversarial samples. The increased robustness to adversarial and unknown samples is achieved while maintaining competitive performance in terms of generalisation to novel samples from the training categories. This enables models of this type to be competitive with state-of-the-art DNNs across multiple different evaluation metrics and benchmark tasks.",
+      "authors": [
+        "Michael W. Spratling",
+        "Heiko H. Schütt"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-11-20T16:38:30+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27811v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27811",
+      "score": 11
+    },
+    "analysis": {
+      "abstract_zh": "早期深度學習模型以交替堆疊的兩類層模擬視覺階層：類似皮質 simple cells、提升選擇性的層，以及類似 complex cells、提升容忍度的層。本文以較能學習選擇性與容忍度的新元件實作此架構，提出的模型少於十個 layer-pairs，能進行準確且穩健的影像分類，並改善模型行為與人類知覺能力的一致性。相較標準 DNN，模型較少對未知類別或純雜訊影像產生高信心預測；對抗樣本則通常產生低信心輸出，因此可被辨識。模型仍無法正確分類對抗樣本，但不再像標準 DNN 一樣以高度信心錯誤分類。這些改善未犧牲已知訓練類別之新樣本泛化能力，並在多項評估指標與基準任務上具競爭力。",
+      "problem_statement": "現有 DNN 雖具備高分類準確率，卻常對未知類別、純雜訊與對抗樣本產生高度信心但錯誤的預測；同時也可能對人類可忽略的小擾動過度敏感。作者認為，標準 cross-correlation、max pooling 與深層架構未充分形成選擇性及外觀變化容忍度，造成開放集拒識、腐蝕穩健性與對抗可靠性不足。",
+      "proposed_solution": "作者提出 STEAL（Selectivity and Tolerance Enhanced Alternating Layer）網路，以交替的 integration 與 pooling blocks 取代標準 CNN 元件。ZINC 是近似 zero-mean normalised cross-correlation 的選擇性 integration function，用於匹配特定特徵；SCAM 是同時進行空間與通道 pooling 的 Spatial and Channel-wise Adaptive Mellowmax，用於學習外觀與位置容忍度；HEM loss 則只平均高於平均錯誤的 margin errors。三者共同構成較淺、具生物啟發性的模型，目標是在維持已知類別泛化能力的同時，降低 confidently wrong predictions。",
+      "core_contributions": [
+        "提出 ZINC integration function，以近似 zero-mean normalised cross-correlation 取代標準線性 cross-correlation，提升神經元對特定特徵的選擇性。",
+        "提出 SCAM pooling，在每個 block 同時進行空間與通道 pooling，並以可學習 Mellowmax 調節平均式與 max 式聚合，以增強外觀變化容忍度。",
+        "將 ZINC、SCAM 與 HEM 組成淺層 STEAL 網路，並透過多資料集、腐蝕、對抗、未知類別與不可辨識影像評估其降低高信心錯誤預測的能力。"
+      ],
+      "methodology": "模型由重複 blocks 組成，每個 block 依序包含 integration function、ReLU 與 pooling；標準模型使用 cross-correlation、max pooling、cross-entropy，STEAL 使用 ZINC、SCAM、HEM。ZINC 先以局部平均估計移除輸入均值，再以輸入與權重的內積除以兩者 L2 norm 的乘積，並加入 beta 避免除零；其局部均值視窗大小由 lambda 控制。SCAM 對預先固定的通道子集合及空間區域套用可學習參數 alpha 的 Mellowmax，alpha 可在平均 pooling 與平滑 max pooling 間調整。HEM 以多類 margin loss 計算錯誤，只聚合高於批次平均的錯誤。實驗涵蓋 MNIST、FashionMNIST、SVHN、CIFAR10、CIFAR100、TinyImageNet 與 ImageNet1k，使用基本或較強資料增強；部分實驗加入 FGSM 或七步 PGD 訓練。評估資料包括 Clean、Corrupt、Adversarial、Novel 與 Unrecognisable，主要指標是以 95% 正確 clean 樣本接受率設定門檻的 detection accuracy rate（DAR）；另報告 clean、corrupt、adversarial accuracy 與 OOD AUROC，信心度使用 MSP，並以 MLS 檢驗結果是否一致。",
+      "key_results": "論文報告的主要結果如下；表中數字來自附錄的傳統指標比較，± 為論文所報告的變異量。\n\n| 資料集 | 模型 | 參數量 | Clean Acc. | Corrupt Acc. | Advers. Acc. | OOD AUROC |\n|---|---|---:|---:|---:|---:|---:|\n| MNIST | STEAL 2-5-20 | 44.0k | 99.29±0.01 | 93.79±0.15 | 1.98±0.15 | 99.17±0.08 |\n| MNIST | 標準 CNN 2-5-160 | 44.2k | 98.81±0.07 | 74.04±1.66 | 0.00 | 96.22±0.47 |\n| CIFAR10 | STEAL 5-3-44 | 459k | 92.32±0.14 | 75.05±0.36 | 0.03±0.01 | 95.21±0.37 |\n| CIFAR10 | 標準 CNN 5-3-128 | 458k | 89.08±0.28 | 71.89±0.05 | 0.08±0.02 | 83.67±2.58 |\n| CIFAR100 | STEAL 5-3-41 | 667k | 70.36±0.19 | 45.04±0.20 | 0.03±0.02 | 75.95±0.63 |\n| CIFAR100 | 標準 CNN 5-3-142 | 677k | 63.66±0.42 | 40.71±0.26 | 0.03±0.01 | 62.43±1.79 |\n| ImageNet1k | STEAL 9-3-15-exp | 27.6M | 68.60 | 28.58 | 0.00 | 83.27 |\n| ImageNet1k | 標準 CNN 9-3-425-exp | 27.2M | 62.12 | 22.43 | 0.00 | 80.33 |\n\n跨七個資料集的平均差異（STEAL 減標準模型）為：Clean 4.69 個百分點、Corrupt 10.51 個百分點、Adversarial 0.98 個百分點、OOD rejection 8.89 個百分點。CIFAR10 與 ImageNet1k 的 STEAL clean accuracy 分別為 94.60% 與 69.04%（另一組較大模型設定）；在 CIFAR10 強 PGD 訓練下，STEAL 的 adversarial accuracy 為 51.66%，標準 CNN 為 46.41%。論文未報告 STEAL 能正確分類一般對抗樣本；其主要改善是使對抗樣本產生低信心、可被拒識。",
+      "insights": [
+        "若系統需要拒絕未知或不可靠輸入，不能只看 clean accuracy；應同時以固定接受率下的拒識指標、OOD AUROC、腐蝕與對抗測試檢查信心校準。",
+        "將特徵匹配的選擇性與跨空間、跨通道的容忍度分開設計，可能比單純增加深度更直接地改善已知類別泛化及異常輸入拒識。",
+        "低信心拒絕不等於對抗魯棒分類：本文模型能使對抗樣本較容易被辨識，但仍無法正確分類；實務部署時應明確區分分類正確率、偵測率與拒絕策略。"
+      ],
+      "limitations": "論文主要以影像分類與所選資料集、腐蝕及 AutoAttack 設定驗證，未提供更廣泛資料分佈、適應性攻擊或人類行為量測的結果。模型仍無法正確分類對抗樣本；且 ZINC 的局部均值是近似計算，SCAM 通道分組固定。論文未報告與更多架構或訓練策略組合的完整比較。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "對抗式機器學習",
+        "開放集辨識與 OOD 拒識",
+        "影像分類信心校準",
+        "生物啟發式神經網路"
+      ],
+      "category": "Safety & Alignment"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27865",
+      "title": "SLICR: Strategy Logic-Guided Multi-Agent Reinforcement Learning",
+      "abstract": "Specification-guided reinforcement learning (RL) translates formal specifications of desired behavior of agents into shaped rewards. This paper introduces SLICR, a significant paradigm shift that advances the state of the art to specification-guided RL in adversarial settings under partial observability. We employ Strategy Logic (SL), which allows explicit quantification over agents' strategies and uses the linear temporal logic (LTL) to specify the agents' objectives and constraints. This enables reasoning not only about how agents should act to satisfy a specification, but also about how they should respond to the strategies and behaviors of other agents. We evaluate SLICR on three popular benchmarks: Predator-Prey, Google Research Football, and our home-grown extension of SMAC-HARD, demonstrating its effectiveness, scalability, and ability to adapt to diverse adversarial strategies.",
+      "authors": [
+        "Arshia Rafieioskouie",
+        "Matthew Lucas",
+        "Tzu-Han Hsu",
+        "Borzoo Bonakdarpour"
+      ],
+      "categories": [
+        "cs.AI",
+        "cs.LO"
+      ],
+      "published": "2026-11-20T17:13:50+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27865v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27865",
+      "score": 10
+    },
+    "analysis": {
+      "abstract_zh": "Specification-guided reinforcement learning（規格導向強化學習）會將以形式語言描述的期望 agent 行為轉換為 shaping rewards。本論文提出 SLICR，將此方向推進至部分可觀測、具對抗性的多 agent 環境。SLICR 採用 Strategy Logic（SL）明確量化 agent strategies，並結合 Linear Temporal Logic（LTL）描述 agent objectives 與 constraints，因此不僅能推理 agent 應如何行動以滿足規格，也能推理其如何回應其他 agent 的 strategies 與 behaviors。作者在 Predator-Prey、Google Research Football，以及自建的 SMAC-HARD 擴充環境上評估 SLICR，結果顯示其具有效性、可擴展性，並能適應多樣的 adversarial strategies。",
+      "problem_statement": "現有 specification-guided MARL 多假設其他 agent 採用 stationary strategies，通常只為固定任務學習單一 policy，或以 Nash equilibrium 等 rational behavior 建模對手，難以處理任意、非理性、變動中的 adversarial strategies。論文要在部分可觀測隨機博弈中，根據 SL 對策略的量化與依賴關係，學習能回應不同對手策略的 best-response functions，最大化 LTL 規格的滿足機率。",
+      "proposed_solution": "作者提出 SLICR（Strategy Logic-Informed Control through Reinforcement Learning），將多 agent strategy synthesis 轉化為 RL 問題。框架以 SL 的策略量化表達對手與控制 agent 間的依賴，將內部 LTL 公式轉成 robustness reward；使用 shield 辨識並排除會干擾訓練的 uniformly random irrational strategies；再以 encoder-decoder 從部分觀測歷史推斷 preceding universal agents 的 strategy context，形成 latent embedding。SLICR 採 CTDE，在集中式訓練、分散式執行下學習 action-level response functions。",
+      "core_contributions": [
+        "將部分可觀測對抗性 MARL 的 strategy synthesis 形式化為 SL-guided learning problem，支援至多一次 quantifier alternation 的 ∀*∃* 與 ∃*∀* fragments。",
+        "提出由 quantitative LTL robustness reward、irrational-strategy shielding、strategy-context encoder-decoder 與 CTDE response learning 組成的 SLICR 框架。",
+        "在 Predator-Prey、Google Research Football 與 SMAC-HARD 上，以 Seen、Unseen、非理性對手及 inner-LTL ablation 驗證方法，相較 LIAM 報告最高 90% 的效能增益。"
+      ],
+      "methodology": "環境建模為 POSG，agent 以 observation-action history 形成 strategy。論文限制處理至多一次 quantifier alternation 的 SL fragments，主要包括 ∀*∃* 與 ∃*∀*。首先建立由 IPPO、MAPPO、VDN、QMIX、QTRAN、內建 AI 與 uniformly random policies 組成的固定 opponent strategy population，並區分 Seen 與 Unseen 設定。對每個完整 strategy assignment，從 POSG 取樣長度 T 的 path，利用 quantitative LTL semantics 計算 prefix robustness，將其作為每一步 reward，並以 discounted cumulative robustness 搭配 A2C、PPO 或 IPPO 學習 response functions。訓練前，shield 以 m-step histories 分類 rational 與 irrational strategy contexts，主訓練排除 irrational 經驗。對 preceding universal strategies，encoder 將 existential agent 的 local history 映射至 latent context；action-reconstruction decoder、observation-reconstruction decoder 與 future-action predictor 分別重建對手 actions、observations，並預測未來 L 步 actions，以學習策略表示。訓練時採 CTDE，可使用對手資訊；執行時僅使用 local information。評估使用 Predator-Prey 的 single-predator collisions、GRF 的每 100 場進球數，以及 SMAC-HARD 的 win rate，並比較 LIAM、兩種 SL fragments、shield 與 inner-LTL guidance 的效果。",
+      "key_results": "主要結果如下；數值為論文報告的最高或代表性差異，曲線通常以十次獨立 runs 的 median 與 25–75 百分位呈現。\n\n| 實驗 | SLICR 相對結果 | 論文報告數據 |\n|---|---|---|\n| Predator-Prey，對比 LIAM | Seen / Unseen 多 single-predator collisions | 分別最多增加 400 / 200；補充新策略族群時 Unseen 最終最多增加 500 |\n| GRF R2S，對比 LIAM | Seen / Unseen 多進球 | 每 100 場最多增加 30 / 20 球 |\n| GRF R2S-DEF，對比 LIAM | Seen / Unseen 多進球 | 每 100 場最多增加 30 / 35 球 |\n| GRF R2S-4DEF，對比 LIAM | Seen / Unseen 多進球 | 每 100 場最多增加 10 球；論文未分別提供兩設定的完整最終數字 |\n| SMAC-HARD 3m，PPO | Seen / Unseen win rate 增益 | 最多增加 25 / 15 個百分點；Seen 約 400K steps 達約 100% |\n| SMAC-HARD 2s3z，PPO | Seen / Unseen win rate 增益 | 最多增加 30 / 20 個百分點；SLICR 約 400K steps 達約 95% |\n| SMAC-HARD 3s_vs_3z，PPO | Seen / Unseen win rate 增益 | 最多增加 60 / 90 個百分點；SLICR 約達 100% / 90% |\n| 非理性 strategies，Predator-Prey | shield 相對無 shield | 50% irrational 時最多增加 250 collisions，平均約增加 100；其他比例的完整平均數據論文未報告 |\n| ∀*∃* 對 ∃*∀* | 策略適應性與效能 | ∀*∃* 在 Seen / Unseen 最多增加 526 / 380 collisions 或任務指標；SMAC-HARD 多數情況相近 |\n| inner-LTL 對 shaped reward | 規格引導增益 | GRF R2S-DEF 最多增加 15 / 20 goals；SMAC-HARD 3s_vs_3z 最多增加 30% / 35% win rate |\n| 理論保證 | 條件式正確性 | 在 order-preservation、information-preserving latent embedding 與充分表達 action-level response functions 等假設下，定理 5.3 將 robustness 最佳化連結至 SL satisfaction probability；具體全域最優性數值論文未報告 |",
+      "insights": [
+        "若 agent 必須面對策略會改變或未見過的對手，將對手表示為可泛化的 strategy context，而非只預測當前 action，可能有助於提升 Unseen 策略的適應性。",
+        "在形式規格可明確描述安全限制與任務目標時，將 LTL robustness 納入 reward 可提供比單純 shaped reward 更直接的學習訊號；但效果依環境而異，論文部分 ablation 顯示後期增益會消失或不穩定。",
+        "對手集合若包含明確定義的隨機或非理性策略，訓練資料篩選或 shield 可能減少噪聲；實務部署前仍應驗證 shield 分類錯誤是否會排除有用的極端行為。"
+      ],
+      "limitations": "SLICR 目前只處理至多一次 quantifier alternation，尚未涵蓋更一般的 SL 公式。理論保證依賴 information-preserving latent embedding，但部分可觀測下未必能無損重建對手策略；同時，實驗主要依賴人工建構的 opponent populations 與三類 benchmark，對更廣泛環境的泛化仍需驗證。",
+      "tags": [
+        "benchmark",
+        "agent-evaluation",
+        "alignment"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "Strategy Logic",
+        "specification-guided reinforcement learning",
+        "multi-agent reinforcement learning",
+        "partial observability",
+        "opponent modeling",
+        "temporal logic"
+      ],
+      "category": "Agent Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27963",
+      "title": "Non-penetrating World Models",
+      "abstract": "We study a new problem of preventing object penetration in interactive video world models. To understand how existing models handle this, we introduce NoPeBench, a benchmark that evaluates how world models respond to physical obstacles. Our evaluation reveals that none of the open-source models can reliably prevent such failures. Surprisingly, however, these models already encode the information needed to predict such violations. We find that the hidden states of diffusion transformers (DiTs) can predict whether a candidate action will penetrate an obstacle. Building on this, we introduce NoPeWorld, a lightweight framework that detects and prevents penetration. Specifically, we train a small prediction head on top of a frozen DiT's hidden states to read out if a candidate action is safe or not. Unsafe actions are then replaced with safe ones that best preserve the original intent. Despite its simplicity, NoPeWorld substantially reduces the physical violation rate, averaged over six video world models, from 74% to 16%. Remarkably, our method shows zero-shot generalization to open-domain imagery, third-person viewpoints, and moving obstacles. We publicly release our code, the NoPeBench benchmark, and model weights. Project Page: https://nopeworld.github.io .",
+      "authors": [
+        "Yuhang Dai",
+        "Yinwei Wu",
+        "Ziyue Lin",
+        "Han Ji",
+        "Xingyi Yang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-11-20T18:44:57+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27963v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27963",
+      "score": 8
+    },
+    "analysis": {
+      "abstract_zh": "本文研究互動式 video world models 如何避免物體穿透，並提出 NoPeBench 評估模型面對物理障礙時的反應。實驗顯示，現有開源模型皆無法可靠防止穿透；然而，模型已編碼可預測違規所需的資訊。作者發現 diffusion transformers（DiTs）的 hidden states 能預測候選動作是否會穿透障礙。基於此，NoPeWorld 在 frozen DiT hidden states 上訓練小型 prediction head，判斷候選動作是否安全；對不安全動作，選擇最能保留原始意圖的安全替代動作。跨六個 video world models，physical violation rate 平均由 74% 降至 16%，並可 zero-shot 泛化至開放域影像、第三人稱視角與移動障礙物。作者公開程式碼、NoPeBench、模型權重及專案頁面。",
+      "problem_statement": "現有互動式 video world models 多以 open-loop 方式依照 camera pose 或 key input 生成影片，沒有明確的場景幾何或 collision constraint，因此遇到要求直行撞向牆面等 out-of-distribution 指令時，可能穿過障礙、消除障礙或產生不合理軌跡。單純 prompt 幾乎無效；外部 depth estimator 雖能偵測障礙，卻需逐幀解碼與額外推論，且通常只能停止，無法保留使用者的滑行意圖。既有 benchmark 也多使用無碰撞路徑，難以直接衡量 non-penetration。",
+      "proposed_solution": "作者提出 NoPeWorld，一個在不更新原始 video generator 的情況下，直接讀取 frozen DiT hidden states 的碰撞預防框架。其核心是以 Unreal Engine 幾何產生候選動作的 swept clearance、collision safety 與 intent labels，訓練少於 2M parameters 的 prediction head。推論時，head 為候選動作估計安全性、障礙距離及意圖分數；若原始動作安全便保留，否則從停止、縮短步伐及轉向等 34 個候選中，選擇安全且最接近原始意圖者。框架支援 collision mode 與 prediction mode，前者在目前 chunk 的初始 denoising state 判斷，後者利用前一 chunk 的 commit state 提前預測。",
+      "core_contributions": [
+        "提出 NoPeBench，透過 ground-truth history、Unreal 幾何 closed-loop rollout 與 open-domain VLM evaluation，直接測試互動式 video world models 的 non-penetration 能力。",
+        "提出 NoPeWorld，使用少於 2M parameters 的 prediction head 讀取 frozen DiT hidden states，預測安全性、障礙距離與使用者意圖，並以 safe collide-and-slide 候選替換不安全動作。",
+        "實驗顯示 DiT hidden states 在影片 chunk 生成前已包含即將碰撞的資訊；方法跨六個 generator，並 zero-shot 泛化至開放域影像、第三人稱視角與移動障礙物。"
+      ],
+      "methodology": "NoPeWorld 將每個 chunk 的動作選擇形式化為：在連續 swept path 上維持 signed obstacle gap 不小於安全 margin，並最小化候選動作與 collide-and-slide response 的 intent error。訓練資料來自 UnrealZoo 的 Unreal Engine 模擬；作者以 729 段影片、44 個訓練場景，在 frozen DiT 上進行 teacher forcing，對 34 個候選動作計算 clearance 與碰撞標籤。prediction head 從中深層 DiT tokens 取特徵，經 token projector、action conditioning 與兩個 cross-attention blocks，由 learned query 輸出 safety logit、clearance、intent score，並以 BCE、Huber、listwise KL 等損失訓練。推論時先以安全機率門檻建立可行集合；若原命令安全且意圖分數足夠則保留，否則選擇意圖分數最高的安全候選，無可行候選時停止。NoPeBench 分為三項任務：Task 1 在 ground-truth history 上評估單步決策；Task 2 在 Unreal 幾何上評估 closed-loop 影片；Task 3 以開放域影像、第一或第三人稱視角及靜態或移動障礙物進行 VLM 評估。主要指標包括 Missed、False、decision score、violation rate、Slide、Safe-Intent Score（SIS）及 Task 3 的 VLM violation rate。",
+      "key_results": "| 評估或方法 | 主要結果 |\n|---|---|\n| 六個模型、Task 2、raw model | 平均 physical violation rate 為 74%；各模型約為 77%–95%，WorldPlay2 為 11%。 |\n| 六個模型、Task 2、NoPeWorld collision mode | 平均 violation rate 由 74% 降至 16%。 |\n| LingBot-World 2.0、Task 2 | Raw violation 89%、SIS 5；NoPeWorld Coll violation 7%、SIS 50；Pred violation 4%、SIS 56。 |\n| HY-WorldPlay、Task 2 | Raw violation 86%、SIS 5；NoPeWorld Coll violation 15%、SIS 38；Pred violation 21%、SIS 43。 |\n| Echo-WM、Task 2 | Raw violation 86%、SIS 11；NoPeWorld Coll violation 3%、SIS 44；Pred violation 5%、SIS 42。 |\n| Evoke-Turbo、Task 2 | Raw violation 77%、SIS 8；NoPeWorld Coll violation 30%、SIS 27。Prediction mode 不適用。 |\n| WorldPlay2、Task 2 | Raw violation 11%、SIS 36；NoPeWorld Coll violation 1%、SIS 25；Pred violation 4%、SIS 29。 |\n| Hy-Nomas、Task 2 | Raw violation 95%、SIS 2；NoPeWorld Coll violation 40%、SIS 31；Pred violation 45%、SIS 29。 |\n| Task 1、六模型 | NoPeWorld 將 missed collisions 從原始模型的 100% 降至 0.6%–11.5%，decision score 提升 17–33 個百分點。 |\n| LingBot-World 2.0、提前預測 | 當前 chunk 判斷 unsafe 的 AUC 為 0.955–0.967；提前一個 chunk、約 0.75 秒時為 0.831–0.838。 |\n| 推論成本、LingBot-World 2.0 | Raw route 為 53.7 秒；NoPeWorld Pred 每 route 額外 0.7 秒，Coll 額外 9.9 秒；External depth 額外 14.7 秒。 |\n| Task 3、開放域泛化 | 作者報告兩種模式均降低六個 generator 在 static 與 dynamic obstacles 上的 violation rate；例如 LingBot-World 2.0 static 由 67% 降至 19%。 |\n\n以上數字為論文報告的實驗結果；論文未提供所有 Task 3 組合的單一總平均數字。",
+      "insights": [
+        "對互動式生成模型而言，安全控制不一定需要重新訓練大型 generator；可先探測其 hidden states 是否已包含可用的物理或風險訊號，再以輕量控制 head 將資訊轉化為決策。",
+        "安全機制不應只追求停止或拒絕，也應建模使用者意圖；本文以候選動作排序與 collide-and-slide 投影，在降低違規的同時保留部分原始運動方向。",
+        "評測應同時區分單步決策、closed-loop rollout 與 domain-shift 情境，並加入無障礙控制路徑，以避免安全方法透過過度停止而取得表面上的低違規率。"
+      ],
+      "limitations": "訓練標籤依賴 Unreal Engine 幾何與 first-person、static UnrealZoo 場景；雖然作者報告可泛化至開放域、第三人稱與移動障礙物，仍未證明對所有真實世界場景或更複雜接觸的可靠性。候選動作集合固定為 34 個，且部分模型仍有較高違規率；Task 3 也依賴 VLM judges。論文提出接觸推、承載與破壞物體作為未來方向，但未提供其結果。",
+      "tags": [
+        "benchmark",
+        "safety",
+        "agent-evaluation"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "互動式 video world models",
+        "diffusion transformer hidden-state probing",
+        "collision detection and response",
+        "physical consistency evaluation",
+        "safe action selection"
+      ],
+      "category": "Multimodal Evaluation"
+    }
+  },
+  {
+    "paper": {
+      "arxiv_id": "2611.27905",
+      "title": "AnimalFarm: Auditing the Generation and Detection of Hateful Images Featuring Anthropomorphic Characters",
+      "abstract": "Anthropomorphic non-human characters have long been used to convey hateful messages targeting human groups, from Nazi-era propaganda to recent AI-generated imagery on social media. However, the safety risks posed by such imagery remain largely unexplored. We thus conduct the first systematic study of hateful image generation and detection involving anthropomorphic non-human characters. We construct a benchmark from conservatively screened source scenes, covering five character types and three image generation tasks: text-to-image generation, image editing, and conversational image generation. Across 14,250 scheduled queries, image generation systems produce images for 92.1\\% of queries, of which 95.9\\% contain hateful content. We further collect 4,370 hateful images and evaluate five popular hateful-content detectors. Even the strongest detector, GPT-5.5, identifies only 73.9\\% of hateful images, while most detect fewer than 58\\%. Our analysis reveals that existing detectors often misclassify hateful images as benign when their main subjects are non-human characters. We explore two effective mitigation approaches: a training-free pipeline that maps non-human characters back to human representations before classification and a detector fine-tuned for this type of hateful content. These approaches achieve F1 scores of 0.962 and 0.979, respectively. Our findings expose significant safety gaps in both image generation and hateful-content detection.   Disclaimer: This paper contains hateful text and imagery.",
+      "authors": [
+        "Junjie Chu",
+        "Ye Leng",
+        "Mingjie Li",
+        "Yiting Qu",
+        "Michael Backes",
+        "Yun Shen",
+        "Yang Zhang"
+      ],
+      "categories": [
+        "cs.CV",
+        "cs.CR"
+      ],
+      "published": "2026-11-20T17:44:55+00:00",
+      "pdf_url": "https://arxiv.org/pdf/2611.27905v1",
+      "arxiv_url": "https://arxiv.org/abs/2611.27905",
+      "score": 7
+    },
+    "analysis": {
+      "abstract_zh": "擬人化非人類角色長期被用來傳達針對人類群體的仇恨訊息，從納粹時期宣傳到近期社群媒體上的 AI 生成影像皆然。然而，此類影像的安全風險仍缺乏系統性研究。本文首次研究涉及擬人化非人類角色的仇恨影像生成與偵測，建立由嚴格篩選來源場景構成的 benchmark，涵蓋五種角色與三項生成任務：text-to-image、image editing 與 conversational image generation。在 14,250 個預定查詢中，生成系統對 92.1% 產生影像，其中 95.9% 含仇恨內容。作者進一步收集 4,370 張仇恨影像並評估五種偵測器；最佳的 GPT-5.5 僅偵測出 73.9%，多數偵測器低於 58%。研究發現，當主體為非人類角色時，現有偵測器常將仇恨影像誤判為良性。作者提出 depiction reversal 與 fine-tuned detector，F1 分別達 0.962 與 0.979。",
+      "problem_statement": "論文探討生成式影像系統是否能阻擋以貓、兔、狐狸、豬及 LABUBU 等擬人化非人類角色影射人類群體的仇恨內容，以及現有偵測器能否辨識此類影像。既有生成與偵測研究主要聚焦人類主體或 hateful memes，可能依賴人類臉部、身體與刻板特徵，因此非人類代理呈現的仇恨語意被忽略，形成生成防護與內容審核缺口。",
+      "proposed_solution": "作者建立 AnthroHate-Prompt 與 AnthroHate-Image 兩個資源，系統評估 text-to-image、image editing 及 multi-turn generation 的安全性與偵測能力。核心解法包括 training-free 的 depiction reversal pipeline：先描述影像場景，再將非人類角色改寫為人類角色，最後進行仇恨判斷；以及以結構化推理資料訓練的 Qwen3.5-4B detector，透過 SFT 與 GRPO 強化場景描述、角色替換、仇恨判斷、格式遵循及目標群體辨識。其創新在於將非人類代理視為需還原語意的仇恨表達，而非僅依賴角色外觀分類。",
+      "core_contributions": [
+        "提出 AnthroHate-Prompt，涵蓋五種擬人化非人類角色、三種影像生成任務及英中 T2I 提示，系統揭示多種生成系統對此類仇恨內容的防護失效。",
+        "建立包含 4,370 張仇恨影像的 AnthroHate-Image，並以五種偵測器證明非人類角色會顯著降低仇恨內容辨識能力。",
+        "提出 depiction reversal 與 SFT+GRPO fine-tuned detector，分別達到 0.962 與 0.979 的 F1，展示針對非人類代理仇恨內容的有效緩解方法。"
+      ],
+      "methodology": "資料方面，作者從 4chan /pol/ 收集 792 張影像，經兩名標註者獨立審查後保留 35 個具可辨識仇恨場景，涵蓋 Asian、Black、Jewish 與 Muslim 群體；另從 Wikimedia Commons 篩選 30 張人類主體仇恨影像。35 個場景與五種角色、英中雙語組合成 350 個 T2I items；30 個 seed image 經角色替換形成 150 個 Edit items，並以兩輪互動形成 150 個 MT items。八個模型用於 T2I、七個用於 Edit、三個用於 MT，每一項重複三次。評估生成率 G/Q、生成影像中的仇恨率 H/G，以及相對預定查詢的仇恨率 H/Q；所有生成影像由至少兩名標註者判定，整體一致率為 96.0%。偵測部分建立 4,370 張仇恨影像，評估 GPT-5.5、Gemini 3.1 Flash、Claude Haiku 4.5、LlavaGuard v1.2 7B 與 Q16，並以 recall 衡量。防禦實驗依 scenario split 建立 1,338 張訓練影像與 7,145 張測試影像，評估 recall、precision 與 F1。Depiction reversal 包含影像描述、非人類至人類角色改寫及最終判斷三階段；fine-tuned detector 先以 LoRA SFT，再以 GRPO 優化正確性、格式、checklist coverage 與目標群體辨識。",
+      "key_results": "| 實驗項目 | 主要結果 |\n|---|---:|\n| 全部生成查詢 | 14,250 個 scheduled queries；產生 13,124 張影像，G/Q = 92.1% |\n| 生成仇恨比例 | 12,584 張生成影像含仇恨內容，H/G = 95.9%；H/Q = 88.3% |\n| 任務別 H/G | T2I 99.1%；Edit 89.1%；MT 93.3% |\n| GPT Image 2 的 H/Q | T2I 66.6%；Edit 68.0%；MT 75.3% |\n| 最佳基準偵測器 | GPT-5.5 recall = 73.9%；Gemini 3.1 Flash = 67.7%；Q16 = 57.0% |\n| 其他偵測器 recall | Claude Haiku 4.5 = 42.5%；LlavaGuard = 28.0% |\n| 偵測器共識 | 五個偵測器全部辨識 18.4%；全部漏判 10.4% |\n| 防禦基準 | GPT-5.5 在 held-out test set recall = 0.761，F1 = 0.864 |\n| Prompt enhancement | GPT-5.5 recall = 0.793、F1 = 0.885；Gemini recall = 0.814、F1 = 0.897 |\n| Depiction reversal | recall = 0.927，F1 = 0.962；良性影像 3,650 張中僅 3 個 false positives |\n| Fine-tuned detector | SFT+GRPO recall = 0.972，F1 = 0.979；SFT only F1 = 0.904 |",
+      "insights": [
+        "內容審核 benchmark 不應只測試人類主體；應加入以動物、虛構角色或其他代理表達群體仇恨的語意保持測試。",
+        "偵測流程可加入角色替換或語意正規化步驟，將非人類角色還原為人類中心的場景描述，再進行安全判斷；但需檢查描述階段是否遺漏細微道具、背景文字與姿勢。",
+        "評估生成模型時應同時報告生成成功率、生成結果中的仇恨率及每個預定查詢產生仇恨影像的比例，避免只以拒絕率推論安全性。"
+      ],
+      "limitations": "資料主要來自少量來源場景，文化脈絡以英語網路社群及四個目標群體為主，且 Edit/MT 的 Muslim seed 僅一個，限制群體間比較。研究只測試特定模型版本與靜態影像，尚未驗證影片、音訊、個人攻擊或未來模型。",
+      "tags": [
+        "benchmark",
+        "red-teaming",
+        "safety"
+      ],
+      "relevance": 4,
+      "related_topics": [
+        "AI 生成影像安全",
+        "仇恨內容偵測",
+        "多模態內容審核",
+        "擬人化與去人化表徵"
+      ],
+      "category": "Benchmark"
+    }
+  }
+]

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2611.27915] StereoVLM - Binocular Vision-Language Models for Metric 3D Spatial Reasoning|StereoVLM: Binocular Vision-Language Models for Me...]] (2026-11-20)
+
 - `[Multimodal Evaluation]` [[[2608.12220] SCOUT - Unlocking Enhanced Spatial Reasoning via Structured Chain-of-Thought and...|SCOUT: Unlocking Enhanced Spatial Reasoning via St...]] (2026-08-12)
 
 ## 延伸閱讀

@@ -21,6 +21,8 @@
 
 ## 相關論文
 
+- `[Multimodal Evaluation]` [[[2611.27915] StereoVLM - Binocular Vision-Language Models for Metric 3D Spatial Reasoning|StereoVLM: Binocular Vision-Language Models for Me...]] (2026-11-20)
+
 - `[Agent Evaluation]` [[[2611.18397] Gamer - A Generalist Vision-Language-Action Foundation Model for Long-Horizon Re...|Gamer: A Generalist Vision-Language-Action Foundat...]] (2026-11-13)
 
 ## 延伸閱讀
